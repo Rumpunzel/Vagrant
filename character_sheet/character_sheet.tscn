@@ -1,102 +1,160 @@
-[gd_scene load_steps=2 format=3 uid="uid://14h1hukjjol7"]
+[gd_scene load_steps=9 format=3 uid="uid://14h1hukjjol7"]
 
 [ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_fnfma"]
+[ext_resource type="Script" path="res://character_sheet/character_sheet.gd" id="1_uqhlh"]
+[ext_resource type="Texture2D" uid="uid://d12l3mfoh65ag" path="res://dice/d4.png" id="3_ljcnb"]
+[ext_resource type="Texture2D" uid="uid://p5eg3k4cdh21" path="res://dice/d6.png" id="4_jkugp"]
+[ext_resource type="Script" path="res://character_sheet/hit_dice_counter.gd" id="4_n7opu"]
+[ext_resource type="Texture2D" uid="uid://sue7comyk6aq" path="res://dice/d8.png" id="5_dvuln"]
+[ext_resource type="Texture2D" uid="uid://cw6ja5k5fq6m6" path="res://dice/d10.png" id="6_3fhhm"]
+[ext_resource type="Texture2D" uid="uid://87t1400wcx4g" path="res://dice/d12.png" id="7_0qwfr"]
 
-[node name="CharacterSheet" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="CharacterSheet" type="MarginContainer"]
+offset_right = 302.0
+offset_bottom = 295.0
+script = ExtResource("1_uqhlh")
 
-[node name="VBoxContainer3" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer3"]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="Name" type="LineEdit" parent="VBoxContainer3/VBoxContainer"]
+[node name="Name" type="LineEdit" parent="VBoxContainer"]
 layout_mode = 2
 placeholder_text = "Name"
 
-[node name="Portrait" type="TextureRect" parent="VBoxContainer3/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
+
+[node name="Portrait" type="TextureRect" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 texture = ExtResource("1_fnfma")
-expand_mode = 5
+expand_mode = 3
 stretch_mode = 6
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer3"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer3/VBoxContainer2"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
 text = "Attributes"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer3/VBoxContainer2"]
+[node name="Muscle" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer3/VBoxContainer2/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Might"
-
-[node name="SpinBox" type="SpinBox" parent="VBoxContainer3/VBoxContainer2/HBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer3/VBoxContainer2"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="VBoxContainer3/VBoxContainer2/HBoxContainer2"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Muscle"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Agility"
+text = "Muscle"
 
-[node name="SpinBox" type="SpinBox" parent="VBoxContainer3/VBoxContainer2/HBoxContainer2"]
+[node name="MuscleScore" type="SpinBox" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Muscle"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer3/VBoxContainer2"]
+[node name="Blood" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer3/VBoxContainer2/HBoxContainer3"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Endurance"
-
-[node name="SpinBox" type="SpinBox" parent="VBoxContainer3/VBoxContainer2/HBoxContainer3"]
-layout_mode = 2
-
-[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer3/VBoxContainer2"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="VBoxContainer3/VBoxContainer2/HBoxContainer4"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Blood"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Wits"
+text = "Blood"
 
-[node name="SpinBox" type="SpinBox" parent="VBoxContainer3/VBoxContainer2/HBoxContainer4"]
+[node name="BloodScore" type="SpinBox" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Blood"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HBoxContainer5" type="HBoxContainer" parent="VBoxContainer3/VBoxContainer2"]
+[node name="Guts" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer3/VBoxContainer2/HBoxContainer5"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Guts"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Guts"
+
+[node name="GutsScore" type="SpinBox" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Guts"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Brain" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Brain"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Brain"
+
+[node name="BrainScore" type="SpinBox" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Brain"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Nerve" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Nerve"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Nerve"
+
+[node name="NerveScore" type="SpinBox" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Nerve"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Heart" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Heart"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Heart"
 
-[node name="SpinBox" type="SpinBox" parent="VBoxContainer3/VBoxContainer2/HBoxContainer5"]
+[node name="HeartScore" type="SpinBox" parent="VBoxContainer/HBoxContainer/VBoxContainer2/Heart"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HBoxContainer6" type="HBoxContainer" parent="VBoxContainer3/VBoxContainer2"]
+[node name="HiteDice" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer3/VBoxContainer2/HBoxContainer6"]
+[node name="d4" type="Button" parent="VBoxContainer/HiteDice"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Luck"
+text = "1
+"
+icon = ExtResource("3_ljcnb")
+expand_icon = true
+script = ExtResource("4_n7opu")
 
-[node name="SpinBox" type="SpinBox" parent="VBoxContainer3/VBoxContainer2/HBoxContainer6"]
+[node name="d6" type="Button" parent="VBoxContainer/HiteDice"]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+text = "1"
+icon = ExtResource("4_jkugp")
+expand_icon = true
+script = ExtResource("4_n7opu")
+
+[node name="d8" type="Button" parent="VBoxContainer/HiteDice"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1"
+icon = ExtResource("5_dvuln")
+expand_icon = true
+script = ExtResource("4_n7opu")
+
+[node name="d10" type="Button" parent="VBoxContainer/HiteDice"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1"
+icon = ExtResource("6_3fhhm")
+expand_icon = true
+script = ExtResource("4_n7opu")
+
+[node name="d12" type="Button" parent="VBoxContainer/HiteDice"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1"
+icon = ExtResource("7_0qwfr")
+expand_icon = true
+script = ExtResource("4_n7opu")

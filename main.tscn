@@ -1,10 +1,24 @@
 [gd_scene load_steps=4 format=3 uid="uid://dtkxp8f3wjow4"]
 
 [ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_vyth7"]
-[ext_resource type="Script" path="res://character_sheet/skill_rating.gd" id="2_aqt4n"]
 
 [sub_resource type="Theme" id="Theme_pfsn5"]
 RichTextLabel/constants/line_separation = 12
+
+[sub_resource type="GDScript" id="GDScript_b6d11"]
+script/source = "@tool
+extends SpinBox
+
+@export var skills: Array[NodePath]
+
+func _process(_delta: float) -> void:
+	var new_value := 0
+	for skill in skills:
+		var spin_box = get_node(skill) as SpinBox
+		if spin_box.value > 0:
+			new_value += 1
+	value = new_value
+"
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -220,7 +234,7 @@ text = "Influence"
 [node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 editable = false
-script = ExtResource("2_aqt4n")
+script = SubResource("GDScript_b6d11")
 skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer"]
@@ -275,7 +289,7 @@ text = "Fight
 layout_mode = 2
 value = 1.0
 editable = false
-script = ExtResource("2_aqt4n")
+script = SubResource("GDScript_b6d11")
 skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer4/SpinBox"), NodePath("../../HBoxContainer5/SpinBox")])
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer"]
@@ -331,7 +345,7 @@ text = "Maneuver"
 layout_mode = 2
 value = 1.0
 editable = false
-script = ExtResource("2_aqt4n")
+script = SubResource("GDScript_b6d11")
 skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer"]
@@ -387,7 +401,7 @@ text = "Wilderness"
 layout_mode = 2
 value = 1.0
 editable = false
-script = ExtResource("2_aqt4n")
+script = SubResource("GDScript_b6d11")
 skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer"]
@@ -442,7 +456,7 @@ text = "Craft"
 [node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 editable = false
-script = ExtResource("2_aqt4n")
+script = SubResource("GDScript_b6d11")
 skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer"]
@@ -495,7 +509,7 @@ text = "Resources"
 [node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 editable = false
-script = ExtResource("2_aqt4n")
+script = SubResource("GDScript_b6d11")
 skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer"]
