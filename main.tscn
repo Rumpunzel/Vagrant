@@ -1,0 +1,547 @@
+[gd_scene load_steps=4 format=3 uid="uid://dtkxp8f3wjow4"]
+
+[ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_vyth7"]
+[ext_resource type="Script" path="res://character_sheet/skill_rating.gd" id="2_aqt4n"]
+
+[sub_resource type="Theme" id="Theme_pfsn5"]
+RichTextLabel/constants/line_separation = 12
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pfsn5")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/VBoxContainer"]
+layout_mode = 2
+text = "Story
+"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/HSplitContainer/VBoxContainer"]
+layout_mode = 2
+text = "You find yourself tumbling down a ravine inside a dark cave.
+Something ambushed you and left its mark in your side. You're bleeding but you are yet alive."
+fit_content = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="VBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Action"
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSplitContainer" type="VSplitContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer"]
+layout_mode = 2
+
+[node name="Character" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Name" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/Character"]
+layout_mode = 2
+text = "Knight Errant"
+placeholder_text = "Name"
+
+[node name="Portrait" type="TextureRect" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/Character"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("1_vyth7")
+expand_mode = 3
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer"]
+layout_mode = 2
+
+[node name="Equipment" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/Equipment"]
+layout_mode = 2
+text = "Equipment"
+
+[node name="ItemList" type="ItemList" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/Equipment"]
+layout_mode = 2
+auto_height = true
+item_count = 3
+item_0/text = "Sword"
+item_1/text = "Armour"
+item_2/text = "Potions"
+
+[node name="Supplies" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/Supplies"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Supplies"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/Supplies"]
+layout_mode = 2
+max_value = 5.0
+value = 2.0
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Conditions" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer/Conditions"]
+layout_mode = 2
+text = "Conditions
+"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer/Conditions"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer/Conditions/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Major" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer/Conditions/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Major (-1D)"
+
+[node name="Moderate" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer/Conditions/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Moderate (Reduced Effect)"
+
+[node name="Minor" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer/Conditions/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Minor"
+
+[node name="VSlider" type="VSlider" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer/Conditions/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+max_value = 6.0
+tick_count = 7
+ticks_on_borders = true
+
+[node name="Momentum" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer/Momentum"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Momentum
+"
+
+[node name="VSlider" type="VSlider" parent="VBoxContainer/HSplitContainer/HSplitContainer/VSplitContainer/VBoxContainer/HBoxContainer/Momentum"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 3
+max_value = 6.0
+tick_count = 7
+ticks_on_borders = true
+
+[node name="Attributes" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes"]
+layout_mode = 2
+
+[node name="Level" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/HBoxContainer/Level"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Level"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/HBoxContainer/Level"]
+layout_mode = 2
+min_value = 1.0
+max_value = 10.0
+value = 1.0
+
+[node name="Attributes" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes"]
+layout_mode = 2
+text = "Attributes"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes"]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Influence" type="PanelContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Influence"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+editable = false
+script = ExtResource("2_aqt4n")
+skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Influence/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="Fight" type="PanelContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Fight
+"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+value = 1.0
+editable = false
+script = ExtResource("2_aqt4n")
+skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer4/SpinBox"), NodePath("../../HBoxContainer5/SpinBox")])
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Sword"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+value = 2.0
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer/HBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Fight/VBoxContainer/HBoxContainer5"]
+layout_mode = 2
+
+[node name="Maneuver" type="PanelContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Maneuver"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+value = 1.0
+editable = false
+script = ExtResource("2_aqt4n")
+skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Athlete"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+value = 1.0
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Maneuver/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="Wilderness" type="PanelContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Wilderness"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+value = 1.0
+editable = false
+script = ExtResource("2_aqt4n")
+skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tracker"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+value = 1.0
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Wilderness/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="Craft" type="PanelContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Craft"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+editable = false
+script = ExtResource("2_aqt4n")
+skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Craft/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="Resources" type="PanelContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Resources"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+editable = false
+script = ExtResource("2_aqt4n")
+skills = Array[NodePath]([NodePath("../../HBoxContainer2/SpinBox"), NodePath("../../HBoxContainer3/SpinBox"), NodePath("../../HBoxContainer4/SpinBox")])
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/HSplitContainer/HSplitContainer/Attributes/Attributes/ScrollContainer/VBoxContainer/Resources/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Dice
+"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3

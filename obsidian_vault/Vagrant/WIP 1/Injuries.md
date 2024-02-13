@@ -1,0 +1,1 @@
+Injury dice are very similar to doom dice but you cannot get rid of them until you mend your wound.

@@ -1,0 +1,7 @@
+Supplies
+
+Treasure
+
+Infamy
+
+Respectability
