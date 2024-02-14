@@ -1,117 +1,129 @@
-[gd_scene load_steps=9 format=3 uid="uid://bpqkh512g0nmb"]
+[gd_scene load_steps=5 format=3 uid="uid://bpqkh512g0nmb"]
 
 [ext_resource type="Script" path="res://story/hit_dice_selection.gd" id="1_ovbfu"]
 [ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_r0tw2"]
-[ext_resource type="Texture2D" uid="uid://d12l3mfoh65ag" path="res://dice/d4.png" id="2_0jx68"]
-[ext_resource type="Texture2D" uid="uid://p5eg3k4cdh21" path="res://dice/d6.png" id="3_0ow7k"]
-[ext_resource type="Texture2D" uid="uid://sue7comyk6aq" path="res://dice/d8.png" id="4_sturm"]
+[ext_resource type="Texture2D" uid="uid://14ufy5sh5hei" path="res://icons/icon_delete.svg" id="3_3oyvl"]
 [ext_resource type="Script" path="res://story/dice_amount.gd" id="4_ykakf"]
-[ext_resource type="Texture2D" uid="uid://cw6ja5k5fq6m6" path="res://dice/d10.png" id="5_lm4hm"]
-[ext_resource type="Texture2D" uid="uid://87t1400wcx4g" path="res://dice/d12.png" id="6_gc707"]
 
-[node name="HitDiceSelection" type="VBoxContainer"]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 561.0
-offset_bottom = 130.0
+[node name="HitDiceSelection" type="PanelContainer"]
+offset_right = 759.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 2
 script = ExtResource("1_ovbfu")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="Portrait" type="TextureRect" parent="HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Portrait" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 texture = ExtResource("1_r0tw2")
 expand_mode = 2
 stretch_mode = 6
 
-[node name="HitDice" type="HBoxContainer" parent="HBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Choose Hit Dice..."
+horizontal_alignment = 1
 
-[node name="d4" type="VBoxContainer" parent="HBoxContainer/HitDice"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/HitDice/d4"]
-layout_mode = 2
-texture = ExtResource("2_0jx68")
-expand_mode = 4
-stretch_mode = 5
-
-[node name="d4Amount" type="SpinBox" parent="HBoxContainer/HitDice/d4"]
+[node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-alignment = 2
-script = ExtResource("4_ykakf")
+icon = ExtResource("3_3oyvl")
 
-[node name="d6" type="VBoxContainer" parent="HBoxContainer/HitDice"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/HitDice/d6"]
-layout_mode = 2
-texture = ExtResource("3_0ow7k")
-expand_mode = 4
-stretch_mode = 5
-
-[node name="d6Amount" type="SpinBox" parent="HBoxContainer/HitDice/d6"]
-unique_name_in_owner = true
-layout_mode = 2
-alignment = 2
-script = ExtResource("4_ykakf")
-
-[node name="d8" type="VBoxContainer" parent="HBoxContainer/HitDice"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/HitDice/d8"]
-layout_mode = 2
-texture = ExtResource("4_sturm")
-expand_mode = 4
-stretch_mode = 5
-
-[node name="d8Amount" type="SpinBox" parent="HBoxContainer/HitDice/d8"]
-unique_name_in_owner = true
-layout_mode = 2
-alignment = 2
-script = ExtResource("4_ykakf")
-
-[node name="d10" type="VBoxContainer" parent="HBoxContainer/HitDice"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/HitDice/d10"]
-layout_mode = 2
-texture = ExtResource("5_lm4hm")
-expand_mode = 4
-stretch_mode = 5
-
-[node name="d10Amount" type="SpinBox" parent="HBoxContainer/HitDice/d10"]
-unique_name_in_owner = true
-layout_mode = 2
-alignment = 2
-script = ExtResource("4_ykakf")
-
-[node name="d12" type="VBoxContainer" parent="HBoxContainer/HitDice"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/HitDice/d12"]
-layout_mode = 2
-texture = ExtResource("6_gc707")
-expand_mode = 4
-stretch_mode = 5
-
-[node name="d12Amount" type="SpinBox" parent="HBoxContainer/HitDice/d12"]
-unique_name_in_owner = true
-layout_mode = 2
-alignment = 2
-script = ExtResource("4_ykakf")
-
-[node name="Description" type="RichTextLabel" parent="."]
+[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Description"
 fit_content = true
+
+[node name="HitDice" type="GridContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HitDice"]
+layout_mode = 2
+
+[node name="d4" type="SpinBox" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 2
+script = ExtResource("4_ykakf")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer"]
+layout_mode = 2
+text = "d4"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HitDice"]
+layout_mode = 2
+
+[node name="d10" type="SpinBox" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 2
+script = ExtResource("4_ykakf")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer4"]
+layout_mode = 2
+text = "d10"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HitDice"]
+layout_mode = 2
+
+[node name="d6" type="SpinBox" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 2
+script = ExtResource("4_ykakf")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer2"]
+layout_mode = 2
+text = "d6"
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HitDice"]
+layout_mode = 2
+
+[node name="d12" type="SpinBox" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer5"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 2
+script = ExtResource("4_ykakf")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer5"]
+layout_mode = 2
+text = "d12"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HitDice"]
+layout_mode = 2
+
+[node name="d8" type="SpinBox" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 2
+script = ExtResource("4_ykakf")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HitDice/HBoxContainer3"]
+layout_mode = 2
+text = "d8"
+
+[node name="OKButton" type="Button" parent="MarginContainer/VBoxContainer/HitDice"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Roll Dice!"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/CloseButton" to="." method="hide"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HitDice/OKButton" to="." method="_on_confirmed"]

@@ -66,7 +66,7 @@ var wounds := [ ]
 func _ready() -> void:
 	_initialize_character()
 
-func roll_save(attribute: Attributes) -> DiceRoller.DieResult:
+func roll_save(attribute: Attributes) -> DiceRoller.SaveResult:
 	return DiceRoller.roll_save(hit_dice, self, attribute)
 
 func get_attribute_score(attribute: Attributes) -> int:

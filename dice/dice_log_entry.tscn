@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://5l5lcf3xxqx2"]
+
+[ext_resource type="Script" path="res://dice/dice_log_entry.gd" id="1_la8xk"]
+
+[node name="DiceLogEntry" type="RichTextLabel"]
+focus_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+script = ExtResource("1_la8xk")

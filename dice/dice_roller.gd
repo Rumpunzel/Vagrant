@@ -1,7 +1,7 @@
 extends Node
 
 signal die_rolled(die_result: DieResult)
-signal save_rolled(dice_log_entry: DiceLogEntry)
+signal save_rolled(save_result: SaveResult)
 
 enum Dice {
 	d4 = 4,
@@ -23,12 +23,14 @@ enum SaveOutcome {
 	FAILURE,
 }
 
-var dice_log_entries: Array[DiceLogEntry] = [ ]
+var die_results: Array[DieResult] = [ ]
+var save_results: Array[SaveResult] = [ ]
 
 func roll_die(die: Dice) -> DieResult:
-	var result := DieResult.new(die, randi_range(1, die))
-	die_rolled.emit(result)
-	return result
+	var die_result := DieResult.new(die, randi_range(1, die))
+	die_results.append(die_result)
+	die_rolled.emit(die_result)
+	return die_result
 
 func roll_sum(dice_pool: DicePool) -> int:
 	var sum := 0
@@ -36,15 +38,15 @@ func roll_sum(dice_pool: DicePool) -> int:
 		sum += roll_die(die).result
 	return sum
 
-func roll_save(dice_pool: DicePool, character: Character, attribute: Character.Attributes, difficulty: int = 0) -> DieResult:
+func roll_save(dice_pool: DicePool, character: Character, attribute: Character.Attributes, difficulty: int = 0) -> SaveResult:
 	var attribute_score := character.get_attribute_score(attribute)
-	var highest: DieResult = null
+	var highest_result: DieResult = null
 	var dice_results: Array[DieResult] = [ ]
 	var exhausted_dice: Array[Dice] = [ ]
 	
 	for die: Dice in dice_pool.dice:
 		var result := roll_die(die)
-		if highest == null or result.result > highest.result: highest = result
+		if highest_result == null or result.result > highest_result.result: highest_result = result
 		var save_outcome := DieOutcome.NORMAL if result.result <= attribute_score else DieOutcome.EXHAUSTED
 		result.outcome = save_outcome
 		dice_results.append(result)
@@ -53,13 +55,13 @@ func roll_save(dice_pool: DicePool, character: Character, attribute: Character.A
 	for die: Dice in exhausted_dice:
 		character.hit_dice.remove_die(die)
 	
-	var new_dice_log_entry := DiceLogEntry.new(character, attribute, highest, difficulty, dice_results)
-	dice_log_entries.append(new_dice_log_entry)
-	save_rolled.emit(new_dice_log_entry)
-	return highest
+	var save_result := SaveResult.new(character, attribute, highest_result, difficulty, dice_results)
+	save_results.append(save_result)
+	save_rolled.emit(save_result)
+	return save_result
 
 
-class DiceLogEntry:
+class SaveResult:
 	var character: Character
 	var attribute: Character.Attributes
 	var result: DieResult

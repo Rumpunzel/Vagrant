@@ -1,17 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=5 format=3 uid="uid://coh7y85ggx45i"]
 
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection.tscn" id="1_0khqd"]
-[ext_resource type="Script" path="res://story/hit_dice_popup.gd" id="1_wqurs"]
+[ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log_entry.tscn" id="3_m00fo"]
+[ext_resource type="Script" path="res://dice/dice_log.gd" id="3_ry5dq"]
 
 [sub_resource type="GDScript" id="GDScript_7yv5m"]
 script/source = "extends Button
 
 func _on_pressed() -> void:
 	var player := $\"/root/Main/Player\"
-	%HitDicePopup.show_hit_dice_selection(player, Character.Attributes.BLOOD, 5, \"Shipwreck\")
+	%DiceLog.request_save(player, Character.Attributes.BLOOD, 5, \"Shipwreck\")
 "
 
 [node name="Story" type="VBoxContainer"]
+offset_right = 778.0
+offset_bottom = 497.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 64
@@ -22,67 +25,90 @@ text = "Title"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Description" type="RichTextLabel" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Description" type="RichTextLabel" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Description"
 
-[node name="Choices" type="VBoxContainer" parent="."]
+[node name="Choices" type="VBoxContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/Choices"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Choices"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Choices/HBoxContainer"]
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/Choices/HBoxContainer"]
 layout_mode = 2
 text = "1."
 
-[node name="Button" type="Button" parent="Choices/HBoxContainer"]
+[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer/Choices/HBoxContainer"]
 layout_mode = 2
 text = "[BLOOD] Hide in the shipwreck."
 flat = true
 alignment = 0
 script = SubResource("GDScript_7yv5m")
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Choices"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/Choices"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Choices/HBoxContainer2"]
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/Choices/HBoxContainer2"]
 layout_mode = 2
 text = "2."
 
-[node name="Button" type="Button" parent="Choices/HBoxContainer2"]
+[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer/Choices/HBoxContainer2"]
 layout_mode = 2
 text = "Option2"
 flat = true
 alignment = 0
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Choices"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/Choices"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Choices/HBoxContainer3"]
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/Choices/HBoxContainer3"]
 layout_mode = 2
 text = "3."
 
-[node name="Button" type="Button" parent="Choices/HBoxContainer3"]
+[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer/Choices/HBoxContainer3"]
 layout_mode = 2
 text = "Option3"
 flat = true
 alignment = 0
 
-[node name="HitDicePopup" type="ConfirmationDialog" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="Dice" type="VBoxContainer" parent="HBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer/Dice"]
+layout_mode = 2
+text = "Dice"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="HBoxContainer/PanelContainer/Dice"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/PanelContainer/Dice"]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="DiceLog" type="VBoxContainer" parent="HBoxContainer/PanelContainer/Dice/ScrollContainer"]
 unique_name_in_owner = true
-title = "Choose Hit Dice..."
-initial_position = 2
-size = Vector2i(586, 192)
-transparent = true
-popup_window = true
-ok_button_text = "Roll Dice!"
-script = ExtResource("1_wqurs")
+layout_mode = 2
+script = ExtResource("3_ry5dq")
+_dice_log_entry = ExtResource("3_m00fo")
+_hit_dice_selection = ExtResource("1_0khqd")
 
-[node name="HitDiceSelection" parent="HitDicePopup" instance=ExtResource("1_0khqd")]
-offset_right = 578.0
-offset_bottom = 143.0
-
-[connection signal="pressed" from="Choices/HBoxContainer/Button" to="Choices/HBoxContainer/Button" method="_on_pressed"]
-[connection signal="confirmed" from="HitDicePopup" to="HitDicePopup/HitDiceSelection" method="_on_confirmed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Choices/HBoxContainer/Button" to="HBoxContainer/VBoxContainer/Choices/HBoxContainer/Button" method="_on_pressed"]
