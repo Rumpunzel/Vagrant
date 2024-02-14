@@ -1,8 +1,6 @@
 class_name CharacterAttributes
 extends Resource
 
-signal attributes_changed(new_attributes: CharacterAttributes)
-
 @export var muscle := 0
 @export var blood := 0
 @export var guts := 0
@@ -11,13 +9,12 @@ signal attributes_changed(new_attributes: CharacterAttributes)
 @export var heart := 0
 
 func roll_stats(dice_pool: DicePool = DicePool.get_2d6()) -> void:
-	muscle = dice_pool.roll_sum()
-	blood = dice_pool.roll_sum()
-	guts = dice_pool.roll_sum()
-	brain = dice_pool.roll_sum()
-	nerve = dice_pool.roll_sum()
-	heart = dice_pool.roll_sum()
-	attributes_changed.emit(self)
+	muscle = DiceRoller.roll_sum(dice_pool)
+	blood = DiceRoller.roll_sum(dice_pool)
+	guts = DiceRoller.roll_sum(dice_pool)
+	brain = DiceRoller.roll_sum(dice_pool)
+	nerve = DiceRoller.roll_sum(dice_pool)
+	heart = DiceRoller.roll_sum(dice_pool)
 
 func _to_string() -> String:
 	return """

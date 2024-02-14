@@ -2,70 +2,48 @@ class_name DicePool
 
 signal dice_pool_changed(new_pool: DicePool)
 
-enum Dice {
-	d4 = 4,
-	d6 = 6,
-	d8 = 8,
-	d10 = 10,
-	d12 = 12,
-	d20 = 20,
-}
+var dice: Array[DiceRoller.Dice] = [ ]
 
-var _dice: Array[Dice] = [ ]
-
-func _init(new_dice: Array[Dice]) -> void:
-	_dice = new_dice
+func _init(dice: Array[DiceRoller.Dice] = [ ]) -> void:
+	self.dice = dice
 	dice_pool_changed.emit(self)
 
 static func get_2d6() -> DicePool:
-	return DicePool.new([Dice.d6, Dice.d6])
+	return DicePool.new([DiceRoller.Dice.d6, DiceRoller.Dice.d6])
 
 static func get_full_set() -> DicePool:
-	return DicePool.new([Dice.d4, Dice.d6, Dice.d8, Dice.d10, Dice.d12])
+	return DicePool.new([
+		DiceRoller.Dice.d4,
+		DiceRoller.Dice.d6,
+		DiceRoller.Dice.d8,
+		DiceRoller.Dice.d10,
+		DiceRoller.Dice.d12,
+	])
 
-func add_die(die: Dice) -> void:
-	_dice.append(die)
+func add_die(new_die: DiceRoller.Dice) -> void:
+	dice.append(new_die)
 	dice_pool_changed.emit(self)
 
-func add_dice(dice: Array[Dice]) -> void:
-	_dice += dice
+func add_dice(new_dice: Array[DiceRoller.Dice]) -> void:
+	dice += new_dice
 	dice_pool_changed.emit(self)
 
-func remove_die(die: Dice) -> void:
-	_dice.erase(die)
+func remove_die(die: DiceRoller.Dice) -> void:
+	dice.erase(die)
 	dice_pool_changed.emit(self)
 
-func roll_sum() -> int:
-	var sum := 0
-	for die: Dice in _dice:
-		sum += randi_range(1, die)
-	return sum
-
-func roll_save(attribute_score: int) -> int:
-	var highest := 0
-	var exhausted_dice := [ ]
-	for die: Dice in _dice:
-		var result := randi_range(1, die)
-		if result > highest: highest = result
-		var exhausted := result > attribute_score
-		if exhausted: exhausted_dice.append(die)
-		print("%s came up: %d%s" % [die, result, " -> die is lost!" if exhausted else ""])
-	for die: Dice in exhausted_dice:
-		remove_die(die)
-	return highest
-
-func get_dice_count(die_to_count: Dice) -> int:
+func get_dice_count(die_to_count: DiceRoller.Dice) -> int:
 	var count := 0
-	for die: Dice in _dice:
+	for die: DiceRoller.Dice in dice:
 		if die == die_to_count: count += 1
 	return count
 
 func _to_string() -> String:
 	var dice_map := { }
-	for die: Dice in _dice:
+	for die: DiceRoller.Dice in dice:
 		dice_map[die] = dice_map.get(dice_map, 0) + 1
 	if dice_map.is_empty(): return "-"
 	var string := ""
-	for die: Dice in dice_map.keys():
+	for die: DiceRoller.Dice in dice_map.keys():
 		string += "%dd%d, " % [dice_map[die], die]
 	return string.trim_suffix(", ")

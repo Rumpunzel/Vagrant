@@ -1,0 +1,88 @@
+[gd_scene load_steps=4 format=3 uid="uid://coh7y85ggx45i"]
+
+[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection.tscn" id="1_0khqd"]
+[ext_resource type="Script" path="res://story/hit_dice_popup.gd" id="1_wqurs"]
+
+[sub_resource type="GDScript" id="GDScript_7yv5m"]
+script/source = "extends Button
+
+func _on_pressed() -> void:
+	var player := $\"/root/Main/Player\"
+	%HitDicePopup.show_hit_dice_selection(player, Character.Attributes.BLOOD, 5, \"Shipwreck\")
+"
+
+[node name="Story" type="VBoxContainer"]
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+theme_override_constants/separation = 64
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Title"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Description" type="RichTextLabel" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Description"
+
+[node name="Choices" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Choices"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Choices/HBoxContainer"]
+layout_mode = 2
+text = "1."
+
+[node name="Button" type="Button" parent="Choices/HBoxContainer"]
+layout_mode = 2
+text = "[BLOOD] Hide in the shipwreck."
+flat = true
+alignment = 0
+script = SubResource("GDScript_7yv5m")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Choices"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Choices/HBoxContainer2"]
+layout_mode = 2
+text = "2."
+
+[node name="Button" type="Button" parent="Choices/HBoxContainer2"]
+layout_mode = 2
+text = "Option2"
+flat = true
+alignment = 0
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Choices"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Choices/HBoxContainer3"]
+layout_mode = 2
+text = "3."
+
+[node name="Button" type="Button" parent="Choices/HBoxContainer3"]
+layout_mode = 2
+text = "Option3"
+flat = true
+alignment = 0
+
+[node name="HitDicePopup" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Choose Hit Dice..."
+initial_position = 2
+size = Vector2i(586, 192)
+transparent = true
+popup_window = true
+ok_button_text = "Roll Dice!"
+script = ExtResource("1_wqurs")
+
+[node name="HitDiceSelection" parent="HitDicePopup" instance=ExtResource("1_0khqd")]
+offset_right = 578.0
+offset_bottom = 143.0
+
+[connection signal="pressed" from="Choices/HBoxContainer/Button" to="Choices/HBoxContainer/Button" method="_on_pressed"]
+[connection signal="confirmed" from="HitDicePopup" to="HitDicePopup/HitDiceSelection" method="_on_confirmed"]

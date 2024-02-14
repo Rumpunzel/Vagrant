@@ -1,0 +1,58 @@
+[gd_scene load_steps=8 format=3 uid="uid://dya4vj7g2hh4e"]
+
+[ext_resource type="Script" path="res://character_sheet/hit_dice.gd" id="1_3ty6b"]
+[ext_resource type="Texture2D" uid="uid://d12l3mfoh65ag" path="res://dice/d4.png" id="1_pwi6k"]
+[ext_resource type="Script" path="res://character_sheet/hit_dice_counter.gd" id="2_kvnoa"]
+[ext_resource type="Texture2D" uid="uid://p5eg3k4cdh21" path="res://dice/d6.png" id="3_qmtu7"]
+[ext_resource type="Texture2D" uid="uid://sue7comyk6aq" path="res://dice/d8.png" id="4_fh7cm"]
+[ext_resource type="Texture2D" uid="uid://cw6ja5k5fq6m6" path="res://dice/d10.png" id="5_3h8ky"]
+[ext_resource type="Texture2D" uid="uid://87t1400wcx4g" path="res://dice/d12.png" id="6_k13aw"]
+
+[node name="HitDice" type="HBoxContainer"]
+script = ExtResource("1_3ty6b")
+
+[node name="d4" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/icon_max_width = 32
+text = "1
+"
+icon = ExtResource("1_pwi6k")
+script = ExtResource("2_kvnoa")
+
+[node name="d6" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/icon_max_width = 32
+text = "1"
+icon = ExtResource("3_qmtu7")
+script = ExtResource("2_kvnoa")
+
+[node name="d8" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/icon_max_width = 32
+text = "1"
+icon = ExtResource("4_fh7cm")
+script = ExtResource("2_kvnoa")
+
+[node name="d10" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/icon_max_width = 32
+text = "1"
+icon = ExtResource("5_3h8ky")
+script = ExtResource("2_kvnoa")
+
+[node name="d12" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/icon_max_width = 32
+text = "1"
+icon = ExtResource("6_k13aw")
+script = ExtResource("2_kvnoa")
