@@ -17,7 +17,6 @@ func request_save(save_request: HitDiceSelection.SaveRequest) -> void:
 	var character := _save_request.character
 	var hit_dice := character.hit_dice
 	var attribute := _save_request.attribute
-	var difficulty := _save_request.difficulty
 	%d4.update_dice_amount(hit_dice.get_dice_count(DiceRoller.Dice.d4), DiceRoller.Dice.d4)
 	%d6.update_dice_amount(hit_dice.get_dice_count(DiceRoller.Dice.d6), DiceRoller.Dice.d6)
 	%d8.update_dice_amount(hit_dice.get_dice_count(DiceRoller.Dice.d8), DiceRoller.Dice.d8)

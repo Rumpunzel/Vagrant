@@ -1,0 +1,22 @@
+[gd_scene load_steps=9 format=3 uid="uid://b31f2ie37gneq"]
+
+[ext_resource type="Script" path="res://character/character.gd" id="1_730xx"]
+[ext_resource type="Texture2D" uid="uid://6jlxmsm0ehfm" path="res://portraits/shadowheart.jpg" id="2_ma8pa"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="3_to2tm"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="4_fl65y"]
+[ext_resource type="Resource" uid="uid://sm0dsmna1cj" path="res://characters/attributes/constitution.tres" id="5_hrugn"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="6_y0q7f"]
+[ext_resource type="Resource" uid="uid://b88ygt3w7sa3y" path="res://characters/attributes/will.tres" id="7_q2m34"]
+[ext_resource type="Resource" uid="uid://b4m0dfvnrfcnp" path="res://characters/attributes/charisma.tres" id="8_jno1j"]
+
+[node name="Eleanor" type="Node"]
+script = ExtResource("1_730xx")
+portrait = ExtResource("2_ma8pa")
+attribute_scores = {
+ExtResource("3_to2tm"): 4,
+ExtResource("4_fl65y"): 11,
+ExtResource("5_hrugn"): 11,
+ExtResource("6_y0q7f"): 3,
+ExtResource("7_q2m34"): 5,
+ExtResource("8_jno1j"): 4
+}

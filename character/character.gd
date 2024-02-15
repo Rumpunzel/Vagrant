@@ -1,12 +1,23 @@
 class_name Character
 extends Node
 
-signal attributes_changed(attributes: CharacterAttributes)
+signal attribute_scores_changed(character: Character)
 signal hit_dice_changed(hit_dice: DicePool)
 
 @export var portrait: Texture = preload("res://portraits/knight.jpeg")
 
-@export var _starting_attributes: CharacterAttributes = null
+# CharacterAttribute -> int
+@export var attribute_scores: Dictionary = {
+	Rules.STRENGTH: 0,
+	Rules.AGILITY: 0,
+	Rules.CONSTITUTION: 0,
+	Rules.INTELLIGENCE: 0,
+	Rules.WILL: 0,
+	Rules.CHARISMA: 0,
+} :
+	set(new_attribute_scores):
+		attribute_scores = new_attribute_scores
+		attribute_scores_changed.emit(new_attribute_scores)
 
 var hit_dice: DicePool :
 	set(new_hit_dice):
@@ -15,26 +26,23 @@ var hit_dice: DicePool :
 		if hit_dice != null: hit_dice.dice_pool_changed.connect(_on_dice_pool_changed)
 		hit_dice_changed.emit(hit_dice)
 
-var _attributes: CharacterAttributes :
-	set(new_attributes):
-		if _attributes != null: _attributes.attribute_scores_changed.disconnect(_on_attributes_changed)
-		_attributes = new_attributes
-		if _attributes != null: _attributes.attribute_scores_changed.connect(_on_attributes_changed)
-		attributes_changed.emit(_attributes)
-
 var _maximum_hit_dice := DicePool.get_full_set()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	_attributes = CharacterAttributes.new()
-	_attributes.initialize_attributes(_starting_attributes)
+	initialize_attributes()
 	hit_dice = _maximum_hit_dice
 
-func get_attribute_score(attribute: CharacterAttribute) -> int:
-	return _attributes.get_attribute_score(attribute)
+func initialize_attributes() -> void:
+	var attributes_changed := false
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
+		if get_attribute_score(attribute) == 0:
+			attribute_scores[attribute] = DiceRoller.roll_sum(DicePool.get_2d6())
+			attributes_changed = true
+	if attributes_changed: attribute_scores_changed.emit(self)
 
-func _on_attributes_changed(_new_attribute_scores: Dictionary) -> void:
-	attributes_changed.emit(_attributes)
+func get_attribute_score(attribute: CharacterAttribute) -> int:
+	return attribute_scores.get(attribute, 0)
 
 func _on_dice_pool_changed(_new_pool: DicePool) -> void:
 	hit_dice_changed.emit(hit_dice)
