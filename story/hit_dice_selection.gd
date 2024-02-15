@@ -4,22 +4,27 @@ extends PanelContainer
 signal dice_selection_configured(character: Character, attribute: CharacterAttribute)
 signal confirmed(save_result: DiceRoller.SaveResult)
 
-var _character: Character = null
-var _attribute: CharacterAttribute
-var _difficulty: int
+var _save_request: HitDiceSelection.SaveRequest = null
 
-func request_save(character: Character, attribute: CharacterAttribute, difficulty: int, description: String) -> void:
-	_character = character
-	_attribute = attribute
-	_difficulty = difficulty
-	var hit_dice := _character.hit_dice
+func _enter_tree() -> void:
+	Events.save_requested.connect(request_save)
+
+func _exit_tree() -> void:
+	Events.save_requested.disconnect(request_save)
+
+func request_save(save_request: HitDiceSelection.SaveRequest) -> void:
+	_save_request = save_request
+	var character := _save_request.character
+	var hit_dice := character.hit_dice
+	var attribute := _save_request.attribute
+	var difficulty := _save_request.difficulty
 	%d4.update_dice_amount(hit_dice.get_dice_count(DiceRoller.Dice.d4), DiceRoller.Dice.d4)
 	%d6.update_dice_amount(hit_dice.get_dice_count(DiceRoller.Dice.d6), DiceRoller.Dice.d6)
 	%d8.update_dice_amount(hit_dice.get_dice_count(DiceRoller.Dice.d8), DiceRoller.Dice.d8)
 	%d10.update_dice_amount(hit_dice.get_dice_count(DiceRoller.Dice.d10), DiceRoller.Dice.d10)
 	%d12.update_dice_amount(hit_dice.get_dice_count(DiceRoller.Dice.d12), DiceRoller.Dice.d12)
 	%Portrait.texture = character.portrait
-	%Description.text = description
+	%Description.text = _save_request.description
 	
 	%OKButton.disabled = false
 	%OKButton.visible = true
@@ -39,7 +44,7 @@ func _on_confirmed() -> void:
 	for _i in range(%d12.value):
 		dice_to_roll.add_die(DiceRoller.Dice.d12)
 	
-	var save_result := DiceRoller.roll_save(dice_to_roll, _character, _attribute, _difficulty)
+	var save_result := DiceRoller.roll_save(dice_to_roll, _save_request)
 	
 	%d4.editable = false
 	%d6.editable = false
@@ -50,4 +55,17 @@ func _on_confirmed() -> void:
 	%OKButton.visible = false
 	%DiceLogEntry.visible = true
 	%DiceLogEntry.initialize_save_result(save_result)
+	Events.save_evaluated.emit(save_result, _save_request)
 	confirmed.emit(save_result)
+
+class SaveRequest:
+	var character: Character
+	var attribute: CharacterAttribute
+	var difficulty: int
+	var description: String
+	
+	func _init(new_character: Character, new_attribute: CharacterAttribute, new_difficulty: int, new_description: String):
+		character = new_character
+		attribute = new_attribute
+		difficulty = new_difficulty
+		description = new_description

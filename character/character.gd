@@ -30,9 +30,6 @@ func _ready() -> void:
 	_attributes.initialize_attributes(_starting_attributes)
 	hit_dice = _maximum_hit_dice
 
-func roll_save(attribute: CharacterAttribute) -> DiceRoller.SaveResult:
-	return DiceRoller.roll_save(hit_dice, self, attribute)
-
 func get_attribute_score(attribute: CharacterAttribute) -> int:
 	return _attributes.get_attribute_score(attribute)
 

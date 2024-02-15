@@ -38,7 +38,9 @@ func roll_sum(dice_pool: DicePool) -> int:
 		sum += roll_die(die).result
 	return sum
 
-func roll_save(dice_pool: DicePool, character: Character, attribute: CharacterAttribute, difficulty: int = 0) -> SaveResult:
+func roll_save(dice_pool: DicePool, save_request: HitDiceSelection.SaveRequest) -> SaveResult:
+	var character := save_request.character
+	var attribute := save_request.attribute
 	var attribute_score := character.get_attribute_score(attribute)
 	var highest_result: DieResult = null
 	var dice_results: Array[DieResult] = [ ]
@@ -55,7 +57,7 @@ func roll_save(dice_pool: DicePool, character: Character, attribute: CharacterAt
 	for die: Dice in exhausted_dice:
 		character.hit_dice.remove_die(die)
 	
-	var save_result := SaveResult.new(character, attribute, highest_result, difficulty, dice_results)
+	var save_result := SaveResult.new(character, attribute, highest_result, save_request.difficulty, dice_results)
 	save_results.append(save_result)
 	save_rolled.emit(save_result)
 	return save_result
@@ -68,12 +70,12 @@ class SaveResult:
 	var difficulty: int
 	var dice: Array[DieResult]
 	
-	func _init(character: Character, attribute: CharacterAttribute, result: DieResult, difficulty: int, dice: Array[DieResult]) -> void:
-		self.character = character
-		self.attribute = attribute
-		self.result = result
-		self.difficulty = difficulty
-		self.dice = dice
+	func _init(new_character: Character, new_attribute: CharacterAttribute, new_result: DieResult, new_difficulty: int, new_dice: Array[DieResult]) -> void:
+		character = new_character
+		attribute = new_attribute
+		result = new_result
+		difficulty = new_difficulty
+		dice = new_dice
 	
 	func get_save_outcome() -> SaveOutcome:
 		return SaveOutcome.NORMAL if difficulty <= 0 else SaveOutcome.SUCCESS if result.result >= difficulty else SaveOutcome.FAILURE
@@ -83,7 +85,7 @@ class DieResult:
 	var result: int
 	var outcome: DieOutcome
 	
-	func _init(die: Dice, result: int, outcome: DieOutcome = DieOutcome.NORMAL) -> void:
-		self.die = die
-		self.result = result
-		self.outcome = outcome
+	func _init(new_die: Dice, new_result: int, new_outcome: DieOutcome = DieOutcome.NORMAL) -> void:
+		die = new_die
+		result = new_result
+		outcome = new_outcome

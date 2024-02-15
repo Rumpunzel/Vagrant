@@ -4,8 +4,8 @@ signal dice_pool_changed(new_pool: DicePool)
 
 var dice: Array[DiceRoller.Dice] = [ ]
 
-func _init(dice: Array[DiceRoller.Dice] = [ ]) -> void:
-	self.dice = dice
+func _init(new_dice: Array[DiceRoller.Dice] = [ ]) -> void:
+	self.dice = new_dice
 	dice_pool_changed.emit(self)
 
 static func get_2d6() -> DicePool:
