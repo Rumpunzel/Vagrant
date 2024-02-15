@@ -1,16 +1,13 @@
 [gd_scene load_steps=6 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_d4koy"]
-[ext_resource type="PackedScene" uid="uid://cb3hg2fulfryt" path="res://characters/player.tscn" id="2_drcq2"]
 [ext_resource type="PackedScene" uid="uid://b31f2ie37gneq" path="res://characters/eleanor.tscn" id="3_7naep"]
+[ext_resource type="Script" path="res://character_sheet/character_sheets.gd" id="4_houmb"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/story.tscn" id="5_5hhyh"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://character_sheet/character_sheet.tscn" id="6_wwv7i"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_d4koy")
-
-[node name="Player" parent="." instance=ExtResource("2_drcq2")]
-unique_name_in_owner = true
 
 [node name="Eleanor" parent="." instance=ExtResource("3_7naep")]
 
@@ -38,13 +35,13 @@ layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 
-[node name="Characters" type="VBoxContainer" parent="HBoxContainer/TabContainer"]
+[node name="CharacterSheets" type="VBoxContainer" parent="HBoxContainer/TabContainer"]
+layout_mode = 2
+script = ExtResource("4_houmb")
+
+[node name="CharacterSheet" parent="HBoxContainer/TabContainer/CharacterSheets" instance=ExtResource("6_wwv7i")]
 layout_mode = 2
 
-[node name="CharacterSheet" parent="HBoxContainer/TabContainer/Characters" node_paths=PackedStringArray("character") instance=ExtResource("6_wwv7i")]
+[node name="CharacterSheet2" parent="HBoxContainer/TabContainer/CharacterSheets" node_paths=PackedStringArray("character") instance=ExtResource("6_wwv7i")]
 layout_mode = 2
-character = NodePath("")
-
-[node name="CharacterSheet2" parent="HBoxContainer/TabContainer/Characters" node_paths=PackedStringArray("character") instance=ExtResource("6_wwv7i")]
-layout_mode = 2
-character = NodePath("")
+character = NodePath("../../../../Eleanor")

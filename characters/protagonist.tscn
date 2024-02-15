@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" path="res://character/character.gd" id="1_k4tfl"]
 
-[node name="Player" type="Node"]
+[node name="Protagonist" type="Node"]
 script = ExtResource("1_k4tfl")

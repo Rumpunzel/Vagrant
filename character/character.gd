@@ -4,6 +4,8 @@ extends Node
 signal attribute_scores_changed(character: Character)
 signal hit_dice_changed(hit_dice: DicePool)
 
+const GROUP := "Characters"
+
 @export var portrait: Texture = preload("res://portraits/knight.jpeg")
 
 # CharacterAttribute -> int
@@ -30,6 +32,7 @@ var _maximum_hit_dice := DicePool.get_full_set()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	add_to_group(GROUP)
 	initialize_attributes()
 	hit_dice = _maximum_hit_dice
 
