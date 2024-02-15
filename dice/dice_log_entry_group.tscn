@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://s1r1hypfpjyj"]
+
+[ext_resource type="Script" path="res://dice/dice_log_entry_group.gd" id="1_adlmw"]
+[ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_onleu"]
+[ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log_entry.tscn" id="2_fljle"]
+
+[node name="DiceLogEntryGroup" type="PanelContainer"]
+offset_right = 183.0
+offset_bottom = 101.0
+script = ExtResource("1_adlmw")
+_dice_log_entry = ExtResource("2_fljle")
+
+[node name="Portrait" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+texture = ExtResource("1_onleu")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="Entries" type="VBoxContainer" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2

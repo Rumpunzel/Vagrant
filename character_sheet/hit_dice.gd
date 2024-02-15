@@ -1,4 +1,4 @@
-extends HBoxContainer
+extends VBoxContainer
 
 func update_hit_dice(new_hit_dice: DicePool) -> void:
 	if new_hit_dice == null:

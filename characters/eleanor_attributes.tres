@@ -1,12 +1,20 @@
-[gd_resource type="Resource" script_class="CharacterAttributes" load_steps=2 format=3 uid="uid://cd5n0dxrtigwm"]
+[gd_resource type="Resource" script_class="CharacterAttributes" load_steps=8 format=3 uid="uid://cd5n0dxrtigwm"]
 
-[ext_resource type="Script" path="res://character/attributes.gd" id="1_elywf"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="1_ctgt5"]
+[ext_resource type="Script" path="res://character/character_attributes.gd" id="2_0f5t2"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="2_wgnc7"]
+[ext_resource type="Resource" uid="uid://sm0dsmna1cj" path="res://characters/attributes/constitution.tres" id="3_cprwy"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="4_glpcx"]
+[ext_resource type="Resource" uid="uid://b88ygt3w7sa3y" path="res://characters/attributes/will.tres" id="5_epsyy"]
+[ext_resource type="Resource" uid="uid://b4m0dfvnrfcnp" path="res://characters/attributes/charisma.tres" id="6_s6u45"]
 
 [resource]
-script = ExtResource("1_elywf")
-muscle = 4
-blood = 11
-guts = 11
-brain = 3
-nerve = 5
-heart = 4
+script = ExtResource("2_0f5t2")
+_attribute_scores = {
+ExtResource("1_ctgt5"): 4,
+ExtResource("2_wgnc7"): 11,
+ExtResource("3_cprwy"): 11,
+ExtResource("4_glpcx"): 3,
+ExtResource("5_epsyy"): 5,
+ExtResource("6_s6u45"): 4
+}

@@ -38,7 +38,7 @@ func roll_sum(dice_pool: DicePool) -> int:
 		sum += roll_die(die).result
 	return sum
 
-func roll_save(dice_pool: DicePool, character: Character, attribute: Character.Attributes, difficulty: int = 0) -> SaveResult:
+func roll_save(dice_pool: DicePool, character: Character, attribute: CharacterAttribute, difficulty: int = 0) -> SaveResult:
 	var attribute_score := character.get_attribute_score(attribute)
 	var highest_result: DieResult = null
 	var dice_results: Array[DieResult] = [ ]
@@ -63,12 +63,12 @@ func roll_save(dice_pool: DicePool, character: Character, attribute: Character.A
 
 class SaveResult:
 	var character: Character
-	var attribute: Character.Attributes
+	var attribute: CharacterAttribute
 	var result: DieResult
 	var difficulty: int
 	var dice: Array[DieResult]
 	
-	func _init(character: Character, attribute: Character.Attributes, result: DieResult, difficulty: int, dice: Array[DieResult]) -> void:
+	func _init(character: Character, attribute: CharacterAttribute, result: DieResult, difficulty: int, dice: Array[DieResult]) -> void:
 		self.character = character
 		self.attribute = attribute
 		self.result = result

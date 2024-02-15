@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=2 format=3 uid="uid://b88ygt3w7sa3y"]
+
+[ext_resource type="Script" path="res://character/character_attribute.gd" id="1_tykuu"]
+
+[resource]
+script = ExtResource("1_tykuu")
+descriptor = "Nerves"
