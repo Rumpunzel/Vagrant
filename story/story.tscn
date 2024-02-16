@@ -1,6 +1,7 @@
-[gd_scene load_steps=16 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=17 format=3 uid="uid://coh7y85ggx45i"]
 
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection.tscn" id="1_0khqd"]
+[ext_resource type="FontFile" uid="uid://ddmsny5phxlhs" path="res://fonts/grenze_gotisch/static/GrenzeGotisch-SemiBold.ttf" id="1_4vd28"]
 [ext_resource type="Script" path="res://story/hit_dice_selection_popup.gd" id="4_ohh58"]
 [ext_resource type="Script" path="res://story/pages/dialog_decision.gd" id="4_vqe5n"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="5_8kq5p"]
@@ -25,6 +26,21 @@ details = ""
 shader = ExtResource("6_36qx3")
 shader_parameter/size = 4.0
 
+[sub_resource type="Animation" id="Animation_7ye6i"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [4.0]
+}
+
 [sub_resource type="Animation" id="Animation_sveo7"]
 resource_name = "background_shimmer"
 loop_mode = 1
@@ -39,21 +55,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [16.0, 10.0, 16.0]
-}
-
-[sub_resource type="Animation" id="Animation_7ye6i"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:material:shader_parameter/size")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [4.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_if8sh"]
@@ -87,19 +88,21 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 32
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 4
 
-[node name="Title" type="Label" parent="PanelContainer/MarginContainer"]
+[node name="Title" type="Label" parent="MarginContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 4
+theme_override_fonts/font = ExtResource("1_4vd28")
+theme_override_font_sizes/font_size = 64
 text = "Title"
 horizontal_alignment = 1
 vertical_alignment = 1
