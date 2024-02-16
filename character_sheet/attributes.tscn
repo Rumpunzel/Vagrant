@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://character_sheet/attributes.gd" id="1_j0bo0"]
 [ext_resource type="PackedScene" uid="uid://1ps6colw5iqa" path="res://character_sheet/attribute_score.tscn" id="2_md1r7"]
 
-[node name="Attributes" type="VBoxContainer"]
+[node name="Attributes" type="GridContainer"]
+columns = 2
 script = ExtResource("1_j0bo0")
 _attribute_score = ExtResource("2_md1r7")

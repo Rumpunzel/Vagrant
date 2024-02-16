@@ -1,4 +1,4 @@
-extends VBoxContainer
+extends TabContainer
 
 @export var _character_sheet: PackedScene
 
