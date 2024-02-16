@@ -15,7 +15,7 @@ func _exit_tree() -> void:
 func request_save(save_request: SaveRequest) -> void:
 	_save_request = save_request
 	var character := _save_request.character
-	%HitDieSelectionButtons.update_buttons(character.get_available_hit_dice())
+	%HitDieSelectionButtons.update_buttons(character.get_available_hit_dice(), character.get_attribute_score(save_request.attribute))
 	%Portrait.texture = character.portrait
 	%Description.text = _save_request.description
 	%OKButton.disabled = false

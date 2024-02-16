@@ -2,13 +2,14 @@ extends HFlowContainer
 
 @export var _hit_die_selection_button: PackedScene
 
-func update_buttons(available_hit_dice: Array[Die]) -> void:
+func update_buttons(available_hit_dice: Array[Die], attribute_score := 0) -> void:
 	for button: HitDieSelectionButton in get_children():
 		remove_child(button)
 		button.queue_free()
 	for hit_die: Die in available_hit_dice:
 		var hit_die_selection_button: HitDieSelectionButton = _hit_die_selection_button.instantiate()
 		hit_die_selection_button.die = hit_die
+		if attribute_score >= hit_die.die_type.faces: hit_die_selection_button.button_pressed = true
 		add_child(hit_die_selection_button)
 
 func select_all_available_buttons(select_buttons := true) -> void:
