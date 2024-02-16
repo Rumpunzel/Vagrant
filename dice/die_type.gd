@@ -4,6 +4,9 @@ extends Resource
 @export var icon: Texture
 @export var faces := 12
 
+func roll() -> int:
+	return randi_range(1, faces)
+
 func get_die() -> Die:
 	return Die.new(self)
 

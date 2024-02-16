@@ -15,23 +15,24 @@ func _exit_tree() -> void:
 func request_save(save_request: SaveRequest) -> void:
 	_save_request = save_request
 	var character := _save_request.character
-	%HitDieSelectionButtons.update_buttons(character.get_available_hit_dice(), character.get_attribute_score(save_request.attribute))
 	%Portrait.texture = character.portrait
 	%Description.text = _save_request.description
 	%OKButton.disabled = false
 	%AllInButton.disabled = false
+	%AllInButton.set_pressed_no_signal(false)
 	%Buttons.visible = true
 	%DiceLogEntry.visible = false
+	%HitDieSelectionButtons.update_buttons(character.get_available_hit_dice(), character.get_attribute_score(save_request.attribute))
 	dice_selection_configured.emit(character, _save_request.attribute)
 
 func _roll_save(dice_to_roll: Array[Die]) -> void:
 	var save_result := DiceRoller.roll_save(dice_to_roll, _save_request)
-	%HitDieSelectionButtons.disable_buttons(save_result.difficulty, save_result.character.get_attribute_score(save_result.attribute))
 	%OKButton.disabled = true
 	%AllInButton.disabled = true
 	%Buttons.visible = false
 	%DiceLogEntry.visible = true
 	%DiceLogEntry.initialize_save_result(save_result)
+	%HitDieSelectionButtons.disable_buttons(save_result.difficulty)
 	Events.save_evaluated.emit(save_result, _save_request)
 	confirmed.emit(save_result)
 

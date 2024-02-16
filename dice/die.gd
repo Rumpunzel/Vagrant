@@ -17,19 +17,15 @@ func _init(new_die_type: DieType, new_result: int = 0, new_status: Status = Stat
 	status = new_status
 
 func roll() -> int:
-	_roll()
+	result = die_type.roll()
 	rolled.emit(self)
 	return result
 
 func roll_save(attribute_score: int) -> int:
-	_roll()
+	result = die_type.roll()
 	if result > attribute_score: status = Status.EXHAUSTED
 	rolled.emit(self)
 	return result
-
-func _roll() -> void:
-	status = Status.ALIVE
-	result = randi_range(1, die_type.faces)
 
 func _to_string() -> String:
 	return "%s → %d" % [die_type, result]

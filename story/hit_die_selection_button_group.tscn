@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://ceb3oeu71v6e1"]
+
+[ext_resource type="Script" path="res://story/hit_die_selection_button_group_wrapper.gd" id="1_e4l4e"]
+[ext_resource type="Script" path="res://story/hit_die_selection_button_group.gd" id="1_ppafg"]
+[ext_resource type="PackedScene" uid="uid://cfnlwcs3oai0c" path="res://story/hit_die_selection_button.tscn" id="1_qywmi"]
+
+[node name="HitDieSelectionButtonGroup" type="VBoxContainer"]
+offset_right = 44.0
+offset_bottom = 145.0
+size_flags_horizontal = 3
+script = ExtResource("1_e4l4e")
+
+[node name="Buttons" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("1_ppafg")
+_hit_die_selection_button = ExtResource("1_qywmi")
+
+[node name="HitDieSelectionButton" parent="Buttons" instance=ExtResource("1_qywmi")]
+layout_mode = 2
+
+[node name="HitDieSelectionButton2" parent="Buttons" instance=ExtResource("1_qywmi")]
+layout_mode = 2
+
+[node name="AllButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "All"
+
+[connection signal="toggled" from="AllButton" to="." method="select_all_available_buttons"]
