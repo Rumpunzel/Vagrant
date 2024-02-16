@@ -38,9 +38,6 @@ func _roll_save(dice_to_roll: Array[Die]) -> void:
 func _on_confirmed() -> void:
 	_roll_save(%HitDieSelectionButtons.get_selected_dice())
 
-func _on_all_in() -> void:
-	_roll_save(_save_request.character.get_available_hit_dice())
-
 class SaveRequest:
 	var character: Character
 	var attribute: CharacterAttribute

@@ -85,6 +85,7 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+toggle_mode = true
 text = "ALL IN!"
 
 [node name="OKButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons"]
@@ -99,5 +100,5 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/AllInButton" to="." method="_on_all_in"]
+[connection signal="toggled" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/AllInButton" to="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HitDieSelectionButtons" method="select_all_available_buttons"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/OKButton" to="." method="_on_confirmed"]
