@@ -6,8 +6,10 @@ signal hit_dice_changed(character: Character)
 
 const GROUP := "Characters"
 
+
 @export var _portrait: Texture = preload("res://portraits/knight.jpeg")
 
+@export_group("Attributes")
 @export_range(0, 12) var _strength := 0
 @export_range(0, 12) var _agility := 0
 @export_range(0, 12) var _constitution := 0
@@ -15,6 +17,7 @@ const GROUP := "Characters"
 @export_range(0, 12) var _will := 0
 @export_range(0, 12) var _charisma := 0
 
+@export_group("Hit Dice")
 @export var _d4_hit_dice := 1
 @export var _d6_hit_dice := 1
 @export var _d8_hit_dice := 1

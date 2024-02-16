@@ -19,11 +19,6 @@ _constitution = 11
 _intelligence = 3
 _will = 5
 _charisma = 4
-_d4_hit_dice = null
-_d6_hit_dice = null
-_d8_hit_dice = null
-_d10_hit_dice = null
-_d12_hit_dice = null
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 anchors_preset = 15
