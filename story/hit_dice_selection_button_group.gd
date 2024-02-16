@@ -14,6 +14,7 @@ func update_hit_dice(available_hit_dice: Array[Die], attribute_score := 0) -> vo
 		if die.die_type == hit_die_type: relevant_hit_dice.append(die)
 	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():
 		button.toggled.disconnect(_on_button_toggled)
+		button.changed_disabled.disconnect(_on_button_changed_disabled)
 		%Buttons.remove_child(button)
 		button.queue_free()
 	
@@ -25,6 +26,7 @@ func update_hit_dice(available_hit_dice: Array[Die], attribute_score := 0) -> vo
 			button.button_pressed = true
 		all_buttons_auto_selected = all_buttons_auto_selected and dice_auto_selected
 		button.toggled.connect(_on_button_toggled)
+		button.changed_disabled.connect(_on_button_changed_disabled)
 		%Buttons.add_child(button)
 	
 	%AllButton.disabled = false
@@ -55,3 +57,9 @@ func _on_button_toggled(_toggled_on: bool) -> void:
 	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():
 		all_buttons_selected = all_buttons_selected and button.button_pressed
 	%AllButton.set_pressed_no_signal(all_buttons_selected)
+
+func _on_button_changed_disabled(_disabled: bool) -> void:
+	var all_buttons_disabled := true
+	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():
+		all_buttons_disabled = all_buttons_disabled and button.disabled
+	%AllButton.disabled = all_buttons_disabled

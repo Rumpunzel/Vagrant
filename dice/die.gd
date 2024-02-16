@@ -1,6 +1,7 @@
 class_name Die
 
 signal rolled(die: Die)
+signal reconsidered_for_save(selected_for_save: bool)
 
 enum Status {
 	ALIVE,
@@ -10,6 +11,10 @@ enum Status {
 var die_type: DieType
 var result: int
 var status: Status
+var selected_for_save := false :
+	set(new_selected_for_save):
+		selected_for_save = new_selected_for_save
+		reconsidered_for_save.emit(selected_for_save)
 
 func _init(new_die_type: DieType, new_result: int = 0, new_status: Status = Status.ALIVE) -> void:
 	die_type = new_die_type

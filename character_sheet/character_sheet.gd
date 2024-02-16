@@ -17,5 +17,4 @@ extends PanelContainer
 		%Portrait.texture = character.portrait
 		%Attributes.update_attributes(character)
 		%HitDice.update_hit_dice(character.hit_dice)
-		%HitDice.disable_buttons()
 		%Name.text = character.name

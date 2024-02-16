@@ -17,3 +17,5 @@ icon = ExtResource("1_j8j4o")
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("2_4tkht")
+
+[connection signal="toggled" from="." to="." method="_on_toggled"]
