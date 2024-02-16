@@ -9,6 +9,9 @@
 [ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/d12.tres" id="7_2rcfj"]
 
 [node name="HitDiceSelectionButtons" type="PanelContainer"]
+offset_right = 238.0
+offset_bottom = 125.0
+size_flags_vertical = 3
 script = ExtResource("1_atjgv")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

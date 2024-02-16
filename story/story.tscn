@@ -192,7 +192,7 @@ flat = true
 alignment = 0
 script = ExtResource("4_vqe5n")
 
-[node name="Window" type="Window" parent="."]
+[node name="HitDiceSelectionWindow" type="Window" parent="."]
 title = "Select Hide Dice"
 position = Vector2i(720, 440)
 size = Vector2i(420, 423)
@@ -201,7 +201,7 @@ wrap_controls = true
 transient = true
 script = ExtResource("4_ohh58")
 
-[node name="HitDiceSelection" parent="Window" instance=ExtResource("1_0khqd")]
+[node name="HitDiceSelection" parent="HitDiceSelectionWindow" instance=ExtResource("1_0khqd")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -236,7 +236,7 @@ speed_scale = 0.05
 layout_mode = 2
 texture = SubResource("GradientTexture2D_uifae")
 
-[connection signal="close_requested" from="Window" to="Window" method="_on_close_requested"]
-[connection signal="confirmed" from="Window/HitDiceSelection" to="Window" method="_on_hit_dice_selection_confirmed"]
-[connection signal="dice_selection_configured" from="Window/HitDiceSelection" to="Window" method="_on_dice_selection_configured"]
+[connection signal="close_requested" from="HitDiceSelectionWindow" to="HitDiceSelectionWindow" method="_on_close_requested"]
+[connection signal="confirmed" from="HitDiceSelectionWindow/HitDiceSelection" to="HitDiceSelectionWindow" method="_on_hit_dice_selection_confirmed"]
+[connection signal="dice_selection_configured" from="HitDiceSelectionWindow/HitDiceSelection" to="HitDiceSelectionWindow" method="_on_dice_selection_configured"]
 [connection signal="ready" from="CanvasLayer/MarginContainer/Background/AnimationPlayer" to="CanvasLayer/MarginContainer/Background/AnimationPlayer" method="play" binds= [&"background_shimmer"]]
