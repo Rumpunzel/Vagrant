@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=16 format=3 uid="uid://coh7y85ggx45i"]
 
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection.tscn" id="1_0khqd"]
 [ext_resource type="Script" path="res://story/hit_dice_selection_popup.gd" id="4_ohh58"]
 [ext_resource type="Script" path="res://story/pages/dialog_decision.gd" id="4_vqe5n"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="5_8kq5p"]
+[ext_resource type="Shader" path="res://story/background.gdshader" id="6_36qx3"]
 [ext_resource type="Script" path="res://story/pages/story_decision.gd" id="6_pao4x"]
 [ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://landscapes/ruin.jpg" id="6_ujpbc"]
 
@@ -20,6 +21,47 @@ description = "Return to the beach."
 difficulty = 0
 details = ""
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_36674"]
+shader = ExtResource("6_36qx3")
+shader_parameter/size = 4.0
+
+[sub_resource type="Animation" id="Animation_sveo7"]
+resource_name = "background_shimmer"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(2, 2, 1),
+"update": 0,
+"values": [16.0, 10.0, 16.0]
+}
+
+[sub_resource type="Animation" id="Animation_7ye6i"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [4.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_if8sh"]
+_data = {
+"RESET": SubResource("Animation_7ye6i"),
+"background_shimmer": SubResource("Animation_sveo7")
+}
+
 [sub_resource type="Gradient" id="Gradient_vew8o"]
 colors = PackedColorArray(0, 0, 0, 0.501961, 0, 0, 0, 0)
 
@@ -32,8 +74,15 @@ fill_to = Vector2(0.5, 0.7)
 metadata/_snap_enabled = true
 
 [node name="Story" type="VBoxContainer"]
-offset_right = 778.0
-offset_bottom = 497.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 117.0
+offset_top = 69.0
+offset_right = -129.0
+offset_bottom = -97.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 32
@@ -172,9 +221,16 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Background" type="TextureRect" parent="CanvasLayer/MarginContainer"]
+material = SubResource("ShaderMaterial_36674")
 layout_mode = 2
 texture = ExtResource("6_ujpbc")
 stretch_mode = 6
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer/MarginContainer/Background"]
+libraries = {
+"": SubResource("AnimationLibrary_if8sh")
+}
+speed_scale = 0.05
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/MarginContainer"]
 layout_mode = 2
@@ -183,3 +239,4 @@ texture = SubResource("GradientTexture2D_uifae")
 [connection signal="close_requested" from="Window" to="Window" method="_on_close_requested"]
 [connection signal="confirmed" from="Window/HitDiceSelection" to="Window" method="_on_hit_dice_selection_confirmed"]
 [connection signal="dice_selection_configured" from="Window/HitDiceSelection" to="Window" method="_on_dice_selection_configured"]
+[connection signal="ready" from="CanvasLayer/MarginContainer/Background/AnimationPlayer" to="CanvasLayer/MarginContainer/Background/AnimationPlayer" method="play" binds= [&"background_shimmer"]]
