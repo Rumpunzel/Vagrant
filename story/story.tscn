@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=11 format=3 uid="uid://coh7y85ggx45i"]
 
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection.tscn" id="1_0khqd"]
 [ext_resource type="Script" path="res://story/hit_dice_selection_popup.gd" id="4_ohh58"]
 [ext_resource type="Script" path="res://story/pages/dialog_decision.gd" id="4_vqe5n"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="5_8kq5p"]
 [ext_resource type="Script" path="res://story/pages/story_decision.gd" id="6_pao4x"]
+[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://landscapes/ruin.jpg" id="6_ujpbc"]
 
 [sub_resource type="Resource" id="Resource_8omh5"]
 script = ExtResource("6_pao4x")
@@ -18,6 +19,17 @@ script = ExtResource("6_pao4x")
 description = "Return to the beach."
 difficulty = 0
 details = ""
+
+[sub_resource type="Gradient" id="Gradient_vew8o"]
+colors = PackedColorArray(0, 0, 0, 0.501961, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_uifae"]
+gradient = SubResource("Gradient_vew8o")
+width = 256
+height = 256
+fill_from = Vector2(0.5, 1)
+fill_to = Vector2(0.5, 0.7)
+metadata/_snap_enabled = true
 
 [node name="Story" type="VBoxContainer"]
 offset_right = 778.0
@@ -148,6 +160,25 @@ offset_right = 0.0
 offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -100
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="CanvasLayer/MarginContainer"]
+layout_mode = 2
+texture = ExtResource("6_ujpbc")
+stretch_mode = 6
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/MarginContainer"]
+layout_mode = 2
+texture = SubResource("GradientTexture2D_uifae")
 
 [connection signal="close_requested" from="Window" to="Window" method="_on_close_requested"]
 [connection signal="confirmed" from="Window/HitDiceSelection" to="Window" method="_on_hit_dice_selection_confirmed"]
