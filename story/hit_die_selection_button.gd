@@ -23,14 +23,12 @@ func disable_button(save_difficulty := 0, set_to_disabled := true) -> void:
 	if font_color != Color.TRANSPARENT: _set_font_colors(font_color)
 
 func _set_font_colors(color: Color) -> void:
-	print(color)
 	add_theme_color_override("font_color", color)
 	add_theme_color_override("font_disabled_color", color)
 	add_theme_color_override("font_pressed_color", color)
 	add_theme_color_override("font_hover_color", color)
 
 func _remove_font_colors() -> void:
-	print("removing_color")
 	remove_theme_color_override("font_color")
 	remove_theme_color_override("font_disabled_color")
 	remove_theme_color_override("font_pressed_color")
