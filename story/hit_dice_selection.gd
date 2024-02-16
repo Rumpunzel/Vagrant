@@ -26,7 +26,7 @@ func request_save(save_request: SaveRequest) -> void:
 
 func _roll_save(dice_to_roll: Array[Die]) -> void:
 	var save_result := DiceRoller.roll_save(dice_to_roll, _save_request)
-	%HitDieSelectionButtons.disable_buttons()
+	%HitDieSelectionButtons.disable_buttons(save_result.difficulty, save_result.character.get_attribute_score(save_result.attribute))
 	%OKButton.disabled = true
 	%AllInButton.disabled = true
 	%Buttons.visible = false

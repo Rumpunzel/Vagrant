@@ -11,9 +11,13 @@ func update_buttons(available_hit_dice: Array[Die]) -> void:
 		hit_die_selection_button.die = hit_die
 		add_child(hit_die_selection_button)
 
-func disable_buttons(set_to_disabled := true) -> void:
+func select_all_available_buttons(select_buttons := true) -> void:
 	for button: HitDieSelectionButton in get_children():
-		button.toggle_mode = not set_to_disabled
+		if not button.disabled: button.button_pressed = not select_buttons
+
+func disable_buttons(save_difficulty := 0, attribute_score := 0, set_to_disabled := true) -> void:
+	for button: HitDieSelectionButton in get_children():
+		button.disable_button(save_difficulty, attribute_score, set_to_disabled)
 
 func get_selected_dice() -> Array[Die]:
 	var selected_dice: Array[Die] = [ ]

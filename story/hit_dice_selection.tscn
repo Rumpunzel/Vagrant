@@ -81,17 +81,17 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OKButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Roll Dice!"
-
 [node name="AllInButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "ALL IN!"
+
+[node name="OKButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Roll Dice!"
 
 [node name="DiceLogEntry" parent="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource("9_v84ty")]
 unique_name_in_owner = true
@@ -99,5 +99,5 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/OKButton" to="." method="_on_confirmed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/AllInButton" to="." method="_on_all_in"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/OKButton" to="." method="_on_confirmed"]
