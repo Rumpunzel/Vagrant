@@ -2,7 +2,7 @@ class_name HitDiceSelection
 extends PanelContainer
 
 signal dice_selection_configured(character: Character, attribute: CharacterAttribute)
-signal confirmed(save_result: DiceRoller.SaveResult)
+signal confirmed(save_result: SaveResult)
 
 var _save_request: SaveRequest = null
 
@@ -26,7 +26,7 @@ func request_save(save_request: SaveRequest) -> void:
 	dice_selection_configured.emit(character, _save_request.attribute)
 
 func _roll_save(dice_to_roll: Array[Die]) -> void:
-	var save_result := DiceRoller.roll_save(dice_to_roll, _save_request)
+	var save_result: SaveResult = DiceRoller.roll_save(dice_to_roll, _save_request)
 	%OKButton.disabled = true
 	%AllInButton.disabled = true
 	%Buttons.visible = false

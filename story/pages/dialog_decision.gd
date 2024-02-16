@@ -30,9 +30,9 @@ func _on_pressed() -> void:
 	else:
 		_progress_story()
 
-func _on_save_evaluated(save_result: DiceRoller.SaveResult, save_request: HitDiceSelection.SaveRequest) -> void:
+func _on_save_evaluated(save_result: SaveResult, save_request: HitDiceSelection.SaveRequest) -> void:
 	if save_request != _save_request: return
-	if save_result.save_outcome != DiceRoller.SaveOutcome.FAILURE:
+	if save_result.save_outcome != SaveResult.Outcome.FAILURE:
 		_progress_story()
 	else:
 		_handle_failure()

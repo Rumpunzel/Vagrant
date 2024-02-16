@@ -12,6 +12,7 @@ script = ExtResource("1_uqhlh")
 
 [node name="Portrait" type="TextureRect" parent="."]
 unique_name_in_owner = true
+show_behind_parent = true
 layout_mode = 2
 texture = ExtResource("1_fnfma")
 expand_mode = 1

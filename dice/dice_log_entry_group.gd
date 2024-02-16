@@ -10,7 +10,7 @@ var character: Character :
 		character = new_character
 		%Portrait.texture = character.portrait
 
-func add_entry(save_result: DiceRoller.SaveResult) -> void:
+func add_entry(save_result: SaveResult) -> void:
 	var dice_log_entry: DiceLogEntry = _dice_log_entry.instantiate()
 	dice_log_entry.initialize_save_result(save_result)
 	%Entries.add_child(dice_log_entry)

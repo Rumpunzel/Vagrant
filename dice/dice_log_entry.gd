@@ -5,7 +5,7 @@ func initialize_die_result(die: Die) -> void:
 	%Entry.clear()
 	%Entry.append_text("%s" % die)
 
-func initialize_save_result(save_result: DiceRoller.SaveResult) -> void:
+func initialize_save_result(save_result: SaveResult) -> void:
 	var character := save_result.character
 	var attribute := save_result.attribute
 	%Entry.clear()
@@ -36,15 +36,15 @@ func initialize_save_result(save_result: DiceRoller.SaveResult) -> void:
 	%Entry.append_text(" → ")
 	
 	var difficulty := ""
-	if save_result.difficulty != DiceRoller.SaveOutcome.NORMAL:
-		difficulty += "Difficulty: %d → %s" % [save_result.difficulty, DiceRoller.SaveOutcome.find_key(save_result.save_outcome)]
+	if save_result.difficulty != SaveResult.Outcome.NORMAL:
+		difficulty += "Difficulty: %d → %s" % [save_result.difficulty, SaveResult.Outcome.find_key(save_result.save_outcome)]
 	%Entry.push_hint(difficulty)
 	match save_result.save_outcome:
-		DiceRoller.SaveOutcome.NORMAL:
+		SaveResult.Outcome.NORMAL:
 			%Entry.push_color(Color.WHITE)
-		DiceRoller.SaveOutcome.SUCCESS:
+		SaveResult.Outcome.SUCCESS:
 			%Entry.push_color(Color.LIME_GREEN)
-		DiceRoller.SaveOutcome.FAILURE:
+		SaveResult.Outcome.FAILURE:
 			%Entry.push_color(Color.FIREBRICK)
 	%Entry.append_text("%d" % save_result.highest_die.result)
 	%Entry.pop()

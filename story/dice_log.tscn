@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://dseu72gbkxh64"]
+
+[ext_resource type="Script" path="res://dice/dice_log.gd" id="1_qalxp"]
+[ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log_entry.tscn" id="2_ejnk2"]
+[ext_resource type="PackedScene" uid="uid://s1r1hypfpjyj" path="res://dice/dice_log_entry_group.tscn" id="3_ctyb8"]
+
+[node name="DiceLog" type="VBoxContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_qalxp")
+_dice_log_entry = ExtResource("2_ejnk2")
+_dice_log_entry_group = ExtResource("3_ctyb8")
+
+[connection signal="child_entered_tree" from="." to="." method="_on_entry_entered_tree"]

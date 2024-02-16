@@ -4,6 +4,13 @@
 
 [node name="Protagonist" type="Node"]
 script = ExtResource("1_k4tfl")
+_portrait = null
+_strength = null
+_agility = null
+_constitution = null
+_intelligence = null
+_will = null
+_charisma = null
 _d4_hit_dice = 2
 _d6_hit_dice = 2
 _d8_hit_dice = 2

@@ -28,7 +28,6 @@ var attribute_scores: Dictionary :
 		attribute_scores = new_attribute_scores
 		attribute_scores_changed.emit(self)
 
-# DiceRoller.Dice -> int
 var hit_dice: Array[Die] :
 	set(new_hit_dice):
 		if new_hit_dice == hit_dice: return
