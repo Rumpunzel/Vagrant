@@ -62,11 +62,11 @@ func get_attribute_score(attribute: CharacterAttribute) -> int:
 func get_available_hit_dice() -> Array[Die]:
 	var available_hit_dice: Array[Die] = [ ]
 	for die: Die in hit_dice:
-		if die.status == Die.Status.ALIVE: available_hit_dice.append(die)
+		if die.is_alive(): available_hit_dice.append(die)
 	return available_hit_dice
 
 func get_hit_dice_count(hit_die_type: DieType, include_exhausted := false) -> int:
 	var count := 0
 	for die: Die in hit_dice:
-		if die.die_type == hit_die_type and (include_exhausted or die.status == Die.Status.ALIVE): count +=1
+		if die.die_type == hit_die_type and (include_exhausted or die.is_alive()): count +=1
 	return count

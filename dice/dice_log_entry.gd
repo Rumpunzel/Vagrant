@@ -20,15 +20,11 @@ func initialize_save_result(save_result: SaveResult) -> void:
 	var dice_results := ""
 	for die: Die in save_result.dice:
 		dice_results += "%s" % die
-		if die.status == Die.Status.EXHAUSTED: dice_results += " ☠"
+		if not die.is_alive(): dice_results += " ☠"
 		if die.result == save_result.highest_die.result: dice_results += " ✓"
 		dice_results += "\n"
 	%Entry.push_hint(dice_results)
-	match save_result.highest_die.status:
-		Die.Status.ALIVE:
-			%Entry.push_color(Color.WHITE)
-		Die.Status.EXHAUSTED:
-			%Entry.push_color(Color.FIREBRICK)
+	%Entry.push_color(save_result.highest_die.get_die_color(save_result.difficulty))
 	%Entry.append_text("%s" % save_result.highest_die.die_type)
 	%Entry.pop()
 	%Entry.pop()

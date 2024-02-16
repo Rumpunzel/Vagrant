@@ -27,5 +27,17 @@ func roll_save(attribute_score: int) -> int:
 	rolled.emit(self)
 	return result
 
+func is_alive() -> bool:
+	return status == Status.ALIVE
+
+func get_die_color(save_difficulty: int) -> Color:
+	var color: Color = Color.WHITE
+	if save_difficulty <= 0: return color
+	if result >= save_difficulty:
+		color = Color.LIME_GREEN if is_alive() else Color.CORNFLOWER_BLUE
+	else:
+		color = Color.ORANGE if is_alive() else Color.FIREBRICK
+	return color
+
 func _to_string() -> String:
 	return "%s → %d" % [die_type, result]
