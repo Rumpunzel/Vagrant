@@ -13,6 +13,7 @@ _hit_die_selection_button = ExtResource("3_6gpjh")
 [node name="Buttons" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="AllButton" type="Button" parent="."]
 unique_name_in_owner = true
