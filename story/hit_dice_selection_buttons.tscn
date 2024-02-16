@@ -1,0 +1,43 @@
+[gd_scene load_steps=8 format=3 uid="uid://deodwapi67ltg"]
+
+[ext_resource type="Script" path="res://story/hit_dice_selection_buttons.gd" id="1_atjgv"]
+[ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://story/hit_dice_selection_button_group.tscn" id="2_neave"]
+[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/d4.tres" id="3_1foph"]
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/d6.tres" id="4_2w341"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/d8.tres" id="5_qhs7t"]
+[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/d10.tres" id="6_7typc"]
+[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/d12.tres" id="7_2rcfj"]
+
+[node name="HitDiceSelectionButtons" type="PanelContainer"]
+script = ExtResource("1_atjgv")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
+
+[node name="HitDiceButtons" type="HBoxContainer" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="d4" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+layout_mode = 2
+hit_die_type = ExtResource("3_1foph")
+
+[node name="d6" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+layout_mode = 2
+hit_die_type = ExtResource("4_2w341")
+
+[node name="d8" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+layout_mode = 2
+hit_die_type = ExtResource("5_qhs7t")
+
+[node name="d10" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+layout_mode = 2
+hit_die_type = ExtResource("6_7typc")
+
+[node name="d12" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+layout_mode = 2
+hit_die_type = ExtResource("7_2rcfj")

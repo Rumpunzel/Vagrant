@@ -22,7 +22,7 @@ func request_save(save_request: SaveRequest) -> void:
 	%AllInButton.set_pressed_no_signal(false)
 	%Buttons.visible = true
 	%DiceLogEntry.visible = false
-	%HitDieSelectionButtons.update_buttons(character.get_available_hit_dice(), character.get_attribute_score(save_request.attribute))
+	%HitDiceSelectionButtons.update_hit_dice(character.get_available_hit_dice(), character.get_attribute_score(save_request.attribute))
 	dice_selection_configured.emit(character, _save_request.attribute)
 
 func _roll_save(dice_to_roll: Array[Die]) -> void:
@@ -32,12 +32,12 @@ func _roll_save(dice_to_roll: Array[Die]) -> void:
 	%Buttons.visible = false
 	%DiceLogEntry.visible = true
 	%DiceLogEntry.initialize_save_result(save_result)
-	%HitDieSelectionButtons.disable_buttons(save_result.difficulty)
+	%HitDiceSelectionButtons.disable_buttons(save_result.difficulty)
 	Events.save_evaluated.emit(save_result, _save_request)
 	confirmed.emit(save_result)
 
 func _on_confirmed() -> void:
-	_roll_save(%HitDieSelectionButtons.get_selected_dice())
+	_roll_save(%HitDiceSelectionButtons.get_selected_dice())
 
 class SaveRequest:
 	var character: Character

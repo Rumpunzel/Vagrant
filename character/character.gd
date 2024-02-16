@@ -2,10 +2,9 @@ class_name Character
 extends Node
 
 signal attribute_scores_changed(character: Character)
-signal hit_dice_changed(character: Character)
+signal hit_dice_changed(hit_dice: Array[Die])
 
 const GROUP := "Characters"
-
 
 @export var _portrait: Texture = preload("res://portraits/knight.jpeg")
 
@@ -35,7 +34,7 @@ var hit_dice: Array[Die] :
 	set(new_hit_dice):
 		if new_hit_dice == hit_dice: return
 		hit_dice = new_hit_dice
-		hit_dice_changed.emit(self)
+		hit_dice_changed.emit(hit_dice)
 
 var portrait := _portrait
 

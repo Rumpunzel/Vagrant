@@ -1,15 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://bpqkh512g0nmb"]
+[gd_scene load_steps=5 format=3 uid="uid://bpqkh512g0nmb"]
 
 [ext_resource type="Script" path="res://story/hit_dice_selection.gd" id="1_ovbfu"]
 [ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_r0tw2"]
-[ext_resource type="Script" path="res://story/hit_die_selection_buttons.gd" id="3_41hrf"]
-[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/d4.tres" id="4_waip6"]
-[ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://story/hit_die_selection_button_group.tscn" id="5_n1y7a"]
-[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/d6.tres" id="6_o0c1x"]
-[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/d8.tres" id="8_x4gua"]
+[ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection_buttons.tscn" id="3_owutq"]
 [ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log_entry.tscn" id="9_v84ty"]
-[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/d10.tres" id="10_iskp5"]
-[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/d12.tres" id="12_32i7j"]
 
 [node name="HitDiceSelection" type="PanelContainer"]
 offset_right = 284.0
@@ -56,43 +50,9 @@ fit_content = true
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 4
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-
-[node name="HitDieSelectionButtons" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HitDiceSelectionButtons" parent="MarginContainer/VBoxContainer/VBoxContainer" instance=ExtResource("3_owutq")]
 unique_name_in_owner = true
 layout_mode = 2
-script = ExtResource("3_41hrf")
-
-[node name="d4" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HitDieSelectionButtons" instance=ExtResource("5_n1y7a")]
-layout_mode = 2
-hit_die_type = ExtResource("4_waip6")
-
-[node name="d6" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HitDieSelectionButtons" instance=ExtResource("5_n1y7a")]
-layout_mode = 2
-hit_die_type = ExtResource("6_o0c1x")
-
-[node name="d8" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HitDieSelectionButtons" instance=ExtResource("5_n1y7a")]
-layout_mode = 2
-hit_die_type = ExtResource("8_x4gua")
-
-[node name="d10" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HitDieSelectionButtons" instance=ExtResource("5_n1y7a")]
-layout_mode = 2
-hit_die_type = ExtResource("10_iskp5")
-
-[node name="d12" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HitDieSelectionButtons" instance=ExtResource("5_n1y7a")]
-layout_mode = 2
-hit_die_type = ExtResource("12_32i7j")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -121,5 +81,5 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[connection signal="toggled" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/AllInButton" to="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HitDieSelectionButtons" method="select_all_available_buttons"]
+[connection signal="toggled" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/AllInButton" to="MarginContainer/VBoxContainer/VBoxContainer/HitDiceSelectionButtons" method="select_all_available_buttons"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/OKButton" to="." method="_on_confirmed"]
