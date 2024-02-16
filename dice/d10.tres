@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dice" load_steps=3 format=3 uid="uid://dtfdogfd6ebga"]
+
+[ext_resource type="Texture2D" uid="uid://cw6ja5k5fq6m6" path="res://icons/dice/d10.png" id="1_s5lwv"]
+[ext_resource type="Script" path="res://dice/die_type.gd" id="2_7ifjg"]
+
+[resource]
+script = ExtResource("2_7ifjg")
+icon = ExtResource("1_s5lwv")
+faces = 10

@@ -4,3 +4,8 @@
 
 [node name="Protagonist" type="Node"]
 script = ExtResource("1_k4tfl")
+_d4_hit_dice = 2
+_d6_hit_dice = 2
+_d8_hit_dice = 2
+_d10_hit_dice = 2
+_d12_hit_dice = 2

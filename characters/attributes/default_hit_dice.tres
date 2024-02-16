@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="DicePool" load_steps=2 format=3 uid="uid://dgjpouiex85ka"]
+
+[ext_resource type="Script" path="res://dice/dice_pool.gd" id="1_5b1r2"]
+
+[resource]
+script = ExtResource("1_5b1r2")
+dice = Array[int]([0, 6, 8, 10, 12])

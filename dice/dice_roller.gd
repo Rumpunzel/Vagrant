@@ -1,21 +1,7 @@
 extends Node
 
-signal die_rolled(die_result: DieResult)
+signal die_rolled(die: Die)
 signal save_rolled(save_result: SaveResult)
-
-enum Dice {
-	d4 = 4,
-	d6 = 6,
-	d8 = 8,
-	d10 = 10,
-	d12 = 12,
-	d20 = 20,
-}
-
-enum DieOutcome {
-	NORMAL,
-	EXHAUSTED,
-}
 
 enum SaveOutcome {
 	NORMAL,
@@ -23,69 +9,51 @@ enum SaveOutcome {
 	FAILURE,
 }
 
-var die_results: Array[DieResult] = [ ]
-var save_results: Array[SaveResult] = [ ]
+func roll_die(die: Die) -> Die:
+	die.roll()
+	die_rolled.emit(die)
+	return die
 
-func roll_die(die: Dice) -> DieResult:
-	var die_result := DieResult.new(die, randi_range(1, die))
-	die_results.append(die_result)
-	die_rolled.emit(die_result)
-	return die_result
-
-func roll_sum(dice_pool: DicePool) -> int:
+func roll_sum(dice_pool: Array[Die]) -> int:
 	var sum := 0
-	for die: Dice in dice_pool.dice:
+	for die: Die in dice_pool:
 		sum += roll_die(die).result
 	return sum
 
-func roll_save(dice_pool: DicePool, save_request: HitDiceSelection.SaveRequest) -> SaveResult:
+func roll_save(dice_pool: Array[Die], save_request: HitDiceSelection.SaveRequest) -> SaveResult:
 	var character := save_request.character
 	var attribute := save_request.attribute
 	var attribute_score := character.get_attribute_score(attribute)
-	var highest_result: DieResult = null
-	var dice_results: Array[DieResult] = [ ]
-	var exhausted_dice: Array[Dice] = [ ]
-	
-	for die: Dice in dice_pool.dice:
-		var result := roll_die(die)
-		if highest_result == null or result.result > highest_result.result: highest_result = result
-		var save_outcome := DieOutcome.NORMAL if result.result <= attribute_score else DieOutcome.EXHAUSTED
-		result.outcome = save_outcome
-		dice_results.append(result)
-		if save_outcome == DieOutcome.EXHAUSTED: exhausted_dice.append(die)
-	
-	for die: Dice in exhausted_dice:
-		character.hit_dice.remove_die(die)
-	
-	var save_result := SaveResult.new(character, attribute, highest_result, save_request.difficulty, dice_results)
-	save_results.append(save_result)
+	for die: Die in dice_pool:
+		die.roll_save(attribute_score)
+	var save_result := SaveResult.new(character, attribute, save_request.difficulty, dice_pool)
 	save_rolled.emit(save_result)
 	return save_result
+
+func generate_dice_pool(d4_amount: int, d6_amount: int, d8_amount: int, d10_amount: int, d12_amount: int) -> Array[Die]:
+	var dice_pool: Array[Die] = [ ]
+	dice_pool += Rules.d4.get_dice_pool(d4_amount)
+	dice_pool += Rules.d6.get_dice_pool(d6_amount)
+	dice_pool += Rules.d8.get_dice_pool(d8_amount)
+	dice_pool += Rules.d10.get_dice_pool(d10_amount)
+	dice_pool += Rules.d12.get_dice_pool(d12_amount)
+	return dice_pool
 
 
 class SaveResult:
 	var character: Character
 	var attribute: CharacterAttribute
-	var result: DieResult
 	var difficulty: int
-	var dice: Array[DieResult]
+	var dice: Array[Die]
+	var highest_die: Die = null
+	var save_outcome: SaveOutcome = SaveOutcome.NORMAL
 	
-	func _init(new_character: Character, new_attribute: CharacterAttribute, new_result: DieResult, new_difficulty: int, new_dice: Array[DieResult]) -> void:
+	func _init(new_character: Character, new_attribute: CharacterAttribute, new_difficulty: int, new_dice: Array[Die]) -> void:
 		character = new_character
 		attribute = new_attribute
-		result = new_result
 		difficulty = new_difficulty
 		dice = new_dice
-	
-	func get_save_outcome() -> SaveOutcome:
-		return SaveOutcome.NORMAL if difficulty <= 0 else SaveOutcome.SUCCESS if result.result >= difficulty else SaveOutcome.FAILURE
-
-class DieResult:
-	var die: DiceRoller.Dice
-	var result: int
-	var outcome: DieOutcome
-	
-	func _init(new_die: Dice, new_result: int, new_outcome: DieOutcome = DieOutcome.NORMAL) -> void:
-		die = new_die
-		result = new_result
-		outcome = new_outcome
+		for die: Die in dice:
+			if highest_die == null or die.result > highest_die.result: highest_die = die
+		if difficulty > 0:
+			save_outcome = SaveOutcome.SUCCESS if highest_die != null and highest_die.result >= difficulty else SaveOutcome.FAILURE

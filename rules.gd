@@ -1,5 +1,11 @@
 extends Node
 
+const d4: DieType = preload("res://dice/d4.tres")
+const d6: DieType = preload("res://dice/d6.tres")
+const d8: DieType = preload("res://dice/d8.tres")
+const d10: DieType = preload("res://dice/d10.tres")
+const d12: DieType = preload("res://dice/d12.tres")
+
 const STRENGTH: CharacterAttribute = preload("res://characters/attributes/strength.tres")
 const AGILITY: CharacterAttribute = preload("res://characters/attributes/agility.tres")
 const CONSTITUTION: CharacterAttribute = preload("res://characters/attributes/constitution.tres")
@@ -15,11 +21,3 @@ const ATTRIBUTES: Array[CharacterAttribute] = [
 	WILL,
 	CHARISMA,
 ]
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
