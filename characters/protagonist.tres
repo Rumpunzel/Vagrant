@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CharacterProfile" load_steps=3 format=3 uid="uid://bknonhgn88qwp"]
+
+[ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_lfyap"]
+[ext_resource type="Script" path="res://characters/character_profile.gd" id="2_imh64"]
+
+[resource]
+script = ExtResource("2_imh64")
+name = "Protagonist"
+portrait = ExtResource("1_lfyap")
+_strength = 0
+_agility = 0
+_constitution = 0
+_intelligence = 0
+_will = 0
+_charisma = 0
+_d4_hit_dice = 2
+_d6_hit_dice = 2
+_d8_hit_dice = 2
+_d10_hit_dice = 2
+_d12_hit_dice = 2

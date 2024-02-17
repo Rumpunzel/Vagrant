@@ -9,7 +9,8 @@ extends Resource
 @export var failure_story_page: StoryPage = null
 
 func to_save_request() -> SaveRequest:
-	return SaveRequest.new(Protagonist, attribute, difficulty, details)
+	var protagonist: Character = Characters.get_protagonist()
+	return SaveRequest.new(protagonist, attribute, difficulty, details)
 
 func _to_string() -> String:
 	var result := ""

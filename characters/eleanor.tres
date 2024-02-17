@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CharacterProfile" load_steps=3 format=3 uid="uid://bemnvbfgpxtbt"]
+
+[ext_resource type="Texture2D" uid="uid://6jlxmsm0ehfm" path="res://portraits/shadowheart.jpg" id="1_08y1w"]
+[ext_resource type="Script" path="res://characters/character_profile.gd" id="2_bgasg"]
+
+[resource]
+script = ExtResource("2_bgasg")
+name = "Eleanor"
+portrait = ExtResource("1_08y1w")
+_strength = 4
+_agility = 11
+_constitution = 11
+_intelligence = 3
+_will = 5
+_charisma = 4
+_d4_hit_dice = 1
+_d6_hit_dice = 1
+_d8_hit_dice = 1
+_d10_hit_dice = 1
+_d12_hit_dice = 1

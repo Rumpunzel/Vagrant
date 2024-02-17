@@ -8,11 +8,8 @@ extends PanelContainer
 			character.attribute_scores_changed.disconnect(_attributes.update_attributes)
 			character.hit_dice_changed.disconnect(_hit_dice.update_hit_dice)
 		character = new_character
-		if character == null:
-			character = Protagonist
 		character.attribute_scores_changed.connect(_attributes.update_attributes)
 		character.hit_dice_changed.connect(_hit_dice.update_hit_dice)
-		
 		name = character.name
 		_portrait.texture = character.portrait
 		_name.text = character.name
