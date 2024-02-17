@@ -31,6 +31,7 @@ theme_override_constants/separation = 32
 
 [node name="CharacterSheets" type="TabContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
 script = ExtResource("4_houmb")
 _character_sheet = ExtResource("6_wwv7i")
 
@@ -54,3 +55,5 @@ layout_mode = 2
 [node name="Story" parent="MarginContainer/HBoxContainer" instance=ExtResource("5_5hhyh")]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[connection signal="entry_added" from="MarginContainer/HBoxContainer/VBoxContainer/GameInfo/DiceLog/DiceLog" to="MarginContainer/HBoxContainer/VBoxContainer/GameInfo/DiceLog" method="ensure_control_visible"]
