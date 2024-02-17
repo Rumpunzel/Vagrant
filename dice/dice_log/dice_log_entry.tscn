@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://5l5lcf3xxqx2"]
 
-[ext_resource type="Script" path="res://dice/dice_log_entry.gd" id="1_la8xk"]
+[ext_resource type="Script" path="res://dice/dice_log/dice_log_entry.gd" id="1_la8xk"]
 
 [node name="DiceLogEntry" type="PanelContainer" node_paths=PackedStringArray("_entry")]
 offset_left = 16.0
@@ -12,10 +12,6 @@ _entry = NodePath("MarginContainer/Entry")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 4
 
 [node name="Entry" type="RichTextLabel" parent="MarginContainer"]
 unique_name_in_owner = true

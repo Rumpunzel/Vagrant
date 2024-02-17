@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://deodwapi67ltg"]
 
-[ext_resource type="Script" path="res://story/hit_dice_selection_buttons.gd" id="1_atjgv"]
-[ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://story/hit_dice_selection_button_group.tscn" id="2_neave"]
+[ext_resource type="Script" path="res://dice/hit_dice_selection/hit_dice_selection_buttons.gd" id="1_atjgv"]
+[ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://dice/hit_dice_selection/hit_dice_selection_button_group.tscn" id="2_neave"]
 [ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/resources/d4.tres" id="3_hfwj6"]
 [ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/resources/d6.tres" id="4_ogiww"]
 [ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/resources/d8.tres" id="5_37k4a"]
@@ -17,10 +17,6 @@ _hit_dice_buttons = NodePath("MarginContainer/HitDiceButtons")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 4
 
 [node name="HitDiceButtons" type="HBoxContainer" parent="MarginContainer"]
 unique_name_in_owner = true

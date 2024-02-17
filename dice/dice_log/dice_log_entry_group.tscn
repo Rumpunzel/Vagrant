@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://s1r1hypfpjyj"]
 
-[ext_resource type="Script" path="res://dice/dice_log_entry_group.gd" id="1_adlmw"]
+[ext_resource type="Script" path="res://dice/dice_log/dice_log_entry_group.gd" id="1_adlmw"]
 [ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_onleu"]
-[ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log_entry.tscn" id="2_fljle"]
+[ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log/dice_log_entry.tscn" id="2_fljle"]
 
 [node name="DiceLogEntryGroup" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_entries")]
 offset_right = 183.0

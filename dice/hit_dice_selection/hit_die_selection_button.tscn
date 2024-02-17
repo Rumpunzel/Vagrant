@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cfnlwcs3oai0c"]
 
 [ext_resource type="Texture2D" uid="uid://d12l3mfoh65ag" path="res://icons/dice/d4.png" id="1_j8j4o"]
-[ext_resource type="Script" path="res://story/hit_die_selection_button.gd" id="2_4tkht"]
+[ext_resource type="Script" path="res://dice/hit_dice_selection/hit_die_selection_button.gd" id="2_4tkht"]
 
 [node name="HitDieSelectionButton" type="Button"]
 custom_minimum_size = Vector2(64, 64)

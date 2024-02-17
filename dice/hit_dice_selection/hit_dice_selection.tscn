@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://bpqkh512g0nmb"]
 
-[ext_resource type="Script" path="res://story/hit_dice_selection.gd" id="1_ovbfu"]
+[ext_resource type="Script" path="res://dice/hit_dice_selection/hit_dice_selection.gd" id="1_ovbfu"]
 [ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_r0tw2"]
-[ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection_buttons.tscn" id="3_owutq"]
-[ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log_entry.tscn" id="9_v84ty"]
+[ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://dice/hit_dice_selection/hit_dice_selection_buttons.tscn" id="3_owutq"]
+[ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log/dice_log_entry.tscn" id="9_v84ty"]
 
 [node name="HitDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_hit_dice_selection_buttons", "_buttons", "_all_in_button", "_ok_button", "_dice_log_entry")]
 offset_right = 284.0
@@ -42,10 +42,6 @@ size_flags_vertical = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 4
 
 [node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
 unique_name_in_owner = true
