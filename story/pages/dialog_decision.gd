@@ -5,7 +5,7 @@ extends Button
 		story_decision = new_story_decision
 		text = "%s" % story_decision
 
-var _save_request: HitDiceSelection.SaveRequest
+var _save_request: SaveRequest
 
 func _enter_tree() -> void:
 	Events.save_evaluated.connect(_on_save_evaluated)
@@ -30,7 +30,7 @@ func _on_pressed() -> void:
 	else:
 		_progress_story()
 
-func _on_save_evaluated(save_result: SaveResult, save_request: HitDiceSelection.SaveRequest) -> void:
+func _on_save_evaluated(save_result: SaveResult, save_request: SaveRequest) -> void:
 	if save_request != _save_request: return
 	if save_result.save_outcome != SaveResult.Outcome.FAILURE:
 		_progress_story()

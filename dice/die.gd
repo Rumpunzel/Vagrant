@@ -1,25 +1,28 @@
 class_name Die
 
 signal rolled(die: Die)
-signal reconsidered_for_save(selected_for_save: bool)
+signal state_changed(state: State)
 
-enum Status {
+enum State {
+	EXHAUSTED = -1,
 	ALIVE,
-	EXHAUSTED,
+	CONSIDERED,
+	SELECTED,
 }
 
 var die_type: DieType
 var result: int
-var status: Status
-var selected_for_save := false :
-	set(new_selected_for_save):
-		selected_for_save = new_selected_for_save
-		reconsidered_for_save.emit(selected_for_save)
 
-func _init(new_die_type: DieType, new_result: int = 0, new_status: Status = Status.ALIVE) -> void:
+var _state: State :
+	set(new_state):
+		if new_state == _state: return
+		_state = new_state
+		state_changed.emit(_state)
+
+func _init(new_die_type: DieType, new_result: int = 0, new_state: State = State.ALIVE) -> void:
 	die_type = new_die_type
 	result = new_result
-	status = new_status
+	_state = new_state
 
 func roll() -> int:
 	result = die_type.roll()
@@ -28,12 +31,24 @@ func roll() -> int:
 
 func roll_save(attribute_score: int) -> int:
 	result = die_type.roll()
-	if result > attribute_score: status = Status.EXHAUSTED
+	if result > attribute_score: _state = State.EXHAUSTED
 	rolled.emit(self)
 	return result
 
+func update_state(new_state: State = State.ALIVE) -> void:
+	_state = new_state
+
+func auto_update_state(attribute_score: int) -> void:
+	_state = State.SELECTED if attribute_score >= die_type.faces else State.CONSIDERED
+
 func is_alive() -> bool:
-	return status == Status.ALIVE
+	return _state >= State.ALIVE
+
+func is_considered() -> bool:
+	return _state >= State.CONSIDERED
+
+func is_selected() -> bool:
+	return _state == State.SELECTED
 
 func get_die_color(save_difficulty: int) -> Color:
 	var color: Color = Color.WHITE

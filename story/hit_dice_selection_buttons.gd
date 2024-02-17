@@ -4,9 +4,9 @@ extends PanelContainer
 @export_group("Configuration")
 @export var _hit_dice_buttons: Container
 
-func update_hit_dice(available_hit_dice: Array[Die], attribute_score := 0) -> void:
+func update_hit_dice(available_hit_dice: Array[Die]) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():
-		button_group.update_hit_dice(available_hit_dice, attribute_score)
+		button_group.update_hit_dice(available_hit_dice)
 
 func select_all_available_buttons(select_buttons := true) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():

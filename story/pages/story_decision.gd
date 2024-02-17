@@ -8,8 +8,8 @@ extends Resource
 @export_multiline var details := ""
 @export var failure_story_page: StoryPage = null
 
-func to_save_request() -> HitDiceSelection.SaveRequest:
-	return HitDiceSelection.SaveRequest.new(Protagonist, attribute, difficulty, details)
+func to_save_request() -> SaveRequest:
+	return SaveRequest.new(Protagonist, attribute, difficulty, details)
 
 func _to_string() -> String:
 	var result := ""

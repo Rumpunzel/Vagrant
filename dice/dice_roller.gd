@@ -17,7 +17,7 @@ func roll_sum(dice_pool: Array[Die]) -> int:
 		sum += roll_die(die).result
 	return sum
 
-func roll_save(dice_pool: Array[Die], save_request: HitDiceSelection.SaveRequest) -> SaveResult:
+func roll_save(dice_pool: Array[Die], save_request: SaveRequest) -> SaveResult:
 	var character := save_request.character
 	var attribute := save_request.attribute
 	var attribute_score := character.get_attribute_score(attribute)

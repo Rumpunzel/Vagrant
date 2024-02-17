@@ -25,7 +25,6 @@ func request_save(save_request: SaveRequest) -> void:
 	_save_request = save_request
 	var character := _save_request.character
 	var available_hit_dice := character.get_available_hit_dice()
-	var attribute_score := character.get_attribute_score(save_request.attribute)
 	_portrait.texture = character.portrait
 	_description.text = _save_request.description
 	_ok_button.disabled = false
@@ -33,7 +32,7 @@ func request_save(save_request: SaveRequest) -> void:
 	_all_in_button.set_pressed_no_signal(false)
 	_buttons.visible = true
 	_dice_log_entry.visible = false
-	_hit_dice_selection_buttons.update_hit_dice(available_hit_dice, attribute_score)
+	_hit_dice_selection_buttons.update_hit_dice(available_hit_dice)
 	dice_selection_configured.emit(character, _save_request.attribute)
 
 func _roll_save(dice_to_roll: Array[Die]) -> void:
@@ -49,19 +48,3 @@ func _roll_save(dice_to_roll: Array[Die]) -> void:
 
 func _on_confirmed() -> void:
 	_roll_save(_hit_dice_selection_buttons.get_selected_dice())
-
-class SaveRequest:
-	var character: Character
-	var attribute: CharacterAttribute
-	var difficulty: int
-	var description: String
-	
-	func _init(new_character: Character, new_attribute: CharacterAttribute, new_difficulty: int, new_description: String):
-		character = new_character
-		attribute = new_attribute
-		difficulty = new_difficulty
-		description = new_description
-		
-		var available_hit_dice := character.get_available_hit_dice()
-		for hit_die: Die in available_hit_dice:
-			hit_die.save_selection = Die.SaveSelection.CONSIDERED
