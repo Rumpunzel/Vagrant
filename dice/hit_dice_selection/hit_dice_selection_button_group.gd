@@ -11,7 +11,7 @@ extends VBoxContainer
 @export var _all_button: Button
 @export var _hit_die_selection_button: PackedScene
 
-func update_hit_dice(available_hit_dice: Array[Die]) -> void:
+func update_hit_dice(available_hit_dice: Array[Die], display_results: HitDieSelectionButton.DisplayResults, save_difficulty := 0) -> void:
 	var all_buttons_auto_selected := true
 	var relevant_hit_dice: Array[Die] = [ ]
 	for die: Die in available_hit_dice:
@@ -26,6 +26,8 @@ func update_hit_dice(available_hit_dice: Array[Die]) -> void:
 	for hit_die: Die in relevant_hit_dice:
 		var button: HitDieSelectionButton = _hit_die_selection_button.instantiate()
 		button.die = hit_die
+		button.display_results = display_results
+		button.save_difficulty = save_difficulty
 		all_buttons_auto_selected = all_buttons_auto_selected and hit_die.is_selected()
 		button.toggled.connect(_on_button_toggled)
 		button.changed_disabled.connect(_on_button_changed_disabled)
@@ -41,11 +43,6 @@ func select_all_available_buttons(select_buttons := true) -> void:
 	_all_button.set_pressed_no_signal(select_buttons)
 	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():
 		if not button.disabled: button.button_pressed = select_buttons
-
-func disable_buttons(save_difficulty := 0, set_to_disabled := true) -> void:
-	_all_button.disabled = true
-	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():
-		button.disable_button(save_difficulty, set_to_disabled)
 
 func get_selected_dice() -> Array[Die]:
 	var selected_dice: Array[Die] = [ ]

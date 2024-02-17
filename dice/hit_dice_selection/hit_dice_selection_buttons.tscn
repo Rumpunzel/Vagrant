@@ -1,18 +1,18 @@
 [gd_scene load_steps=8 format=3 uid="uid://deodwapi67ltg"]
 
-[ext_resource type="Script" path="res://dice/hit_dice_selection/hit_dice_selection_buttons.gd" id="1_atjgv"]
-[ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://dice/hit_dice_selection/hit_dice_selection_button_group.tscn" id="2_neave"]
-[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/resources/d4.tres" id="3_hfwj6"]
-[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/resources/d6.tres" id="4_ogiww"]
-[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/resources/d8.tres" id="5_37k4a"]
-[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/resources/d10.tres" id="6_4l8ue"]
-[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/resources/d12.tres" id="7_hro67"]
+[ext_resource type="Script" path="res://dice/hit_dice_selection/hit_dice_selection_buttons.gd" id="1_0p7wt"]
+[ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://dice/hit_dice_selection/hit_dice_selection_button_group.tscn" id="2_3dl60"]
+[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/resources/d4.tres" id="3_e11wd"]
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/resources/d6.tres" id="4_apfyf"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/resources/d8.tres" id="5_7syyt"]
+[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/resources/d10.tres" id="6_hwnf6"]
+[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/resources/d12.tres" id="7_4nsxi"]
 
 [node name="HitDiceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_hit_dice_buttons")]
 offset_right = 238.0
 offset_bottom = 125.0
 size_flags_vertical = 3
-script = ExtResource("1_atjgv")
+script = ExtResource("1_0p7wt")
 _hit_dice_buttons = NodePath("MarginContainer/HitDiceButtons")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -22,22 +22,22 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="d4" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+[node name="d4" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_3dl60")]
 layout_mode = 2
-hit_die_type = ExtResource("3_hfwj6")
+hit_die_type = ExtResource("3_e11wd")
 
-[node name="d6" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+[node name="d6" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_3dl60")]
 layout_mode = 2
-hit_die_type = ExtResource("4_ogiww")
+hit_die_type = ExtResource("4_apfyf")
 
-[node name="d8" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+[node name="d8" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_3dl60")]
 layout_mode = 2
-hit_die_type = ExtResource("5_37k4a")
+hit_die_type = ExtResource("5_7syyt")
 
-[node name="d10" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+[node name="d10" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_3dl60")]
 layout_mode = 2
-hit_die_type = ExtResource("6_4l8ue")
+hit_die_type = ExtResource("6_hwnf6")
 
-[node name="d12" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
+[node name="d12" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_3dl60")]
 layout_mode = 2
-hit_die_type = ExtResource("7_hro67")
+hit_die_type = ExtResource("7_4nsxi")

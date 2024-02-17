@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_fnfma"]
 [ext_resource type="Script" path="res://character_sheet/character_sheet.gd" id="1_uqhlh"]
 [ext_resource type="PackedScene" uid="uid://dgk1ipqq2uypw" path="res://character_sheet/attributes.tscn" id="3_hgrxd"]
-[ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://dice/hit_dice_selection/hit_dice_selection_buttons.tscn" id="4_2b7sg"]
+[ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://dice/hit_dice_selection/hit_dice_selection_buttons.tscn" id="4_gaha4"]
 
 [node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_attributes", "_hit_dice")]
 offset_right = 412.0
@@ -48,7 +48,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HitDice" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_2b7sg")]
+[node name="HitDice" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
 unique_name_in_owner = true
 layout_mode = 2
 

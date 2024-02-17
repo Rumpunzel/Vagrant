@@ -4,6 +4,11 @@ extends Button
 signal changed_disabled(disabled: bool)
 signal changed_button_mask(button_mask: int)
 
+enum DisplayResults {
+	NEVER,
+	ALWAYS,
+}
+
 var die: Die :
 	set(new_die):
 		if new_die == die: return
@@ -17,15 +22,18 @@ var die: Die :
 			die.rolled.connect(_on_die_changed)
 			die.state_changed.connect(_on_die_save_selection_changed)
 
-func disable_button(save_difficulty := 0, set_to_disabled := true) -> void:
-	_set_inactive(set_to_disabled)
-	if not button_pressed: return
-	text = "%d" % die.result if set_to_disabled else ""
-	_set_font_colors(die.get_die_color(save_difficulty))
+var display_results: DisplayResults = DisplayResults.NEVER
+var save_difficulty := 0
 
 func _set_inactive(set_inactive := true) -> void:
 	button_mask = 0 if set_inactive else MOUSE_BUTTON_MASK_LEFT
 	changed_button_mask.emit(button_mask)
+	if not set_inactive:
+		text = ""
+		_remove_font_colors()
+	elif display_results and button_pressed:
+		text = "%d" % die.result
+		_set_font_colors(die.get_die_color(save_difficulty))
 
 func _set_font_colors(color: Color) -> void:
 	add_theme_color_override("font_color", color)
