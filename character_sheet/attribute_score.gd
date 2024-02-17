@@ -4,7 +4,7 @@ extends HBoxContainer
 
 @export_group("Configuration")
 @export var _descriptor: Label
-@export var _score: SpinBox
+@export var _score: Label
 
 var attribute: CharacterAttribute :
 	set(new_attribute):
@@ -14,4 +14,4 @@ var attribute: CharacterAttribute :
 var score: int :
 	set(new_score):
 		score = new_score
-		_score.value = score
+		_score.text = "%d" % score

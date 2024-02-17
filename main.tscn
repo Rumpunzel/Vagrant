@@ -1,24 +1,16 @@
-[gd_scene load_steps=8 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=7 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_d4koy"]
-[ext_resource type="Texture2D" uid="uid://6jlxmsm0ehfm" path="res://portraits/shadowheart.jpg" id="3_4ccpw"]
 [ext_resource type="PackedScene" uid="uid://b31f2ie37gneq" path="res://characters/eleanor.tscn" id="3_7naep"]
 [ext_resource type="Script" path="res://character_sheet/character_sheets.gd" id="4_houmb"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/story.tscn" id="5_5hhyh"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://character_sheet/character_sheet.tscn" id="6_wwv7i"]
-[ext_resource type="PackedScene" uid="uid://dseu72gbkxh64" path="res://story/dice_log.tscn" id="7_ng1n7"]
+[ext_resource type="PackedScene" uid="uid://dseu72gbkxh64" path="res://dice/dice_log/dice_log.tscn" id="7_ng1n7"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_d4koy")
 
 [node name="Eleanor" parent="." instance=ExtResource("3_7naep")]
-_portrait = ExtResource("3_4ccpw")
-_strength = 4
-_agility = 11
-_constitution = 11
-_intelligence = 3
-_will = 5
-_charisma = 4
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
