@@ -1,0 +1,85 @@
+[gd_scene load_steps=9 format=3 uid="uid://l8n866i755ja"]
+
+[ext_resource type="Shader" path="res://story/background.gdshader" id="1_vtw0o"]
+[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://landscapes/ruin.jpg" id="2_p31bb"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_36674"]
+shader = ExtResource("1_vtw0o")
+shader_parameter/size = 12.2614
+
+[sub_resource type="Animation" id="Animation_7ye6i"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [4.0]
+}
+
+[sub_resource type="Animation" id="Animation_sveo7"]
+resource_name = "background_shimmer"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [16.0, 10.0, 16.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_if8sh"]
+_data = {
+"RESET": SubResource("Animation_7ye6i"),
+"background_shimmer": SubResource("Animation_sveo7")
+}
+
+[sub_resource type="Gradient" id="Gradient_vew8o"]
+colors = PackedColorArray(0, 0, 0, 0.501961, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_uifae"]
+gradient = SubResource("Gradient_vew8o")
+width = 256
+height = 256
+fill_from = Vector2(0.5, 1)
+fill_to = Vector2(0.6, 0.4)
+metadata/_snap_enabled = true
+
+[node name="Stage" type="CanvasLayer"]
+layer = -100
+
+[node name="Background" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_36674")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_p31bb")
+stretch_mode = 6
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Background"]
+libraries = {
+"": SubResource("AnimationLibrary_if8sh")
+}
+speed_scale = 0.05
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_uifae")
+
+[connection signal="ready" from="Background/AnimationPlayer" to="Background/AnimationPlayer" method="play" binds= [&"background_shimmer"]]

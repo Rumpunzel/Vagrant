@@ -1,13 +1,12 @@
-[gd_scene load_steps=17 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=10 format=3 uid="uid://coh7y85ggx45i"]
 
-[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection.tscn" id="1_0khqd"]
+[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://dice/hit_dice_selection/hit_dice_selection.tscn" id="1_0khqd"]
 [ext_resource type="FontFile" uid="uid://ddmsny5phxlhs" path="res://fonts/grenze_gotisch/static/GrenzeGotisch-SemiBold.ttf" id="1_4vd28"]
-[ext_resource type="Script" path="res://story/hit_dice_selection_popup.gd" id="4_ohh58"]
+[ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage.tscn" id="1_ott02"]
+[ext_resource type="Script" path="res://dice/hit_dice_selection/hit_dice_selection_popup.gd" id="4_ohh58"]
 [ext_resource type="Script" path="res://story/pages/dialog_decision.gd" id="4_vqe5n"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="5_8kq5p"]
-[ext_resource type="Shader" path="res://story/background.gdshader" id="6_36qx3"]
 [ext_resource type="Script" path="res://story/pages/story_decision.gd" id="6_pao4x"]
-[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://landscapes/ruin.jpg" id="6_ujpbc"]
 
 [sub_resource type="Resource" id="Resource_8omh5"]
 script = ExtResource("6_pao4x")
@@ -21,58 +20,6 @@ script = ExtResource("6_pao4x")
 description = "Return to the beach."
 difficulty = 0
 details = ""
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_36674"]
-shader = ExtResource("6_36qx3")
-shader_parameter/size = 4.0
-
-[sub_resource type="Animation" id="Animation_7ye6i"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:material:shader_parameter/size")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [4.0]
-}
-
-[sub_resource type="Animation" id="Animation_sveo7"]
-resource_name = "background_shimmer"
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:material:shader_parameter/size")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5, 1),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [16.0, 10.0, 16.0]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_if8sh"]
-_data = {
-"RESET": SubResource("Animation_7ye6i"),
-"background_shimmer": SubResource("Animation_sveo7")
-}
-
-[sub_resource type="Gradient" id="Gradient_vew8o"]
-colors = PackedColorArray(0, 0, 0, 0.501961, 0, 0, 0, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_uifae"]
-gradient = SubResource("Gradient_vew8o")
-width = 256
-height = 256
-fill_from = Vector2(0.5, 1)
-fill_to = Vector2(0.6, 0.4)
-metadata/_snap_enabled = true
 
 [node name="Story" type="VBoxContainer"]
 anchors_preset = 15
@@ -88,12 +35,10 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 32
 
+[node name="Stage" parent="." instance=ExtResource("1_ott02")]
+
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 4
 
 [node name="Title" type="Label" parent="MarginContainer"]
 layout_mode = 2
@@ -143,8 +88,8 @@ horizontal_scroll_mode = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer3/MarginContainer/ScrollContainer"]
 layout_mode = 2
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_bottom = 4
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = 0
 
 [node name="Choices" type="VBoxContainer" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer"]
 layout_mode = 2
@@ -213,33 +158,6 @@ offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = -100
-
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Background" type="TextureRect" parent="CanvasLayer/MarginContainer"]
-material = SubResource("ShaderMaterial_36674")
-layout_mode = 2
-texture = ExtResource("6_ujpbc")
-stretch_mode = 6
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer/MarginContainer/Background"]
-libraries = {
-"": SubResource("AnimationLibrary_if8sh")
-}
-speed_scale = 0.05
-
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/MarginContainer"]
-layout_mode = 2
-texture = SubResource("GradientTexture2D_uifae")
-
 [connection signal="close_requested" from="HitDiceSelectionWindow" to="HitDiceSelectionWindow" method="_on_close_requested"]
 [connection signal="confirmed" from="HitDiceSelectionWindow/HitDiceSelection" to="HitDiceSelectionWindow" method="_on_hit_dice_selection_confirmed"]
 [connection signal="dice_selection_configured" from="HitDiceSelectionWindow/HitDiceSelection" to="HitDiceSelectionWindow" method="_on_dice_selection_configured"]
-[connection signal="ready" from="CanvasLayer/MarginContainer/Background/AnimationPlayer" to="CanvasLayer/MarginContainer/Background/AnimationPlayer" method="play" binds= [&"background_shimmer"]]
