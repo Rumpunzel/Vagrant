@@ -1,11 +1,13 @@
-[gd_scene load_steps=9 format=3 uid="uid://l8n866i755ja"]
+[gd_scene load_steps=11 format=3 uid="uid://l8n866i755ja"]
 
-[ext_resource type="Shader" path="res://story/background.gdshader" id="1_vtw0o"]
-[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://landscapes/ruin.jpg" id="2_p31bb"]
+[ext_resource type="Script" path="res://stage/stage.gd" id="1_gw8ty"]
+[ext_resource type="Shader" path="res://story/background.gdshader" id="2_sjp73"]
+[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://landscapes/ruin.jpg" id="3_27881"]
+[ext_resource type="AudioStream" uid="uid://b3ynhoh2yis3n" path="res://sfx/ambience/gentle-ocean-and-birdsong-24068.mp3" id="4_auwyo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_36674"]
-shader = ExtResource("1_vtw0o")
-shader_parameter/size = 12.2614
+shader = ExtResource("2_sjp73")
+shader_parameter/size = 4.0
 
 [sub_resource type="Animation" id="Animation_7ye6i"]
 length = 0.001
@@ -57,6 +59,7 @@ metadata/_snap_enabled = true
 
 [node name="Stage" type="CanvasLayer"]
 layer = -100
+script = ExtResource("1_gw8ty")
 
 [node name="Background" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_36674")
@@ -65,7 +68,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_p31bb")
+texture = ExtResource("3_27881")
 stretch_mode = 6
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Background"]
@@ -81,5 +84,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_uifae")
+
+[node name="Ambience" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_auwyo")
+autoplay = true
+bus = &"Ambience"
 
 [connection signal="ready" from="Background/AnimationPlayer" to="Background/AnimationPlayer" method="play" binds= [&"background_shimmer"]]

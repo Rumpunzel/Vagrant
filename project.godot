@@ -21,6 +21,7 @@ Rules="*res://rules.gd"
 DiceRoller="*res://dice/dice_roller.tscn"
 Events="*res://events.gd"
 Protagonist="*res://characters/protagonist.tscn"
+Stage="*res://stage/stage.tscn"
 
 [display]
 
