@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yiscdc14pxtb"
-path="res://.godot/imported/swamp.png-c0909b582f2affff74c7e6dfa2c86c1d.ctex"
+path="res://.godot/imported/dark_forest.png-7cbc17d39b11d28e4ecfdea29fc1d2a6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://landscapes/swamp.png"
-dest_files=["res://.godot/imported/swamp.png-c0909b582f2affff74c7e6dfa2c86c1d.ctex"]
+source_file="res://landscapes/dark_forest.png"
+dest_files=["res://.godot/imported/dark_forest.png-7cbc17d39b11d28e4ecfdea29fc1d2a6.ctex"]
 
 [params]
 
