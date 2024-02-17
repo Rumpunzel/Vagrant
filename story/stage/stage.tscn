@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://l8n866i755ja"]
 
-[ext_resource type="Script" path="res://stage/stage.gd" id="1_gw8ty"]
-[ext_resource type="Shader" path="res://story/background.gdshader" id="2_sjp73"]
+[ext_resource type="Script" path="res://story/stage/stage.gd" id="1_gw8ty"]
+[ext_resource type="Shader" path="res://story/stage/background.gdshader" id="2_sjp73"]
 [ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://landscapes/ruin.jpg" id="3_27881"]
 [ext_resource type="AudioStream" uid="uid://b3ynhoh2yis3n" path="res://sfx/ambience/gentle-ocean-and-birdsong-24068.mp3" id="4_auwyo"]
 
@@ -57,9 +57,11 @@ fill_from = Vector2(0.5, 1)
 fill_to = Vector2(0.6, 0.4)
 metadata/_snap_enabled = true
 
-[node name="Stage" type="CanvasLayer"]
+[node name="Stage" type="CanvasLayer" node_paths=PackedStringArray("_background", "_ambience")]
 layer = -100
 script = ExtResource("1_gw8ty")
+_background = NodePath("Background")
+_ambience = NodePath("Ambience")
 
 [node name="Background" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_36674")
@@ -78,7 +80,7 @@ libraries = {
 }
 speed_scale = 0.05
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="Gradient" type="TextureRect" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

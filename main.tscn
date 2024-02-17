@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=7 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_d4koy"]
+[ext_resource type="Resource" uid="uid://dgwh5n48px17a" path="res://adventures/locations/beach.tres" id="2_vigra"]
 [ext_resource type="Script" path="res://character_sheet/character_sheets.gd" id="4_houmb"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/story.tscn" id="5_5hhyh"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://character_sheet/character_sheet.tscn" id="6_wwv7i"]
@@ -8,6 +9,7 @@
 
 [node name="Main" type="Node"]
 script = ExtResource("1_d4koy")
+starting_location = ExtResource("2_vigra")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15

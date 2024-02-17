@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=10 format=3 uid="uid://coh7y85ggx45i"]
 
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://dice/hit_dice_selection/hit_dice_selection.tscn" id="1_0khqd"]
 [ext_resource type="FontFile" uid="uid://ddmsny5phxlhs" path="res://fonts/grenze_gotisch/static/GrenzeGotisch-SemiBold.ttf" id="1_4vd28"]
+[ext_resource type="Script" path="res://story/story.gd" id="1_cts4e"]
 [ext_resource type="Script" path="res://dice/hit_dice_selection/hit_dice_selection_popup.gd" id="4_ohh58"]
 [ext_resource type="Script" path="res://story/pages/dialog_decision.gd" id="4_vqe5n"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="5_8kq5p"]
@@ -20,7 +21,7 @@ description = "Return to the beach."
 difficulty = 0
 details = ""
 
-[node name="Story" type="VBoxContainer"]
+[node name="Story" type="VBoxContainer" node_paths=PackedStringArray("_title")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -33,6 +34,8 @@ grow_vertical = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 32
+script = ExtResource("1_cts4e")
+_title = NodePath("MarginContainer/Title")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
