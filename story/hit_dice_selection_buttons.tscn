@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" path="res://story/hit_dice_selection_buttons.gd" id="1_atjgv"]
 [ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://story/hit_dice_selection_button_group.tscn" id="2_neave"]
-[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/d4.tres" id="3_1foph"]
-[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/d6.tres" id="4_2w341"]
-[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/d8.tres" id="5_qhs7t"]
-[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/d10.tres" id="6_7typc"]
-[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/d12.tres" id="7_2rcfj"]
+[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/resources/d4.tres" id="3_hfwj6"]
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/resources/d6.tres" id="4_ogiww"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/resources/d8.tres" id="5_37k4a"]
+[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/resources/d10.tres" id="6_4l8ue"]
+[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/resources/d12.tres" id="7_hro67"]
 
 [node name="HitDiceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_hit_dice_buttons")]
 offset_right = 238.0
@@ -28,20 +28,20 @@ layout_mode = 2
 
 [node name="d4" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
 layout_mode = 2
-hit_die_type = ExtResource("3_1foph")
+hit_die_type = ExtResource("3_hfwj6")
 
 [node name="d6" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
 layout_mode = 2
-hit_die_type = ExtResource("4_2w341")
+hit_die_type = ExtResource("4_ogiww")
 
 [node name="d8" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
 layout_mode = 2
-hit_die_type = ExtResource("5_qhs7t")
+hit_die_type = ExtResource("5_37k4a")
 
 [node name="d10" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
 layout_mode = 2
-hit_die_type = ExtResource("6_7typc")
+hit_die_type = ExtResource("6_4l8ue")
 
 [node name="d12" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_neave")]
 layout_mode = 2
-hit_die_type = ExtResource("7_2rcfj")
+hit_die_type = ExtResource("7_hro67")
