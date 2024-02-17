@@ -1,4 +1,5 @@
 @tool
+class_name CharacterAttributesPanel
 extends VerticalGridContainer
 
 @export var _attribute_score: PackedScene

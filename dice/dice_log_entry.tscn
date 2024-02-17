@@ -2,12 +2,13 @@
 
 [ext_resource type="Script" path="res://dice/dice_log_entry.gd" id="1_la8xk"]
 
-[node name="DiceLogEntry" type="PanelContainer"]
+[node name="DiceLogEntry" type="PanelContainer" node_paths=PackedStringArray("_entry")]
 offset_left = 16.0
 offset_top = 4.0
 offset_right = 130.0
 offset_bottom = 28.0
 script = ExtResource("1_la8xk")
+_entry = NodePath("MarginContainer/Entry")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2

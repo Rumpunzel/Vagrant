@@ -3,11 +3,13 @@
 [ext_resource type="Script" path="res://story/hit_dice_selection_button_group.gd" id="2_nci2h"]
 [ext_resource type="PackedScene" uid="uid://cfnlwcs3oai0c" path="res://story/hit_die_selection_button.tscn" id="3_6gpjh"]
 
-[node name="HitDiceSelectionButtonGroup" type="VBoxContainer"]
+[node name="HitDiceSelectionButtonGroup" type="VBoxContainer" node_paths=PackedStringArray("_buttons", "_all_button")]
 offset_right = 44.0
 offset_bottom = 145.0
 size_flags_horizontal = 3
 script = ExtResource("2_nci2h")
+_buttons = NodePath("Buttons")
+_all_button = NodePath("AllButton")
 _hit_die_selection_button = ExtResource("3_6gpjh")
 
 [node name="Buttons" type="VBoxContainer" parent="."]

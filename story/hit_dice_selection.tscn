@@ -5,11 +5,18 @@
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection_buttons.tscn" id="3_owutq"]
 [ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log_entry.tscn" id="9_v84ty"]
 
-[node name="HitDiceSelection" type="PanelContainer"]
+[node name="HitDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_hit_dice_selection_buttons", "_buttons", "_all_in_button", "_ok_button", "_dice_log_entry")]
 offset_right = 284.0
 offset_bottom = 267.0
 size_flags_horizontal = 3
 script = ExtResource("1_ovbfu")
+_portrait = NodePath("Portrait")
+_description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Description")
+_hit_dice_selection_buttons = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HitDiceSelectionButtons")
+_buttons = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons")
+_all_in_button = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/AllInButton")
+_ok_button = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/OKButton")
+_dice_log_entry = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/DiceLogEntry")
 
 [node name="Portrait" type="TextureRect" parent="."]
 unique_name_in_owner = true

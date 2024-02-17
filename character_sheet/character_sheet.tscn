@@ -5,10 +5,14 @@
 [ext_resource type="PackedScene" uid="uid://dgk1ipqq2uypw" path="res://character_sheet/attributes.tscn" id="3_hgrxd"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection_buttons.tscn" id="4_2b7sg"]
 
-[node name="CharacterSheet" type="PanelContainer"]
+[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_attributes", "_hit_dice")]
 offset_right = 412.0
 offset_bottom = 412.0
 script = ExtResource("1_uqhlh")
+_portrait = NodePath("Portrait")
+_name = NodePath("MarginContainer/VBoxContainer/Name")
+_attributes = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Attributes")
+_hit_dice = NodePath("MarginContainer/VBoxContainer/HitDice")
 
 [node name="Portrait" type="TextureRect" parent="."]
 unique_name_in_owner = true

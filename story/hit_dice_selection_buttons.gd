@@ -1,4 +1,8 @@
+class_name HitDiceSelectionButtons
 extends PanelContainer
+
+@export_group("Configuration")
+@export var _hit_dice_buttons: Container
 
 func update_hit_dice(available_hit_dice: Array[Die], attribute_score := 0) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():
@@ -19,4 +23,4 @@ func get_selected_dice() -> Array[Die]:
 	return selected_dice
 
 func _get_hit_dice_button_groups() -> Array[Node]:
-	return %HitDiceButtons.get_children()
+	return _hit_dice_buttons.get_children()

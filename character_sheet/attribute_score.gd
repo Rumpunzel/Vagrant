@@ -2,12 +2,16 @@
 class_name CharacterSheetAttributeScore
 extends HBoxContainer
 
+@export_group("Configuration")
+@export var _descriptor: Label
+@export var _score: SpinBox
+
 var attribute: CharacterAttribute :
 	set(new_attribute):
 		attribute = new_attribute
-		%Descriptor.text = attribute.descriptor
+		_descriptor.text = attribute.descriptor
 
 var score: int :
 	set(new_score):
 		score = new_score
-		%Score.value = score
+		_score.value = score

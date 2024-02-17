@@ -3,6 +3,9 @@ extends Node
 signal die_rolled(die: Die)
 signal save_rolled(save_result: SaveResult)
 
+@export_group("Configuration")
+@export var _dice_roll_sounds: AudioStreamPlayer
+
 func roll_die(die: Die) -> Die:
 	die.roll()
 	die_rolled.emit(die)
@@ -40,4 +43,4 @@ func _on_save_rolled(_save_result: SaveResult) -> void:
 	_play_dice_roll_sound()
 
 func _play_dice_roll_sound() -> void:
-	%DiceRollSounds.play()
+	_dice_roll_sounds.play()

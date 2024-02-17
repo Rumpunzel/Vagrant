@@ -14,8 +14,9 @@ stream_1/weight = 1.0
 stream_2/stream = ExtResource("4_1dxds")
 stream_2/weight = 1.0
 
-[node name="DiceRoller" type="Node"]
+[node name="DiceRoller" type="Node" node_paths=PackedStringArray("_dice_roll_sounds")]
 script = ExtResource("1_5xwht")
+_dice_roll_sounds = NodePath("DiceRollSounds")
 
 [node name="DiceRollSounds" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true
