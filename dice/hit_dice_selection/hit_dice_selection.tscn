@@ -5,18 +5,17 @@
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://dice/hit_dice_selection/hit_dice_selection_buttons.tscn" id="3_jl5yh"]
 [ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log/dice_log_entry.tscn" id="4_5n6kt"]
 
-[node name="HitDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_hit_dice_selection_buttons", "_buttons", "_all_in_button", "_ok_button", "_dice_log_entry")]
-offset_right = 284.0
-offset_bottom = 267.0
+[node name="HitDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_hit_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_entry")]
+offset_right = 422.0
+offset_bottom = 236.0
 size_flags_horizontal = 3
 script = ExtResource("1_ogtti")
 _portrait = NodePath("Portrait")
-_description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Description")
-_hit_dice_selection_buttons = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HitDiceSelectionButtons")
-_buttons = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons")
-_all_in_button = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/AllInButton")
-_ok_button = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/OKButton")
-_dice_log_entry = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/DiceLogEntry")
+_description = NodePath("MarginContainer/GridContainer/PanelContainer/MarginContainer/ScrollContainer/Description")
+_hit_dice_selection_buttons = NodePath("MarginContainer/GridContainer/HitDiceSelectionButtons")
+_all_in_button = NodePath("MarginContainer/GridContainer/HBoxContainer/AllInButton")
+_ok_button = NodePath("MarginContainer/GridContainer/HBoxContainer/OKButton")
+_dice_log_entry = NodePath("MarginContainer/GridContainer/DiceLogEntry")
 
 [node name="Portrait" type="TextureRect" parent="."]
 unique_name_in_owner = true
@@ -32,58 +31,56 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="GridContainer" type="GridContainer" parent="MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 16
+columns = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/GridContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
-unique_name_in_owner = true
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/GridContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-text = "Description"
-fit_content = true
+follow_focus = true
+horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HitDiceSelectionButtons" parent="MarginContainer/VBoxContainer/VBoxContainer" instance=ExtResource("3_jl5yh")]
-unique_name_in_owner = true
-layout_mode = 2
-_display_results = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Buttons" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="Description" type="RichTextLabel" parent="MarginContainer/GridContainer/PanelContainer/MarginContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "Description"
+fit_content = true
 
-[node name="AllInButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons"]
+[node name="HitDiceSelectionButtons" parent="MarginContainer/GridContainer" instance=ExtResource("3_jl5yh")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+_display_results = 1
+
+[node name="DiceLogEntry" parent="MarginContainer/GridContainer" instance=ExtResource("4_5n6kt")]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AllInButton" type="Button" parent="MarginContainer/GridContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 text = "ALL IN!"
 
-[node name="OKButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons"]
+[node name="OKButton" type="Button" parent="MarginContainer/GridContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Roll Dice!"
 
-[node name="DiceLogEntry" parent="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource("4_5n6kt")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-
-[connection signal="toggled" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/AllInButton" to="MarginContainer/VBoxContainer/VBoxContainer/HitDiceSelectionButtons" method="select_all_available_buttons"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Buttons/OKButton" to="." method="_on_confirmed"]
+[connection signal="toggled" from="MarginContainer/GridContainer/HBoxContainer/AllInButton" to="MarginContainer/GridContainer/HitDiceSelectionButtons" method="select_all_available_buttons"]
+[connection signal="pressed" from="MarginContainer/GridContainer/HBoxContainer/OKButton" to="." method="_on_confirmed"]

@@ -1,7 +1,7 @@
 class_name CharacterProfile
 extends Resource
 
-@export_placeholder("Name") var name := ""
+@export_placeholder("Name") var name: String
 @export var portrait: Texture = preload("res://portraits/knight.jpeg")
 
 @export_group("Attributes")
