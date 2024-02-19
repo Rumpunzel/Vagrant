@@ -1,27 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=3 format=3 uid="uid://coh7y85ggx45i"]
 
-[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://dice/hit_dice_selection/hit_dice_selection.tscn" id="1_0khqd"]
-[ext_resource type="FontFile" uid="uid://ddmsny5phxlhs" path="res://fonts/grenze_gotisch/static/GrenzeGotisch-SemiBold.ttf" id="1_4vd28"]
 [ext_resource type="Script" path="res://story/story.gd" id="1_cts4e"]
-[ext_resource type="Script" path="res://dice/hit_dice_selection/hit_dice_selection_popup.gd" id="4_ohh58"]
-[ext_resource type="Script" path="res://story/pages/dialog_decision.gd" id="4_vqe5n"]
-[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="5_8kq5p"]
-[ext_resource type="Script" path="res://story/pages/story_decision.gd" id="6_pao4x"]
+[ext_resource type="PackedScene" uid="uid://cy2ymcfk2tejn" path="res://story/story_entry.tscn" id="2_x8uvv"]
 
-[sub_resource type="Resource" id="Resource_8omh5"]
-script = ExtResource("6_pao4x")
-description = "Hide in the shipwreck."
-attribute = ExtResource("5_8kq5p")
-difficulty = 5
-details = "Shipwreck stuff."
-
-[sub_resource type="Resource" id="Resource_21ath"]
-script = ExtResource("6_pao4x")
-description = "Return to the beach."
-difficulty = 0
-details = ""
-
-[node name="Story" type="VBoxContainer" node_paths=PackedStringArray("_title")]
+[node name="Story" type="VBoxContainer" node_paths=PackedStringArray("_title", "_sub_title")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -35,129 +17,65 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 32
 script = ExtResource("1_cts4e")
-_title = NodePath("MarginContainer/Title")
+_title = NodePath("MarginContainer/VBoxContainer/Title")
+_sub_title = NodePath("MarginContainer/VBoxContainer/Subtitle")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
+
+[node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+focus_mode = 2
 theme_override_constants/shadow_outline_size = 4
-theme_override_fonts/font = ExtResource("1_4vd28")
-theme_override_font_sizes/font_size = 64
-text = "Title"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PanelContainer2" type="PanelContainer" parent="."]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer2"]
-layout_mode = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 24
-
-[node name="Description" type="RichTextLabel" parent="PanelContainer2/MarginContainer"]
-layout_mode = 2
-size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true
-text = "Description"
+text = "[center]Title[/center]"
+fit_content = true
+scroll_active = false
+selection_enabled = true
 
-[node name="PanelContainer3" type="PanelContainer" parent="."]
+[node name="Subtitle" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+focus_mode = 2
+theme_override_colors/default_color = Color(0.827, 0.827, 0.827, 1)
+bbcode_enabled = true
+text = "[center]Subtitle - Details[/center]"
+fit_content = true
+scroll_active = false
+selection_enabled = true
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer3"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 24
 
-[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer3/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
-size_flags_vertical = 3
 follow_focus = true
 horizontal_scroll_mode = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer3/MarginContainer/ScrollContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 0
-theme_override_constants/margin_right = 0
-
-[node name="Choices" type="VBoxContainer" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer/Choices"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 24
+
+[node name="StoryEntry" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_x8uvv")]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer/Choices/HBoxContainer"]
-layout_mode = 2
-text = "1."
-
-[node name="Button" type="Button" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer/Choices/HBoxContainer"]
-layout_mode = 2
-text = "[SHADOW] Hide in the shipwreck."
-flat = true
-alignment = 0
-script = ExtResource("4_vqe5n")
-story_decision = SubResource("Resource_8omh5")
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer/Choices"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer/Choices/HBoxContainer2"]
-layout_mode = 2
-text = "2."
-
-[node name="Button" type="Button" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer/Choices/HBoxContainer2"]
-layout_mode = 2
-text = "[Eleanor][FLESH] Break down the door."
-flat = true
-alignment = 0
-script = ExtResource("4_vqe5n")
-story_decision = SubResource("Resource_21ath")
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer/Choices"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer/Choices/HBoxContainer3"]
-layout_mode = 2
-text = "3."
-
-[node name="Button" type="Button" parent="PanelContainer3/MarginContainer/ScrollContainer/MarginContainer/Choices/HBoxContainer3"]
-layout_mode = 2
-text = "Option3"
-flat = true
-alignment = 0
-script = ExtResource("4_vqe5n")
-
-[node name="HitDiceSelectionWindow" type="Window" parent="."]
-title = "Select Hide Dice"
-position = Vector2i(720, 440)
-size = Vector2i(420, 423)
-visible = false
-wrap_controls = true
-transient = true
-script = ExtResource("4_ohh58")
-
-[node name="HitDiceSelection" parent="HitDiceSelectionWindow" instance=ExtResource("1_0khqd")]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 0.0
-offset_bottom = 0.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[connection signal="close_requested" from="HitDiceSelectionWindow" to="HitDiceSelectionWindow" method="_on_close_requested"]
-[connection signal="confirmed" from="HitDiceSelectionWindow/HitDiceSelection" to="HitDiceSelectionWindow" method="_on_hit_dice_selection_confirmed"]
-[connection signal="dice_selection_configured" from="HitDiceSelectionWindow/HitDiceSelection" to="HitDiceSelectionWindow" method="_on_dice_selection_configured"]
+[connection signal="hit_dice_selection_added" from="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/StoryEntry" to="PanelContainer/MarginContainer/ScrollContainer" method="ensure_control_visible"]
