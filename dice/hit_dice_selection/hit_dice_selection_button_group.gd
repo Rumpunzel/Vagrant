@@ -8,7 +8,7 @@ extends VBoxContainer
 
 @export_group("Configuration")
 @export var _buttons: Container
-@export var _all_button: Button
+@export var _all_button: DisplayButton
 @export var _hit_die_selection_button: PackedScene
 
 func update_hit_dice(available_hit_dice: Array[Die], display_results: HitDieSelectionButton.DisplayResults, save_difficulty := 0) -> void:
@@ -19,7 +19,7 @@ func update_hit_dice(available_hit_dice: Array[Die], display_results: HitDieSele
 	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():
 		button.toggled.disconnect(_on_button_toggled)
 		button.changed_disabled.disconnect(_on_button_changed_disabled)
-		button.changed_button_mask.disconnect(_on_button_changed_button_mask)
+		button.activation_changed.disconnect(_on_button_activation_changed)
 		_buttons.remove_child(button)
 		button.queue_free()
 	
@@ -31,12 +31,12 @@ func update_hit_dice(available_hit_dice: Array[Die], display_results: HitDieSele
 		all_buttons_auto_selected = all_buttons_auto_selected and hit_die.is_selected()
 		button.toggled.connect(_on_button_toggled)
 		button.changed_disabled.connect(_on_button_changed_disabled)
-		button.changed_button_mask.connect(_on_button_changed_button_mask)
+		button.activation_changed.connect(_on_button_activation_changed)
 		_buttons.add_child(button)
 	
 	_on_button_toggled()
 	_on_button_changed_disabled()
-	_on_button_changed_button_mask()
+	_on_button_activation_changed()
 	visible = not relevant_hit_dice.is_empty()
 
 func select_all_available_buttons(select_buttons := true) -> void:
@@ -69,8 +69,8 @@ func _on_button_changed_disabled(_disabled := false) -> void:
 		all_buttons_disabled = all_buttons_disabled and button.disabled
 	_all_button.disabled = all_buttons_disabled
 
-func _on_button_changed_button_mask(_button_mask := 0) -> void:
-	var joined_button_mask := 0
+func _on_button_activation_changed(_new_status := false) -> void:
+	var all_buttons_active := true
 	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():
-		joined_button_mask = joined_button_mask | button.button_mask
-	_all_button.button_mask = joined_button_mask
+		all_buttons_active = all_buttons_active and button.active
+	_all_button.active = all_buttons_active

@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://ceb3oeu71v6e1"]
+[gd_scene load_steps=4 format=3 uid="uid://ceb3oeu71v6e1"]
 
 [ext_resource type="Script" path="res://dice/hit_dice_selection/hit_dice_selection_button_group.gd" id="2_nci2h"]
 [ext_resource type="PackedScene" uid="uid://cfnlwcs3oai0c" path="res://dice/hit_dice_selection/hit_die_selection_button.tscn" id="3_6gpjh"]
+[ext_resource type="Script" path="res://custom_nodes/control/display_button.gd" id="3_qcqnq"]
 
 [node name="HitDiceSelectionButtonGroup" type="VBoxContainer" node_paths=PackedStringArray("_buttons", "_all_button")]
 offset_right = 44.0
@@ -22,5 +23,6 @@ unique_name_in_owner = true
 layout_mode = 2
 toggle_mode = true
 text = "All"
+script = ExtResource("3_qcqnq")
 
 [connection signal="toggled" from="AllButton" to="." method="select_all_available_buttons"]
