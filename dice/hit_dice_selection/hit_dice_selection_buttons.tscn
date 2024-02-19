@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" path="res://dice/hit_dice_selection/hit_dice_selection_buttons.gd" id="1_0p7wt"]
 [ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://dice/hit_dice_selection/hit_dice_selection_button_group.tscn" id="2_3dl60"]
-[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/resources/d4.tres" id="3_e11wd"]
-[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/resources/d6.tres" id="4_apfyf"]
-[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/resources/d8.tres" id="5_7syyt"]
-[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/resources/d10.tres" id="6_hwnf6"]
-[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/resources/d12.tres" id="7_4nsxi"]
+[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/die_types/d4.tres" id="3_e11wd"]
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="4_apfyf"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="5_7syyt"]
+[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/die_types/d10.tres" id="6_hwnf6"]
+[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/die_types/d12.tres" id="7_4nsxi"]
 
 [node name="HitDiceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_hit_dice_buttons")]
 offset_right = 238.0

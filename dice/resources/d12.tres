@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="DieType" load_steps=3 format=3 uid="uid://cq2oc01qwwaei"]
-
-[ext_resource type="Texture2D" uid="uid://87t1400wcx4g" path="res://icons/dice/d12.png" id="1_cg2p3"]
-[ext_resource type="Script" path="res://dice/die_type.gd" id="1_x153c"]
-
-[resource]
-script = ExtResource("1_x153c")
-icon = ExtResource("1_cg2p3")
-faces = 12

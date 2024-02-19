@@ -24,13 +24,13 @@ func _init(new_die_type: DieType, new_result: int = 0, new_state: State = State.
 	result = new_result
 	_state = new_state
 
-func roll() -> int:
-	result = die_type.roll()
+func roll(play_sound := true) -> int:
+	result = die_type.roll(play_sound)
 	rolled.emit(self)
 	return result
 
-func roll_save(attribute_score: int) -> int:
-	result = die_type.roll()
+func roll_save(attribute_score: int, play_sound := true) -> int:
+	result = die_type.roll(play_sound)
 	if result > attribute_score: _state = State.EXHAUSTED
 	rolled.emit(self)
 	return result

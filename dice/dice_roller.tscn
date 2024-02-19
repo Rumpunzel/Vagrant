@@ -1,26 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://mid5ol0p3rtm"]
+[gd_scene load_steps=4 format=3 uid="uid://mid5ol0p3rtm"]
 
 [ext_resource type="Script" path="res://dice/dice_roller.gd" id="1_5xwht"]
-[ext_resource type="AudioStream" uid="uid://cxpdh8asvpth4" path="res://sfx/dice/268238-DICE_on_Hard_Wood-Throw_and_Roll_-Metal-2_Two_Dice-v1.wav" id="2_ics8y"]
-[ext_resource type="AudioStream" uid="uid://73uau43jljta" path="res://sfx/dice/268257-DICE_on_Hard_Wood-Throw_and_Roll_-Standard-5_Five_Dice-v2.wav" id="3_6yh8y"]
-[ext_resource type="AudioStream" uid="uid://beiainj8rh6po" path="res://sfx/dice/488449-Organic-Material-UI-dropping-batteries-objects-on-wood-wooden-table-roll-dice-staggered.wav" id="4_1dxds"]
+[ext_resource type="Script" path="res://dice/dice_roll_sounds.gd" id="2_5dcv6"]
 
-[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_qgaf1"]
-streams_count = 3
-stream_0/stream = ExtResource("2_ics8y")
-stream_0/weight = 1.0
-stream_1/stream = ExtResource("3_6yh8y")
-stream_1/weight = 1.0
-stream_2/stream = ExtResource("4_1dxds")
-stream_2/weight = 1.0
+[sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_jr2w1"]
 
-[node name="DiceRoller" type="Node" node_paths=PackedStringArray("_dice_roll_sounds")]
+[node name="DiceRoller" type="Node"]
 script = ExtResource("1_5xwht")
-_dice_roll_sounds = NodePath("DiceRollSounds")
 
 [node name="DiceRollSounds" type="AudioStreamPlayer" parent="."]
-unique_name_in_owner = true
-stream = SubResource("AudioStreamRandomizer_qgaf1")
-
-[connection signal="die_rolled" from="." to="." method="_on_die_rolled"]
-[connection signal="save_rolled" from="." to="." method="_on_save_rolled"]
+stream = SubResource("AudioStreamPolyphonic_jr2w1")
+autoplay = true
+script = ExtResource("2_5dcv6")

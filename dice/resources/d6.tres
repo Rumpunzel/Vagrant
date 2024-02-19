@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="Dice" load_steps=3 format=3 uid="uid://clrjpyohkfypv"]
-
-[ext_resource type="Texture2D" uid="uid://p5eg3k4cdh21" path="res://icons/dice/d6.png" id="1_q6y7h"]
-[ext_resource type="Script" path="res://dice/die_type.gd" id="2_ois1k"]
-
-[resource]
-script = ExtResource("2_ois1k")
-icon = ExtResource("1_q6y7h")
-faces = 6

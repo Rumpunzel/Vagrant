@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="DieType" load_steps=6 format=3 uid="uid://clrjpyohkfypv"]
+
+[ext_resource type="Texture2D" uid="uid://p5eg3k4cdh21" path="res://icons/dice/d6.png" id="1_q6y7h"]
+[ext_resource type="AudioStream" uid="uid://cxpdh8asvpth4" path="res://sfx/dice/268238-DICE_on_Hard_Wood-Throw_and_Roll_-Metal-2_Two_Dice-v1.wav" id="2_hfnaj"]
+[ext_resource type="Script" path="res://dice/die_types/die_type.gd" id="2_ois1k"]
+[ext_resource type="AudioStream" uid="uid://ejhgyr4i4iwg" path="res://sfx/dice/zapsplat_leisure_board_game_dice_throw_roll_on_playing_board_003_37259.mp3" id="3_govek"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_8paqr"]
+streams_count = 2
+stream_0/stream = ExtResource("2_hfnaj")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("3_govek")
+stream_1/weight = 1.0
+
+[resource]
+script = ExtResource("2_ois1k")
+icon = ExtResource("1_q6y7h")
+faces = 6
+roll_sound = SubResource("AudioStreamRandomizer_8paqr")

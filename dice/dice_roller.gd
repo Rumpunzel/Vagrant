@@ -3,18 +3,15 @@ extends Node
 signal die_rolled(die: Die)
 signal save_rolled(save_result: SaveResult)
 
-@export_group("Configuration")
-@export var _dice_roll_sounds: AudioStreamPlayer
-
-func roll_die(die: Die) -> Die:
-	die.roll()
+func roll_die(die: Die, play_sound := true) -> Die:
+	die.roll(play_sound)
 	die_rolled.emit(die)
 	return die
 
-func roll_sum(dice_pool: Array[Die]) -> int:
+func roll_sum(dice_pool: Array[Die], play_sound := true) -> int:
 	var sum := 0
 	for die: Die in dice_pool:
-		sum += roll_die(die).result
+		sum += roll_die(die, play_sound).result
 	return sum
 
 func roll_save(dice_pool: Array[Die], save_request: SaveRequest) -> SaveResult:
@@ -35,12 +32,3 @@ func generate_dice_pool(d4_amount: int, d6_amount: int, d8_amount: int, d10_amou
 	dice_pool += Rules.d10.get_dice_pool(d10_amount)
 	dice_pool += Rules.d12.get_dice_pool(d12_amount)
 	return dice_pool
-
-func _on_die_rolled(_die: Die) -> void:
-	pass#_play_dice_roll_sound()
-
-func _on_save_rolled(_save_result: SaveResult) -> void:
-	_play_dice_roll_sound()
-
-func _play_dice_roll_sound() -> void:
-	_dice_roll_sounds.play()
