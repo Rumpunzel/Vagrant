@@ -1,9 +1,12 @@
-extends VBoxContainer
+extends PanelContainer
 
 signal entry_added(entry: Control)
 
+@export_group("Configuration")
 @export var _dice_log_entry: PackedScene
 @export var _dice_log_entry_group: PackedScene
+@export var _scroll_container: ScrollContainer
+@export var _log_entries: Container
 
 var _current_entry_group: DiceLogEntryGroup = null
 
@@ -17,7 +20,7 @@ func _exit_tree() -> void:
 func _on_die_rolled(die: Die) -> void:
 	var dice_log_entry: DiceLogEntry = _dice_log_entry.instantiate()
 	dice_log_entry.initialize_die_result(die)
-	add_child(dice_log_entry)
+	_log_entries.add_child(dice_log_entry)
 
 func _on_save_rolled(save_result: SaveResult) -> void:
 	var dice_log_entry: DiceLogEntry = _dice_log_entry.instantiate()
@@ -27,10 +30,11 @@ func _on_save_rolled(save_result: SaveResult) -> void:
 		_current_entry_group = _dice_log_entry_group.instantiate()
 		_current_entry_group.character = save_result.character
 		_current_entry_group.entry_added.connect(_on_entry_entered_tree)
-		add_child(_current_entry_group)
+		_log_entries.add_child(_current_entry_group)
 	_current_entry_group.add_entry(save_result)
 
 func _on_entry_entered_tree(node: Node) -> void:
 	if not node is Control: return
-	await await get_tree().process_frame
+	await get_tree().process_frame
+	_scroll_container.ensure_control_visible(node)
 	entry_added.emit(node)
