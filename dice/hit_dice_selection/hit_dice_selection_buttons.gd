@@ -14,6 +14,10 @@ func select_all_available_buttons(select_buttons := true) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():
 		button_group.select_all_available_buttons(select_buttons)
 
+func disable_buttons(set_to_disabled := true) -> void:
+	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():
+		button_group.disable_buttons(set_to_disabled)
+
 func get_selected_dice() -> Array[Die]:
 	var selected_dice: Array[Die] = [ ]
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():

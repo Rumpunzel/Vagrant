@@ -44,6 +44,10 @@ func select_all_available_buttons(select_buttons := true) -> void:
 	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():
 		if not button.disabled: button.button_pressed = select_buttons
 
+func disable_buttons(set_to_disabled := true) -> void:
+	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():
+		button.disable(set_to_disabled)
+
 func get_selected_dice() -> Array[Die]:
 	var selected_dice: Array[Die] = [ ]
 	for button: HitDieSelectionButton in _get_hit_die_selection_buttons():

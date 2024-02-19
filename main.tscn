@@ -48,8 +48,8 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo"]
+[node name="DiceLog" type="MarginContainer" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo"]
 layout_mode = 2
 
-[node name="DiceLog" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo/MarginContainer" instance=ExtResource("6_hkljh")]
+[node name="DiceLog" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo/DiceLog" instance=ExtResource("6_hkljh")]
 layout_mode = 2

@@ -2,7 +2,7 @@ class_name HitDiceSelection
 extends PanelContainer
 
 signal dice_selection_configured(character: Character, attribute: CharacterAttribute)
-signal confirmed(save_result: SaveResult)
+signal save_evaluated(save_result: SaveResult)
 
 @export_group("Configuration")
 @export var _portrait: TextureRect
@@ -36,11 +36,12 @@ func request_save(save_request: SaveRequest) -> void:
 
 func _roll_save(dice_to_roll: Array[Die]) -> void:
 	_save_result = DiceRoller.roll_save(dice_to_roll, _save_request)
-	_ok_button.disabled = true
-	_all_in_button.disabled = true
 	_dice_log_entry.initialize_save_result(_save_result)
 	Events.save_evaluated.emit(_save_result, _save_request)
-	confirmed.emit(_save_result)
+	save_evaluated.emit(_save_result)
 
 func _on_confirmed() -> void:
 	_roll_save(_hit_dice_selection_buttons.get_selected_dice())
+	_hit_dice_selection_buttons.disable_buttons()
+	_ok_button.disabled = true
+	_all_in_button.disabled = true

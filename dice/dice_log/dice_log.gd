@@ -3,10 +3,10 @@ extends PanelContainer
 signal entry_added(entry: Control)
 
 @export_group("Configuration")
-@export var _dice_log_entry: PackedScene
-@export var _dice_log_entry_group: PackedScene
 @export var _scroll_container: ScrollContainer
 @export var _log_entries: Container
+@export var _dice_log_entry: PackedScene
+@export var _dice_log_entry_group: PackedScene
 
 var _current_entry_group: DiceLogEntryGroup = null
 
