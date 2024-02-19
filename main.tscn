@@ -4,8 +4,8 @@
 [ext_resource type="Resource" uid="uid://dgwh5n48px17a" path="res://adventures/locations/beach.tres" id="2_vigra"]
 [ext_resource type="Script" path="res://character_sheet/character_sheets.gd" id="4_houmb"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/story.tscn" id="5_5hhyh"]
+[ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="6_hkljh"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://character_sheet/character_sheet.tscn" id="6_wwv7i"]
-[ext_resource type="PackedScene" uid="uid://dseu72gbkxh64" path="res://dice/dice_log/dice_log.tscn" id="7_ng1n7"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_d4koy")
@@ -23,49 +23,33 @@ theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 48
 theme_override_constants/margin_bottom = 32
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="HSplitContainer" type="HSplitContainer" parent="MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="CharacterSheets" type="TabContainer" parent="MarginContainer/HBoxContainer"]
+[node name="CharacterSheets" type="TabContainer" parent="MarginContainer/HSplitContainer"]
 layout_mode = 2
 script = ExtResource("4_houmb")
 _character_sheet = ExtResource("6_wwv7i")
 
-[node name="CharacterSheet" parent="MarginContainer/HBoxContainer/CharacterSheets" instance=ExtResource("6_wwv7i")]
+[node name="CharacterSheet" parent="MarginContainer/HSplitContainer/CharacterSheets" instance=ExtResource("6_wwv7i")]
 layout_mode = 2
 
-[node name="VSplitContainer" type="VSplitContainer" parent="MarginContainer/HBoxContainer"]
+[node name="VSplitContainer" type="VSplitContainer" parent="MarginContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 48
 
-[node name="Story" parent="MarginContainer/HBoxContainer/VSplitContainer" instance=ExtResource("5_5hhyh")]
+[node name="Story" parent="MarginContainer/HSplitContainer/VSplitContainer" instance=ExtResource("5_5hhyh")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="GameInfo" type="TabContainer" parent="MarginContainer/HBoxContainer/VSplitContainer"]
+[node name="GameInfo" type="TabContainer" parent="MarginContainer/HSplitContainer/VSplitContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="DiceLog" type="MarginContainer" parent="MarginContainer/HBoxContainer/VSplitContainer/GameInfo"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo"]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer/VSplitContainer/GameInfo/DiceLog"]
+[node name="DiceLog" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo/MarginContainer" instance=ExtResource("6_hkljh")]
 layout_mode = 2
-
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer/VSplitContainer/GameInfo/DiceLog/PanelContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-follow_focus = true
-horizontal_scroll_mode = 0
-
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/VSplitContainer/GameInfo/DiceLog/PanelContainer/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="DiceLog" parent="MarginContainer/HBoxContainer/VSplitContainer/GameInfo/DiceLog/PanelContainer/ScrollContainer/MarginContainer" instance=ExtResource("7_ng1n7")]
-layout_mode = 2
-
-[connection signal="entry_added" from="MarginContainer/HBoxContainer/VSplitContainer/GameInfo/DiceLog/PanelContainer/ScrollContainer/MarginContainer/DiceLog" to="MarginContainer/HBoxContainer/VSplitContainer/GameInfo/DiceLog/PanelContainer/ScrollContainer" method="ensure_control_visible"]

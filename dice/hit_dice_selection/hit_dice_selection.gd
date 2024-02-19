@@ -1,8 +1,8 @@
 class_name HitDiceSelection
 extends PanelContainer
 
-signal dice_selection_configured#(character: Character, attribute: CharacterAttribute)
-signal confirmed#(save_result: SaveResult)
+signal dice_selection_configured(character: Character, attribute: CharacterAttribute)
+signal confirmed(save_result: SaveResult)
 
 @export_group("Configuration")
 @export var _portrait: TextureRect
@@ -13,6 +13,7 @@ signal confirmed#(save_result: SaveResult)
 @export var _dice_log_entry: DiceLogEntry
 
 var _save_request: SaveRequest = null
+var _save_result: SaveResult = null
 
 func _enter_tree() -> void:
 	Events.save_requested.connect(request_save)
@@ -31,15 +32,15 @@ func request_save(save_request: SaveRequest) -> void:
 	_all_in_button.set_pressed_no_signal(false)
 	_hit_dice_selection_buttons.update_hit_dice(available_hit_dice, save_request.difficulty)
 	_dice_log_entry.initialize_save_request(save_request)
-	dice_selection_configured.emit()#(character, _save_request.attribute)
+	dice_selection_configured.emit(character, _save_request.attribute)
 
 func _roll_save(dice_to_roll: Array[Die]) -> void:
-	var save_result: SaveResult = DiceRoller.roll_save(dice_to_roll, _save_request)
+	_save_result = DiceRoller.roll_save(dice_to_roll, _save_request)
 	_ok_button.disabled = true
 	_all_in_button.disabled = true
-	_dice_log_entry.initialize_save_result(save_result)
-	Events.save_evaluated.emit(save_result, _save_request)
-	confirmed.emit()#(save_result)
+	_dice_log_entry.initialize_save_result(_save_result)
+	Events.save_evaluated.emit(_save_result, _save_request)
+	confirmed.emit(_save_result)
 
 func _on_confirmed() -> void:
 	_roll_save(_hit_dice_selection_buttons.get_selected_dice())
