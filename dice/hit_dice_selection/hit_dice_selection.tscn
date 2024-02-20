@@ -53,6 +53,7 @@ fit_content = true
 [node name="HitDiceSelectionButtons" parent="MarginContainer/GridContainer" instance=ExtResource("3_jl5yh")]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 _display_results = 1
 
 [node name="DiceLogEntry" parent="MarginContainer/GridContainer" instance=ExtResource("4_5n6kt")]
