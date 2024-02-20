@@ -1,7 +1,8 @@
 [gd_resource type="Resource" script_class="CharacterAttribute" load_steps=2 format=3 uid="uid://sm0dsmna1cj"]
 
-[ext_resource type="Script" path="res://characters/character_attribute.gd" id="1_o2dq5"]
+[ext_resource type="Script" path="res://characters/attributes/character_attribute.gd" id="1_mks2b"]
 
 [resource]
-script = ExtResource("1_o2dq5")
+script = ExtResource("1_mks2b")
 descriptor = "Guts"
+color = Color(0.894118, 0.737255, 0.788235, 1)

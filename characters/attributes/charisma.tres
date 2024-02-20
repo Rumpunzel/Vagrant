@@ -1,7 +1,8 @@
 [gd_resource type="Resource" script_class="CharacterAttribute" load_steps=2 format=3 uid="uid://b4m0dfvnrfcnp"]
 
-[ext_resource type="Script" path="res://characters/character_attribute.gd" id="1_kdjf2"]
+[ext_resource type="Script" path="res://characters/attributes/character_attribute.gd" id="1_lslgj"]
 
 [resource]
-script = ExtResource("1_kdjf2")
+script = ExtResource("1_lslgj")
 descriptor = "Heart"
+color = Color(0.584314, 0.152941, 0.0666667, 1)

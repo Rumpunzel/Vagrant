@@ -1,7 +1,8 @@
 [gd_resource type="Resource" script_class="CharacterAttribute" load_steps=2 format=3 uid="uid://bu20awm3swywv"]
 
-[ext_resource type="Script" path="res://characters/character_attribute.gd" id="1_c5mv0"]
+[ext_resource type="Script" path="res://characters/attributes/character_attribute.gd" id="1_3pd1w"]
 
 [resource]
-script = ExtResource("1_c5mv0")
+script = ExtResource("1_3pd1w")
 descriptor = "Shadow"
+color = Color(0.866667, 0.584314, 0.682353, 1)

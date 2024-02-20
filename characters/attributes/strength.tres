@@ -1,7 +1,8 @@
 [gd_resource type="Resource" script_class="CharacterAttribute" load_steps=2 format=3 uid="uid://b1c6aib060ja5"]
 
-[ext_resource type="Script" path="res://characters/character_attribute.gd" id="1_pstlp"]
+[ext_resource type="Script" path="res://characters/attributes/character_attribute.gd" id="1_27sg8"]
 
 [resource]
-script = ExtResource("1_pstlp")
+script = ExtResource("1_27sg8")
 descriptor = "Flesh"
+color = Color(0.823529, 0.427451, 0.576471, 1)
