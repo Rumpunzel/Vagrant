@@ -12,7 +12,7 @@ offset_bottom = 236.0
 size_flags_horizontal = 3
 script = ExtResource("1_ogtti")
 _portrait = NodePath("Portrait")
-_description = NodePath("MarginContainer/GridContainer/PanelContainer/MarginContainer/ScrollContainer/Description")
+_description = NodePath("MarginContainer/GridContainer/PanelContainer/MarginContainer/Description")
 _hit_dice_selection_buttons = NodePath("MarginContainer/GridContainer/HitDiceSelectionButtons")
 _all_in_button = NodePath("MarginContainer/GridContainer/HBoxContainer/AllInButton")
 _ok_button = NodePath("MarginContainer/GridContainer/HBoxContainer/OKButton")
@@ -44,12 +44,7 @@ size_flags_vertical = 3
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/GridContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/GridContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-follow_focus = true
-horizontal_scroll_mode = 0
-
-[node name="Description" type="RichTextLabel" parent="MarginContainer/GridContainer/PanelContainer/MarginContainer/ScrollContainer"]
+[node name="Description" type="RichTextLabel" parent="MarginContainer/GridContainer/PanelContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
