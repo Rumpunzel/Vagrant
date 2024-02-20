@@ -19,10 +19,10 @@ signal page_entered(story_page: StoryPage)
 						is_exclusive = true
 						break
 					else:
-						description += "%s\n\n" % event.description
+						description += "[p]%s[/p]" % event.description
 						decisions.append_array(event.decisions)
 		if not is_exclusive:
-			description += story_page.description
+			description = ("[p]%s[/p]" % story_page.description) + description
 			decisions.append_array(story_page.decisions)
 		_description.text = description
 		_update_decisions(decisions)

@@ -10,10 +10,10 @@ offset_bottom = 282.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 script = ExtResource("1_i7rrh")
 _hit_dice_selection = NodePath("HitDiceSelection")
-_description = NodePath("Description")
+_description = NodePath("PanelContainer/MarginContainer/Description")
 _choices = NodePath("Choices")
 _dialog_button = ExtResource("2_4ecuj")
 
@@ -22,12 +22,23 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="Description" type="RichTextLabel" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 16
+
+[node name="Description" type="RichTextLabel" parent="PanelContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
 focus_mode = 2
+theme_override_constants/line_separation = 16
 bbcode_enabled = true
+text = "First line.
+Second line."
 fit_content = true
 scroll_active = false
 selection_enabled = true
@@ -35,8 +46,6 @@ selection_enabled = true
 [node name="Choices" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
 theme_override_constants/separation = 2
 
 [connection signal="save_evaluated" from="HitDiceSelection" to="." method="_on_save_evaluated"]
