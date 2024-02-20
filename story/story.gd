@@ -22,7 +22,7 @@ func _append_page(story_page: StoryPage) -> void:
 	var story_page_entry: StoryPageEntry = _story_page_entry.instantiate()
 	story_page_entry.story_page = story_page
 	story_page_entry.new_page_requested.connect(_append_page)
-	story_page_entry.hit_dice_selection_added.connect(_scroll_container.ensure_control_visible)
+	story_page_entry.content_changed.connect(_scroll_container.ensure_control_visible)
 	_story_pages.add_child(story_page_entry)
 
 func _on_location_changed(new_location: StoryLocation) -> void:

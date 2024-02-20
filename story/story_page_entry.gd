@@ -2,8 +2,8 @@
 class_name StoryPageEntry
 extends VBoxContainer
 
+signal content_changed(story_page_entry: StoryPageEntry)
 signal new_page_requested(story_page: StoryPage)
-signal hit_dice_selection_added(hit_dice_selection: HitDiceSelection)
 
 @export var story_page: StoryPage :
 	set(new_story_page):
@@ -15,11 +15,14 @@ signal hit_dice_selection_added(hit_dice_selection: HitDiceSelection)
 @export var _description: RichTextLabel
 @export var _choices: Container
 @export var _dialog_button: PackedScene
-@export var _hit_dice_selection: PackedScene
+@export var _hit_dice_selection: HitDiceSelection
 
 var _selected_story_decision: StoryDecision
 var _save_request: SaveRequest
 var _save_result: SaveResult
+
+func _enter_tree() -> void:
+	_hit_dice_selection.visible = false
 
 func _progress_story(source: StoryDecision) -> void:
 	print("SUCCESS!")
@@ -43,14 +46,12 @@ func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
 	_save_request = save_request
 	_selected_story_decision = source
-	var hit_dice_selection: HitDiceSelection = _hit_dice_selection.instantiate()
-	hit_dice_selection.request_save(_save_request)
-	hit_dice_selection.save_evaluated.connect(_on_save_evaluated)
-	add_child(hit_dice_selection)
+	_hit_dice_selection.request_save(_save_request)
+	_hit_dice_selection.visible = true
 	for button: DialogButton in _choices.get_children():
 		button.disable()
 	await get_tree().process_frame
-	hit_dice_selection_added.emit(hit_dice_selection)
+	content_changed.emit(self)
 
 func _on_save_evaluated(save_result: SaveResult) -> void:
 	_save_result = save_result

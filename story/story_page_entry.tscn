@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/dialog_button.tscn" id="2_4ecuj"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://dice/hit_dice_selection/hit_dice_selection.tscn" id="3_bmmcs"]
 
-[node name="StoryPageEntry" type="VBoxContainer" node_paths=PackedStringArray("_description", "_choices")]
+[node name="StoryPageEntry" type="VBoxContainer" node_paths=PackedStringArray("_description", "_choices", "_hit_dice_selection")]
 offset_right = 866.0
 offset_bottom = 282.0
 grow_horizontal = 2
@@ -15,7 +15,7 @@ script = ExtResource("1_i7rrh")
 _description = NodePath("Description")
 _choices = NodePath("Choices")
 _dialog_button = ExtResource("2_4ecuj")
-_hit_dice_selection = ExtResource("3_bmmcs")
+_hit_dice_selection = NodePath("HitDiceSelection")
 
 [node name="Description" type="RichTextLabel" parent="."]
 unique_name_in_owner = true
@@ -34,3 +34,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 2
+
+[node name="HitDiceSelection" parent="." instance=ExtResource("3_bmmcs")]
+visible = false
+layout_mode = 2
+
+[connection signal="save_evaluated" from="HitDiceSelection" to="." method="_on_save_evaluated"]
