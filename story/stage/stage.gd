@@ -10,4 +10,5 @@ var location: StoryLocation :
 		location = new_location
 		_background.texture = location.background
 		_ambience.stream = location.ambience
+		_ambience.play()
 		Events.location_changed.emit(location)

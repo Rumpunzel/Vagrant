@@ -9,3 +9,4 @@ script = ExtResource("1_xax1j")
 name = "Beach"
 background = ExtResource("2_c7l00")
 ambience = ExtResource("1_15gga")
+transitionss = Array[Resource("res://story/pages/story_decision.gd")]([])
