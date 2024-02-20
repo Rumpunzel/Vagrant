@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="StoryPage" load_steps=3 format=3 uid="uid://p40i0nctc35a"]
-
-[ext_resource type="Resource" uid="uid://cqni4rc71blri" path="res://adventures/pages/test_decision.tres" id="1_3xav0"]
-[ext_resource type="Script" path="res://story/pages/story_page.gd" id="1_ni2mw"]
-
-[resource]
-script = ExtResource("1_ni2mw")
-description = "Test Description."
-decisions = Array[Resource("res://story/pages/story_decision.gd")]([ExtResource("1_3xav0")])
