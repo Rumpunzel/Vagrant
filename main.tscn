@@ -1,16 +1,14 @@
-[gd_scene load_steps=8 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=7 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_d4koy"]
-[ext_resource type="Resource" uid="uid://dgwh5n48px17a" path="res://adventures/locations/beach.tres" id="2_vigra"]
 [ext_resource type="Script" path="res://character_sheet/character_sheets.gd" id="4_houmb"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/story.tscn" id="5_5hhyh"]
-[ext_resource type="Resource" uid="uid://p40i0nctc35a" path="res://adventures/pages/test_page.tres" id="6_33o3h"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="6_hkljh"]
+[ext_resource type="Resource" uid="uid://ycd6xhx346l6" path="res://adventures/locations/beach/rocky_shore.tres" id="6_ieces"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://character_sheet/character_sheet.tscn" id="6_wwv7i"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_d4koy")
-starting_location = ExtResource("2_vigra")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
@@ -44,7 +42,7 @@ theme_override_constants/separation = 48
 [node name="Story" parent="MarginContainer/HSplitContainer/VSplitContainer" instance=ExtResource("5_5hhyh")]
 layout_mode = 2
 size_flags_horizontal = 3
-current_page = ExtResource("6_33o3h")
+current_page = ExtResource("6_ieces")
 
 [node name="GameInfo" type="TabContainer" parent="MarginContainer/HSplitContainer/VSplitContainer"]
 layout_mode = 2

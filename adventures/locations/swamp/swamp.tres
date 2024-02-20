@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="StoryArea" load_steps=3 format=3 uid="uid://kfbf7v18dp6a"]
+
+[ext_resource type="Script" path="res://story/pages/story_area.gd" id="1_nwy5p"]
+[ext_resource type="Texture2D" uid="uid://dmxhv3vydqpry" path="res://landscapes/swamp.jpg" id="1_r7gu4"]
+
+[resource]
+script = ExtResource("1_nwy5p")
+name = "Swamp"
+background = ExtResource("1_r7gu4")

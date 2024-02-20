@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StoryLocation2" load_steps=7 format=3 uid="uid://cs40ge42lw0ry"]
+
+[ext_resource type="Resource" uid="uid://kfbf7v18dp6a" path="res://adventures/locations/swamp/swamp.tres" id="1_8bxsp"]
+[ext_resource type="Script" path="res://story/pages/story_location.gd" id="1_j41ex"]
+[ext_resource type="Script" path="res://story/pages/story_decision.gd" id="2_r3twy"]
+[ext_resource type="Script" path="res://story/pages/story_transition.gd" id="3_34ol8"]
+
+[sub_resource type="Resource" id="Resource_vxgv4"]
+script = ExtResource("3_34ol8")
+_leads_to = "res://adventures/locations/beach/rocky_shore/rocky_shore.tres"
+
+[sub_resource type="Resource" id="Resource_oebbs"]
+script = ExtResource("2_r3twy")
+description = "Go back to the beach."
+transition = SubResource("Resource_vxgv4")
+
+[resource]
+script = ExtResource("1_j41ex")
+name = "Temple Ruin"
+area = ExtResource("1_8bxsp")
+description = "The air is damp and smells of rotten earth."
+decisions = Array[ExtResource("2_r3twy")]([SubResource("Resource_oebbs")])
