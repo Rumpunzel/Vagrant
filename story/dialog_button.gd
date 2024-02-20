@@ -18,7 +18,9 @@ signal save_requested(save_request: SaveRequest, source: StoryDecision)
 var _hovered := false
 
 func _ready() -> void:
-	_index.text = "%d." % [get_index() + 1]
+	var index := get_index()
+	if index == 0: grab_focus()
+	_index.text = "%d." % [index + 1]
 	_update_font_colors()
 	_resize_to_fit_children()
 
@@ -46,8 +48,8 @@ func _resize_to_fit_children() -> void:
 
 func _on_pressed() -> void:
 	_index.text = "✔"
-	if story_decision.attribute != null:
-		var save_request := story_decision.to_save_request()
+	if story_decision is StorySaveDecision:
+		var save_request := (story_decision as StorySaveDecision).to_save_request()
 		save_requested.emit(save_request, story_decision)
 	else:
 		story_continued.emit(story_decision)

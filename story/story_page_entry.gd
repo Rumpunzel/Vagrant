@@ -7,8 +7,25 @@ signal page_entered(story_page: StoryPage)
 @export var story_page: StoryPage :
 	set(new_story_page):
 		story_page = new_story_page
-		_description.text = story_page.description
-		_update_decisions(story_page.decisions)
+		var description := ""
+		var decisions: Array[StoryDecision] = [ ]
+		var is_exclusive := false
+		if story_page is StoryLocation:
+			for event: StoryEvent in story_page.events:
+				if event.are_all_prerequisites_fullfilled():
+					if event.exclusive:
+						description = event.description
+						decisions = event.decisions
+						is_exclusive = true
+						break
+					else:
+						description += "%s\n\n" % event.description
+						decisions.append_array(event.decisions)
+		if not is_exclusive:
+			description += story_page.description
+			decisions.append_array(story_page.decisions)
+		_description.text = description
+		_update_decisions(decisions)
 
 @export_group("Configuration")
 @export var _hit_dice_selection: HitDiceSelection
@@ -25,11 +42,13 @@ func _enter_tree() -> void:
 
 func _progress_story(source: StoryDecision) -> void:
 	print("SUCCESS!")
-	page_entered.emit(source.next_story_page)
+	_disable_buttons()
+	page_entered.emit(source.transition.get_next_page())
 
 func _handle_failure(source: StoryDecision) -> void:
 	print("FAILURE!")
-	page_entered.emit(source.failure_story_page)
+	_disable_buttons()
+	page_entered.emit(source.failure_transition.get_next_page())
 
 func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for dialog_button: DialogButton in _choices.get_children():
@@ -41,14 +60,21 @@ func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 		dialog_button.story_continued.connect(_progress_story)
 		dialog_button.save_requested.connect(_on_save_requested)
 		_choices.add_child(dialog_button)
+	if story_decisions.is_empty():
+		var dialog_button: DialogButton = _dialog_button.instantiate()
+		dialog_button.story_decision = StoryDecision.get_continue()
+		dialog_button.story_continued.connect(_progress_story)
+		_choices.add_child(dialog_button)
+
+func _disable_buttons() -> void:
+	for button: DialogButton in _choices.get_children():
+		button.disable()
 
 func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
 	_save_request = save_request
 	_selected_story_decision = source
 	_hit_dice_selection.request_save(_save_request)
 	_hit_dice_selection.visible = true
-	for button: DialogButton in _choices.get_children():
-		button.disable()
 
 func _on_save_evaluated(save_result: SaveResult) -> void:
 	_save_result = save_result
