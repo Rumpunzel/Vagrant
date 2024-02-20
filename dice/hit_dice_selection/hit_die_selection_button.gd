@@ -22,7 +22,6 @@ var save_difficulty := 0
 
 func disable(set_to_disabled := true) -> void:
 	active = not set_to_disabled
-	focus_mode = Control.FOCUS_NONE if set_to_disabled else Control.FOCUS_ALL
 	if not set_to_disabled:
 		_connect_to_die()
 	else:

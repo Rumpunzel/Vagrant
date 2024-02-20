@@ -30,7 +30,7 @@ func initialize_save_result(save_result: SaveResult) -> void:
 	for die: Die in save_result.dice:
 		dice_results += "%s" % die
 		if not die.is_alive(): dice_results += " ☠"
-		if save_result.highest_dice.has(die): dice_results += " ✓"
+		if save_result.highest_dice.has(die): dice_results += " ✔"
 		dice_results += "\n"
 	_entry.push_hint(dice_results)
 	_entry.append_text("[")
