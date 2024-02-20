@@ -14,8 +14,8 @@ theme_override_constants/separation = 16
 script = ExtResource("1_i7rrh")
 _description = NodePath("Description")
 _choices = NodePath("Choices")
-_dialog_button = ExtResource("2_4ecuj")
 _hit_dice_selection = NodePath("HitDiceSelection")
+_dialog_button = ExtResource("2_4ecuj")
 
 [node name="Description" type="RichTextLabel" parent="."]
 unique_name_in_owner = true
@@ -36,6 +36,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 2
 
 [node name="HitDiceSelection" parent="." instance=ExtResource("3_bmmcs")]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 

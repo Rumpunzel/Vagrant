@@ -10,7 +10,6 @@ extends VBoxContainer
 @export_group("Configuration")
 @export var _title: RichTextLabel
 @export var _sub_title: RichTextLabel
-@export var _scroll_container: ScrollContainer
 @export var _story_pages: Container
 @export var _story_page_entry: PackedScene
 
@@ -19,11 +18,13 @@ func _ready() -> void:
 	Events.location_changed.connect(_on_location_changed)
 
 func _append_page(story_page: StoryPage) -> void:
+	if story_page == null: return
 	var story_page_entry: StoryPageEntry = _story_page_entry.instantiate()
 	story_page_entry.story_page = story_page
 	story_page_entry.new_page_requested.connect(_append_page)
-	story_page_entry.content_changed.connect(_scroll_container.ensure_control_visible)
 	_story_pages.add_child(story_page_entry)
+	_story_pages.move_child(story_page_entry, 0)
+	if _story_pages.get_child_count() > 1: story_page_entry.add_sibling(HSeparator.new())
 
 func _on_location_changed(new_location: StoryLocation) -> void:
 	_title.text = "[center]%s[/center]" % "Title"

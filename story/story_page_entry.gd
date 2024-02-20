@@ -2,7 +2,6 @@
 class_name StoryPageEntry
 extends VBoxContainer
 
-signal content_changed(story_page_entry: StoryPageEntry)
 signal new_page_requested(story_page: StoryPage)
 
 @export var story_page: StoryPage :
@@ -14,8 +13,8 @@ signal new_page_requested(story_page: StoryPage)
 @export_group("Configuration")
 @export var _description: RichTextLabel
 @export var _choices: Container
-@export var _dialog_button: PackedScene
 @export var _hit_dice_selection: HitDiceSelection
+@export var _dialog_button: PackedScene
 
 var _selected_story_decision: StoryDecision
 var _save_request: SaveRequest
@@ -50,8 +49,6 @@ func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> voi
 	_hit_dice_selection.visible = true
 	for button: DialogButton in _choices.get_children():
 		button.disable()
-	await get_tree().process_frame
-	content_changed.emit(self)
 
 func _on_save_evaluated(save_result: SaveResult) -> void:
 	_save_result = save_result
