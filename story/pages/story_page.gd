@@ -1,5 +1,5 @@
 class_name StoryPage
 extends Resource
 
-@export_multiline var description := ""
-@export var decisions: Array[StoryDecision] = [ ]
+@export_multiline var description: String
+@export var decisions: Array[StoryDecision]

@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://cy2ymcfk2tejn"]
+
+[ext_resource type="Script" path="res://story/story_page_entry.gd" id="1_i7rrh"]
+[ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/dialog_button.tscn" id="2_4ecuj"]
+[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://dice/hit_dice_selection/hit_dice_selection.tscn" id="3_bmmcs"]
+
+[node name="StoryPageEntry" type="VBoxContainer" node_paths=PackedStringArray("_description", "_choices")]
+offset_right = 866.0
+offset_bottom = 282.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+script = ExtResource("1_i7rrh")
+_description = NodePath("Description")
+_choices = NodePath("Choices")
+_dialog_button = ExtResource("2_4ecuj")
+_hit_dice_selection = ExtResource("3_bmmcs")
+
+[node name="Description" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+bbcode_enabled = true
+text = "Description"
+fit_content = true
+scroll_active = false
+selection_enabled = true
+
+[node name="Choices" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 2

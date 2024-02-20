@@ -2,8 +2,8 @@
 class_name DialogButton
 extends Button
 
-signal story_continued
-signal save_requested(save_request: SaveRequest)
+signal story_continued(source: StoryDecision)
+signal save_requested(save_request: SaveRequest, source: StoryDecision)
 
 @export var story_decision: StoryDecision :
 	set(new_story_decision):
@@ -48,9 +48,9 @@ func _on_pressed() -> void:
 	_index.text = "✔"
 	if story_decision.attribute != null:
 		var save_request := story_decision.to_save_request()
-		save_requested.emit(save_request)
+		save_requested.emit(save_request, story_decision)
 	else:
-		story_continued.emit()
+		story_continued.emit(story_decision)
 
 func _on_container_minimum_size_changed() -> void:
 	_resize_to_fit_children()
