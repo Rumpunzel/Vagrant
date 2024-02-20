@@ -7,8 +7,8 @@
 [ext_resource type="Script" path="res://custom_nodes/control/display_button.gd" id="5_7ii1w"]
 
 [node name="HitDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_hit_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_entry")]
-offset_right = 422.0
-offset_bottom = 236.0
+offset_right = 405.0
+offset_bottom = 186.0
 size_flags_horizontal = 3
 script = ExtResource("1_ogtti")
 _portrait = NodePath("Portrait")
@@ -39,7 +39,6 @@ columns = 2
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/GridContainer/PanelContainer"]
 layout_mode = 2
@@ -47,8 +46,6 @@ layout_mode = 2
 [node name="Description" type="RichTextLabel" parent="MarginContainer/GridContainer/PanelContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
 bbcode_enabled = true
 text = "Description"
 fit_content = true
@@ -56,7 +53,6 @@ fit_content = true
 [node name="HitDiceSelectionButtons" parent="MarginContainer/GridContainer" instance=ExtResource("3_jl5yh")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 _display_results = 1
 
 [node name="DiceLogEntry" parent="MarginContainer/GridContainer" instance=ExtResource("4_5n6kt")]

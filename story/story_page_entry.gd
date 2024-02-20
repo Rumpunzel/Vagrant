@@ -2,7 +2,7 @@
 class_name StoryPageEntry
 extends VBoxContainer
 
-signal new_page_requested(story_page: StoryPage)
+signal page_entered(story_page: StoryPage)
 
 @export var story_page: StoryPage :
 	set(new_story_page):
@@ -11,9 +11,9 @@ signal new_page_requested(story_page: StoryPage)
 		_update_decisions(story_page.decisions)
 
 @export_group("Configuration")
+@export var _hit_dice_selection: HitDiceSelection
 @export var _description: RichTextLabel
 @export var _choices: Container
-@export var _hit_dice_selection: HitDiceSelection
 @export var _dialog_button: PackedScene
 
 var _selected_story_decision: StoryDecision
@@ -25,11 +25,11 @@ func _enter_tree() -> void:
 
 func _progress_story(source: StoryDecision) -> void:
 	print("SUCCESS!")
-	new_page_requested.emit(source.next_story_page)
+	page_entered.emit(source.next_story_page)
 
 func _handle_failure(source: StoryDecision) -> void:
 	print("FAILURE!")
-	new_page_requested.emit(source.failure_story_page)
+	page_entered.emit(source.failure_story_page)
 
 func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for dialog_button: DialogButton in _choices.get_children():

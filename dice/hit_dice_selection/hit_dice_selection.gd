@@ -1,7 +1,6 @@
 class_name HitDiceSelection
 extends PanelContainer
 
-signal dice_selection_configured(character: Character, attribute: CharacterAttribute)
 signal save_evaluated(save_result: SaveResult)
 
 @export_group("Configuration")
@@ -28,7 +27,6 @@ func request_save(save_request: SaveRequest) -> void:
 	_all_in_button.set_pressed_no_signal(false)
 	_hit_dice_selection_buttons.update_hit_dice(available_hit_dice, save_request.difficulty)
 	_dice_log_entry.initialize_save_request(save_request)
-	dice_selection_configured.emit(character, _save_request.attribute)
 
 func _roll_save(dice_to_roll: Array[Die]) -> void:
 	_save_result = DiceRoller.roll_save(dice_to_roll, _save_request)
