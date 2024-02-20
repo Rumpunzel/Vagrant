@@ -12,8 +12,8 @@ func to_save_request() -> SaveRequest:
 	var protagonist: Character = Characters.get_protagonist()
 	return SaveRequest.new(protagonist, attribute, difficulty, details)
 
-func _to_string() -> String:
+func to_dialog_button_text() -> String:
 	var result := ""
-	if attribute != null: result += "[%s] " % attribute
+	if attribute != null: result += "[color=#%s][%s][/color] " % [attribute.color.to_html(), attribute]
 	result += description
 	return result

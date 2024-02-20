@@ -1,0 +1,57 @@
+[gd_scene load_steps=2 format=3 uid="uid://d0ecexfpobl4m"]
+
+[ext_resource type="Script" path="res://story/dialog_button.gd" id="1_ujj37"]
+
+[node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
+custom_minimum_size = Vector2(45, 31)
+offset_right = 333.0
+offset_bottom = 31.0
+flat = true
+script = ExtResource("1_ujj37")
+_container = NodePath("MarginContainer")
+_index = NodePath("MarginContainer/HBoxContainer/Index")
+_description = NodePath("MarginContainer/HBoxContainer/Description")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Index" type="Label" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.875, 0.875, 0.875, 1)
+text = "12."
+horizontal_alignment = 2
+
+[node name="Description" type="RichTextLabel" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.875, 0.875, 0.875, 1)
+bbcode_enabled = true
+text = "Hide in the shipwreck."
+fit_content = true
+scroll_active = false
+
+[connection signal="button_down" from="." to="." method="_update_font_colors"]
+[connection signal="button_up" from="." to="." method="_update_font_colors"]
+[connection signal="focus_entered" from="." to="." method="_update_font_colors"]
+[connection signal="focus_exited" from="." to="." method="_update_font_colors"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="pressed" from="." to="." method="_on_pressed"]
+[connection signal="minimum_size_changed" from="MarginContainer" to="." method="_on_container_minimum_size_changed"]
