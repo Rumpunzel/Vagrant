@@ -18,15 +18,18 @@ signal save_requested(save_request: SaveRequest, source: StoryDecision)
 var _hovered := false
 
 func _ready() -> void:
-	var index := get_index()
-	if index == 0: grab_focus()
-	_index.text = "%d." % [index + 1]
+	_index.text = "%d." % [get_index() + 1]
 	_update_font_colors()
 	_resize_to_fit_children()
 
 func disable(set_to_disabled := true) -> void:
-	focus_mode = Control.FOCUS_ALL if not set_to_disabled or button_pressed else Control.FOCUS_NONE
+	if set_to_disabled:
+		if button_pressed:
+			_index.text = "✔"
+		else:
+			focus_mode = Control.FOCUS_NONE
 	disabled = set_to_disabled
+	release_focus()
 	_update_font_colors()
 
 func _update_font_colors() -> void:
@@ -47,7 +50,6 @@ func _resize_to_fit_children() -> void:
 	custom_minimum_size = _container.get_minimum_size()
 
 func _on_pressed() -> void:
-	_index.text = "✔"
 	if story_decision is StorySaveDecision:
 		var save_request := (story_decision as StorySaveDecision).to_save_request()
 		save_requested.emit(save_request, story_decision)
