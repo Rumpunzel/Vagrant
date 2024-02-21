@@ -30,7 +30,7 @@ func _enter_tree() -> void:
 
 func _process(_delta: float) -> void:
 	if visible_ratio >= 1.0: return
-	if Input.is_anything_pressed():
+	if Input.is_action_pressed("skip_dialog_typing"):
 		visible_characters = -1
 		_typing_timer.stop()
 		finished_typing.emit()
