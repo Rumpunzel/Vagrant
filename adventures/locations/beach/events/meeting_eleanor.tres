@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="StoryEvent" load_steps=15 format=3 uid="uid://rget62tdwg42"]
+[gd_resource type="Resource" script_class="StoryEvent" load_steps=16 format=3 uid="uid://rget62tdwg42"]
 
 [ext_resource type="Script" path="res://story/pages/story_decision.gd" id="1_bmav6"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="2_2l21d"]
@@ -6,10 +6,12 @@
 [ext_resource type="Script" path="res://story/pages/story_transition.gd" id="3_2y6kf"]
 [ext_resource type="Script" path="res://story/pages/story_save_decision.gd" id="3_rw8um"]
 [ext_resource type="Script" path="res://story/pages/story_event.gd" id="4_7e6iw"]
+[ext_resource type="Texture2D" uid="uid://6jlxmsm0ehfm" path="res://portraits/shadowheart.jpg" id="7_uecg3"]
 
 [sub_resource type="Resource" id="Resource_lpqjd"]
 script = ExtResource("2_v3a6t")
 description = "She says 'Hi!'"
+thumbnail = ExtResource("7_uecg3")
 decisions = Array[ExtResource("1_bmav6")]([])
 
 [sub_resource type="Resource" id="Resource_f76or"]

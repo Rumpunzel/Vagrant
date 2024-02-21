@@ -6,22 +6,29 @@
 [ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="3_mesq1"]
 [ext_resource type="Script" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_of6hj"]
 
-[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]
+[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_thumbnail", "_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]
 offset_right = 808.0
 offset_bottom = 277.0
 script = ExtResource("1_i7rrh")
+_thumbnail = NodePath("Thumbnnail")
 _description = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Description")
 _choices = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Choices")
 _hit_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/HitDiceSelection")
 _hit_dice_selection_cc = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
 _dialog_button = ExtResource("2_2v1bp")
 
+[node name="Thumbnnail" type="TextureRect" parent="."]
+show_behind_parent = true
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 6
+
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
@@ -56,7 +63,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(386, 126)
+custom_minimum_size = Vector2(386, 436)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
