@@ -28,10 +28,12 @@ func _enter_tree() -> void:
 	_typing_timer.one_shot = true
 	_typing_timer.timeout.connect(_type_next_character)
 
-# Type out the text while briefly pausing for punctuation
-func _process(delta: float) -> void:
-	if not Engine.is_editor_hint() and Input.is_action_just_pressed("skip_dialog"):
+func _process(_delta: float) -> void:
+	if visible_ratio >= 1.0: return
+	if Input.is_anything_pressed():
 		visible_characters = -1
+		_typing_timer.stop()
+		finished_typing.emit()
 
 ## To use this script, simply call this method from anywhere with the text you want it to type
 func type_text(new_text: String):
@@ -45,13 +47,10 @@ func type_text(new_text: String):
 func _type_next_character():
 	var parsed_text := get_parsed_text()
 	var typed_character := parsed_text[visible_characters]
-	print("typed_character: %s" % typed_character)
 	visible_characters += 1
 	if visible_characters >= parsed_text.length():
-		print("here")  
 		finished_typing.emit()
 		return
 	var pause_multiplier: float = _pause_multipliers.get(typed_character, 1.0)
 	var type_delay := 60.0 / _characters_per_minute * pause_multiplier
-	print("type_delay: %f" % type_delay)
 	_typing_timer.start(type_delay)
