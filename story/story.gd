@@ -8,6 +8,7 @@ extends VBoxContainer
 @export var _title: RichTextLabel
 @export var _sub_title: RichTextLabel
 @export var _story_pages: Container
+@export var _stage: Stage
 @export var _story_page_entry: PackedScene
 
 var _page_stack: Array[StoryPage] = [ ]
@@ -23,7 +24,7 @@ func _enter_page(story_page: StoryPage = current_page) -> void:
 
 func _enter_location(story_location: StoryLocation) -> void:
 	_sub_title.text = story_location.to_page_subtitle()
-	Stage.location = story_location
+	_stage.location = story_location
 
 func _set_current_page(new_current_page: StoryPage) -> void:
 	if new_current_page == null: current_page = _page_stack.pop_back()

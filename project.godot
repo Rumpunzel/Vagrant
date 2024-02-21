@@ -19,7 +19,6 @@ config/icon="res://icons/fantasy/map.png"
 
 Rules="*res://rules.gd"
 DiceRoller="*res://dice/dice_roller.tscn"
-Stage="*res://story/stage/stage.tscn"
 Characters="*res://characters/characters.tscn"
 
 [display]

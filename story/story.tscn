@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=4 format=3 uid="uid://coh7y85ggx45i"]
 
 [ext_resource type="Script" path="res://story/story.gd" id="1_cts4e"]
 [ext_resource type="PackedScene" uid="uid://cy2ymcfk2tejn" path="res://story/story_page_entry.tscn" id="2_x8uvv"]
+[ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage/stage.tscn" id="3_cnyp4"]
 
-[node name="Story" type="VBoxContainer" node_paths=PackedStringArray("_title", "_sub_title", "_story_pages")]
+[node name="Story" type="VBoxContainer" node_paths=PackedStringArray("_title", "_sub_title", "_story_pages", "_stage")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -20,6 +21,7 @@ script = ExtResource("1_cts4e")
 _title = NodePath("MarginContainer/VBoxContainer/Title")
 _sub_title = NodePath("MarginContainer/VBoxContainer/Subtitle")
 _story_pages = NodePath("PanelContainer/MarginContainer/ScrollContainer/MarginContainer/StoryPages")
+_stage = NodePath("Stage")
 _story_page_entry = ExtResource("2_x8uvv")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -78,3 +80,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 24
+
+[node name="Stage" parent="." instance=ExtResource("3_cnyp4")]
+unique_name_in_owner = true

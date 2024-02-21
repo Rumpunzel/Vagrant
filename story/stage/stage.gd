@@ -1,4 +1,5 @@
 @tool
+class_name Stage
 extends CanvasLayer
 
 @export_group("Configuration")
@@ -11,4 +12,4 @@ var location: StoryLocation :
 		location = new_location
 		_background.texture = location.background
 		_ambience.stream = location.ambience
-		if is_inside_tree(): _ambience.play()
+		if not Engine.is_editor_hint() and is_inside_tree(): _ambience.play()

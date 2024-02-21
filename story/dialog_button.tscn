@@ -1,11 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://d0ecexfpobl4m"]
+[gd_scene load_steps=4 format=3 uid="uid://d0ecexfpobl4m"]
 
 [ext_resource type="Script" path="res://story/dialog_button.gd" id="1_ujj37"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_e3yj0"]
+keycode = 49
+
+[sub_resource type="Shortcut" id="Shortcut_33rn8"]
+events = [SubResource("InputEventKey_e3yj0")]
 
 [node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
 custom_minimum_size = Vector2(45, 31)
 offset_right = 333.0
 offset_bottom = 31.0
+shortcut = SubResource("Shortcut_33rn8")
 flat = true
 script = ExtResource("1_ujj37")
 _container = NodePath("MarginContainer")
