@@ -7,27 +7,12 @@ signal page_entered(story_page: StoryPage)
 @export var story_page: StoryPage :
 	set(new_story_page):
 		story_page = new_story_page
-		var description := ""
-		var decisions: Array[StoryDecision] = [ ]
-		var is_exclusive := false
-		if story_page is StoryLocation:
-			for event: StoryEvent in story_page.events:
-				if event.are_all_prerequisites_fullfilled():
-					if event.exclusive:
-						description = event.description
-						decisions = event.decisions
-						is_exclusive = true
-						break
-					else:
-						description += "[p]%s[/p]" % event.description
-						decisions.append_array(event.decisions)
-		if story_page != null and not is_exclusive:
-			description = ("[p]%s[/p]" % story_page.description) + description
-			decisions.append_array(story_page.decisions)
-		_description.type_text(description)
-		_update_decisions(decisions)
+		_thumbnail.texture = story_page.thumbnail
+		_description.type_text(story_page.description)
+		_update_decisions(story_page.decisions)
 
 @export_group("Configuration")
+@export var _thumbnail: TextureRect
 @export var _description: TypingLabel
 @export var _choices: Container
 @export var _hit_dice_selection: HitDiceSelection

@@ -3,17 +3,18 @@
 [ext_resource type="Script" path="res://story/dialog_button.gd" id="1_ujj37"]
 [ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="2_p4pnf"]
 
-[sub_resource type="InputEventKey" id="InputEventKey_q16eq"]
+[sub_resource type="InputEventKey" id="InputEventKey_mrbu8"]
 keycode = 49
 
-[sub_resource type="Shortcut" id="Shortcut_qhmfb"]
-events = [SubResource("InputEventKey_q16eq")]
+[sub_resource type="Shortcut" id="Shortcut_wtsph"]
+events = [SubResource("InputEventKey_mrbu8")]
 
 [node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
-custom_minimum_size = Vector2(45, 31)
+visible = false
+custom_minimum_size = Vector2(45, 514)
 offset_right = 333.0
 offset_bottom = 31.0
-shortcut = SubResource("Shortcut_qhmfb")
+shortcut = SubResource("Shortcut_wtsph")
 flat = true
 script = ExtResource("1_ujj37")
 _container = NodePath("MarginContainer")
