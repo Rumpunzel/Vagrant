@@ -8,54 +8,54 @@
 [ext_resource type="Script" path="res://story/pages/story_event.gd" id="4_7e6iw"]
 [ext_resource type="Texture2D" uid="uid://6jlxmsm0ehfm" path="res://portraits/shadowheart.jpg" id="7_uecg3"]
 
-[sub_resource type="Resource" id="Resource_lpqjd"]
+[sub_resource type="Resource" id="Resource_a3shy"]
 script = ExtResource("2_v3a6t")
-description = "She says 'Hi!'"
-thumbnail = ExtResource("7_uecg3")
-decisions = Array[ExtResource("1_bmav6")]([])
+_description = "She says 'Hi!' back to you."
+_thumbnail = ExtResource("7_uecg3")
+_decisions = Array[ExtResource("1_bmav6")]([])
 
-[sub_resource type="Resource" id="Resource_f76or"]
+[sub_resource type="Resource" id="Resource_rc0mh"]
 script = ExtResource("3_2y6kf")
-_next_page = SubResource("Resource_lpqjd")
+_next_page = SubResource("Resource_a3shy")
 _leads_to = ""
 
-[sub_resource type="Resource" id="Resource_nby43"]
+[sub_resource type="Resource" id="Resource_fqbk4"]
 script = ExtResource("1_bmav6")
-description = "Approach."
-transition = SubResource("Resource_f76or")
+description = "Approach and greet her."
+transition = SubResource("Resource_rc0mh")
 
-[sub_resource type="Resource" id="Resource_v6bsq"]
+[sub_resource type="Resource" id="Resource_4ouxt"]
 script = ExtResource("2_v3a6t")
-description = "Walking behind a you-shaped plank does not count as stealth."
-decisions = Array[ExtResource("1_bmav6")]([])
+_description = "Too bad you are dummy thicc..."
+_decisions = Array[ExtResource("1_bmav6")]([])
 
-[sub_resource type="Resource" id="Resource_sqwra"]
+[sub_resource type="Resource" id="Resource_h2x4r"]
 script = ExtResource("3_2y6kf")
-_next_page = SubResource("Resource_v6bsq")
+_next_page = SubResource("Resource_4ouxt")
 _leads_to = ""
 
-[sub_resource type="Resource" id="Resource_p2xjq"]
+[sub_resource type="Resource" id="Resource_gsvhv"]
 script = ExtResource("2_v3a6t")
-description = "You hid, well done."
-decisions = Array[ExtResource("1_bmav6")]([])
+_description = "Your insurance called, though you are not dead, simply invisible!"
+_decisions = Array[ExtResource("1_bmav6")]([])
 
-[sub_resource type="Resource" id="Resource_5f4ae"]
+[sub_resource type="Resource" id="Resource_jclfo"]
 script = ExtResource("3_2y6kf")
-_next_page = SubResource("Resource_p2xjq")
+_next_page = SubResource("Resource_gsvhv")
 _leads_to = ""
 
-[sub_resource type="Resource" id="Resource_w8t4o"]
+[sub_resource type="Resource" id="Resource_yrhxu"]
 script = ExtResource("3_rw8um")
 attribute = ExtResource("2_2l21d")
 difficulty = 5
 details = "Hide in the shipwreck."
-failure_transition = SubResource("Resource_sqwra")
+failure_transition = SubResource("Resource_h2x4r")
 description = "Shipwreck stuff."
-transition = SubResource("Resource_5f4ae")
+transition = SubResource("Resource_jclfo")
 
 [resource]
 script = ExtResource("4_7e6iw")
 exclusive = false
 _placeholder = true
-description = "A young woman knocks at the door."
-decisions = Array[ExtResource("1_bmav6")]([SubResource("Resource_nby43"), SubResource("Resource_w8t4o")])
+_description = "A young woman knocks her heavy against the heavy gate of the ruined keep."
+_decisions = Array[ExtResource("1_bmav6")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])

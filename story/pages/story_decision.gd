@@ -7,7 +7,7 @@ extends Resource
 
 static func get_continue() -> StoryDecision:
 	var continue_decision := StoryDecision.new()
-	continue_decision.description = "Continue"
+	continue_decision.description = "Continue."
 	continue_decision.transition = StoryTransition.new()
 	return continue_decision
 

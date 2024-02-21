@@ -2,15 +2,15 @@
 class_name StoryPage
 extends Resource
 
-@export_multiline var description: String : get = _get_description
-@export var thumbnail: Texture : get = _get_thumbnail
-@export var decisions: Array[StoryDecision] : get = _get_decisions
+@export_multiline var _description: String
+@export var _thumbnail: Texture
+@export var _decisions: Array[StoryDecision]
 
-func _get_description() -> String:
-	return description
+func get_description() -> String:
+	return "[p]%s[/p]" % _description
 
-func _get_thumbnail() -> Texture:
-	return thumbnail
+func get_thumbnail() -> Texture:
+	return _thumbnail
 
-func _get_decisions() ->  Array[StoryDecision]:
-	return decisions
+func get_decisions() ->  Array[StoryDecision]:
+	return _decisions

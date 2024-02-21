@@ -7,9 +7,9 @@ signal page_entered(story_page: StoryPage)
 @export var story_page: StoryPage :
 	set(new_story_page):
 		story_page = new_story_page
-		_thumbnail.texture = story_page.thumbnail
-		_description.type_text(story_page.description)
-		_update_decisions(story_page.decisions)
+		_thumbnail.texture = story_page.get_thumbnail()
+		_description.type_text(story_page.get_description())
+		_update_decisions(story_page.get_decisions())
 
 @export_group("Configuration")
 @export var _thumbnail: TextureRect

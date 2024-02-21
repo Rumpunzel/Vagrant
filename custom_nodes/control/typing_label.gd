@@ -38,7 +38,7 @@ func _process(_delta: float) -> void:
 ## To use this script, simply call this method from anywhere with the text you want it to type
 func type_text(new_text: String):
 	text = new_text
-	if text.is_empty() or _characters_per_minute <= 0:
+	if get_parsed_text().is_empty() or _characters_per_minute <= 0:
 		visible_characters = -1
 	else:
 		visible_characters = 0

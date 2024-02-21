@@ -12,28 +12,28 @@ extends StoryPage
 
 func to_page_subtitle() -> String:
 	if area == null: return name
-	return "[center]%s - %s[/center]" % [area.name, name]
+	return "[center]%s — %s[/center]" % [area.name, name]
 
-func _get_description() -> String:
-	var combined_description := "[p]%s[/p]" % description
+func get_description() -> String:
+	var combined_description := super.get_description()
 	for event: StoryEvent in events:
 		if event.are_all_prerequisites_fullfilled():
-			if event.exclusive: return event.description
-			combined_description += "[p]%s[/p]" % event.description
+			if event.exclusive: return event.get_description()
+			combined_description += event.get_description()
 	return combined_description
 
-func _get_decisions() ->  Array[StoryDecision]:
+func get_decisions() ->  Array[StoryDecision]:
 	var combined_decisions: Array[StoryDecision]= [ ]
 	for event: StoryEvent in events:
 		if event.are_all_prerequisites_fullfilled():
-			if event.exclusive: return event.decisions
-			combined_decisions.append_array(event.decisions)
-	combined_decisions.append_array(decisions)
+			if event.exclusive: return event.get_decisions()
+			combined_decisions.append_array(event.get_decisions())
+	combined_decisions.append_array(super.get_decisions())
 	return combined_decisions
 
-func _get_thumbnail() -> Texture:
+func get_thumbnail() -> Texture:
 	for event: StoryEvent in events:
 		if event.are_all_prerequisites_fullfilled():
-			if event.thumbnail != null: return event.thumbnail
+			if event.get_thumbnail() != null: return event.get_thumbnail()
 			if event.exclusive: break
-	return thumbnail if thumbnail != null else background
+	return super.get_thumbnail() if super.get_thumbnail() != null else background
