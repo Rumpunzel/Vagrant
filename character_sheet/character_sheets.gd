@@ -11,5 +11,5 @@ func _update_character_list() -> void:
 		character_sheet.queue_free()
 	for character: Character in get_tree().get_nodes_in_group(Character.GROUP):
 		var character_sheet: CharacterSheet = _character_sheet.instantiate()
-		character_sheet.character = character
 		add_child(character_sheet)
+		character_sheet.character = character

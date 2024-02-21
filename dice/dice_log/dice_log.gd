@@ -19,8 +19,8 @@ func _exit_tree() -> void:
 
 func _on_die_rolled(die: Die) -> void:
 	var dice_log_entry: DiceLogEntry = _dice_log_entry.instantiate()
-	dice_log_entry.initialize_die_result(die)
 	_log_entries.add_child(dice_log_entry)
+	dice_log_entry.initialize_die_result(die)
 
 func _on_save_rolled(save_result: SaveResult) -> void:
 	var dice_log_entry: DiceLogEntry = _dice_log_entry.instantiate()

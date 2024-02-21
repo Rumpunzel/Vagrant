@@ -15,6 +15,6 @@ var character: Character :
 
 func add_entry(save_result: SaveResult) -> void:
 	var dice_log_entry: DiceLogEntry = _dice_log_entry.instantiate()
-	dice_log_entry.initialize_save_result(save_result)
 	_entries.add_child(dice_log_entry)
+	dice_log_entry.initialize_save_result(save_result)
 	entry_added.emit(dice_log_entry)

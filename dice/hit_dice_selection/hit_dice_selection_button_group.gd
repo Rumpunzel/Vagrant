@@ -25,6 +25,7 @@ func update_hit_dice(available_hit_dice: Array[Die], display_results: HitDieSele
 	
 	for hit_die: Die in relevant_hit_dice:
 		var button: HitDieSelectionButton = _hit_die_selection_button.instantiate()
+		_buttons.add_child(button)
 		button.die = hit_die
 		button.display_results = display_results
 		button.save_difficulty = save_difficulty
@@ -32,7 +33,6 @@ func update_hit_dice(available_hit_dice: Array[Die], display_results: HitDieSele
 		button.toggled.connect(_on_button_toggled)
 		button.changed_disabled.connect(_on_button_changed_disabled)
 		button.activation_changed.connect(_on_button_activation_changed)
-		_buttons.add_child(button)
 	
 	_on_button_toggled()
 	_on_button_changed_disabled()

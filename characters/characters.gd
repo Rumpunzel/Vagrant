@@ -23,7 +23,7 @@ func get_character(character_profile: CharacterProfile, create_if_nonexistant :=
 func create_character(character_profile: CharacterProfile) -> Character:
 	assert(not characters.has(character_profile), "Character is not allowed to exist when being created!")
 	var character: Character = _character.instantiate()
+	add_child(character)
 	character.character_profile = character_profile
 	characters[character_profile] = character
-	add_child(character)
 	return character

@@ -24,12 +24,12 @@ signal page_entered(story_page: StoryPage)
 		if not is_exclusive:
 			description = ("[p]%s[/p]" % story_page.description) + description
 			decisions.append_array(story_page.decisions)
-		_description.text = description
+		_description.type_text(description)
 		_update_decisions(decisions)
 
 @export_group("Configuration")
 @export var _hit_dice_selection: HitDiceSelection
-@export var _description: RichTextLabel
+@export var _description: TypingLabel
 @export var _choices: Container
 @export var _dialog_button: PackedScene
 
@@ -56,17 +56,18 @@ func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 		dialog_button.queue_free()
 	for story_decision: StoryDecision in story_decisions:
 		var dialog_button: DialogButton = _dialog_button.instantiate()
+		_choices.add_child(dialog_button)
 		dialog_button.story_decision = story_decision
 		dialog_button.story_continued.connect(_progress_story)
 		dialog_button.save_requested.connect(_on_save_requested)
-		_choices.add_child(dialog_button)
 	if story_decisions.is_empty():
 		var dialog_button: DialogButton = _dialog_button.instantiate()
+		_choices.add_child(dialog_button)
 		dialog_button.story_decision = StoryDecision.get_continue()
 		dialog_button.story_continued.connect(_progress_story)
-		_choices.add_child(dialog_button)
 
 func _disable_buttons(selected_story_decision: StoryDecision) -> void:
+	custom_minimum_size = Vector2.ZERO
 	for button: DialogButton in _choices.get_children():
 		button.disable(selected_story_decision)
 
