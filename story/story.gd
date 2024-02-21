@@ -7,19 +7,25 @@ extends VBoxContainer
 @export_group("Configuration")
 @export var _title: RichTextLabel
 @export var _sub_title: RichTextLabel
+@export var _scroll_container: Container
 @export var _story_pages: Container
 @export var _stage: Stage
 @export var _story_page_entry: PackedScene
 
 var _page_stack: Array[StoryPage] = [ ]
 
+func _ready() -> void:
+	_enter_page()
+
 func _enter_page(story_page: StoryPage = current_page) -> void:
 	if story_page is StoryLocation: _enter_location(story_page)
 	var story_page_entry: StoryPageEntry = _story_page_entry.instantiate()
-	story_page_entry.story_page = story_page
-	story_page_entry.page_entered.connect(_set_current_page)
 	_story_pages.add_child(story_page_entry)
 	_story_pages.move_child(story_page_entry, 0)
+	story_page_entry.story_page = story_page
+	story_page_entry.page_entered.connect(_set_current_page)
+	story_page_entry.custom_minimum_size = Vector2(0, _scroll_container.size.y - 16)
+	print(story_page_entry.custom_minimum_size)
 	if _story_pages.get_child_count() > 1: story_page_entry.add_sibling(HSeparator.new())
 
 func _enter_location(story_location: StoryLocation) -> void:
@@ -35,7 +41,7 @@ func _set_current_page(new_current_page: StoryPage) -> void:
 		else:
 			print("Already on page: <%s>!" % current_page)
 			return
-	_enter_page()
+	if is_inside_tree(): _enter_page()
 
 func _on_location_changed(new_location: StoryLocation) -> void:
 	_title.text = "[center]%s[/center]" % "Title"
