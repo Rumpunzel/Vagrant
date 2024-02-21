@@ -1,3 +1,4 @@
+@tool
 extends CanvasLayer
 
 @export_group("Configuration")

@@ -24,7 +24,7 @@ transition = SubResource("Resource_f76or")
 
 [sub_resource type="Resource" id="Resource_v6bsq"]
 script = ExtResource("2_v3a6t")
-description = "Walking behind a you-shaped plank does no count as stealth."
+description = "Walking behind a you-shaped plank does not count as stealth."
 decisions = Array[ExtResource("1_bmav6")]([])
 
 [sub_resource type="Resource" id="Resource_sqwra"]

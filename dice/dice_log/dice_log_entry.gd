@@ -14,7 +14,7 @@ func initialize_save_request(save_request: SaveRequest) -> void:
 	_entry.clear()
 	_append_attribute_prefix(character, attribute)
 	_entry.append_text(" ")
-	_entry.append_text(" Choose Hit Dice to roll…")
+	_entry.append_text(" Choose Hit Dice…")
 
 func initialize_save_result(save_result: SaveResult) -> void:
 	var character := save_result.character

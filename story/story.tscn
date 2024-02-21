@@ -64,6 +64,7 @@ theme_override_constants/margin_bottom = 16
 
 [node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 follow_focus = true
 horizontal_scroll_mode = 0
 

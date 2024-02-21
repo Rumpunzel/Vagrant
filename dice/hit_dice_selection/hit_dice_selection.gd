@@ -16,14 +16,12 @@ var _save_result: SaveResult = null
 
 func request_save(save_request: SaveRequest) -> void:
 	_save_request = save_request
+	if _save_request == null: return
 	var character := _save_request.character
 	var available_hit_dice := character.get_available_hit_dice()
 	_portrait.texture = character.portrait
 	_description.text = _save_request.description
-	_ok_button.disabled = false
-	_ok_button.active = true
-	_all_in_button.disabled = false
-	_all_in_button.active = true
+	_enable_hud()
 	_all_in_button.set_pressed_no_signal(false)
 	_hit_dice_selection_buttons.update_hit_dice(available_hit_dice, save_request.difficulty)
 	_dice_log_entry.initialize_save_request(save_request)
@@ -33,10 +31,13 @@ func _roll_save(dice_to_roll: Array[Die]) -> void:
 	_dice_log_entry.initialize_save_result(_save_result)
 	save_evaluated.emit(_save_result)
 
+func _enable_hud(set_to_enabled := true) -> void:
+	_ok_button.disabled = not set_to_enabled
+	_ok_button.active = set_to_enabled
+	_all_in_button.disabled = not set_to_enabled
+	_all_in_button.active = set_to_enabled
+
 func _on_confirmed() -> void:
 	_roll_save(_hit_dice_selection_buttons.get_selected_dice())
 	_hit_dice_selection_buttons.disable_buttons()
-	_ok_button.disabled = true
-	_ok_button.active = false
-	_all_in_button.disabled = true
-	_all_in_button.active = false
+	_enable_hud(false)

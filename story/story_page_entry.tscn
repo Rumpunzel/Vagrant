@@ -1,37 +1,48 @@
 [gd_scene load_steps=4 format=3 uid="uid://cy2ymcfk2tejn"]
 
 [ext_resource type="Script" path="res://story/story_page_entry.gd" id="1_i7rrh"]
-[ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/dialog_button.tscn" id="2_4ecuj"]
+[ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/dialog_button.tscn" id="2_2v1bp"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://dice/hit_dice_selection/hit_dice_selection.tscn" id="3_bmmcs"]
 
-[node name="StoryPageEntry" type="VBoxContainer" node_paths=PackedStringArray("_hit_dice_selection", "_description", "_choices")]
-offset_right = 866.0
-offset_bottom = 282.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 12
+[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_hit_dice_selection", "_description", "_choices")]
+offset_right = 808.0
+offset_bottom = 216.0
 script = ExtResource("1_i7rrh")
-_hit_dice_selection = NodePath("HitDiceSelection")
-_description = NodePath("PanelContainer/MarginContainer/Description")
-_choices = NodePath("Choices")
-_dialog_button = ExtResource("2_4ecuj")
+_hit_dice_selection = NodePath("MarginContainer/VBoxContainer/HitDiceSelection")
+_description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Description")
+_choices = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Choices")
+_dialog_button = ExtResource("2_2v1bp")
 
-[node name="HitDiceSelection" parent="." instance=ExtResource("3_bmmcs")]
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HitDiceSelection" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_bmmcs")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 20
+theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
-[node name="Description" type="RichTextLabel" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 2
@@ -40,12 +51,11 @@ bbcode_enabled = true
 text = "First line.
 Second line."
 fit_content = true
-scroll_active = false
 selection_enabled = true
 
-[node name="Choices" type="VBoxContainer" parent="."]
+[node name="Choices" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[connection signal="save_evaluated" from="HitDiceSelection" to="." method="_on_save_evaluated"]
+[connection signal="save_evaluated" from="MarginContainer/VBoxContainer/HitDiceSelection" to="." method="_on_save_evaluated"]

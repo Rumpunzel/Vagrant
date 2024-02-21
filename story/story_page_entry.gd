@@ -1,6 +1,6 @@
 @tool
 class_name StoryPageEntry
-extends VBoxContainer
+extends PanelContainer
 
 signal page_entered(story_page: StoryPage)
 
@@ -42,12 +42,12 @@ func _enter_tree() -> void:
 
 func _progress_story(source: StoryDecision) -> void:
 	print("SUCCESS!")
-	_disable_buttons()
+	_disable_buttons(source)
 	page_entered.emit(source.transition.get_next_page())
 
 func _handle_failure(source: StoryDecision) -> void:
 	print("FAILURE!")
-	_disable_buttons()
+	_disable_buttons(source)
 	page_entered.emit(source.failure_transition.get_next_page())
 
 func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
@@ -66,15 +66,15 @@ func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 		dialog_button.story_continued.connect(_progress_story)
 		_choices.add_child(dialog_button)
 
-func _disable_buttons() -> void:
+func _disable_buttons(selected_story_decision: StoryDecision) -> void:
 	for button: DialogButton in _choices.get_children():
-		button.disable()
+		button.disable(selected_story_decision)
 
 func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
 	_save_request = save_request
 	_selected_story_decision = source
 	_hit_dice_selection.request_save(_save_request)
-	_hit_dice_selection.visible = true
+	_hit_dice_selection.visible = save_request != null
 
 func _on_save_evaluated(save_result: SaveResult) -> void:
 	_save_result = save_result
