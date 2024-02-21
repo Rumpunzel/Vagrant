@@ -7,7 +7,6 @@ extends VBoxContainer
 @export_group("Configuration")
 @export var _title: RichTextLabel
 @export var _sub_title: RichTextLabel
-@export var _scroll_container: Container
 @export var _story_pages: Container
 @export var _stage: Stage
 @export var _story_page_entry: PackedScene
@@ -24,8 +23,6 @@ func _enter_page(story_page: StoryPage = current_page) -> void:
 	_story_pages.move_child(story_page_entry, 0)
 	story_page_entry.story_page = story_page
 	story_page_entry.page_entered.connect(_set_current_page)
-	story_page_entry.custom_minimum_size = Vector2(0, _scroll_container.size.y - 16)
-	print(story_page_entry.custom_minimum_size)
 	if _story_pages.get_child_count() > 1: story_page_entry.add_sibling(HSeparator.new())
 
 func _enter_location(story_location: StoryLocation) -> void:

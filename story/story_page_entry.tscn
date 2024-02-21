@@ -1,49 +1,39 @@
-[gd_scene load_steps=5 format=3 uid="uid://cy2ymcfk2tejn"]
+[gd_scene load_steps=6 format=3 uid="uid://cy2ymcfk2tejn"]
 
 [ext_resource type="Script" path="res://story/story_page_entry.gd" id="1_i7rrh"]
 [ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/dialog_button.tscn" id="2_2v1bp"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://dice/hit_dice_selection/hit_dice_selection.tscn" id="3_bmmcs"]
 [ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="3_mesq1"]
+[ext_resource type="Script" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_of6hj"]
 
-[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_hit_dice_selection", "_description", "_choices")]
+[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]
 offset_right = 808.0
 offset_bottom = 277.0
 script = ExtResource("1_i7rrh")
-_hit_dice_selection = NodePath("MarginContainer/VBoxContainer/HitDiceSelection")
-_description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Description")
-_choices = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Choices")
+_description = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Description")
+_choices = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Choices")
+_hit_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/HitDiceSelection")
+_hit_dice_selection_cc = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
 _dialog_button = ExtResource("2_2v1bp")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-size_flags_vertical = 0
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 16
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-
-[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Description" type="RichTextLabel" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
 focus_mode = 2
 theme_override_constants/line_separation = 16
 bbcode_enabled = true
@@ -51,19 +41,42 @@ text = "First line.
 Second line."
 fit_content = true
 selection_enabled = true
-visible_characters = 10
-visible_ratio = 0.416667
 script = ExtResource("3_mesq1")
 
-[node name="Choices" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Choices" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 2
 
-[node name="HitDiceSelection" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_bmmcs")]
-unique_name_in_owner = true
-visible = false
+[node name="CollapsibleContainer" type="Control" parent="MarginContainer/HBoxContainer"]
+process_mode = 3
+editor_description = "
+			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
+			
+Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
+clip_contents = true
+custom_minimum_size = Vector2(386, 126)
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+script = ExtResource("4_of6hj")
+starts_opened = false
+folding_direction_preset = 10
+sizing_constraint = 1
+auto_update_size = 1
+sizing_node = NodePath("HitDiceSelection")
 
-[connection signal="save_evaluated" from="MarginContainer/VBoxContainer/HitDiceSelection" to="." method="_on_save_evaluated"]
+[node name="HitDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("3_bmmcs")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="finished_typing" from="MarginContainer/HBoxContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
+[connection signal="save_evaluated" from="MarginContainer/HBoxContainer/CollapsibleContainer/HitDiceSelection" to="." method="_on_save_evaluated"]

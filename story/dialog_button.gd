@@ -2,6 +2,7 @@
 class_name DialogButton
 extends Button
 
+signal finished_setup
 signal story_continued(source: StoryDecision)
 signal save_requested(save_request: SaveRequest, source: StoryDecision)
 
@@ -13,7 +14,7 @@ signal save_requested(save_request: SaveRequest, source: StoryDecision)
 @export_group("Configuration")
 @export var _container: Container
 @export var _index: Label
-@export var _description: RichTextLabel
+@export var _description: TypingLabel
 
 var _hovered := false
 var _selected := false :
@@ -23,6 +24,7 @@ var _selected := false :
 		else: _set_index()
 
 func _ready() -> void:
+	visible = false
 	_update_font_colors()
 	_resize_to_fit_children()
 	_set_index()
@@ -33,6 +35,12 @@ func _ready() -> void:
 	number_shortcut.pressed = false
 	shortcut = Shortcut.new()
 	shortcut.events = [number_shortcut]
+
+func popup(set_to_visible := true) -> void:
+	visible = set_to_visible
+	if not set_to_visible: return
+	_description.type_text(story_decision.to_dialog_button_text())
+	finished_setup.emit()
 
 func disable(selected_story_decision: StoryDecision, set_to_disabled := true) -> void:
 	if set_to_disabled:
@@ -78,6 +86,9 @@ func _on_pressed() -> void:
 	else:
 		save_requested.emit(null, story_decision)
 		story_continued.emit(story_decision)
+
+func _on_description_finished_typing() -> void:
+	finished_setup.emit()
 
 func _on_container_minimum_size_changed() -> void:
 	_resize_to_fit_children()

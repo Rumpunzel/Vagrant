@@ -1,18 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://d0ecexfpobl4m"]
+[gd_scene load_steps=5 format=3 uid="uid://d0ecexfpobl4m"]
 
 [ext_resource type="Script" path="res://story/dialog_button.gd" id="1_ujj37"]
+[ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="2_p4pnf"]
 
-[sub_resource type="InputEventKey" id="InputEventKey_e3yj0"]
+[sub_resource type="InputEventKey" id="InputEventKey_q16eq"]
 keycode = 49
 
-[sub_resource type="Shortcut" id="Shortcut_33rn8"]
-events = [SubResource("InputEventKey_e3yj0")]
+[sub_resource type="Shortcut" id="Shortcut_qhmfb"]
+events = [SubResource("InputEventKey_q16eq")]
 
 [node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
 custom_minimum_size = Vector2(45, 31)
 offset_right = 333.0
 offset_bottom = 31.0
-shortcut = SubResource("Shortcut_33rn8")
+shortcut = SubResource("Shortcut_qhmfb")
 flat = true
 script = ExtResource("1_ujj37")
 _container = NodePath("MarginContainer")
@@ -54,6 +55,7 @@ bbcode_enabled = true
 text = "Hide in the shipwreck."
 fit_content = true
 scroll_active = false
+script = ExtResource("2_p4pnf")
 
 [connection signal="button_down" from="." to="." method="_update_font_colors"]
 [connection signal="button_up" from="." to="." method="_update_font_colors"]
@@ -63,3 +65,4 @@ scroll_active = false
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="pressed" from="." to="." method="_on_pressed"]
 [connection signal="minimum_size_changed" from="MarginContainer" to="." method="_on_container_minimum_size_changed"]
+[connection signal="finished_typing" from="MarginContainer/HBoxContainer/Description" to="." method="_on_description_finished_typing"]
