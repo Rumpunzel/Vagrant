@@ -10,7 +10,6 @@
 [node name="HitDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_hit_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_entry")]
 offset_right = 431.0
 offset_bottom = 276.0
-size_flags_horizontal = 3
 script = ExtResource("1_6stf5")
 _portrait = NodePath("Portrait")
 _description = NodePath("MarginContainer/GridContainer/PanelContainer/MarginContainer/Description")

@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage/stage.tscn" id="3_cnyp4"]
 [ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="4_kbsk1"]
 
-[node name="Story" type="VBoxContainer" node_paths=PackedStringArray("_title", "_sub_title", "_story_pages", "_stage")]
+[node name="Story" type="VBoxContainer" node_paths=PackedStringArray("_stage", "_title", "_sub_title", "_pages_container", "_story_pages", "_page_history")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -19,10 +19,12 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 32
 script = ExtResource("1_cts4e")
+_stage = NodePath("Stage")
 _title = NodePath("MarginContainer/VBoxContainer/Title")
 _sub_title = NodePath("MarginContainer/VBoxContainer/Subtitle")
-_story_pages = NodePath("ScrollContainer/MarginContainer/StoryPages")
-_stage = NodePath("Stage")
+_pages_container = NodePath("StoryPages/PanelContainer/ScrollContainer")
+_story_pages = NodePath("StoryPages")
+_page_history = NodePath("StoryPages/PanelContainer/ScrollContainer/MarginContainer/PageHistory")
 _story_page_entry = ExtResource("2_x8uvv")
 
 [node name="Stage" parent="." instance=ExtResource("3_cnyp4")]
@@ -61,19 +63,26 @@ selection_enabled = true
 script = ExtResource("4_kbsk1")
 _characters_per_minute = 1000.0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
-unique_name_in_owner = true
+[node name="StoryPages" type="VSplitContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="StoryPages"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="StoryPages/PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 follow_focus = true
 horizontal_scroll_mode = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="StoryPages/PanelContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="StoryPages" type="VBoxContainer" parent="ScrollContainer/MarginContainer"]
+[node name="PageHistory" type="VBoxContainer" parent="StoryPages/PanelContainer/ScrollContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

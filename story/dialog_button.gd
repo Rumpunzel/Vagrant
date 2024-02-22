@@ -32,7 +32,6 @@ func _ready() -> void:
 	if index > 9: return
 	var number_shortcut := InputEventKey.new()
 	number_shortcut.keycode = KEY_0 + index as Key
-	number_shortcut.pressed = false
 	shortcut = Shortcut.new()
 	shortcut.events = [number_shortcut]
 

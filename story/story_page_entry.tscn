@@ -6,18 +6,20 @@
 [ext_resource type="Script" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_of6hj"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection/hit_dice_selection.tscn" id="5_wgcyu"]
 
-[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_thumbnail", "_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]
-offset_right = 808.0
-offset_bottom = 277.0
+[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]
+offset_right = 641.0
+offset_bottom = 182.0
+size_flags_vertical = 3
 script = ExtResource("1_i7rrh")
-_thumbnail = NodePath("Thumbnnail")
+_background = NodePath("Background")
 _description = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Description")
 _choices = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Choices")
 _hit_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/HitDiceSelection")
 _hit_dice_selection_cc = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
 _dialog_button = ExtResource("2_2v1bp")
 
-[node name="Thumbnnail" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
+visible = false
 show_behind_parent = true
 layout_mode = 2
 expand_mode = 1
@@ -36,6 +38,7 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 16
 
 [node name="Description" type="RichTextLabel" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -63,7 +66,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(386, 436)
+custom_minimum_size = Vector2(392, 436)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -77,13 +80,11 @@ sizing_node = NodePath("HitDiceSelection")
 [node name="HitDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("5_wgcyu")]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 1.0
 offset_right = 0.0
-offset_bottom = 0.0
+offset_bottom = 126.0
 grow_horizontal = 2
-grow_vertical = 2
 
 [connection signal="finished_typing" from="MarginContainer/HBoxContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
 [connection signal="save_evaluated" from="MarginContainer/HBoxContainer/CollapsibleContainer/HitDiceSelection" to="." method="_on_save_evaluated"]

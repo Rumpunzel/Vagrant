@@ -20,7 +20,9 @@ script = ExtResource("1_j41ex")
 name = "Temple Ruin"
 area = ExtResource("1_8bxsp")
 background = ExtResource("2_1qcin")
-events = Array[Resource("res://story/pages/story_event.gd")]([])
+events = Array[Resource("res://story/pages/story_page.gd")]([])
+exclusive = false
+_placeholder = true
 _description = "The air is damp and smells of rotten earth.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed orci orci. Donec tincidunt arcu viverra, lacinia enim at, pharetra orci. Integer ac neque sit amet nunc venenatis fermentum ut mollis eros. Maecenas egestas tortor at dui mattis pulvinar. Mauris rutrum ligula id massa euismod scelerisque. Cras sed molestie orci. Phasellus non finibus felis. Aenean purus lectus, tempus quis enim in, tincidunt laoreet arcu. Nullam in eleifend purus. Etiam eros lacus, lacinia id metus sed, faucibus viverra tortor. Phasellus sit amet leo sit amet massa consectetur porttitor. Vestibulum in facilisis lorem. Etiam est sapien, condimentum sed convallis vel, auctor in mi. Proin sit amet ornare tortor. Proin commodo quam mi, at placerat dolor cursus faucibus. Ut dictum accumsan neque eget consectetur."
 _decisions = Array[ExtResource("2_r3twy")]([SubResource("Resource_e22nq")])

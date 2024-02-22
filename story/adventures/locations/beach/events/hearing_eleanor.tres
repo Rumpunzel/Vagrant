@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="StoryEvent" load_steps=2 format=3 uid="uid://dffxphat87a8a"]
+[gd_resource type="Resource" script_class="StoryPage" load_steps=2 format=3 uid="uid://dffxphat87a8a"]
 
-[ext_resource type="Script" path="res://story/pages/story_event.gd" id="6_66rfc"]
+[ext_resource type="Script" path="res://story/pages/story_page.gd" id="1_3veit"]
 
 [resource]
-script = ExtResource("6_66rfc")
+script = ExtResource("1_3veit")
 exclusive = false
 _placeholder = true
 _description = "You hear a knocking sound from the castle ruins to the north-east."
