@@ -1,0 +1,59 @@
+[gd_scene load_steps=5 format=3 uid="uid://14h1hukjjol7"]
+
+[ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://assets/portraits/knight.jpeg" id="1_fnfma"]
+[ext_resource type="Script" path="res://characters/character_sheet/character_sheet.gd" id="1_uqhlh"]
+[ext_resource type="PackedScene" uid="uid://dgk1ipqq2uypw" path="res://characters/character_sheet/attributes.tscn" id="3_hgrxd"]
+[ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection/hit_dice_selection_buttons.tscn" id="4_gaha4"]
+
+[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_attributes", "_hit_dice")]
+offset_right = 412.0
+offset_bottom = 412.0
+script = ExtResource("1_uqhlh")
+_portrait = NodePath("Portrait")
+_name = NodePath("MarginContainer/VBoxContainer/Name")
+_attributes = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Attributes")
+_hit_dice = NodePath("MarginContainer/VBoxContainer/HitDice")
+
+[node name="Portrait" type="TextureRect" parent="."]
+unique_name_in_owner = true
+show_behind_parent = true
+layout_mode = 2
+texture = ExtResource("1_fnfma")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Name" type="LineEdit" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Name"
+alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Attributes" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer" instance=ExtResource("3_hgrxd")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HitDice" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="Wounds" type="LineEdit" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Wounds"
+alignment = 1

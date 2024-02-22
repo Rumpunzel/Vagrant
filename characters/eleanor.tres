@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CharacterProfile" load_steps=3 format=3 uid="uid://bemnvbfgpxtbt"]
 
-[ext_resource type="Texture2D" uid="uid://6jlxmsm0ehfm" path="res://portraits/shadowheart.jpg" id="1_08y1w"]
+[ext_resource type="Texture2D" uid="uid://6jlxmsm0ehfm" path="res://assets/portraits/shadowheart.jpg" id="1_08y1w"]
 [ext_resource type="Script" path="res://characters/character_profile.gd" id="2_bgasg"]
 
 [resource]

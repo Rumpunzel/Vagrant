@@ -7,6 +7,7 @@ signal page_entered(story_page: StoryPage)
 @export var story_page: StoryPage :
 	set(new_story_page):
 		story_page = new_story_page
+		if story_page == null: return
 		_thumbnail.texture = story_page.get_thumbnail()
 		_description.type_text(story_page.get_description())
 		_update_decisions(story_page.get_decisions())
@@ -26,12 +27,12 @@ var _save_result: SaveResult
 func _progress_story(source: StoryDecision) -> void:
 	print("SUCCESS!")
 	_disable_buttons(source)
-	page_entered.emit(source.transition.get_next_page())
+	page_entered.emit(source.transition.get_story_page())
 
 func _handle_failure(source: StoryDecision) -> void:
 	print("FAILURE!")
 	_disable_buttons(source)
-	page_entered.emit(source.failure_transition.get_next_page())
+	page_entered.emit(source.failure_transition.get_story_page())
 
 func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for dialog_button: DialogButton in _choices.get_children():

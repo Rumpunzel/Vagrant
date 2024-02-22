@@ -5,7 +5,7 @@ extends StoryDecision
 @export var attribute: CharacterAttribute
 @export_range(0, 12) var difficulty: int
 @export_multiline var details: String
-@export var failure_transition: StoryTransition
+@export var failure_transition: StoryPageReference
 
 func to_save_request() -> SaveRequest:
 	var protagonist: Character = Characters.get_protagonist()

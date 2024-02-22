@@ -36,13 +36,13 @@ layout_mode = 2
 
 [node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 45)
 layout_mode = 2
 focus_mode = 2
 theme_override_constants/shadow_outline_size = 4
 theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true
 text = "[center]Title[/center]"
-fit_content = true
 scroll_active = false
 selection_enabled = true
 script = ExtResource("4_kbsk1")
@@ -50,12 +50,12 @@ _characters_per_minute = 1000.0
 
 [node name="Subtitle" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 focus_mode = 2
 theme_override_colors/default_color = Color(0.827, 0.827, 0.827, 1)
 bbcode_enabled = true
 text = "[center]Subtitle - Details[/center]"
-fit_content = true
 scroll_active = false
 selection_enabled = true
 script = ExtResource("4_kbsk1")

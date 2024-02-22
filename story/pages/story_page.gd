@@ -1,6 +1,6 @@
 @tool
 class_name StoryPage
-extends Resource
+extends StoryPageReference
 
 @export_multiline var _description: String
 @export var _thumbnail: Texture
@@ -14,3 +14,6 @@ func get_thumbnail() -> Texture:
 
 func get_decisions() ->  Array[StoryDecision]:
 	return _decisions
+
+func get_story_page() -> StoryPage:
+	return self

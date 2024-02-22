@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b11javrif3o0h"]
 
-[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://landscapes/ruin.jpg" id="2_etfne"]
+[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://assets/landscapes/ruin.jpg" id="1_t2cgw"]
 
 [node name="Background" type="TextureRect"]
 anchors_preset = 15
@@ -8,6 +8,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_etfne")
+texture = ExtResource("1_t2cgw")
 expand_mode = 1
 stretch_mode = 6

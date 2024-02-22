@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://story/story_page_entry.gd" id="1_i7rrh"]
 [ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/dialog_button.tscn" id="2_2v1bp"]
-[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://dice/hit_dice_selection/hit_dice_selection.tscn" id="3_bmmcs"]
 [ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="3_mesq1"]
 [ext_resource type="Script" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_of6hj"]
+[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection/hit_dice_selection.tscn" id="5_wgcyu"]
 
 [node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_thumbnail", "_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]
 offset_right = 808.0
@@ -46,6 +46,7 @@ bbcode_enabled = true
 text = "First line.
 Second line."
 fit_content = true
+scroll_active = false
 selection_enabled = true
 script = ExtResource("3_mesq1")
 
@@ -73,7 +74,7 @@ sizing_constraint = 1
 auto_update_size = 1
 sizing_node = NodePath("HitDiceSelection")
 
-[node name="HitDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("3_bmmcs")]
+[node name="HitDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("5_wgcyu")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15

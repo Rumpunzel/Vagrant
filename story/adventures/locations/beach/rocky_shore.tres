@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="StoryLocation" load_steps=12 format=3 uid="uid://ycd6xhx346l6"]
+
+[ext_resource type="Script" path="res://story/pages/story_decision.gd" id="1_wupgv"]
+[ext_resource type="Script" path="res://story/pages/story_transition.gd" id="2_hl5gp"]
+[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://assets/landscapes/ruin.jpg" id="3_d0vy1"]
+[ext_resource type="AudioStream" uid="uid://b3ynhoh2yis3n" path="res://assets/sfx/ambience/gentle-ocean-and-birdsong-24068.mp3" id="4_2hskh"]
+[ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://story/adventures/locations/beach/beach.tres" id="5_r3xmp"]
+[ext_resource type="Resource" uid="uid://dffxphat87a8a" path="res://story/adventures/locations/beach/events/hearing_eleanor.tres" id="6_wt0kr"]
+[ext_resource type="Script" path="res://story/pages/story_location.gd" id="7_qp10o"]
+
+[sub_resource type="Resource" id="Resource_vfpl1"]
+script = ExtResource("2_hl5gp")
+_leads_to = "res://story/adventures/locations/beach/castle_ruin.tres"
+
+[sub_resource type="Resource" id="Resource_c1yb7"]
+script = ExtResource("1_wupgv")
+description = "Go to the castle ruin."
+transition = SubResource("Resource_vfpl1")
+
+[sub_resource type="Resource" id="Resource_bjlpt"]
+script = ExtResource("2_hl5gp")
+_leads_to = "res://story/adventures/locations/swamp/temple_ruin.tres"
+
+[sub_resource type="Resource" id="Resource_025i5"]
+script = ExtResource("1_wupgv")
+description = "Go to the swamp."
+transition = SubResource("Resource_bjlpt")
+
+[resource]
+script = ExtResource("7_qp10o")
+name = "Rocky Shore"
+area = ExtResource("5_r3xmp")
+background = ExtResource("3_d0vy1")
+ambience = ExtResource("4_2hskh")
+events = Array[Resource("res://story/pages/story_event.gd")]([ExtResource("6_wt0kr")])
+_description = "The cold waves roll across the ragged shorelines."
+_decisions = Array[ExtResource("1_wupgv")]([SubResource("Resource_c1yb7"), SubResource("Resource_025i5")])

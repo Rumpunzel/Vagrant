@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://5l5lcf3xxqx2"]
+[gd_scene load_steps=3 format=3 uid="uid://5l5lcf3xxqx2"]
 
 [ext_resource type="Script" path="res://dice/dice_log/dice_log_entry.gd" id="1_la8xk"]
+[ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="2_t14o7"]
 
 [node name="DiceLogEntry" type="PanelContainer" node_paths=PackedStringArray("_entry")]
 offset_left = 16.0
@@ -21,3 +22,4 @@ bbcode_enabled = true
 text = "Entry"
 fit_content = true
 scroll_active = false
+script = ExtResource("2_t14o7")

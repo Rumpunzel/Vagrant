@@ -2,7 +2,7 @@ class_name CharacterProfile
 extends Resource
 
 @export_placeholder("Name") var name: String
-@export var portrait: Texture = preload("res://portraits/knight.jpeg")
+@export var portrait: Texture = preload("res://assets/portraits/knight.jpeg")
 
 @export_group("Attributes")
 ## The character's strength score. Will be rolled with 2d6 if equal to or less than 0.

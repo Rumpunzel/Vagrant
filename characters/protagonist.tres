@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CharacterProfile" load_steps=3 format=3 uid="uid://bknonhgn88qwp"]
 
-[ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://portraits/knight.jpeg" id="1_lfyap"]
+[ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://assets/portraits/knight.jpeg" id="1_lfyap"]
 [ext_resource type="Script" path="res://characters/character_profile.gd" id="2_imh64"]
 
 [resource]

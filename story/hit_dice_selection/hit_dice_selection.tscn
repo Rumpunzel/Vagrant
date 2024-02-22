@@ -1,0 +1,84 @@
+[gd_scene load_steps=7 format=3 uid="uid://bpqkh512g0nmb"]
+
+[ext_resource type="Script" path="res://story/hit_dice_selection/hit_dice_selection.gd" id="1_6stf5"]
+[ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://assets/portraits/knight.jpeg" id="2_h0l3f"]
+[ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="3_06obj"]
+[ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection/hit_dice_selection_buttons.tscn" id="3_gpl86"]
+[ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log/dice_log_entry.tscn" id="4_vfqac"]
+[ext_resource type="Script" path="res://custom_nodes/control/display_button.gd" id="5_bhkt5"]
+
+[node name="HitDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_hit_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_entry")]
+offset_right = 431.0
+offset_bottom = 276.0
+size_flags_horizontal = 3
+script = ExtResource("1_6stf5")
+_portrait = NodePath("Portrait")
+_description = NodePath("MarginContainer/GridContainer/PanelContainer/MarginContainer/Description")
+_hit_dice_selection_buttons = NodePath("MarginContainer/GridContainer/HitDiceSelectionButtons")
+_all_in_button = NodePath("MarginContainer/GridContainer/HBoxContainer/AllInButton")
+_ok_button = NodePath("MarginContainer/GridContainer/HBoxContainer/OKButton")
+_dice_log_entry = NodePath("MarginContainer/GridContainer/DiceLogEntry")
+
+[node name="Portrait" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+texture = ExtResource("2_h0l3f")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/GridContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Description" type="RichTextLabel" parent="MarginContainer/GridContainer/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "Description"
+fit_content = true
+script = ExtResource("3_06obj")
+
+[node name="HitDiceSelectionButtons" parent="MarginContainer/GridContainer" instance=ExtResource("3_gpl86")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+_display_results = 1
+
+[node name="DiceLogEntry" parent="MarginContainer/GridContainer" instance=ExtResource("4_vfqac")]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AllInButton" type="Button" parent="MarginContainer/GridContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "ALL IN!"
+script = ExtResource("5_bhkt5")
+
+[node name="OKButton" type="Button" parent="MarginContainer/GridContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Roll Dice!"
+script = ExtResource("5_bhkt5")
+
+[connection signal="toggled" from="MarginContainer/GridContainer/HBoxContainer/AllInButton" to="MarginContainer/GridContainer/HitDiceSelectionButtons" method="select_all_available_buttons"]
+[connection signal="pressed" from="MarginContainer/GridContainer/HBoxContainer/OKButton" to="." method="_on_confirmed"]

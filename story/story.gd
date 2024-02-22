@@ -26,8 +26,10 @@ func _enter_page(story_page: StoryPage = current_page) -> void:
 	if _story_pages.get_child_count() > 1: story_page_entry.add_sibling(HSeparator.new())
 
 func _enter_location(story_location: StoryLocation) -> void:
+	var previous_location := _stage.location
+	if story_location == previous_location: return
+	_sub_title.type_text(story_location.to_page_subtitle(), previous_location != null)
 	_stage.location = story_location
-	_sub_title.type_text(story_location.to_page_subtitle())
 
 func _set_current_page(new_current_page: StoryPage) -> void:
 	if new_current_page == null: current_page = _page_stack.pop_back()
