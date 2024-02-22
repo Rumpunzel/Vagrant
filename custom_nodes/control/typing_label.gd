@@ -7,12 +7,8 @@ extends RichTextLabel
 signal finished_typing
 signal finished_erasing
 
-@export var _characters_per_minute := 4000.0
-@export var _erase_multiplier := 2.0
-@export var _pause_after_erase_multiplier := 8.0
-
 ## Definition of all used punctuation which will cause a brief pause when typing out the message
-@export var _pause_multipliers := {
+const _PAUSE_MULTIPLIERS := {
 	".": 16.0,
 	"?": 16.0,
 	"!": 16.0,
@@ -20,8 +16,13 @@ signal finished_erasing
 	";": 12.0,
 	"…": 24.0,
 	"—": 8.0, 
-	",": 4.0, 
+	",": 4.0,
+	"\n": 16.0,
 }
+
+@export var _characters_per_minute := 4000.0
+@export var _erase_multiplier := 2.0
+@export var _pause_after_erase_multiplier := 8.0
 
 var _text_to_type: String
 var _typing_timer: Timer
@@ -71,7 +72,7 @@ func _type_next_character():
 		return
 	var next_character := parsed_text[visible_characters]
 	visible_characters += 1
-	var pause_multiplier: float = _pause_multipliers.get(next_character, 1.0)
+	var pause_multiplier: float = _PAUSE_MULTIPLIERS.get(next_character, 1.0)
 	var type_delay := 60.0 / _characters_per_minute * pause_multiplier
 	_typing_timer.start(type_delay)
 
