@@ -5,7 +5,7 @@ extends Resource
 @export var transition: StoryPageReference
 
 static func get_continue() -> StoryDecision:
-	return load("res://story/continue.tres")
+	return preload("res://story/pages/continue.tres")
 
 func to_dialog_button_text() -> String:
 	return description

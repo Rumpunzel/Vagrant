@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://main.gd" id="1_d4koy"]
 [ext_resource type="Script" path="res://characters/character_sheet/character_sheets.gd" id="4_houmb"]
-[ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/story_book.tscn" id="5_5hhyh"]
+[ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/book/story_book.tscn" id="5_5hhyh"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="6_hkljh"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://characters/character_sheet/character_sheet.tscn" id="6_wwv7i"]
 

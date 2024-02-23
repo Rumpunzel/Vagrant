@@ -1,22 +1,22 @@
 [gd_scene load_steps=6 format=3 uid="uid://cy2ymcfk2tejn"]
 
-[ext_resource type="Script" path="res://story/story_page_entry.gd" id="1_i7rrh"]
-[ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/dialog_button.tscn" id="2_2v1bp"]
-[ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="3_mesq1"]
-[ext_resource type="Script" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_of6hj"]
-[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection/hit_dice_selection.tscn" id="5_wgcyu"]
+[ext_resource type="Script" path="res://story/book/story_page_entry.gd" id="1_xif0c"]
+[ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/book/dialog_button.tscn" id="2_6tquj"]
+[ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="3_pf20m"]
+[ext_resource type="Script" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_nyvyp"]
+[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection/hit_dice_selection.tscn" id="5_15pgc"]
 
 [node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]
 offset_right = 641.0
 offset_bottom = 182.0
 size_flags_vertical = 3
-script = ExtResource("1_i7rrh")
+script = ExtResource("1_xif0c")
 _background = NodePath("Background")
 _description = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Description")
 _choices = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Choices")
 _hit_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/HitDiceSelection")
 _hit_dice_selection_cc = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
-_dialog_button = ExtResource("2_2v1bp")
+_dialog_button = ExtResource("2_6tquj")
 
 [node name="Background" type="TextureRect" parent="."]
 visible = false
@@ -50,7 +50,7 @@ Second line."
 fit_content = true
 scroll_active = false
 selection_enabled = true
-script = ExtResource("3_mesq1")
+script = ExtResource("3_pf20m")
 
 [node name="Choices" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -65,18 +65,18 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(392, 126)
+custom_minimum_size = Vector2(392, 436)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-script = ExtResource("4_of6hj")
+script = ExtResource("4_nyvyp")
 starts_opened = false
 folding_direction_preset = 10
 sizing_constraint = 1
 auto_update_size = 1
 sizing_node = NodePath("HitDiceSelection")
 
-[node name="HitDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("5_wgcyu")]
+[node name="HitDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("5_15pgc")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 10
