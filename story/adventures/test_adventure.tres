@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="Adventure" load_steps=3 format=3 uid="uid://dw1vkutmmhnao"]
+
+[ext_resource type="Script" path="res://story/adventure.gd" id="1_5cnpf"]
+[ext_resource type="Resource" uid="uid://ycd6xhx346l6" path="res://story/adventures/locations/beach/rocky_shore.tres" id="2_74d10"]
+
+[resource]
+script = ExtResource("1_5cnpf")
+starting_page = ExtResource("2_74d10")
