@@ -26,13 +26,11 @@ func _enter_page(story_page: StoryPage = current_page) -> void:
 	_current_story_page_entry.story_page = story_page
 	_current_story_page_entry.page_entered.connect(_set_current_page)
 	_current_story_page_entry.custom_minimum_size.y = _pages_container.size.y - 8.0
-	if story_page is StoryLocation: _enter_location(story_page)
-	_stage.story_page = story_page
-
-func _enter_location(story_location: StoryLocation) -> void:
 	var previous_story_page := _stage.story_page
-	if story_location == previous_story_page: return
-	_sub_title.type_text(story_location.to_page_subtitle(), previous_story_page != null)
+	if story_page == previous_story_page: return
+	var sub_title := story_page.get_page_title()
+	if not sub_title.is_empty(): _sub_title.type_text(sub_title, previous_story_page != null)
+	_stage.story_page = story_page
 
 func _set_current_page(new_current_page: StoryPage) -> void:
 	if new_current_page == null: new_current_page = _page_stack.pop_back()

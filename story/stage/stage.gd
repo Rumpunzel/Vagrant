@@ -13,8 +13,7 @@ var story_page: StoryPage :
 		if story_page == new_story_page: return
 		story_page = new_story_page
 		_set_background(story_page.get_background())
-		if story_page is StoryLocation:
-			_set_ambience(story_page.get_ambience())
+		_set_ambience(story_page.get_ambience())
 
 func _set_background(background_texture: Texture) -> void:
 	if background_texture == null or (_current_background!= null and _current_background.texture == background_texture): return

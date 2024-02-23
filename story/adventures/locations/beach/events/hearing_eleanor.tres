@@ -5,6 +5,8 @@
 [resource]
 script = ExtResource("1_3veit")
 exclusive = false
+_title = ""
 _placeholder = true
 _description = "You hear a knocking sound from the castle ruins to the north-east."
 _decisions = Array[Resource("res://story/pages/story_decision.gd")]([])
+_events = Array[ExtResource("1_3veit")]([])

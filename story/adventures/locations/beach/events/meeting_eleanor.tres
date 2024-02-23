@@ -9,10 +9,12 @@
 [sub_resource type="Resource" id="Resource_j24m5"]
 script = ExtResource("3_t43k6")
 exclusive = false
+_title = ""
 _placeholder = true
 _description = "She throws a strange artifact at your head, then dabs on the haters."
 _background = ExtResource("2_kfen3")
 _decisions = Array[ExtResource("1_npy2t")]([])
+_events = Array[ExtResource("3_t43k6")]([])
 
 [sub_resource type="Resource" id="Resource_fqbk4"]
 script = ExtResource("1_npy2t")
@@ -22,17 +24,21 @@ transition = SubResource("Resource_j24m5")
 [sub_resource type="Resource" id="Resource_0x8r7"]
 script = ExtResource("3_t43k6")
 exclusive = false
+_title = ""
 _placeholder = true
 _description = "Oops, you accidentaly the claps of your ass cheeks.
 Dummy thicc."
 _decisions = Array[ExtResource("1_npy2t")]([])
+_events = Array[ExtResource("3_t43k6")]([])
 
 [sub_resource type="Resource" id="Resource_b3ed1"]
 script = ExtResource("3_t43k6")
 exclusive = false
+_title = ""
 _placeholder = true
 _description = "You hide among the barnacles and flotsam."
 _decisions = Array[ExtResource("1_npy2t")]([])
+_events = Array[ExtResource("3_t43k6")]([])
 
 [sub_resource type="Resource" id="Resource_yrhxu"]
 script = ExtResource("5_yeb4i")
@@ -46,6 +52,8 @@ transition = SubResource("Resource_b3ed1")
 [resource]
 script = ExtResource("3_t43k6")
 exclusive = true
+_title = "The Mysterious Woman"
 _placeholder = true
-_description = "A young woman knocks her heavy against the heavy gate of the ruined keep."
+_description = "A young woman knocks her mace against the heavy gate of the ruined keep."
 _decisions = Array[ExtResource("1_npy2t")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])
+_events = Array[ExtResource("3_t43k6")]([])

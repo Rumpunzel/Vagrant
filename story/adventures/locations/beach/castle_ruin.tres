@@ -1,12 +1,10 @@
-[gd_resource type="Resource" script_class="StoryLocation" load_steps=10 format=3 uid="uid://dk3q4ia5u7q6m"]
+[gd_resource type="Resource" script_class="StoryPage" load_steps=8 format=3 uid="uid://dk3q4ia5u7q6m"]
 
 [ext_resource type="Script" path="res://story/pages/story_decision.gd" id="1_ctu8i"]
 [ext_resource type="Script" path="res://story/pages/story_transition.gd" id="2_k7v3r"]
-[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://assets/landscapes/ruin.jpg" id="3_arajt"]
-[ext_resource type="AudioStream" uid="uid://b3ynhoh2yis3n" path="res://assets/sfx/ambience/gentle-ocean-and-birdsong-24068.mp3" id="4_yb6ls"]
+[ext_resource type="Script" path="res://story/pages/story_page.gd" id="3_gmk2e"]
 [ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://story/adventures/locations/beach/beach.tres" id="5_rumxx"]
 [ext_resource type="Resource" uid="uid://rget62tdwg42" path="res://story/adventures/locations/beach/events/meeting_eleanor.tres" id="6_ct28b"]
-[ext_resource type="Script" path="res://story/pages/story_location.gd" id="7_a72iv"]
 
 [sub_resource type="Resource" id="Resource_y5shu"]
 script = ExtResource("2_k7v3r")
@@ -18,13 +16,11 @@ description = "Go back to the rocky shore."
 transition = SubResource("Resource_y5shu")
 
 [resource]
-script = ExtResource("7_a72iv")
-name = "Castle Ruin"
-area = ExtResource("5_rumxx")
-background = ExtResource("3_arajt")
-ambience = ExtResource("4_yb6ls")
-events = Array[Resource("res://story/pages/story_page.gd")]([ExtResource("6_ct28b")])
+script = ExtResource("3_gmk2e")
 exclusive = false
+_title = "Castle Ruin"
 _placeholder = true
-_description = "The cold waves roll across the ragged shorelines."
+_description = "The ruined castle towers high above you on the cliff. Behind a cluster of overgrown rocks you spot a hidden gate carved into the cliffside wall."
+_area = ExtResource("5_rumxx")
 _decisions = Array[ExtResource("1_ctu8i")]([SubResource("Resource_106m3")])
+_events = Array[ExtResource("3_gmk2e")]([ExtResource("6_ct28b")])
