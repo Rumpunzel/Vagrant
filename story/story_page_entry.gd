@@ -24,10 +24,10 @@ var _save_request: SaveRequest
 var _save_result: SaveResult
 
 func _enter_tree() -> void:
-	StoryLog.decision_made.connect(_on_decision_made)
+	Story.decision_made.connect(_on_decision_made)
 
 func _exit_tree() -> void:
-	if StoryLog.decision_made.is_connected(_on_decision_made): StoryLog.decision_made.disconnect(_on_decision_made)
+	if Story.decision_made.is_connected(_on_decision_made): Story.decision_made.disconnect(_on_decision_made)
 
 func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for dialog_button: DialogButton in _choices.get_children():
@@ -55,7 +55,7 @@ func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> voi
 
 func _on_save_evaluated(save_result: SaveResult) -> void:
 	_save_result = save_result
-	StoryLog.make_save_decision(_selected_story_decision, _save_result)
+	Story.make_save_decision(_selected_story_decision, _save_result)
 
 func _on_description_finished_typing() -> void:
 	for button: DialogButton in _choices.get_children():
@@ -65,4 +65,4 @@ func _on_description_finished_typing() -> void:
 func _on_decision_made(_story_decision: StoryDecision, _selected_how_many_times: int) -> void:
 	custom_minimum_size = Vector2.ZERO
 	_background.visible = true
-	StoryLog.decision_made.disconnect(_on_decision_made)
+	Story.decision_made.disconnect(_on_decision_made)

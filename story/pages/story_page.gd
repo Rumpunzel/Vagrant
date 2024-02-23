@@ -14,7 +14,7 @@ extends StoryPageReference
 @export var _events: Array[StoryPage]
 
 func are_all_prerequisites_fullfilled() -> bool:
-	if _one_time_only and StoryLog.get_how_often_page_has_been_entered(self) > 1: return false
+	if _one_time_only and Story.get_how_often_page_has_been_entered(self) > 1: return false
 	for condition: StoryCondition in _conditions:
 		if condition.is_true(): return true
 	return _conditions.is_empty()

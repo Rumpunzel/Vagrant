@@ -20,7 +20,7 @@ config/icon="res://icons/fantasy/map.png"
 Rules="*res://rules.gd"
 DiceRoller="*res://dice/dice_roller.tscn"
 Characters="*res://characters/characters.tscn"
-StoryLog="*res://story/story_log.gd"
+Story="*res://story/story.gd"
 
 [display]
 
