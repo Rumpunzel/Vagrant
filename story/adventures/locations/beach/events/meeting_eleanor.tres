@@ -44,9 +44,9 @@ _events = Array[ExtResource("3_t43k6")]([])
 script = ExtResource("5_yeb4i")
 attribute = ExtResource("4_qabnk")
 difficulty = 5
-details = "Hide in the shipwreck."
+details = "Shipwreck stuff."
 failure_transition = SubResource("Resource_0x8r7")
-description = "Shipwreck stuff."
+description = "Hide in the shipwreck."
 transition = SubResource("Resource_b3ed1")
 
 [resource]

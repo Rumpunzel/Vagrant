@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage/stage.tscn" id="3_cnyp4"]
 [ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="4_kbsk1"]
 
-[node name="Story" type="VBoxContainer" node_paths=PackedStringArray("_stage", "_title", "_sub_title", "_pages_container", "_story_pages", "_page_history")]
+[node name="Story" type="VBoxContainer" node_paths=PackedStringArray("_stage", "_title", "_sub_title", "_story_pages", "_page_history")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -22,7 +22,6 @@ script = ExtResource("1_cts4e")
 _stage = NodePath("Stage")
 _title = NodePath("MarginContainer/VBoxContainer/Title")
 _sub_title = NodePath("MarginContainer/VBoxContainer/Subtitle")
-_pages_container = NodePath("StoryPages/PanelContainer/ScrollContainer")
 _story_pages = NodePath("StoryPages")
 _page_history = NodePath("StoryPages/PanelContainer/ScrollContainer/MarginContainer/PageHistory")
 _story_page_entry = ExtResource("2_x8uvv")

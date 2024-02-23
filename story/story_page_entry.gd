@@ -2,8 +2,6 @@
 class_name StoryPageEntry
 extends PanelContainer
 
-signal page_entered(story_page: StoryPage)
-
 @export var story_page: StoryPage :
 	set(new_story_page):
 		story_page = new_story_page
@@ -25,15 +23,11 @@ var _selected_story_decision: StoryDecision
 var _save_request: SaveRequest
 var _save_result: SaveResult
 
-func _progress_story(source: StoryDecision) -> void:
-	print("SUCCESS!")
-	_disable_buttons(source)
-	page_entered.emit(source.transition.get_story_page())
+func _enter_tree() -> void:
+	StoryLog.decision_made.connect(_on_decision_made)
 
-func _handle_failure(source: StoryDecision) -> void:
-	print("FAILURE!")
-	_disable_buttons(source)
-	page_entered.emit(source.failure_transition.get_story_page())
+func _exit_tree() -> void:
+	if StoryLog.decision_made.is_connected(_on_decision_made): StoryLog.decision_made.disconnect(_on_decision_made)
 
 func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for dialog_button: DialogButton in _choices.get_children():
@@ -43,19 +37,11 @@ func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 		var dialog_button: DialogButton = _dialog_button.instantiate()
 		_choices.add_child(dialog_button)
 		dialog_button.story_decision = story_decision
-		dialog_button.story_continued.connect(_progress_story)
 		dialog_button.save_requested.connect(_on_save_requested)
 	if story_decisions.is_empty():
 		var dialog_button: DialogButton = _dialog_button.instantiate()
 		_choices.add_child(dialog_button)
 		dialog_button.story_decision = StoryDecision.get_continue()
-		dialog_button.story_continued.connect(_progress_story)
-
-func _disable_buttons(selected_story_decision: StoryDecision) -> void:
-	custom_minimum_size = Vector2.ZERO
-	_background.visible = true
-	for button: DialogButton in _choices.get_children():
-		button.disable(selected_story_decision)
 
 func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
 	_save_request = save_request
@@ -69,12 +55,14 @@ func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> voi
 
 func _on_save_evaluated(save_result: SaveResult) -> void:
 	_save_result = save_result
-	if _save_result.save_outcome != SaveResult.Outcome.FAILURE:
-		_progress_story(_selected_story_decision)
-	else:
-		_handle_failure(_selected_story_decision)
+	StoryLog.make_save_decision(_selected_story_decision, _save_result)
 
 func _on_description_finished_typing() -> void:
 	for button: DialogButton in _choices.get_children():
 		button.popup()
 		await button.finished_setup
+
+func _on_decision_made(_story_decision: StoryDecision, _selected_how_many_times: int) -> void:
+	custom_minimum_size = Vector2.ZERO
+	_background.visible = true
+	StoryLog.decision_made.disconnect(_on_decision_made)
