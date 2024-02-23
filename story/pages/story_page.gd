@@ -1,20 +1,23 @@
-@tool
 class_name StoryPage
 extends StoryPageReference
 
 @export var exclusive := false
 
 @export_placeholder("Title") var _title: String
-@export var _placeholder := true
 @export_multiline var _description: String
 @export var _area: StoryArea
 @export var _background: Texture
 @export var _ambience: AudioStream
+@export var _one_time_only := false
+@export var _conditions: Array[StoryCondition]
 @export var _decisions: Array[StoryDecision]
 @export var _events: Array[StoryPage]
 
 func are_all_prerequisites_fullfilled() -> bool:
-	return _placeholder
+	if _one_time_only and StoryLog.get_how_often_page_has_been_entered(self) > 1: return false
+	for condition: StoryCondition in _conditions:
+		if condition.is_true(): return true
+	return _conditions.is_empty()
 
 func get_page_title() -> String:
 	for event: StoryPage in _events:
@@ -25,12 +28,12 @@ func get_page_title() -> String:
 	return "[center]%s — %s[/center]" % [_area.name, _title]
 
 func get_description() -> String:
-	var combined_description := "[p]%s[/p]" % _description
+	var combined_description := ""
 	for event: StoryPage in _events:
 		if event.are_all_prerequisites_fullfilled():
-			if event.exclusive: return event.get_description()
-			combined_description += event.get_description()
-	return combined_description
+			combined_description += "%s" % event.get_description()
+			if event.exclusive: return combined_description
+	return ("[p]%s[/p]" % _description) + combined_description
 
 func get_background() -> Texture:
 	for event: StoryPage in _events:
@@ -48,10 +51,18 @@ func get_decisions() ->  Array[StoryDecision]:
 	var combined_decisions: Array[StoryDecision]= [ ]
 	for event: StoryPage in _events:
 		if event.are_all_prerequisites_fullfilled():
-			if event.exclusive: return event.get_decisions()
 			combined_decisions.append_array(event.get_decisions())
+			if event.exclusive: return combined_decisions
 	combined_decisions.append_array(_decisions)
 	return combined_decisions
+
+func get_events() -> Array[StoryPage]:
+	var events: Array[StoryPage]= [ ]
+	for event: StoryPage in _events:
+		if event.are_all_prerequisites_fullfilled():
+			events.append(event)
+			if event.exclusive: return events
+	return events
 
 func get_story_page() -> StoryPage:
 	return self

@@ -1,4 +1,3 @@
-@tool
 class_name StoryDecision
 extends Resource
 
