@@ -15,6 +15,7 @@ signal save_requested(save_request: SaveRequest, source: StoryDecision)
 @export var _container: Container
 @export var _index: Label
 @export var _description: TypingLabel
+@export var _shortcuts: Array[Shortcut] = [ ]
 
 var _hovered := false
 var _selected := false :
@@ -34,12 +35,9 @@ func _ready() -> void:
 	_update_font_colors()
 	_resize_to_fit_children()
 	_set_index()
-	var index := _set_index()
-	if index > 9: return
-	var number_shortcut := InputEventKey.new()
-	number_shortcut.keycode = KEY_0 + index as Key
-	shortcut = Shortcut.new()
-	shortcut.events = [number_shortcut]
+	var index := get_index()
+	if index >= _shortcuts.size(): return
+	shortcut = _shortcuts[index]
 
 func popup(set_to_visible := true) -> void:
 	visible = set_to_visible

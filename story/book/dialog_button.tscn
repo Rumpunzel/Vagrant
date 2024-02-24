@@ -1,25 +1,99 @@
-[gd_scene load_steps=5 format=3 uid="uid://d0ecexfpobl4m"]
+[gd_scene load_steps=23 format=3 uid="uid://d0ecexfpobl4m"]
 
 [ext_resource type="Script" path="res://story/book/dialog_button.gd" id="1_smxr3"]
 [ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="2_g8jf2"]
 
-[sub_resource type="InputEventKey" id="InputEventKey_epfk1"]
+[sub_resource type="InputEventKey" id="InputEventKey_w0yih"]
+device = -1
 keycode = 49
+unicode = 49
 
-[sub_resource type="Shortcut" id="Shortcut_gaold"]
-events = [SubResource("InputEventKey_epfk1")]
+[sub_resource type="Shortcut" id="Shortcut_4452u"]
+events = [SubResource("InputEventKey_w0yih")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_cm7mn"]
+device = -1
+keycode = 50
+unicode = 50
+
+[sub_resource type="Shortcut" id="Shortcut_fg3ec"]
+events = [SubResource("InputEventKey_cm7mn")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_67wxs"]
+device = -1
+keycode = 51
+unicode = 51
+
+[sub_resource type="Shortcut" id="Shortcut_5aiqg"]
+events = [SubResource("InputEventKey_67wxs")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_osk5w"]
+device = -1
+keycode = 52
+unicode = 52
+
+[sub_resource type="Shortcut" id="Shortcut_ypkvd"]
+events = [SubResource("InputEventKey_osk5w")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_gpepv"]
+device = -1
+keycode = 53
+unicode = 53
+
+[sub_resource type="Shortcut" id="Shortcut_o3aia"]
+events = [SubResource("InputEventKey_gpepv")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_iy104"]
+device = -1
+keycode = 54
+unicode = 54
+
+[sub_resource type="Shortcut" id="Shortcut_jht22"]
+events = [SubResource("InputEventKey_iy104")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_fxq8n"]
+device = -1
+keycode = 55
+unicode = 55
+
+[sub_resource type="Shortcut" id="Shortcut_2q0j8"]
+events = [SubResource("InputEventKey_fxq8n")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_x4qdx"]
+device = -1
+keycode = 56
+unicode = 56
+
+[sub_resource type="Shortcut" id="Shortcut_giagg"]
+events = [SubResource("InputEventKey_x4qdx")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_a5b8j"]
+device = -1
+keycode = 57
+unicode = 57
+
+[sub_resource type="Shortcut" id="Shortcut_uumch"]
+events = [SubResource("InputEventKey_a5b8j")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_glou3"]
+device = -1
+keycode = 48
+unicode = 48
+
+[sub_resource type="Shortcut" id="Shortcut_akluy"]
+events = [SubResource("InputEventKey_glou3")]
 
 [node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
 visible = false
 custom_minimum_size = Vector2(45, 514)
 offset_right = 333.0
 offset_bottom = 31.0
-shortcut = SubResource("Shortcut_gaold")
 flat = true
 script = ExtResource("1_smxr3")
 _container = NodePath("MarginContainer")
 _index = NodePath("MarginContainer/HBoxContainer/Index")
 _description = NodePath("MarginContainer/HBoxContainer/Description")
+_shortcuts = Array[Shortcut]([SubResource("Shortcut_4452u"), SubResource("Shortcut_fg3ec"), SubResource("Shortcut_5aiqg"), SubResource("Shortcut_ypkvd"), SubResource("Shortcut_o3aia"), SubResource("Shortcut_jht22"), SubResource("Shortcut_2q0j8"), SubResource("Shortcut_giagg"), SubResource("Shortcut_uumch"), SubResource("Shortcut_akluy")])
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
