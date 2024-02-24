@@ -3,11 +3,11 @@ extends Node
 signal decision_made(story_decision: StoryDecision, selected_how_many_times: int)
 signal page_entered(story_page: StoryPage)
 
-var _current_adventure_tome: AdventureTome
-var _current_adventure: Adventure :
+var _current_adventure_tome: Adventure
+var _current_adventure: AdventureTome :
 	get: return _current_adventure_tome.adventure
 
-func start_adventure(adventure_tome: AdventureTome) -> void:
+func start_adventure(adventure_tome: Adventure) -> void:
 	if _current_adventure_tome != null:
 		print_debug("Trying to start an adventure while there is already an ongoing one!")
 		return
