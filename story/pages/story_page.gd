@@ -1,7 +1,12 @@
 class_name StoryPage
 extends StoryPageReference
 
-@export var exclusive := false
+enum Exclusivity {
+	NONE = 0,
+	EXCLUDE_BASE = 1,
+	EXCLUDE_BELOW = 2,
+	EXCLUDE_ABOVE = 4,
+}
 
 @export_placeholder("Title") var _title: String
 @export_multiline var _description: String
@@ -11,6 +16,8 @@ extends StoryPageReference
 @export var _one_time_only := false
 @export var _conditions: Array[StoryCondition]
 @export var _decisions: Array[StoryDecision]
+@export_flags("Hide Base:1", "Hide Below:2", "Hide Above:4", "Hide All:7")
+var _exclusivity := 0
 @export var _events: Array[StoryPage]
 
 func are_all_prerequisites_fullfilled() -> bool:
@@ -31,8 +38,11 @@ func get_description() -> String:
 	var combined_description := ""
 	for event: StoryPage in _events:
 		if event.are_all_prerequisites_fullfilled():
+			if event.exclude_above(): combined_description = ""
 			combined_description += "%s" % event.get_description()
-			if event.exclusive: return combined_description
+			if event.exclude_below():
+				if event.exclude_base(): return combined_description
+				else: break
 	return ("[p]%s[/p]" % _description) + combined_description
 
 func get_background() -> Texture:
@@ -48,11 +58,14 @@ func get_ambience() -> AudioStream:
 	return _ambience if _ambience != null else area_ambience
 
 func get_decisions() ->  Array[StoryDecision]:
-	var combined_decisions: Array[StoryDecision]= [ ]
+	var combined_decisions: Array[StoryDecision] = [ ]
 	for event: StoryPage in _events:
 		if event.are_all_prerequisites_fullfilled():
+			if event.exclude_above(): combined_decisions = [ ]
 			combined_decisions.append_array(event.get_decisions())
-			if event.exclusive: return combined_decisions
+			if event.exclude_below():
+				if event.exclude_base(): return combined_decisions
+				else: break
 	combined_decisions.append_array(_decisions)
 	return combined_decisions
 
@@ -60,9 +73,21 @@ func get_events() -> Array[StoryPage]:
 	var events: Array[StoryPage]= [ ]
 	for event: StoryPage in _events:
 		if event.are_all_prerequisites_fullfilled():
+			if event.exclude_above(): events = [ ]
 			events.append(event)
-			if event.exclusive: return events
+			if event.exclude_below():
+				if event.exclude_base(): return events
+				else: break
 	return events
+
+func exclude_base() -> bool:
+	return _exclusivity & Exclusivity.EXCLUDE_BELOW
+
+func exclude_below() -> bool:
+	return _exclusivity & Exclusivity.EXCLUDE_BELOW
+
+func exclude_above() -> bool:
+	return _exclusivity & Exclusivity.EXCLUDE_ABOVE
 
 func get_story_page() -> StoryPage:
 	return self

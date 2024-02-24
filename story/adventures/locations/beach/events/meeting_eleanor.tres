@@ -8,13 +8,13 @@
 
 [sub_resource type="Resource" id="Resource_j24m5"]
 script = ExtResource("3_t43k6")
-exclusive = false
 _title = ""
 _description = "She throws a strange artifact at your head, then dabs on the haters."
 _background = ExtResource("2_kfen3")
 _one_time_only = false
 _conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
 _decisions = Array[ExtResource("1_npy2t")]([])
+_exclusivity = 0
 _events = Array[ExtResource("3_t43k6")]([])
 
 [sub_resource type="Resource" id="Resource_fqbk4"]
@@ -24,23 +24,23 @@ transition = SubResource("Resource_j24m5")
 
 [sub_resource type="Resource" id="Resource_0x8r7"]
 script = ExtResource("3_t43k6")
-exclusive = false
 _title = ""
 _description = "Oops, you accidentaly the claps of your ass cheeks.
 Dummy thicc."
 _one_time_only = false
 _conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
 _decisions = Array[ExtResource("1_npy2t")]([])
+_exclusivity = 0
 _events = Array[ExtResource("3_t43k6")]([])
 
 [sub_resource type="Resource" id="Resource_b3ed1"]
 script = ExtResource("3_t43k6")
-exclusive = false
 _title = ""
 _description = "You hide among the barnacles and flotsam."
 _one_time_only = false
 _conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
 _decisions = Array[ExtResource("1_npy2t")]([])
+_exclusivity = 0
 _events = Array[ExtResource("3_t43k6")]([])
 
 [sub_resource type="Resource" id="Resource_yrhxu"]
@@ -54,10 +54,10 @@ transition = SubResource("Resource_b3ed1")
 
 [resource]
 script = ExtResource("3_t43k6")
-exclusive = true
 _title = "The Mysterious Woman"
 _description = "A young woman knocks her mace against the heavy gate of the ruined keep."
 _one_time_only = true
 _conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
 _decisions = Array[ExtResource("1_npy2t")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])
+_exclusivity = 7
 _events = Array[ExtResource("3_t43k6")]([])
