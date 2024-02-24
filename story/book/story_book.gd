@@ -14,6 +14,9 @@ var _current_story_page_entry: StoryPageEntry
 func _enter_tree() -> void:
 	Story.page_entered.connect(_on_page_entered)
 
+func _exit_tree() -> void:
+	Story.page_entered.disconnect(_on_page_entered)
+
 func _on_page_entered(story_page: StoryPage) -> void:
 	if _current_story_page_entry != null:
 		_story_pages.remove_child(_current_story_page_entry)

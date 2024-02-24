@@ -6,7 +6,6 @@ extends PanelContainer
 	set(new_story_page):
 		story_page = new_story_page
 		if story_page == null: return
-		_background.visible = story_page.exclusive
 		_background.texture = story_page.get_background()
 		_description.type_text(story_page.get_description())
 		_update_decisions(story_page.get_decisions())
