@@ -4,10 +4,10 @@
 
 [resource]
 script = ExtResource("1_3veit")
-exclusive = false
 _title = ""
 _description = "You hear a knocking sound from the castle ruins to the north-east."
 _one_time_only = false
 _conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
 _decisions = Array[Resource("res://story/pages/story_decision.gd")]([])
+_exclusivity = 0
 _events = Array[ExtResource("1_3veit")]([])

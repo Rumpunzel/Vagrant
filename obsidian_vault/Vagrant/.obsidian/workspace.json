@@ -93,7 +93,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "WIP 1/Scenario I.md",
+                "file": "WIP 1/Momentum.md",
                 "mode": "source",
                 "source": false
               }
@@ -310,7 +310,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "WIP 1/Scenario I.md",
+                "file": "WIP 1/Momentum.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -327,7 +327,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "WIP 1/Scenario I.md",
+                "file": "WIP 1/Momentum.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -350,7 +350,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "WIP 1/Scenario I.md"
+                "file": "WIP 1/Momentum.md"
               }
             }
           }
@@ -373,23 +373,24 @@
   },
   "active": "deb2a7fa8406a3bd",
   "lastOpenFiles": [
+    "WIP 1/Character Creation.md",
+    "WIP 1/Attributes.md",
+    "WIP 1/Scenario I.md",
+    "WIP 1/Skills.md",
+    "WIP 1/Stress.md",
+    "WIP 1/Vagrant.md",
+    "Party Archetypes.md",
+    "WIP 3/Resource System.md",
+    "WIP 3/Dice System.md",
     "WIP 1/Party.md",
     "WIP 1/Moves/Endure Harm.md",
     "WIP 1/Moves/Combat Moves.md",
     "WIP 1/Moves/Adventure Moves.md",
     "WIP 1/Moves/Adventure Moves 2.md",
-    "WIP 1/Attributes.md",
-    "WIP 1/Character Creation.md",
     "WIP 1/Injuries.md",
     "WIP 1/Momentum.md",
-    "WIP 1/Scenario I.md",
-    "WIP 1/Vagrant.md",
-    "WIP 1/Skills.md",
-    "WIP 3/Resource System.md",
-    "WIP 3/Dice System.md",
     "WIP 2/Nicht-Retarded Dice System.md",
     "WIP 3",
-    "Party Archetypes.md",
     "WIP 1/Actions.md",
     "WIP 2",
     "WIP 1",
@@ -401,7 +402,6 @@
     "Moves/Combat Moves/Maneuver.md",
     "Moves/Combat Moves/Strike.md",
     "Moves/Suffer Moves/Pay the Price.md",
-    "Moves/Combat Moves/Battle.md",
     "Moves/Suffer Moves",
     "WIP 1/Moves/Group Moves",
     "Moves/Adventure Moves",

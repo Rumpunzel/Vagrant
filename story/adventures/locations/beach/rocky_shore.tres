@@ -26,11 +26,11 @@ transition = SubResource("Resource_bjlpt")
 
 [resource]
 script = ExtResource("3_ch8ms")
-exclusive = false
 _title = "Rocky Shore"
 _description = "The cold waves roll across the ragged shorelines."
 _area = ExtResource("5_r3xmp")
 _one_time_only = false
 _conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
 _decisions = Array[ExtResource("1_wupgv")]([SubResource("Resource_c1yb7"), SubResource("Resource_025i5")])
+_exclusivity = 0
 _events = Array[ExtResource("3_ch8ms")]([ExtResource("6_wt0kr")])

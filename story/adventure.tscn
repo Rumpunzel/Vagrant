@@ -45,7 +45,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="GameInfo" type="TabContainer" parent="MarginContainer/HSplitContainer/VSplitContainer"]
-visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -53,4 +52,5 @@ size_flags_vertical = 3
 layout_mode = 2
 
 [node name="DiceLog" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo/DiceLog" instance=ExtResource("6_hg7gt")]
+visible = false
 layout_mode = 2

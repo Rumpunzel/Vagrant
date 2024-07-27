@@ -25,7 +25,7 @@ func get_how_often_page_has_been_entered(story_page: StoryPage) -> int:
 	return _page_log.get(story_page, 0)
 
 func update_decision_log(story_decision: StoryDecision) -> int:
-	var selected_how_many_times: int = get_how_often_decision_has_been_made(story_decision) + 1
+	var selected_how_many_times := get_how_often_decision_has_been_made(story_decision) + 1
 	_decision_log[story_decision] = selected_how_many_times
 	return selected_how_many_times
 

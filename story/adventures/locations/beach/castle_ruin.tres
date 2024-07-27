@@ -17,11 +17,11 @@ transition = SubResource("Resource_y5shu")
 
 [resource]
 script = ExtResource("3_gmk2e")
-exclusive = false
 _title = "Castle Ruin"
 _description = "The ruined castle towers high above you on the cliff. Behind a cluster of overgrown rocks you spot a hidden gate carved into the cliffside wall."
 _area = ExtResource("5_rumxx")
 _one_time_only = false
 _conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
 _decisions = Array[ExtResource("1_ctu8i")]([SubResource("Resource_106m3")])
+_exclusivity = 0
 _events = Array[ExtResource("3_gmk2e")]([ExtResource("6_ct28b")])

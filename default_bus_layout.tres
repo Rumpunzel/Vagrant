@@ -5,6 +5,7 @@ resource_name = "Reverb"
 wet = 0.2
 
 [resource]
+bus/0/mute = true
 bus/1/name = &"Ambience"
 bus/1/solo = false
 bus/1/mute = false
