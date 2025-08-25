@@ -6,11 +6,11 @@ extends Node
 var current_page: StoryPage
 
 # StoryDecision -> int (how many times the decision has been made)
-var _decision_log := { }
+var _decision_log: Dictionary[StoryDecision, int] = { }
 # StorySaveDecision -> Array[SaveResult]
-var _save_decision_log := { }
+var _save_decision_log: Dictionary[StorySaveDecision, Array]= { }
 # StoryPage -> int (how many times the page has been entered)
-var _page_log := { }
+var _page_log: Dictionary[StoryPage, int] = { }
 var _page_stack: Array[StoryPage] = [ ]
 
 func _ready() -> void:
@@ -25,14 +25,14 @@ func get_how_often_page_has_been_entered(story_page: StoryPage) -> int:
 	return _page_log.get(story_page, 0)
 
 func update_decision_log(story_decision: StoryDecision) -> int:
-	var selected_how_many_times := get_how_often_decision_has_been_made(story_decision) + 1
+	var selected_how_many_times: int = get_how_often_decision_has_been_made(story_decision) + 1
 	_decision_log[story_decision] = selected_how_many_times
 	return selected_how_many_times
 
 func update_save_decision_log(story_save_decision: StorySaveDecision, save_result: SaveResult) -> int:
 	var save_results: Array[SaveResult] = _save_decision_log.get(story_save_decision, [ ] as Array[SaveResult])
 	save_results.append(save_result)
-	var selected_how_many_times := save_results.size()
+	var selected_how_many_times: int = save_results.size()
 	_save_decision_log[story_save_decision] = save_results
 	return selected_how_many_times
 

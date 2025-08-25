@@ -1,16 +1,14 @@
 [gd_resource type="Resource" script_class="DieType" load_steps=6 format=3 uid="uid://c3ciobci54n6u"]
 
 [ext_resource type="Texture2D" uid="uid://sue7comyk6aq" path="res://icons/dice/d8.png" id="1_xogre"]
-[ext_resource type="Script" path="res://dice/die_types/die_type.gd" id="2_bf0ti"]
+[ext_resource type="Script" uid="uid://ci73mrt3tkiel" path="res://dice/die_types/die_type.gd" id="2_bf0ti"]
 [ext_resource type="AudioStream" uid="uid://beiainj8rh6po" path="res://assets/sfx/dice/488449-Organic-Material-UI-dropping-batteries-objects-on-wood-wooden-table-roll-dice-staggered.wav" id="2_ssovr"]
 [ext_resource type="AudioStream" uid="uid://dqhxq1wwesgl" path="res://assets/sfx/dice/zapsplat_leisure_board_game_dice_throw_roll_on_playing_board_002_37258.mp3" id="3_20j0m"]
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_kx8ar"]
 streams_count = 2
 stream_0/stream = ExtResource("2_ssovr")
-stream_0/weight = 1.0
 stream_1/stream = ExtResource("3_20j0m")
-stream_1/weight = 1.0
 
 [resource]
 script = ExtResource("2_bf0ti")

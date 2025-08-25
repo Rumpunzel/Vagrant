@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="StoryPage" load_steps=8 format=3 uid="uid://dk3q4ia5u7q6m"]
+[gd_resource type="Resource" script_class="StoryPage" load_steps=9 format=3 uid="uid://dk3q4ia5u7q6m"]
 
-[ext_resource type="Script" path="res://story/pages/story_decision.gd" id="1_ctu8i"]
-[ext_resource type="Script" path="res://story/pages/story_transition.gd" id="2_k7v3r"]
-[ext_resource type="Script" path="res://story/pages/story_page.gd" id="3_gmk2e"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://story/pages/story_decision.gd" id="1_ctu8i"]
+[ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://story/pages/story_transition.gd" id="2_k7v3r"]
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://story/pages/story_condition.gd" id="2_s0jsn"]
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://story/pages/story_page.gd" id="3_gmk2e"]
 [ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://story/adventures/locations/beach/beach.tres" id="5_rumxx"]
 [ext_resource type="Resource" uid="uid://rget62tdwg42" path="res://story/adventures/locations/beach/events/meeting_eleanor.tres" id="6_ct28b"]
 
@@ -21,7 +22,7 @@ _title = "Castle Ruin"
 _description = "The ruined castle towers high above you on the cliff. Behind a cluster of overgrown rocks you spot a hidden gate carved into the cliffside wall."
 _area = ExtResource("5_rumxx")
 _one_time_only = false
-_conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
+_conditions = Array[ExtResource("2_s0jsn")]([])
 _decisions = Array[ExtResource("1_ctu8i")]([SubResource("Resource_106m3")])
 _exclusivity = 0
 _events = Array[ExtResource("3_gmk2e")]([ExtResource("6_ct28b")])

@@ -6,15 +6,15 @@ extends PanelContainer
 @export_group("Configuration")
 @export var _hit_dice_buttons: Container
 
-func update_hit_dice(available_hit_dice: Array[Die], save_difficulty := 0) -> void:
+func update_hit_dice(available_hit_dice: Array[Die], save_difficulty: int = 0) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():
 		button_group.update_hit_dice(available_hit_dice, _display_results, save_difficulty)
 
-func select_all_available_buttons(select_buttons := true) -> void:
+func select_all_available_buttons(select_buttons: bool = true) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():
 		button_group.select_all_available_buttons(select_buttons)
 
-func disable_buttons(set_to_disabled := true) -> void:
+func disable_buttons(set_to_disabled: bool = true) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():
 		button_group.disable_buttons(set_to_disabled)
 

@@ -1,8 +1,10 @@
-[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=2 format=3 uid="uid://2vf8mdpla1u2"]
+[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=3 format=3 uid="uid://2vf8mdpla1u2"]
 
-[ext_resource type="Script" path="res://characters/attributes/character_attribute.gd" id="1_wgpsi"]
+[ext_resource type="Texture2D" uid="uid://b63k46cjhugpr" path="res://icons/old_dice/dead-eye.png" id="1_rkmxj"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_wgpsi"]
 
 [resource]
 script = ExtResource("1_wgpsi")
-descriptor = "Brains"
-color = Color(0.827451, 0.352941, 0.380392, 1)
+descriptor = "Nerves"
+color = Color(1, 0.976471, 0.976471, 1)
+icon = ExtResource("1_rkmxj")

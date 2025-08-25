@@ -17,8 +17,8 @@ var _save_result: SaveResult = null
 func request_save(save_request: SaveRequest) -> void:
 	_save_request = save_request
 	if _save_request == null: return
-	var character := _save_request.character
-	var available_hit_dice := character.get_available_hit_dice()
+	var character: Character = _save_request.character
+	var available_hit_dice: Array[Die] = character.get_available_hit_dice()
 	_portrait.texture = character.portrait
 	_description.type_text(_save_request.description)
 	_enable_hud()
@@ -31,7 +31,7 @@ func _roll_save(dice_to_roll: Array[Die]) -> void:
 	_dice_log_entry.initialize_save_result(_save_result)
 	save_evaluated.emit(_save_result)
 
-func _enable_hud(set_to_enabled := true) -> void:
+func _enable_hud(set_to_enabled: bool = true) -> void:
 	_ok_button.disabled = not set_to_enabled
 	_ok_button.active = set_to_enabled
 	_all_in_button.disabled = not set_to_enabled

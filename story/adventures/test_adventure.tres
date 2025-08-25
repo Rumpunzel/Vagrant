@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="Adventure" load_steps=3 format=3 uid="uid://dw1vkutmmhnao"]
+[gd_resource type="Resource" script_class="AdventureTome" load_steps=3 format=3 uid="uid://dw1vkutmmhnao"]
 
-[ext_resource type="Script" path="res://story/adventure_tome.gd" id="1_5cnpf"]
+[ext_resource type="Script" uid="uid://b70286dnr6ftj" path="res://story/adventure_tome.gd" id="1_5cnpf"]
 [ext_resource type="Resource" uid="uid://ycd6xhx346l6" path="res://story/adventures/locations/beach/rocky_shore.tres" id="2_74d10"]
 
 [resource]

@@ -24,7 +24,7 @@ func _set_background(background_texture: Texture) -> void:
 		_ambience.add_sibling(new_background)
 	new_background.texture = story_page.get_background()
 	if _current_background != null:
-		var tween := create_tween()
+		var tween: Tween = create_tween()
 		tween.tween_property(new_background, "modulate:a", 1.0, 2.0).from(0.0)
 		await tween.finished
 		remove_child(_current_background)

@@ -1,8 +1,10 @@
-[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=2 format=3 uid="uid://bu20awm3swywv"]
+[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=3 format=3 uid="uid://bu20awm3swywv"]
 
-[ext_resource type="Script" path="res://characters/attributes/character_attribute.gd" id="1_3pd1w"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_3pd1w"]
+[ext_resource type="Texture2D" uid="uid://bs71ip4k6605c" path="res://icons/old_dice/defibrilate.png" id="1_oehal"]
 
 [resource]
 script = ExtResource("1_3pd1w")
-descriptor = "Shadow"
-color = Color(0.866667, 0.584314, 0.682353, 1)
+descriptor = "Blood"
+color = Color(0.705882, 0.0470588, 0.0470588, 1)
+icon = ExtResource("1_oehal")

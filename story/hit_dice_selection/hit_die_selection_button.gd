@@ -18,9 +18,9 @@ var die: Die :
 		_on_toggled(button_pressed)
 
 var display_results: DisplayResults = DisplayResults.NEVER
-var save_difficulty := 0
+var save_difficulty: int = 0
 
-func disable(set_to_disabled := true) -> void:
+func disable(set_to_disabled: bool = true) -> void:
 	active = not set_to_disabled
 	if not set_to_disabled:
 		_connect_to_die()
@@ -35,7 +35,7 @@ func _disconnect_from_die() -> void:
 	die.rolled.disconnect(_on_die_changed)
 	die.state_changed.disconnect(_on_die_save_selection_changed)
 
-func _set_inactive(set_inactive := true) -> void:
+func _set_inactive(set_inactive: bool = true) -> void:
 	active = not set_inactive
 	if not set_inactive:
 		text = ""
@@ -72,5 +72,5 @@ func _on_die_save_selection_changed(_die_state: Die.State = Die.State.ALIVE) -> 
 
 func _on_toggled(toggled_on: bool) -> void:
 	if not die.is_considered(): return
-	var state := Die.State.SELECTED if toggled_on else Die.State.CONSIDERED
+	var state: Die.State = Die.State.SELECTED if toggled_on else Die.State.CONSIDERED
 	die.update_state(state)

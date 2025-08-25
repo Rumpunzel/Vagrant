@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=3 uid="uid://cy2ymcfk2tejn"]
 
-[ext_resource type="Script" path="res://story/book/story_page_entry.gd" id="1_xif0c"]
+[ext_resource type="Script" uid="uid://7rp8e3m8fvuh" path="res://story/book/story_page_entry.gd" id="1_xif0c"]
 [ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/book/dialog_button.tscn" id="2_6tquj"]
-[ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="3_pf20m"]
-[ext_resource type="Script" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_nyvyp"]
+[ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="3_pf20m"]
+[ext_resource type="Script" uid="uid://ral4tq3ea3w4" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_nyvyp"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection/hit_dice_selection.tscn" id="5_15pgc"]
 
 [node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]

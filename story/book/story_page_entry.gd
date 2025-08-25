@@ -53,8 +53,9 @@ func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> voi
 		_hit_dice_selection_cc.close()
 
 func _on_save_evaluated(save_result: SaveResult) -> void:
+	assert(_selected_story_decision is StorySaveDecision)
 	_save_result = save_result
-	Story.make_save_decision(_selected_story_decision, _save_result)
+	Story.make_save_decision(_selected_story_decision as StorySaveDecision, _save_result)
 
 func _on_description_finished_typing() -> void:
 	for button: DialogButton in _choices.get_children():

@@ -4,247 +4,41 @@
     "type": "split",
     "children": [
       {
-        "id": "1f5f361417017193",
+        "id": "4db001f23ef9aa68",
         "type": "tabs",
         "children": [
           {
-            "id": "1363c3e838541718",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {}
-            }
-          },
-          {
-            "id": "37aec0bef584ea06",
+            "id": "63373c1af5b1cf1f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "WIP 2/Nicht-Retarded Dice System.md",
+                "file": "WIP 5/Violence.md",
                 "mode": "source",
-                "source": false
-              }
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "Violence"
             }
           },
           {
-            "id": "c1dec497a51fb0d8",
+            "id": "e58d2323be9bd86a",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "canvas",
               "state": {
-                "file": "Party Archetypes.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "dc4063622e3719d6",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 2/Nicht-Retarded Dice System.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "1c487089b0074a9d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 3/Resource System.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "43520b4e72389751",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 3/Dice System.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "04357a93aae1c598",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 2/Nicht-Retarded Dice System.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "deb2a7fa8406a3bd",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Momentum.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "79e09512e00cdac1",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Attributes.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "9d71b72fd6eadff7",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Actions.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "5856a4b61e2a541a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Attributes.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "a9c5e25cf85673cc",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Character Creation.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "96c74a6682ed85d5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Momentum.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "c1d557f40b3e563c",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Momentum.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "0736f08bb2844a47",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Stress.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "2e2d2f52d9ed58e2",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Attributes.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "d4baa2090e878d0a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Actions.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "f526ef5de3c54db9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Moves/Adventure Moves.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "4cb80b87ff35fdd0",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Moves/Face Danger.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "5e9664712286fc6e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "WIP 1/Skills.md",
-                "mode": "source",
-                "source": false
-              }
+                "file": "WIP 4/Adventure Dice.canvas",
+                "viewState": {
+                  "x": 244.4121376393606,
+                  "y": 141.1015982519529,
+                  "zoom": -1.6167084101034968
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "Adventure Dice"
             }
           }
-        ],
-        "currentTab": 7
+        ]
       }
     ],
     "direction": "vertical"
@@ -263,8 +57,11 @@
             "state": {
               "type": "file-explorer",
               "state": {
-                "sortOrder": "alphabetical"
-              }
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
             }
           },
           {
@@ -279,7 +76,9 @@
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-search",
+              "title": "Search"
             }
           },
           {
@@ -287,7 +86,9 @@
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {}
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
             }
           }
         ]
@@ -310,7 +111,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "WIP 1/Momentum.md",
+                "file": "WIP 4/Resting.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -318,7 +119,9 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Resting"
             }
           },
           {
@@ -327,10 +130,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "WIP 1/Momentum.md",
+                "file": "WIP 4/Arms & Armour.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Arms & Armour"
             }
           },
           {
@@ -341,7 +146,9 @@
               "state": {
                 "sortOrder": "frequency",
                 "useHierarchy": true
-              }
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
             }
           },
           {
@@ -350,19 +157,25 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "WIP 1/Momentum.md"
-              }
+                "file": "WIP 5/Violence.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Violence"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:Create new base": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
@@ -371,41 +184,53 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "deb2a7fa8406a3bd",
+  "active": "63373c1af5b1cf1f",
   "lastOpenFiles": [
-    "WIP 1/Character Creation.md",
-    "WIP 1/Attributes.md",
-    "WIP 1/Scenario I.md",
-    "WIP 1/Skills.md",
-    "WIP 1/Stress.md",
-    "WIP 1/Vagrant.md",
-    "Party Archetypes.md",
-    "WIP 3/Resource System.md",
-    "WIP 3/Dice System.md",
-    "WIP 1/Party.md",
-    "WIP 1/Moves/Endure Harm.md",
-    "WIP 1/Moves/Combat Moves.md",
-    "WIP 1/Moves/Adventure Moves.md",
-    "WIP 1/Moves/Adventure Moves 2.md",
-    "WIP 1/Injuries.md",
-    "WIP 1/Momentum.md",
+    "WIP 5/Stories/Goblin on the Trail.md",
+    "WIP 4/Adventure Dice/water_dice.png.import",
+    "WIP 5/Violence.md",
+    "WIP 5/Stories",
+    "WIP 4/Characters.md",
+    "WIP 4/Adventure Dice.canvas",
+    "WIP 5/Characters.md",
+    "WIP 4/Arms & Armour.md",
+    "WIP 4/Combat.md",
+    "WIP 4/Example.md",
+    "WIP 4/Journey.md",
+    "WIP 4/Resting.md",
+    "WIP 5",
+    "WIP 4/Adventure Dice/horseshoe.svg",
+    "WIP 4/Adventure Dice/fangs.svg",
+    "ent-mouth.svg",
+    "WIP 4/Adventure Dice/drakkar.svg",
+    "WIP 4/Adventure Dice/butterfly.svg",
+    "WIP 4/Adventure Dice/tumulus.svg",
+    "WIP 4/Adventure Dice/danger_dice.png",
+    "WIP 4/Adventure Dice/dead-wood.svg",
     "WIP 2/Nicht-Retarded Dice System.md",
-    "WIP 3",
+    "WIP 3/Dice System.md",
+    "WIP 3/Resource System.md",
+    "WIP 4/Adventure Dice/wilderness_dice.png",
+    "WIP 4/Adventure Dice/water_dice.png",
+    "WIP 4/Adventure Dice/adventure_dice.xcf",
+    "WIP 4/Adventure Dice",
+    "Untitled.md",
+    "Untitled 1.md",
+    "Profession.md",
+    "WIP 1/Scenario I.md",
+    "WIP 1/Attributes.md",
+    "WIP 1/Character Creation.md",
+    "WIP 1/Momentum.md",
+    "WIP 1/Stress.md",
     "WIP 1/Actions.md",
+    "WIP 1/Moves/Adventure Moves.md",
+    "WIP 1/Moves/Face Danger.md",
+    "WIP 1/Skills.md",
+    "Party Archetypes.md",
+    "WIP 4",
+    "WIP 3",
     "WIP 2",
     "WIP 1",
-    "WIP 1/Moves/Face Danger.md",
-    "Moves/Adventure Moves/Overcome Obstacle.md",
-    "Moves/Adventure Moves/Secure an Advantage.md",
-    "Moves/Combat Moves/Feint.md",
-    "Moves/Combat Moves/Volley.md",
-    "Moves/Combat Moves/Maneuver.md",
-    "Moves/Combat Moves/Strike.md",
-    "Moves/Suffer Moves/Pay the Price.md",
-    "Moves/Suffer Moves",
-    "WIP 1/Moves/Group Moves",
-    "Moves/Adventure Moves",
-    "Moves/Combat Moves",
-    "WIP 1/Moves"
+    "Moves/Suffer Moves"
   ]
 }

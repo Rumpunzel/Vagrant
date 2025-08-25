@@ -1,10 +1,10 @@
 [gd_scene load_steps=9 format=3 uid="uid://l8n866i755ja"]
 
-[ext_resource type="Script" path="res://story/stage/stage.gd" id="1_gw8ty"]
+[ext_resource type="Script" uid="uid://bysk8fr0ekhsg" path="res://story/stage/stage.gd" id="1_gw8ty"]
 [ext_resource type="PackedScene" uid="uid://b11javrif3o0h" path="res://story/stage/background.tscn" id="3_8h6qk"]
 [ext_resource type="AudioStream" uid="uid://b3ynhoh2yis3n" path="res://assets/sfx/ambience/gentle-ocean-and-birdsong-24068.mp3" id="4_auwyo"]
 [ext_resource type="Texture2D" uid="uid://c56fr4gg3616i" path="res://assets/landscapes/tavern.png" id="5_7i01a"]
-[ext_resource type="Shader" path="res://story/stage/blur.gdshader" id="5_hdi0x"]
+[ext_resource type="Shader" uid="uid://chm2iklhnb1pg" path="res://story/stage/blur.gdshader" id="5_hdi0x"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_515v2"]
 shader = ExtResource("5_hdi0x")

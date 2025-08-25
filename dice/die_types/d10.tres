@@ -1,16 +1,14 @@
 [gd_resource type="Resource" script_class="DieType" load_steps=6 format=3 uid="uid://dtfdogfd6ebga"]
 
 [ext_resource type="Texture2D" uid="uid://cw6ja5k5fq6m6" path="res://icons/dice/d10.png" id="1_s5lwv"]
-[ext_resource type="Script" path="res://dice/die_types/die_type.gd" id="2_7ifjg"]
+[ext_resource type="Script" uid="uid://ci73mrt3tkiel" path="res://dice/die_types/die_type.gd" id="2_7ifjg"]
 [ext_resource type="AudioStream" uid="uid://b7upfqv3bfjea" path="res://assets/sfx/dice/zapsplat_leisure_board_game_dice_set_down_on_playing_board_001_37253.mp3" id="2_lxdf3"]
 [ext_resource type="AudioStream" uid="uid://d2f21vwbe6tfw" path="res://assets/sfx/dice/zapsplat_leisure_board_game_dice_throw_roll_on_playing_board_001_37257.mp3" id="3_8tej6"]
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_w87oa"]
 streams_count = 2
 stream_0/stream = ExtResource("2_lxdf3")
-stream_0/weight = 1.0
 stream_1/stream = ExtResource("3_8tej6")
-stream_1/weight = 1.0
 
 [resource]
 script = ExtResource("2_7ifjg")

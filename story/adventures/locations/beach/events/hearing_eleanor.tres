@@ -1,13 +1,15 @@
-[gd_resource type="Resource" script_class="StoryPage" load_steps=2 format=3 uid="uid://dffxphat87a8a"]
+[gd_resource type="Resource" script_class="StoryPage" load_steps=4 format=3 uid="uid://dffxphat87a8a"]
 
-[ext_resource type="Script" path="res://story/pages/story_page.gd" id="1_3veit"]
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://story/pages/story_page.gd" id="1_3veit"]
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://story/pages/story_condition.gd" id="1_ie8jc"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://story/pages/story_decision.gd" id="2_521mh"]
 
 [resource]
 script = ExtResource("1_3veit")
 _title = ""
 _description = "You hear a knocking sound from the castle ruins to the north-east."
 _one_time_only = false
-_conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
-_decisions = Array[Resource("res://story/pages/story_decision.gd")]([])
+_conditions = Array[ExtResource("1_ie8jc")]([])
+_decisions = Array[ExtResource("2_521mh")]([])
 _exclusivity = 0
 _events = Array[ExtResource("1_3veit")]([])

@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="StoryPage" load_steps=7 format=3 uid="uid://cs40ge42lw0ry"]
+[gd_resource type="Resource" script_class="StoryPage" load_steps=8 format=3 uid="uid://cs40ge42lw0ry"]
 
 [ext_resource type="Resource" uid="uid://kfbf7v18dp6a" path="res://story/adventures/locations/swamp/swamp.tres" id="1_8bxsp"]
-[ext_resource type="Script" path="res://story/pages/story_decision.gd" id="2_r3twy"]
-[ext_resource type="Script" path="res://story/pages/story_page.gd" id="3_6p547"]
-[ext_resource type="Script" path="res://story/pages/story_transition.gd" id="3_34ol8"]
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://story/pages/story_condition.gd" id="2_6pnwp"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://story/pages/story_decision.gd" id="2_r3twy"]
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://story/pages/story_page.gd" id="3_6p547"]
+[ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://story/pages/story_transition.gd" id="3_34ol8"]
 
 [sub_resource type="Resource" id="Resource_vvpox"]
 script = ExtResource("3_34ol8")
@@ -16,11 +17,12 @@ transition = SubResource("Resource_vvpox")
 
 [resource]
 script = ExtResource("3_6p547")
-exclusive = false
 _title = "Temple Ruin"
-_placeholder = true
 _description = "The air is damp and smells of rotten earth.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed orci orci. Donec tincidunt arcu viverra, lacinia enim at, pharetra orci. Integer ac neque sit amet nunc venenatis fermentum ut mollis eros. Maecenas egestas tortor at dui mattis pulvinar. Mauris rutrum ligula id massa euismod scelerisque. Cras sed molestie orci. Phasellus non finibus felis. Aenean purus lectus, tempus quis enim in, tincidunt laoreet arcu. Nullam in eleifend purus. Etiam eros lacus, lacinia id metus sed, faucibus viverra tortor. Phasellus sit amet leo sit amet massa consectetur porttitor. Vestibulum in facilisis lorem. Etiam est sapien, condimentum sed convallis vel, auctor in mi. Proin sit amet ornare tortor. Proin commodo quam mi, at placerat dolor cursus faucibus. Ut dictum accumsan neque eget consectetur."
 _area = ExtResource("1_8bxsp")
+_one_time_only = false
+_conditions = Array[ExtResource("2_6pnwp")]([])
 _decisions = Array[ExtResource("2_r3twy")]([SubResource("Resource_e22nq")])
+_exclusivity = 0
 _events = Array[ExtResource("3_6p547")]([])

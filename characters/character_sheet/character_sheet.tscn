@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://14h1hukjjol7"]
 
 [ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://assets/portraits/knight.jpeg" id="1_fnfma"]
-[ext_resource type="Script" path="res://characters/character_sheet/character_sheet.gd" id="1_uqhlh"]
+[ext_resource type="Script" uid="uid://dkwi26f6nf1xj" path="res://characters/character_sheet/character_sheet.gd" id="1_uqhlh"]
 [ext_resource type="PackedScene" uid="uid://dgk1ipqq2uypw" path="res://characters/character_sheet/attributes.tscn" id="3_hgrxd"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection/hit_dice_selection_buttons.tscn" id="4_gaha4"]
 

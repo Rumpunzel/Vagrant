@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://db6oui711vqep"]
 
-[ext_resource type="Script" path="res://story/adventure.gd" id="1_bnng7"]
+[ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
 [ext_resource type="Resource" uid="uid://dw1vkutmmhnao" path="res://story/adventures/test_adventure.tres" id="2_sj31b"]
-[ext_resource type="Script" path="res://characters/character_sheet/character_sheets.gd" id="3_4lj7w"]
+[ext_resource type="Script" uid="uid://dlr4addkwoige" path="res://characters/character_sheet/character_sheets.gd" id="3_4lj7w"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://characters/character_sheet/character_sheet.tscn" id="4_2poxt"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/book/story_book.tscn" id="5_p35e8"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="6_hg7gt"]
@@ -29,11 +29,13 @@ theme_override_constants/separation = 32
 
 [node name="CharacterSheets" type="TabContainer" parent="MarginContainer/HSplitContainer"]
 layout_mode = 2
+current_tab = 0
 script = ExtResource("3_4lj7w")
 _character_sheet = ExtResource("4_2poxt")
 
 [node name="CharacterSheet" parent="MarginContainer/HSplitContainer/CharacterSheets" instance=ExtResource("4_2poxt")]
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="VSplitContainer" type="VSplitContainer" parent="MarginContainer/HSplitContainer"]
 layout_mode = 2
@@ -47,9 +49,11 @@ size_flags_horizontal = 3
 [node name="GameInfo" type="TabContainer" parent="MarginContainer/HSplitContainer/VSplitContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+current_tab = 0
 
 [node name="DiceLog" type="MarginContainer" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo"]
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="DiceLog" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo/DiceLog" instance=ExtResource("6_hg7gt")]
 visible = false

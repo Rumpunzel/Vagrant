@@ -1,7 +1,7 @@
 [gd_scene load_steps=23 format=3 uid="uid://d0ecexfpobl4m"]
 
-[ext_resource type="Script" path="res://story/book/dialog_button.gd" id="1_smxr3"]
-[ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="2_g8jf2"]
+[ext_resource type="Script" uid="uid://1rnnvyy1byjt" path="res://story/book/dialog_button.gd" id="1_smxr3"]
+[ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="2_g8jf2"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_w0yih"]
 device = -1

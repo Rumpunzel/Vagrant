@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="StoryPage" load_steps=10 format=3 uid="uid://ycd6xhx346l6"]
+[gd_resource type="Resource" script_class="StoryPage" load_steps=11 format=3 uid="uid://ycd6xhx346l6"]
 
-[ext_resource type="Script" path="res://story/pages/story_decision.gd" id="1_wupgv"]
-[ext_resource type="Script" path="res://story/pages/story_transition.gd" id="2_hl5gp"]
-[ext_resource type="Script" path="res://story/pages/story_page.gd" id="3_ch8ms"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://story/pages/story_decision.gd" id="1_wupgv"]
+[ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://story/pages/story_transition.gd" id="2_hl5gp"]
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://story/pages/story_condition.gd" id="2_ygwya"]
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://story/pages/story_page.gd" id="3_ch8ms"]
 [ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://story/adventures/locations/beach/beach.tres" id="5_r3xmp"]
 [ext_resource type="Resource" uid="uid://dffxphat87a8a" path="res://story/adventures/locations/beach/events/hearing_eleanor.tres" id="6_wt0kr"]
 
@@ -30,7 +31,7 @@ _title = "Rocky Shore"
 _description = "The cold waves roll across the ragged shorelines."
 _area = ExtResource("5_r3xmp")
 _one_time_only = false
-_conditions = Array[Resource("res://story/pages/story_condition.gd")]([])
+_conditions = Array[ExtResource("2_ygwya")]([])
 _decisions = Array[ExtResource("1_wupgv")]([SubResource("Resource_c1yb7"), SubResource("Resource_025i5")])
 _exclusivity = 0
 _events = Array[ExtResource("3_ch8ms")]([ExtResource("6_wt0kr")])

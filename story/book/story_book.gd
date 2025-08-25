@@ -27,8 +27,8 @@ func _on_page_entered(story_page: StoryPage) -> void:
 	_story_pages.add_child(_current_story_page_entry)
 	_story_pages.move_child(_current_story_page_entry, 0)
 	_current_story_page_entry.story_page = story_page
-	var previous_story_page := _stage.story_page
+	var previous_story_page: StoryPage = _stage.story_page
 	if story_page == previous_story_page: return
-	var sub_title := story_page.get_page_title()
+	var sub_title: String = story_page.get_page_title()
 	if not sub_title.is_empty(): _sub_title.type_text(sub_title, previous_story_page != null)
 	_stage.story_page = story_page

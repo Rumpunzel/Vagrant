@@ -11,7 +11,7 @@ var attribute: CharacterAttribute
 var difficulty: int
 var dice: Array[Die]
 
-var result := 0
+var result: int = 0
 var highest_dice: Array[Die] = [ ]
 var save_outcome: Outcome = Outcome.NORMAL
 
@@ -29,6 +29,6 @@ func _init(new_character: Character, new_attribute: CharacterAttribute, new_diff
 	if difficulty > 0:
 		save_outcome = Outcome.SUCCESS if result >= difficulty else Outcome.FAILURE
 	
-	var available_hit_dice := character.get_available_hit_dice()
+	var available_hit_dice: Array[Die] = character.get_available_hit_dice()
 	for hit_die: Die in available_hit_dice:
 		hit_die.update_state()

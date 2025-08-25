@@ -3,7 +3,7 @@ extends Button
 
 signal activation_changed(new_status: bool)
 
-var active := true :
+var active: bool = true :
 	set(new_status):
 		if new_status == active: return
 		active = new_status

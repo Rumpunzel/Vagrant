@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://cnfx4s8ortj53"]
 
-[ext_resource type="Script" path="res://addons/collapsible_container/examples (OPTIONAL)/signal_example/signal_example_script.gd" id="1_teivp"]
-[ext_resource type="Script" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="2_nump6"]
-[ext_resource type="Texture2D" uid="uid://yji7vga2as48" path="res://icon.svg" id="3_lrcam"]
+[ext_resource type="Script" uid="uid://550ogxuvcexa" path="res://addons/collapsible_container/examples (OPTIONAL)/signal_example/signal_example_script.gd" id="1_teivp"]
+[ext_resource type="Script" uid="uid://ral4tq3ea3w4" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="2_nump6"]
+[ext_resource type="Texture2D" uid="uid://b7oncxwsx2scg" path="res://icon.svg" id="3_lrcam"]
 
 [node name="Control" type="Control"]
 layout_mode = 3

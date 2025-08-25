@@ -8,7 +8,7 @@ signal finished_typing
 signal finished_erasing
 
 ## Definition of all used punctuation which will cause a brief pause when typing out the message
-const _PAUSE_MULTIPLIERS := {
+const _PAUSE_MULTIPLIERS: Dictionary[StringName, float] = {
 	".": 16.0,
 	"?": 16.0,
 	"!": 16.0,
@@ -20,9 +20,9 @@ const _PAUSE_MULTIPLIERS := {
 	"\n": 16.0,
 }
 
-@export var _characters_per_minute := 4000.0
-@export var _erase_multiplier := 2.0
-@export var _pause_after_erase_multiplier := 8.0
+@export var _characters_per_minute: float = 4000.0
+@export var _erase_multiplier: float = 2.0
+@export var _pause_after_erase_multiplier: float = 8.0
 
 var _text_to_type: String
 var _typing_timer: Timer
@@ -44,7 +44,7 @@ func _process(_delta: float) -> void:
 		set_text_normally(_text_to_type)
 
 ## To use this script, simply call this method from anywhere with the text you want it to type
-func type_text(new_text: String, erase_text_first := false):
+func type_text(new_text: String, erase_text_first: bool = false) -> void:
 	if _characters_per_minute <= 0:
 		set_text_normally(new_text)
 		return
@@ -65,32 +65,32 @@ func set_text_normally(new_text: String) -> void:
 	_erasing_timer.stop()
 	finished_typing.emit()
 
-func _type_next_character():
-	var parsed_text := get_parsed_text()
+func _type_next_character() -> void:
+	var parsed_text: String = get_parsed_text()
 	if visible_characters >= parsed_text.length():
 		finished_typing.emit()
 		return
-	var next_character := parsed_text[visible_characters]
+	var next_character: String = parsed_text[visible_characters]
 	visible_characters += 1
 	var pause_multiplier: float = _PAUSE_MULTIPLIERS.get(next_character, 1.0)
-	var type_delay := 60.0 / _characters_per_minute * pause_multiplier
+	var type_delay: float = 60.0 / _characters_per_minute * pause_multiplier
 	_typing_timer.start(type_delay)
 
-func _erase_previous_character():
-	var parsed_text := get_parsed_text()
-	var parsed_text_to_type := _strip_bbcode(_text_to_type)
-	var visible_previous_text := parsed_text.substr(0, visible_characters)
+func _erase_previous_character() -> void:
+	var parsed_text: String = get_parsed_text()
+	var parsed_text_to_type: String = _strip_bbcode(_text_to_type)
+	var visible_previous_text: String = parsed_text.substr(0, visible_characters)
 	if parsed_text_to_type.begins_with(visible_previous_text):
 		finished_erasing.emit()
 		text = _text_to_type
-		var type_delay := 60.0 / _characters_per_minute * _pause_after_erase_multiplier
+		var type_delay: float = 60.0 / _characters_per_minute * _pause_after_erase_multiplier
 		_typing_timer.start(type_delay)
 		return
 	visible_characters -= 1
-	var erase_delay := 60.0 / _characters_per_minute / _erase_multiplier
+	var erase_delay: float = 60.0 / _characters_per_minute / _erase_multiplier
 	_erasing_timer.start(erase_delay)
 
 func _strip_bbcode(source:String) -> String:
-	var regex := RegEx.new()
+	var regex: RegEx = RegEx.new()
 	regex.compile("\\[.+?\\]")
 	return regex.sub(source, "", true)

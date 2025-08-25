@@ -34,5 +34,5 @@ func _on_save_rolled(save_result: SaveResult) -> void:
 func _on_entry_entered_tree(node: Node) -> void:
 	if not node is Control: return
 	await get_tree().process_frame
-	_scroll_container.ensure_control_visible(node)
+	_scroll_container.ensure_control_visible(node as Control)
 	entry_added.emit(node)

@@ -5,8 +5,7 @@ const PROTAGONIST_PROFILE: CharacterProfile = preload("res://characters/protagon
 @export var _character: PackedScene
 @export var eleanor: CharacterProfile = preload("res://characters/eleanor.tres")
 
-# CharacterProfile -> Character
-var characters := { }
+var characters: Dictionary[CharacterProfile, Character]= { }
 
 func _ready() -> void:
 	create_character(PROTAGONIST_PROFILE)
@@ -15,7 +14,7 @@ func _ready() -> void:
 func get_protagonist() -> Character:
 	return get_character(PROTAGONIST_PROFILE)
 
-func get_character(character_profile: CharacterProfile, create_if_nonexistant := false) -> Character:
+func get_character(character_profile: CharacterProfile, create_if_nonexistant: bool = false) -> Character:
 	var character: Character = characters[character_profile]
 	if character == null and create_if_nonexistant: character = create_character(character_profile)
 	return character

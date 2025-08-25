@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://bpqkh512g0nmb"]
 
-[ext_resource type="Script" path="res://story/hit_dice_selection/hit_dice_selection.gd" id="1_6stf5"]
+[ext_resource type="Script" uid="uid://dfxwf0abq0203" path="res://story/hit_dice_selection/hit_dice_selection.gd" id="1_6stf5"]
 [ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://assets/portraits/knight.jpeg" id="2_h0l3f"]
-[ext_resource type="Script" path="res://custom_nodes/control/typing_label.gd" id="3_06obj"]
+[ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="3_06obj"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection/hit_dice_selection_buttons.tscn" id="3_gpl86"]
 [ext_resource type="PackedScene" uid="uid://5l5lcf3xxqx2" path="res://dice/dice_log/dice_log_entry.tscn" id="4_vfqac"]
-[ext_resource type="Script" path="res://custom_nodes/control/display_button.gd" id="5_bhkt5"]
+[ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="5_bhkt5"]
 
 [node name="HitDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_hit_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_entry")]
 offset_right = 431.0

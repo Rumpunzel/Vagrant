@@ -23,7 +23,7 @@ func make_decision(story_decision: StoryDecision) -> int:
 	return selected_how_many_times
 
 func make_save_decision(story_save_decision: StorySaveDecision, save_result: SaveResult) -> int:
-	var selected_how_many_times := _current_adventure_tome.update_save_decision_log(story_save_decision, save_result)
+	var selected_how_many_times: int = _current_adventure_tome.update_save_decision_log(story_save_decision, save_result)
 	decision_made.emit(story_save_decision, selected_how_many_times)
 	if save_result.save_outcome != SaveResult.Outcome.FAILURE:
 		enter_page(story_save_decision.transition.get_story_page())
@@ -32,7 +32,7 @@ func make_save_decision(story_save_decision: StorySaveDecision, save_result: Sav
 	return selected_how_many_times
 
 func enter_page(story_page: StoryPage) -> StoryPage:
-	var current_page := _current_adventure_tome.update_page_log(story_page)
+	var current_page: StoryPage = _current_adventure_tome.update_page_log(story_page)
 	page_entered.emit(current_page)
 	return current_page
 

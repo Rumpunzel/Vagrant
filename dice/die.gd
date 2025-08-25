@@ -1,4 +1,5 @@
 class_name Die
+extends Resource
 
 signal rolled(die: Die)
 signal state_changed(state: State)
@@ -10,8 +11,8 @@ enum State {
 	SELECTED,
 }
 
-var die_type: DieType
-var result: int
+@export var die_type: DieType
+@export var result: int
 
 var _state: State :
 	set(new_state):
@@ -24,12 +25,12 @@ func _init(new_die_type: DieType, new_result: int = 0, new_state: State = State.
 	result = new_result
 	_state = new_state
 
-func roll(play_sound := true) -> int:
+func roll(play_sound: bool = true) -> int:
 	result = die_type.roll(play_sound)
 	rolled.emit(self)
 	return result
 
-func roll_save(attribute_score: int, play_sound := true) -> int:
+func roll_save(attribute_score: int, play_sound: bool = true) -> int:
 	result = die_type.roll(play_sound)
 	if result > attribute_score: _state = State.EXHAUSTED
 	rolled.emit(self)
@@ -38,8 +39,8 @@ func roll_save(attribute_score: int, play_sound := true) -> int:
 func update_state(new_state: State = State.ALIVE) -> void:
 	_state = new_state
 
-func auto_update_state(attribute_score: int) -> void:
-	_state = State.SELECTED if attribute_score >= die_type.faces else State.CONSIDERED
+func auto_update_state(attribute_score: AttributeScore) -> void:
+	_state = State.SELECTED if attribute_score.get_score() >= die_type.faces else State.CONSIDERED
 
 func is_alive() -> bool:
 	return _state >= State.ALIVE

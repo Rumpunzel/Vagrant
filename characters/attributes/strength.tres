@@ -1,8 +1,10 @@
-[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=2 format=3 uid="uid://b1c6aib060ja5"]
+[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=3 format=3 uid="uid://b1c6aib060ja5"]
 
-[ext_resource type="Script" path="res://characters/attributes/character_attribute.gd" id="1_27sg8"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_27sg8"]
+[ext_resource type="Texture2D" uid="uid://ct2so8s4uk0f" path="res://icons/old_dice/hand-bandage.png" id="1_ga1e2"]
 
 [resource]
 script = ExtResource("1_27sg8")
-descriptor = "Flesh"
-color = Color(0.823529, 0.427451, 0.576471, 1)
+descriptor = "Guts"
+color = Color(0, 0, 0, 1)
+icon = ExtResource("1_ga1e2")
