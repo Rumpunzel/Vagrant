@@ -20,18 +20,11 @@ extends Resource
 @export var _d12_hit_dice: int = 1
 
 func get_attribute_scores() -> Dictionary[CharacterAttribute, AttributeScore]:
-	var strength: AttributeScore = _strength if _strength else roll_attribute()
-	var agility: AttributeScore = _agility if _agility else roll_attribute()
-	var intelligence: AttributeScore = _intelligence if _intelligence else roll_attribute()
 	return {
-		Rules.STRENGTH: strength,
-		Rules.AGILITY: agility,
-		Rules.INTELLIGENCE: intelligence,
+		Rules.STRENGTH: _strength,
+		Rules.AGILITY: _agility,
+		Rules.INTELLIGENCE: _intelligence,
 	}
-
-func roll_attribute() -> AttributeScore:
-	var rolled_dice: Array[Die] = DiceRoller.roll_dice(Rules.d6.get_dice_pool(2))
-	return AttributeScore.new(rolled_dice)
 
 func get_hit_dice() -> Array[Die]:
 	return DiceRoller.generate_dice_pool(_d4_hit_dice, _d6_hit_dice, _d8_hit_dice, _d10_hit_dice, _d12_hit_dice)

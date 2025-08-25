@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://ddhtfyj4sn1r6"]
+
+[ext_resource type="PackedScene" uid="uid://c5uet8sda2yqw" path="res://story/character_creation/attribute_score_roller.tscn" id="1_d1ydc"]
+[ext_resource type="Script" uid="uid://by22kdnwqjkef" path="res://story/character_creation/attributes_roller.gd" id="1_ql5hc"]
+
+[node name="AttributesRoller" type="HBoxContainer"]
+script = ExtResource("1_ql5hc")
+_attribute_score_roller = ExtResource("1_d1ydc")

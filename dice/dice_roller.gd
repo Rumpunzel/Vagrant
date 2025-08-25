@@ -1,3 +1,4 @@
+@tool
 extends Node
 
 signal die_rolled(die: Die)
@@ -18,6 +19,10 @@ func roll_sum(dice_pool: Array[Die], play_sound: bool = true) -> int:
 	for die: Die in dice_pool:
 		sum += roll_die(die, play_sound).result
 	return sum
+
+func roll_attribute() -> AttributeScore:
+	var rolled_dice: Array[Die] = DiceRoller.roll_dice(Rules.d6.get_dice_pool(2))
+	return AttributeScore.new(rolled_dice)
 
 func roll_save(dice_pool: Array[Die], save_request: SaveRequest) -> SaveResult:
 	var character: Character = save_request.character

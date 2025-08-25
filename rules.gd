@@ -1,14 +1,15 @@
+@tool
 extends Node
 
-const d4: DieType = preload("res://dice/die_types/d4.tres")
-const d6: DieType = preload("res://dice/die_types/d6.tres")
-const d8: DieType = preload("res://dice/die_types/d8.tres")
-const d10: DieType = preload("res://dice/die_types/d10.tres")
-const d12: DieType = preload("res://dice/die_types/d12.tres")
+const d4: DieType = preload("uid://damgavu0n4rho")
+const d6: DieType = preload("uid://clrjpyohkfypv")
+const d8: DieType = preload("uid://c3ciobci54n6u")
+const d10: DieType = preload("uid://dtfdogfd6ebga")
+const d12: DieType = preload("uid://cq2oc01qwwaei")
 
-const STRENGTH: CharacterAttribute = preload("res://characters/attributes/strength.tres")
-const AGILITY: CharacterAttribute = preload("res://characters/attributes/agility.tres")
-const INTELLIGENCE: CharacterAttribute = preload("res://characters/attributes/intelligence.tres")
+const STRENGTH: CharacterAttribute = preload("uid://b1c6aib060ja5")
+const AGILITY: CharacterAttribute = preload("uid://bu20awm3swywv")
+const INTELLIGENCE: CharacterAttribute = preload("uid://2vf8mdpla1u2")
 
 const ATTRIBUTES: Array[CharacterAttribute] = [
 	STRENGTH,
