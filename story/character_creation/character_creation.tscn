@@ -23,7 +23,7 @@ _attributes_roller = NodePath("MarginContainer/VBoxContainer/AttributesRoller")
 _origins_picker = NodePath("MarginContainer/VBoxContainer/OriginsPicker")
 
 [node name="BackgroundTimer" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 7.0
 autostart = true
 
 [node name="Stage" parent="." instance=ExtResource("2_w0qgq")]

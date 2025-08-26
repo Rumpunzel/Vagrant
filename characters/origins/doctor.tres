@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://dgikjtge36uha"]
+
+[ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="1_2esmf"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_ehs31"]
+
+[resource]
+script = ExtResource("2_ehs31")
+name = "Doctor"
+icon = ExtResource("1_2esmf")
+type = 1
+color = Color(0, 0, 0, 1)
+details = ""
+ability = ""
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

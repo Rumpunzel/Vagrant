@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://de62kh1q4mybj"]
+
+[ext_resource type="Texture2D" uid="uid://cpio2dgd5kcva" path="res://characters/origins/icons/drama-masks.svg" id="1_mepsy"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_mjcs8"]
+
+[resource]
+script = ExtResource("2_mjcs8")
+name = "Minstrel"
+icon = ExtResource("1_mepsy")
+type = 0
+color = Color(0, 0, 0, 1)
+details = ""
+ability = "+1 to all attributes."
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

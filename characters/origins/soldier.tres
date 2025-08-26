@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://cawcb1f8r3nb8"]
 
-[ext_resource type="Texture2D" uid="uid://cciklu4j70sjt" path="res://characters/origins/icons/closed-barbute.svg" id="1_l3qjt"]
+[ext_resource type="Texture2D" uid="uid://d073jvxfp62ln" path="res://characters/origins/icons/barbute.svg" id="1_l3qjt"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_j0cvg"]
 
 [resource]
 script = ExtResource("2_j0cvg")
-name = "Soldier"
+name = "Warrior"
 icon = ExtResource("1_l3qjt")
 type = 0
 color = Color(0, 0, 0, 1)

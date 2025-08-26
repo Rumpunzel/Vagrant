@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://yct1dsuv2io1"]
+
+[ext_resource type="Texture2D" uid="uid://u83ycsrxsky0" path="res://characters/origins/icons/pointy-hat.svg" id="1_y3x3c"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_c44ej"]
+
+[resource]
+script = ExtResource("2_c44ej")
+name = "Sorcerer"
+icon = ExtResource("1_y3x3c")
+type = 1
+color = Color(0, 0, 0, 1)
+details = ""
+ability = ""
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

@@ -17,24 +17,21 @@ const ATTRIBUTES: Array[CharacterAttribute] = [
 	INTELLIGENCE,
 ]
 
-const ADVENTURER: Origin = preload("uid://ciavtykggnu43")
-const NOBLE: Origin = preload("uid://bax71w1etiyel")
-const OUTLAW: Origin = preload("uid://binkm27w771kw")
-const PEASANT: Origin = preload("uid://c7j5c7ekitgl3")
-const SAILOR: Origin = preload("uid://cy17lbnstbpf2")
-const SCHOLAR: Origin = preload("uid://bpesh0vj6mbdm")
-const SOLDIER: Origin = preload("uid://cawcb1f8r3nb8")
-const THIEF: Origin = preload("uid://bj6k6l430dyvn")
-const VETERAN: Origin = preload("uid://45sbhcfyenlm")
-
 const ORIGINS: Array[Origin] = [
-	ADVENTURER,
-	NOBLE,
-	OUTLAW,
-	PEASANT,
-	SAILOR,
-	SCHOLAR,
-	SOLDIER,
-	THIEF,
-	VETERAN,
+	preload("uid://ciavtykggnu43"), # adventurer
+	preload("uid://7uemslxbeu5b"), # artisan
+	preload("uid://dqjtp62n331s7"), # cook
+	preload("uid://dgikjtge36uha"), # doctor
+	preload("uid://cskgqp6fm3x52"), # hunter
+	preload("uid://de62kh1q4mybj"), # minstrel
+	preload("uid://bax71w1etiyel"), # noble
+	preload("uid://binkm27w771kw"), # outlaw
+	preload("uid://c7j5c7ekitgl3"), # peasant
+	preload("uid://cvyqjfqbkfvap"), # priest
+	preload("uid://cy17lbnstbpf2"), # sailor
+	preload("uid://bpesh0vj6mbdm"), # scholar
+	preload("uid://yct1dsuv2io1"), # sorcerer
+	preload("uid://bj6k6l430dyvn"), # thief
+	preload("uid://45sbhcfyenlm"), # veteran
+	preload("uid://cawcb1f8r3nb8"), # soldier
 ]

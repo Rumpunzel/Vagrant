@@ -1,15 +1,19 @@
-[gd_scene load_steps=11 format=3 uid="uid://0mji1mdlk5op"]
+[gd_scene load_steps=15 format=3 uid="uid://0mji1mdlk5op"]
 
 [ext_resource type="Script" uid="uid://dytsvtmv8gt68" path="res://story/character_creation/origins_picker.gd" id="1_gr0sf"]
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="2_biqa6"]
+[ext_resource type="Texture2D" uid="uid://clqto2bouwcbi" path="res://characters/origins/icons/chef-toque.svg" id="3_3fxev"]
 [ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="3_x4kkx"]
+[ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="4_aeon6"]
 [ext_resource type="Texture2D" uid="uid://b1nrbvek1tou5" path="res://characters/origins/icons/executioner-hood.svg" id="4_gg73k"]
-[ext_resource type="Texture2D" uid="uid://cciklu4j70sjt" path="res://characters/origins/icons/closed-barbute.svg" id="5_cjxw6"]
+[ext_resource type="Texture2D" uid="uid://cpio2dgd5kcva" path="res://characters/origins/icons/drama-masks.svg" id="5_3rtwe"]
 [ext_resource type="Texture2D" uid="uid://6mmns06hkyd7" path="res://characters/origins/icons/pirate-captain.svg" id="6_loh28"]
 [ext_resource type="Texture2D" uid="uid://blcffdsjp6tdv" path="res://characters/origins/icons/hood.svg" id="7_hqqb3"]
 [ext_resource type="Texture2D" uid="uid://cf181o5jyh3vl" path="res://characters/origins/icons/graduate-cap.svg" id="7_x4kkx"]
 [ext_resource type="Texture2D" uid="uid://bjus5vac11gdv" path="res://characters/origins/icons/crenel-crown.svg" id="8_3fxev"]
 [ext_resource type="Texture2D" uid="uid://d073jvxfp62ln" path="res://characters/origins/icons/barbute.svg" id="10_gg73k"]
+[ext_resource type="Texture2D" uid="uid://u83ycsrxsky0" path="res://characters/origins/icons/pointy-hat.svg" id="11_u031w"]
+[ext_resource type="Texture2D" uid="uid://cv8uurjbynyom" path="res://characters/origins/icons/frog-mouth-helm.svg" id="13_4t8ms"]
 
 [node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_kin_list", "_ilk_list", "_kin_ability", "_ilk_ability", "_kin_details", "_ilk_details", "_continue")]
 offset_right = 1053.0
@@ -60,37 +64,54 @@ layout_mode = 2
 size_flags_vertical = 3
 auto_width = true
 auto_height = true
-item_count = 9
-max_columns = 5
+item_count = 16
+max_columns = 4
 same_column_width = true
 icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
 item_0/text = "Adventurer"
 item_0/icon = ExtResource("2_biqa6")
-item_1/text = "Noble"
-item_1/icon = ExtResource("8_3fxev")
-item_1/disabled = true
-item_2/text = "Outlaw"
-item_2/icon = ExtResource("4_gg73k")
-item_2/disabled = true
-item_3/text = "Peasant"
-item_3/icon = ExtResource("3_x4kkx")
-item_4/text = "Sailor"
-item_4/icon = ExtResource("6_loh28")
-item_5/text = "Scholar"
-item_5/icon = ExtResource("7_x4kkx")
-item_5/disabled = true
-item_6/text = "Soldier"
-item_6/icon = ExtResource("5_cjxw6")
-item_7/text = "Thief"
-item_7/icon = ExtResource("7_hqqb3")
-item_8/text = "Veteran"
-item_8/icon = ExtResource("10_gg73k")
+item_1/text = "Adventurer"
+item_1/icon = ExtResource("2_biqa6")
+item_2/text = "Cook"
+item_2/icon = ExtResource("3_3fxev")
+item_3/text = "Doctor"
+item_3/icon = ExtResource("4_aeon6")
+item_3/disabled = true
+item_4/text = "Adventurer"
+item_4/icon = ExtResource("2_biqa6")
+item_5/text = "Minstrel"
+item_5/icon = ExtResource("5_3rtwe")
+item_6/text = "Noble"
+item_6/icon = ExtResource("8_3fxev")
+item_6/disabled = true
+item_7/text = "Outlaw"
+item_7/icon = ExtResource("4_gg73k")
+item_7/disabled = true
+item_8/text = "Peasant"
+item_8/icon = ExtResource("3_x4kkx")
+item_9/text = "Noble"
+item_9/icon = ExtResource("8_3fxev")
+item_9/disabled = true
+item_10/text = "Sailor"
+item_10/icon = ExtResource("6_loh28")
+item_11/text = "Scholar"
+item_11/icon = ExtResource("7_x4kkx")
+item_11/disabled = true
+item_12/text = "Sorcerer"
+item_12/icon = ExtResource("11_u031w")
+item_12/disabled = true
+item_13/text = "Thief"
+item_13/icon = ExtResource("7_hqqb3")
+item_14/text = "Veteran"
+item_14/icon = ExtResource("13_4t8ms")
+item_15/text = "Warrior"
+item_15/icon = ExtResource("10_gg73k")
 
 [node name="Details" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
-text = "The people among whom you grew up"
+text = "You did not choose your kin"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -144,37 +165,54 @@ layout_mode = 2
 size_flags_vertical = 3
 auto_width = true
 auto_height = true
-item_count = 9
-max_columns = 5
+item_count = 16
+max_columns = 4
 same_column_width = true
 icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
 item_0/text = "Adventurer"
 item_0/icon = ExtResource("2_biqa6")
-item_1/text = "Noble"
-item_1/icon = ExtResource("8_3fxev")
-item_1/disabled = true
-item_2/text = "Outlaw"
-item_2/icon = ExtResource("4_gg73k")
-item_2/disabled = true
-item_3/text = "Peasant"
-item_3/icon = ExtResource("3_x4kkx")
-item_4/text = "Sailor"
-item_4/icon = ExtResource("6_loh28")
-item_5/text = "Scholar"
-item_5/icon = ExtResource("7_x4kkx")
-item_5/disabled = true
-item_6/text = "Soldier"
-item_6/icon = ExtResource("5_cjxw6")
-item_7/text = "Thief"
-item_7/icon = ExtResource("7_hqqb3")
-item_8/text = "Veteran"
-item_8/icon = ExtResource("10_gg73k")
+item_1/text = "Adventurer"
+item_1/icon = ExtResource("2_biqa6")
+item_2/text = "Cook"
+item_2/icon = ExtResource("3_3fxev")
+item_3/text = "Doctor"
+item_3/icon = ExtResource("4_aeon6")
+item_3/disabled = true
+item_4/text = "Adventurer"
+item_4/icon = ExtResource("2_biqa6")
+item_5/text = "Minstrel"
+item_5/icon = ExtResource("5_3rtwe")
+item_6/text = "Noble"
+item_6/icon = ExtResource("8_3fxev")
+item_6/disabled = true
+item_7/text = "Outlaw"
+item_7/icon = ExtResource("4_gg73k")
+item_7/disabled = true
+item_8/text = "Peasant"
+item_8/icon = ExtResource("3_x4kkx")
+item_9/text = "Noble"
+item_9/icon = ExtResource("8_3fxev")
+item_9/disabled = true
+item_10/text = "Sailor"
+item_10/icon = ExtResource("6_loh28")
+item_11/text = "Scholar"
+item_11/icon = ExtResource("7_x4kkx")
+item_11/disabled = true
+item_12/text = "Sorcerer"
+item_12/icon = ExtResource("11_u031w")
+item_12/disabled = true
+item_13/text = "Thief"
+item_13/icon = ExtResource("7_hqqb3")
+item_14/text = "Veteran"
+item_14/icon = ExtResource("13_4t8ms")
+item_15/text = "Warrior"
+item_15/icon = ExtResource("10_gg73k")
 
 [node name="Details" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
-text = "The people with whom you associate professionally"
+text = "But you chose your ilk"
 horizontal_alignment = 1
 vertical_alignment = 1
 

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://cskgqp6fm3x52"]
+
+[ext_resource type="Texture2D" uid="uid://cdsc4strj6fui" path="res://characters/origins/icons/badger.svg" id="1_27hth"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_2s25p"]
+
+[resource]
+script = ExtResource("2_2s25p")
+name = "Hunter"
+icon = ExtResource("1_27hth")
+type = 0
+color = Color(0, 0, 0, 1)
+details = ""
+ability = "+1 to all attributes."
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"
