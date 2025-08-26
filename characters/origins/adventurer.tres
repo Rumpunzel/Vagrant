@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://ciavtykggnu43"]
+
+[ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="1_khty3"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_vwydo"]
+
+[resource]
+script = ExtResource("1_vwydo")
+name = "Adventurer"
+icon = ExtResource("1_khty3")
+type = 0
+color = Color(0, 0, 0, 1)
+details = ""
+ability = "+1 to all attributes."
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

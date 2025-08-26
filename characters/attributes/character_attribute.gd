@@ -2,9 +2,9 @@ class_name CharacterAttribute
 extends Resource
 
 @export_placeholder("Descriptor") var descriptor: String
-@export_multiline var details: String
+@export var icon: Texture2D
 @export var color: Color
-@export var icon: Texture
+@export_multiline var details: String
 
 func _to_string() -> String:
 	return descriptor

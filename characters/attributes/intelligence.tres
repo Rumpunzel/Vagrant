@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CharacterAttribute" load_steps=3 format=3 uid="uid://2vf8mdpla1u2"]
 
-[ext_resource type="Texture2D" uid="uid://1mcf236wt112" path="res://characters/attributes/dead-eye.svg" id="1_rkmxj"]
+[ext_resource type="Texture2D" uid="uid://1mcf236wt112" path="res://characters/attributes/icons/dead-eye.svg" id="1_rkmxj"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_wgpsi"]
 
 [resource]

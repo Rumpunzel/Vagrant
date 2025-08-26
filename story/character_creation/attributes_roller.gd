@@ -12,9 +12,13 @@ signal attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, Attrib
 var _attribute_scores: Dictionary[CharacterAttribute, AttributeScore] = { }
 
 func _ready() -> void:
+	if not Engine.is_editor_hint(): return
 	setup()
 
 func setup() -> void:
+	for attribute_score_roller: AttributeScoreRoller in _roller_container.get_children():
+		_roller_container.remove_child(attribute_score_roller)
+		attribute_score_roller.queue_free()
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
 		var attribute_score_roller: AttributeScoreRoller = _attribute_score_roller.instantiate()

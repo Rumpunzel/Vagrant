@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://bpesh0vj6mbdm"]
+
+[ext_resource type="Texture2D" uid="uid://cf181o5jyh3vl" path="res://characters/origins/icons/graduate-cap.svg" id="1_vh0is"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_medmp"]
+
+[resource]
+script = ExtResource("2_medmp")
+name = "Scholar"
+icon = ExtResource("1_vh0is")
+type = 1
+color = Color(0, 0, 0, 1)
+details = ""
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

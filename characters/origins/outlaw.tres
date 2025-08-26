@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://binkm27w771kw"]
+
+[ext_resource type="Texture2D" uid="uid://b1nrbvek1tou5" path="res://characters/origins/icons/executioner-hood.svg" id="1_5uhwg"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_sq5ij"]
+
+[resource]
+script = ExtResource("2_sq5ij")
+name = "Outlaw"
+icon = ExtResource("1_5uhwg")
+type = 1
+color = Color(0, 0, 0, 1)
+details = ""
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

@@ -4,9 +4,11 @@ extends CanvasLayer
 
 @export var background: Texture : set = _set_background
 @export var ambience: AudioStream : set = _set_ambience
+@export var music: AudioStream : set = _set_music
 
 @export_group("Configuration")
 @export var _ambience: AudioStreamPlayer
+@export var _music: AudioStreamPlayer
 @export var _background: PackedScene
 
 var _current_background: TextureRect
@@ -36,7 +38,13 @@ func _set_background(background_texture: Texture) -> void:
 	_current_background = new_background
 
 func _set_ambience(audio_stream: AudioStream) -> void:
+	if _ambience.stream == audio_stream: return
 	ambience = audio_stream
-	if audio_stream == null or _ambience.stream == audio_stream: return
 	_ambience.stream = audio_stream
 	if not Engine.is_editor_hint() and is_inside_tree(): _ambience.play()
+
+func _set_music(audio_stream: AudioStream) -> void:
+	if _music.stream == audio_stream: return
+	music = audio_stream
+	_music.stream = audio_stream
+	if not Engine.is_editor_hint() and is_inside_tree(): _music.play()

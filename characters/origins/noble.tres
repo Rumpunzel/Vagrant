@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://bax71w1etiyel"]
+
+[ext_resource type="Texture2D" uid="uid://bjus5vac11gdv" path="res://characters/origins/icons/crenel-crown.svg" id="1_ur7u2"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_400pu"]
+
+[resource]
+script = ExtResource("2_400pu")
+name = "Noble"
+icon = ExtResource("1_ur7u2")
+type = 1
+color = Color(0, 0, 0, 1)
+details = ""
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

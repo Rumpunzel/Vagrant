@@ -16,3 +16,25 @@ const ATTRIBUTES: Array[CharacterAttribute] = [
 	AGILITY,
 	INTELLIGENCE,
 ]
+
+const ADVENTURER: Origin = preload("uid://ciavtykggnu43")
+const NOBLE: Origin = preload("uid://bax71w1etiyel")
+const OUTLAW: Origin = preload("uid://binkm27w771kw")
+const PEASANT: Origin = preload("uid://c7j5c7ekitgl3")
+const SAILOR: Origin = preload("uid://cy17lbnstbpf2")
+const SCHOLAR: Origin = preload("uid://bpesh0vj6mbdm")
+const SOLDIER: Origin = preload("uid://cawcb1f8r3nb8")
+const THIEF: Origin = preload("uid://bj6k6l430dyvn")
+const VETERAN: Origin = preload("uid://45sbhcfyenlm")
+
+const ORIGINS: Array[Origin] = [
+	ADVENTURER,
+	NOBLE,
+	OUTLAW,
+	PEASANT,
+	SAILOR,
+	SCHOLAR,
+	SOLDIER,
+	THIEF,
+	VETERAN,
+]

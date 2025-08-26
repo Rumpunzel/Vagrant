@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://c7j5c7ekitgl3"]
+
+[ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="1_1fvhu"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_1xadg"]
+
+[resource]
+script = ExtResource("2_1xadg")
+name = "Peasant"
+icon = ExtResource("1_1fvhu")
+type = 0
+color = Color(0, 0, 0, 1)
+details = ""
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

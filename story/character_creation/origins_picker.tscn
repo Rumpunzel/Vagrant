@@ -1,0 +1,188 @@
+[gd_scene load_steps=11 format=3 uid="uid://0mji1mdlk5op"]
+
+[ext_resource type="Script" uid="uid://dytsvtmv8gt68" path="res://story/character_creation/origins_picker.gd" id="1_gr0sf"]
+[ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="2_biqa6"]
+[ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="3_x4kkx"]
+[ext_resource type="Texture2D" uid="uid://b1nrbvek1tou5" path="res://characters/origins/icons/executioner-hood.svg" id="4_gg73k"]
+[ext_resource type="Texture2D" uid="uid://cciklu4j70sjt" path="res://characters/origins/icons/closed-barbute.svg" id="5_cjxw6"]
+[ext_resource type="Texture2D" uid="uid://6mmns06hkyd7" path="res://characters/origins/icons/pirate-captain.svg" id="6_loh28"]
+[ext_resource type="Texture2D" uid="uid://blcffdsjp6tdv" path="res://characters/origins/icons/hood.svg" id="7_hqqb3"]
+[ext_resource type="Texture2D" uid="uid://cf181o5jyh3vl" path="res://characters/origins/icons/graduate-cap.svg" id="7_x4kkx"]
+[ext_resource type="Texture2D" uid="uid://bjus5vac11gdv" path="res://characters/origins/icons/crenel-crown.svg" id="8_3fxev"]
+[ext_resource type="Texture2D" uid="uid://d073jvxfp62ln" path="res://characters/origins/icons/barbute.svg" id="10_gg73k"]
+
+[node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_kin_list", "_ilk_list", "_kin_ability", "_ilk_ability", "_kin_details", "_ilk_details", "_continue")]
+offset_right = 1053.0
+offset_bottom = 551.0
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+script = ExtResource("1_gr0sf")
+_kin_list = NodePath("PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/Kins")
+_ilk_list = NodePath("PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/Ilks")
+_kin_ability = NodePath("PanelContainer/MarginContainer/HBoxContainer/Abilites/Kin/MarginContainer/KinAbility")
+_ilk_ability = NodePath("PanelContainer/MarginContainer/HBoxContainer/Abilites/Ilk/MarginContainer/IlkAbility")
+_kin_details = NodePath("PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/Details")
+_ilk_details = NodePath("PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/Details")
+_continue = NodePath("Continue")
+metadata/_custom_type_script = "uid://dytsvtmv8gt68"
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Origin"
+horizontal_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Kin" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Kin"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "Kin"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Kins" type="ItemList" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+auto_width = true
+auto_height = true
+item_count = 9
+max_columns = 5
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2i(32, 32)
+item_0/text = "Adventurer"
+item_0/icon = ExtResource("2_biqa6")
+item_1/text = "Noble"
+item_1/icon = ExtResource("8_3fxev")
+item_1/disabled = true
+item_2/text = "Outlaw"
+item_2/icon = ExtResource("4_gg73k")
+item_2/disabled = true
+item_3/text = "Peasant"
+item_3/icon = ExtResource("3_x4kkx")
+item_4/text = "Sailor"
+item_4/icon = ExtResource("6_loh28")
+item_5/text = "Scholar"
+item_5/icon = ExtResource("7_x4kkx")
+item_5/disabled = true
+item_6/text = "Soldier"
+item_6/icon = ExtResource("5_cjxw6")
+item_7/text = "Thief"
+item_7/icon = ExtResource("7_hqqb3")
+item_8/text = "Veteran"
+item_8/icon = ExtResource("10_gg73k")
+
+[node name="Details" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+text = "The people among whom you grew up"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Abilites" type="VBoxContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Kin" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites/Kin"]
+layout_mode = 2
+
+[node name="KinAbility" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites/Kin/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=gray]Your kin ability.[/color]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ilk" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites/Ilk"]
+layout_mode = 2
+
+[node name="IlkAbility" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites/Ilk/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=gray]Your ilk ability.[/color]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ilk" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "Ilk"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ilks" type="ItemList" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+auto_width = true
+auto_height = true
+item_count = 9
+max_columns = 5
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2i(32, 32)
+item_0/text = "Adventurer"
+item_0/icon = ExtResource("2_biqa6")
+item_1/text = "Noble"
+item_1/icon = ExtResource("8_3fxev")
+item_1/disabled = true
+item_2/text = "Outlaw"
+item_2/icon = ExtResource("4_gg73k")
+item_2/disabled = true
+item_3/text = "Peasant"
+item_3/icon = ExtResource("3_x4kkx")
+item_4/text = "Sailor"
+item_4/icon = ExtResource("6_loh28")
+item_5/text = "Scholar"
+item_5/icon = ExtResource("7_x4kkx")
+item_5/disabled = true
+item_6/text = "Soldier"
+item_6/icon = ExtResource("5_cjxw6")
+item_7/text = "Thief"
+item_7/icon = ExtResource("7_hqqb3")
+item_8/text = "Veteran"
+item_8/icon = ExtResource("10_gg73k")
+
+[node name="Details" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+text = "The people with whom you associate professionally"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Continue" type="Button" parent="."]
+layout_mode = 2
+disabled = true
+text = "Continue"
+
+[connection signal="item_selected" from="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/Kins" to="." method="_on_kin_list_item_selected"]
+[connection signal="item_selected" from="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/Ilks" to="." method="_on_ilk_list_item_selected"]
+[connection signal="pressed" from="Continue" to="." method="_on_continue_pressed"]
