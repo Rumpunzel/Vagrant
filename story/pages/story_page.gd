@@ -31,8 +31,8 @@ func get_page_title() -> String:
 		if event.are_all_prerequisites_fullfilled():
 			var event_title: String = event.get_page_title()
 			if not event_title.is_empty(): return event_title
-	if _area == null: return "[center]%s[/center]" % _title if not _title.is_empty() else ""
-	return "[center]%s — %s[/center]" % [_area.name, _title]
+	if _area == null: return "%s" % _title if not _title.is_empty() else ""
+	return "%s — %s" % [_area.name, _title]
 
 func get_description() -> String:
 	var combined_description: String = ""

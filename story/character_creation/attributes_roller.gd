@@ -1,26 +1,44 @@
 @tool
 class_name AttributesRoller
-extends HBoxContainer
+extends VBoxContainer
 
+signal attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, AttributeScore])
+
+@export var _roller_container: Container
 @export var _continue: Button
+
 @export var _attribute_score_roller: PackedScene
 
-var _attribute_score_rollers: Dictionary[CharacterAttribute, AttributeScoreRoller] = { }
+var _attribute_scores: Dictionary[CharacterAttribute, AttributeScore] = { }
 
 func _ready() -> void:
-	_setup()
+	setup()
 
-func _setup() -> void:
-	assert(_attribute_score_rollers.is_empty())
-	for index: int in Rules.ATTRIBUTES.size():
-		var attribute: CharacterAttribute = Rules.ATTRIBUTES[index]
+func setup() -> void:
+	size_flags_vertical = Control.SIZE_EXPAND_FILL
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
 		var attribute_score_roller: AttributeScoreRoller = _attribute_score_roller.instantiate()
 		attribute_score_roller.attribute = attribute as CharacterAttribute
-		_attribute_score_rollers[attribute] = attribute_score_roller
-		add_child(attribute_score_roller)
-		if index == Rules.ATTRIBUTES.size() - 1:
-			attribute_score_roller._roll.pressed.connect(_continue.grab_focus)
-			attribute_score_roller._roll.pressed.connect(_continue.set_disabled.bind(false))
-		if index == 0: continue
-		var previous_attribute_score_roller: AttributeScoreRoller = _attribute_score_rollers[Rules.ATTRIBUTES[index - 1]]
-		previous_attribute_score_roller._roll.pressed.connect(attribute_score_roller._roll.grab_focus)
+		attribute_score_roller.attribute_score_rolled.connect(_on_attribute_score_rolled)
+		_roller_container.add_child(attribute_score_roller)
+
+func collapse() -> void:
+	_continue.disabled = true
+	# TODO: animate this
+	_continue.visible = false
+	for attribute_score_roller: AttributeScoreRoller in _roller_container.get_children():
+		attribute_score_roller.collapse()
+	size_flags_vertical = Control.SIZE_FILL
+
+func _is_ready() -> bool:
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES: if not _attribute_scores.has(attribute): return false
+	return true
+
+func _on_attribute_score_rolled(attribute: CharacterAttribute, attribute_score: AttributeScore) -> void:
+	_attribute_scores[attribute] = attribute_score
+	if not _is_ready(): return
+	_continue.disabled = false
+	_continue.grab_focus()
+
+func _on_continue_pressed() -> void:
+	attributes_rolled.emit(_attribute_scores)
