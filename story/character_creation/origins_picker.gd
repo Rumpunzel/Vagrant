@@ -8,8 +8,6 @@ signal origins_picked(kin: Origin, ilk: Origin)
 @export var _ilk_list: ItemList
 @export var _kin_ability: RichTextLabel
 @export var _ilk_ability: RichTextLabel
-@export var _kin_details: RichTextLabel
-@export var _ilk_details: RichTextLabel
 @export var _continue: Button
 
 var _selected_kin: Origin = null
@@ -44,8 +42,6 @@ func setup(rare_options: int) -> void:
 func collapse() -> void:
 	_continue.disabled = true
 	# TODO: animate this
-	_kin_details.visible = false
-	_ilk_details.visible = false
 	_continue.visible = false
 	#for attribute_score_roller: AttributeScoreRoller in _roller_container.get_children():
 		#attribute_score_roller.collapse()

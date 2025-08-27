@@ -1,32 +1,33 @@
-[gd_scene load_steps=15 format=3 uid="uid://0mji1mdlk5op"]
+[gd_scene load_steps=18 format=3 uid="uid://0mji1mdlk5op"]
 
 [ext_resource type="Script" uid="uid://dytsvtmv8gt68" path="res://story/character_creation/origins_picker.gd" id="1_gr0sf"]
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="2_biqa6"]
 [ext_resource type="Texture2D" uid="uid://clqto2bouwcbi" path="res://characters/origins/icons/chef-toque.svg" id="3_3fxev"]
+[ext_resource type="Texture2D" uid="uid://dr2h77gqaw3it" path="res://characters/origins/icons/philosopher-bust.svg" id="3_u031w"]
 [ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="3_x4kkx"]
 [ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="4_aeon6"]
 [ext_resource type="Texture2D" uid="uid://b1nrbvek1tou5" path="res://characters/origins/icons/executioner-hood.svg" id="4_gg73k"]
 [ext_resource type="Texture2D" uid="uid://cpio2dgd5kcva" path="res://characters/origins/icons/drama-masks.svg" id="5_3rtwe"]
+[ext_resource type="Texture2D" uid="uid://cdsc4strj6fui" path="res://characters/origins/icons/badger.svg" id="6_4t8ms"]
 [ext_resource type="Texture2D" uid="uid://6mmns06hkyd7" path="res://characters/origins/icons/pirate-captain.svg" id="6_loh28"]
 [ext_resource type="Texture2D" uid="uid://blcffdsjp6tdv" path="res://characters/origins/icons/hood.svg" id="7_hqqb3"]
 [ext_resource type="Texture2D" uid="uid://cf181o5jyh3vl" path="res://characters/origins/icons/graduate-cap.svg" id="7_x4kkx"]
 [ext_resource type="Texture2D" uid="uid://bjus5vac11gdv" path="res://characters/origins/icons/crenel-crown.svg" id="8_3fxev"]
 [ext_resource type="Texture2D" uid="uid://d073jvxfp62ln" path="res://characters/origins/icons/barbute.svg" id="10_gg73k"]
+[ext_resource type="Texture2D" uid="uid://vo5h0q8e31bp" path="res://characters/origins/icons/sun-priest.svg" id="11_pqbml"]
 [ext_resource type="Texture2D" uid="uid://u83ycsrxsky0" path="res://characters/origins/icons/pointy-hat.svg" id="11_u031w"]
 [ext_resource type="Texture2D" uid="uid://cv8uurjbynyom" path="res://characters/origins/icons/frog-mouth-helm.svg" id="13_4t8ms"]
 
-[node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_kin_list", "_ilk_list", "_kin_ability", "_ilk_ability", "_kin_details", "_ilk_details", "_continue")]
-offset_right = 1053.0
-offset_bottom = 551.0
+[node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_kin_list", "_ilk_list", "_kin_ability", "_ilk_ability", "_continue")]
+offset_right = 1413.0
+offset_bottom = 567.0
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 script = ExtResource("1_gr0sf")
 _kin_list = NodePath("PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/Kins")
 _ilk_list = NodePath("PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/Ilks")
-_kin_ability = NodePath("PanelContainer/MarginContainer/HBoxContainer/Abilites/Kin/MarginContainer/KinAbility")
-_ilk_ability = NodePath("PanelContainer/MarginContainer/HBoxContainer/Abilites/Ilk/MarginContainer/IlkAbility")
-_kin_details = NodePath("PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/Details")
-_ilk_details = NodePath("PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/Details")
+_kin_ability = NodePath("PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/PanelContainer/MarginContainer/Ability")
+_ilk_ability = NodePath("PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/PanelContainer/MarginContainer/Ability")
 _continue = NodePath("Continue")
 metadata/_custom_type_script = "uid://dytsvtmv8gt68"
 
@@ -65,21 +66,21 @@ size_flags_vertical = 3
 auto_width = true
 auto_height = true
 item_count = 16
-max_columns = 4
+max_columns = 5
 same_column_width = true
 icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
 item_0/text = "Adventurer"
 item_0/icon = ExtResource("2_biqa6")
-item_1/text = "Adventurer"
-item_1/icon = ExtResource("2_biqa6")
+item_1/text = "Artisan"
+item_1/icon = ExtResource("3_u031w")
 item_2/text = "Cook"
 item_2/icon = ExtResource("3_3fxev")
 item_3/text = "Doctor"
 item_3/icon = ExtResource("4_aeon6")
 item_3/disabled = true
-item_4/text = "Adventurer"
-item_4/icon = ExtResource("2_biqa6")
+item_4/text = "Hunter"
+item_4/icon = ExtResource("6_4t8ms")
 item_5/text = "Minstrel"
 item_5/icon = ExtResource("5_3rtwe")
 item_6/text = "Noble"
@@ -90,8 +91,8 @@ item_7/icon = ExtResource("4_gg73k")
 item_7/disabled = true
 item_8/text = "Peasant"
 item_8/icon = ExtResource("3_x4kkx")
-item_9/text = "Noble"
-item_9/icon = ExtResource("8_3fxev")
+item_9/text = "Priest"
+item_9/icon = ExtResource("11_pqbml")
 item_9/disabled = true
 item_10/text = "Sailor"
 item_10/icon = ExtResource("6_loh28")
@@ -108,42 +109,31 @@ item_14/icon = ExtResource("13_4t8ms")
 item_15/text = "Warrior"
 item_15/icon = ExtResource("10_gg73k")
 
-[node name="Details" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
-custom_minimum_size = Vector2(0, 64)
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
 layout_mode = 2
-text = "You did not choose your kin"
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Ability" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=gray]You did not choose your kin.[/color]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Abilites" type="VBoxContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+[node name="Inventory" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Kin" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites/Kin"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Inventory"]
 layout_mode = 2
 
-[node name="KinAbility" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites/Kin/MarginContainer"]
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/Inventory/VBoxContainer"]
 layout_mode = 2
-bbcode_enabled = true
-text = "[color=gray]Your kin ability.[/color]"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Ilk" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites/Ilk"]
-layout_mode = 2
-
-[node name="IlkAbility" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Abilites/Ilk/MarginContainer"]
-layout_mode = 2
-bbcode_enabled = true
-text = "[color=gray]Your ilk ability.[/color]"
+theme_type_variation = &"HeaderMedium"
+text = "Inventory"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -166,21 +156,21 @@ size_flags_vertical = 3
 auto_width = true
 auto_height = true
 item_count = 16
-max_columns = 4
+max_columns = 5
 same_column_width = true
 icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
 item_0/text = "Adventurer"
 item_0/icon = ExtResource("2_biqa6")
-item_1/text = "Adventurer"
-item_1/icon = ExtResource("2_biqa6")
+item_1/text = "Artisan"
+item_1/icon = ExtResource("3_u031w")
 item_2/text = "Cook"
 item_2/icon = ExtResource("3_3fxev")
 item_3/text = "Doctor"
 item_3/icon = ExtResource("4_aeon6")
 item_3/disabled = true
-item_4/text = "Adventurer"
-item_4/icon = ExtResource("2_biqa6")
+item_4/text = "Hunter"
+item_4/icon = ExtResource("6_4t8ms")
 item_5/text = "Minstrel"
 item_5/icon = ExtResource("5_3rtwe")
 item_6/text = "Noble"
@@ -191,8 +181,8 @@ item_7/icon = ExtResource("4_gg73k")
 item_7/disabled = true
 item_8/text = "Peasant"
 item_8/icon = ExtResource("3_x4kkx")
-item_9/text = "Noble"
-item_9/icon = ExtResource("8_3fxev")
+item_9/text = "Priest"
+item_9/icon = ExtResource("11_pqbml")
 item_9/disabled = true
 item_10/text = "Sailor"
 item_10/icon = ExtResource("6_loh28")
@@ -209,10 +199,17 @@ item_14/icon = ExtResource("13_4t8ms")
 item_15/text = "Warrior"
 item_15/icon = ExtResource("10_gg73k")
 
-[node name="Details" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
-custom_minimum_size = Vector2(0, 64)
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
 layout_mode = 2
-text = "But you chose your ilk"
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Ability" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=gray]But you chose your ilk.[/color]"
 horizontal_alignment = 1
 vertical_alignment = 1
 

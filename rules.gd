@@ -23,6 +23,7 @@ const ORIGINS: Array[Origin] = [
 	preload("uid://dqjtp62n331s7"), # cook
 	preload("uid://dgikjtge36uha"), # doctor
 	preload("uid://cskgqp6fm3x52"), # hunter
+	preload("uid://1n7f7ltq8e42"), # merchant
 	preload("uid://de62kh1q4mybj"), # minstrel
 	preload("uid://bax71w1etiyel"), # noble
 	preload("uid://binkm27w771kw"), # outlaw
