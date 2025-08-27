@@ -1,8 +1,9 @@
-[gd_scene load_steps=20 format=3 uid="uid://0mji1mdlk5op"]
+[gd_scene load_steps=26 format=3 uid="uid://0mji1mdlk5op"]
 
 [ext_resource type="Script" uid="uid://dytsvtmv8gt68" path="res://story/character_creation/origins_picker.gd" id="1_gr0sf"]
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="2_biqa6"]
 [ext_resource type="Texture2D" uid="uid://clqto2bouwcbi" path="res://characters/origins/icons/chef-toque.svg" id="3_3fxev"]
+[ext_resource type="Texture2D" uid="uid://c18vwojibiavq" path="res://characters/origins/icons/crossbow.svg" id="3_110h8"]
 [ext_resource type="Texture2D" uid="uid://dr2h77gqaw3it" path="res://characters/origins/icons/philosopher-bust.svg" id="3_u031w"]
 [ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="3_x4kkx"]
 [ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="4_aeon6"]
@@ -19,17 +20,24 @@
 [ext_resource type="Texture2D" uid="uid://u83ycsrxsky0" path="res://characters/origins/icons/pointy-hat.svg" id="11_u031w"]
 [ext_resource type="Texture2D" uid="uid://cv8uurjbynyom" path="res://characters/origins/icons/frog-mouth-helm.svg" id="13_4t8ms"]
 [ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://characters/character_sheet/inventory/inventory.tscn" id="19_110h8"]
+[ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="21_xw2kr"]
+[ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/editor/hover_button.gd" id="22_5f0br"]
+[ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="22_ujcxx"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v6bxy"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xw2kr"]
 
 [node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_kin_list", "_ilk_list", "_kin_ability", "_ilk_ability", "_continue")]
-offset_right = 1488.0
-offset_bottom = 678.0
+offset_right = 1483.0
+offset_bottom = 740.0
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 script = ExtResource("1_gr0sf")
-_kin_list = NodePath("PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/Kins")
-_ilk_list = NodePath("PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/Ilks")
-_kin_ability = NodePath("PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/PanelContainer/MarginContainer/Ability")
-_ilk_ability = NodePath("PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/PanelContainer/MarginContainer/Ability")
+_kin_list = NodePath("HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/Kins")
+_ilk_list = NodePath("HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/Ilks")
+_kin_ability = NodePath("HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/PanelContainer/MarginContainer/Ability")
+_ilk_ability = NodePath("HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/PanelContainer/MarginContainer/Ability")
 _continue = NodePath("Continue")
 metadata/_custom_type_script = "uid://dytsvtmv8gt68"
 
@@ -39,182 +47,240 @@ theme_type_variation = &"HeaderLarge"
 text = "Origin"
 horizontal_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="Kin" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+[node name="Kin" type="PanelContainer" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Kin"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Kin"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
+[node name="Title" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
 layout_mode = 2
 theme_type_variation = &"HeaderMedium"
 text = "Kin"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Kins" type="ItemList" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
+[node name="Kins" type="ItemList" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
 allow_reselect = true
 auto_width = true
 auto_height = true
-item_count = 17
-max_columns = 4
+item_count = 18
+max_columns = 3
 same_column_width = true
 icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
 item_0/text = "Adventurer"
 item_0/icon = ExtResource("2_biqa6")
-item_1/text = "Artisan"
-item_1/icon = ExtResource("3_u031w")
-item_2/text = "Cook"
-item_2/icon = ExtResource("3_3fxev")
-item_3/text = "Doctor"
-item_3/icon = ExtResource("4_aeon6")
-item_3/disabled = true
-item_4/text = "Hunter"
-item_4/icon = ExtResource("6_4t8ms")
-item_5/text = "Merchant"
-item_5/icon = ExtResource("7_pqbml")
-item_6/text = "Minstrel"
-item_6/icon = ExtResource("5_3rtwe")
-item_7/text = "Noble"
-item_7/icon = ExtResource("8_3fxev")
-item_7/disabled = true
-item_8/text = "Outlaw"
-item_8/icon = ExtResource("4_gg73k")
+item_1/text = "Archer"
+item_1/icon = ExtResource("3_110h8")
+item_2/text = "Artisan"
+item_2/icon = ExtResource("3_u031w")
+item_3/text = "Cook"
+item_3/icon = ExtResource("3_3fxev")
+item_4/text = "Doctor"
+item_4/icon = ExtResource("4_aeon6")
+item_4/disabled = true
+item_5/text = "Hunter"
+item_5/icon = ExtResource("6_4t8ms")
+item_6/text = "Merchant"
+item_6/icon = ExtResource("7_pqbml")
+item_7/text = "Minstrel"
+item_7/icon = ExtResource("5_3rtwe")
+item_8/text = "Noble"
+item_8/icon = ExtResource("8_3fxev")
 item_8/disabled = true
-item_9/text = "Peasant"
-item_9/icon = ExtResource("3_x4kkx")
-item_10/text = "Priest"
-item_10/icon = ExtResource("11_pqbml")
-item_10/disabled = true
-item_11/text = "Sailor"
-item_11/icon = ExtResource("6_loh28")
-item_12/text = "Scholar"
-item_12/icon = ExtResource("7_x4kkx")
-item_12/disabled = true
-item_13/text = "Sorcerer"
-item_13/icon = ExtResource("11_u031w")
+item_9/text = "Outlaw"
+item_9/icon = ExtResource("4_gg73k")
+item_9/disabled = true
+item_10/text = "Peasant"
+item_10/icon = ExtResource("3_x4kkx")
+item_11/text = "Priest"
+item_11/icon = ExtResource("11_pqbml")
+item_11/disabled = true
+item_12/text = "Sailor"
+item_12/icon = ExtResource("6_loh28")
+item_13/text = "Scholar"
+item_13/icon = ExtResource("7_x4kkx")
 item_13/disabled = true
-item_14/text = "Thief"
-item_14/icon = ExtResource("7_hqqb3")
-item_15/text = "Veteran"
-item_15/icon = ExtResource("13_4t8ms")
-item_16/text = "Warrior"
-item_16/icon = ExtResource("10_gg73k")
+item_14/text = "Sorcerer"
+item_14/icon = ExtResource("11_u031w")
+item_14/disabled = true
+item_15/text = "Thief"
+item_15/icon = ExtResource("7_hqqb3")
+item_16/text = "Veteran"
+item_16/icon = ExtResource("13_4t8ms")
+item_17/text = "Warrior"
+item_17/icon = ExtResource("10_gg73k")
 
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="Ability" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/PanelContainer/MarginContainer"]
+[node name="Ability" type="RichTextLabel" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
 text = "[color=gray]You did not choose your kin.[/color]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Inventory" parent="PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("19_110h8")]
+[node name="Inventory" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("19_110h8")]
 layout_mode = 2
 
-[node name="Ilk" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+[node name="Ilk" type="PanelContainer" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Ilk"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
+[node name="Title" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
 layout_mode = 2
 theme_type_variation = &"HeaderMedium"
 text = "Ilk"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Ilks" type="ItemList" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
+[node name="Ilks" type="ItemList" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
 allow_reselect = true
 auto_width = true
 auto_height = true
-item_count = 17
-max_columns = 4
+item_count = 18
+max_columns = 3
 same_column_width = true
 icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
 item_0/text = "Adventurer"
 item_0/icon = ExtResource("2_biqa6")
-item_1/text = "Artisan"
-item_1/icon = ExtResource("3_u031w")
-item_2/text = "Cook"
-item_2/icon = ExtResource("3_3fxev")
-item_3/text = "Doctor"
-item_3/icon = ExtResource("4_aeon6")
-item_3/disabled = true
-item_4/text = "Hunter"
-item_4/icon = ExtResource("6_4t8ms")
-item_5/text = "Merchant"
-item_5/icon = ExtResource("7_pqbml")
-item_6/text = "Minstrel"
-item_6/icon = ExtResource("5_3rtwe")
-item_7/text = "Noble"
-item_7/icon = ExtResource("8_3fxev")
-item_7/disabled = true
-item_8/text = "Outlaw"
-item_8/icon = ExtResource("4_gg73k")
+item_1/text = "Archer"
+item_1/icon = ExtResource("3_110h8")
+item_2/text = "Artisan"
+item_2/icon = ExtResource("3_u031w")
+item_3/text = "Cook"
+item_3/icon = ExtResource("3_3fxev")
+item_4/text = "Doctor"
+item_4/icon = ExtResource("4_aeon6")
+item_4/disabled = true
+item_5/text = "Hunter"
+item_5/icon = ExtResource("6_4t8ms")
+item_6/text = "Merchant"
+item_6/icon = ExtResource("7_pqbml")
+item_7/text = "Minstrel"
+item_7/icon = ExtResource("5_3rtwe")
+item_8/text = "Noble"
+item_8/icon = ExtResource("8_3fxev")
 item_8/disabled = true
-item_9/text = "Peasant"
-item_9/icon = ExtResource("3_x4kkx")
-item_10/text = "Priest"
-item_10/icon = ExtResource("11_pqbml")
-item_10/disabled = true
-item_11/text = "Sailor"
-item_11/icon = ExtResource("6_loh28")
-item_12/text = "Scholar"
-item_12/icon = ExtResource("7_x4kkx")
-item_12/disabled = true
-item_13/text = "Sorcerer"
-item_13/icon = ExtResource("11_u031w")
+item_9/text = "Outlaw"
+item_9/icon = ExtResource("4_gg73k")
+item_9/disabled = true
+item_10/text = "Peasant"
+item_10/icon = ExtResource("3_x4kkx")
+item_11/text = "Priest"
+item_11/icon = ExtResource("11_pqbml")
+item_11/disabled = true
+item_12/text = "Sailor"
+item_12/icon = ExtResource("6_loh28")
+item_13/text = "Scholar"
+item_13/icon = ExtResource("7_x4kkx")
 item_13/disabled = true
-item_14/text = "Thief"
-item_14/icon = ExtResource("7_hqqb3")
-item_15/text = "Veteran"
-item_15/icon = ExtResource("13_4t8ms")
-item_16/text = "Warrior"
-item_16/icon = ExtResource("10_gg73k")
+item_14/text = "Sorcerer"
+item_14/icon = ExtResource("11_u031w")
+item_14/disabled = true
+item_15/text = "Thief"
+item_15/icon = ExtResource("7_hqqb3")
+item_16/text = "Veteran"
+item_16/icon = ExtResource("13_4t8ms")
+item_17/text = "Warrior"
+item_17/icon = ExtResource("10_gg73k")
 
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="Ability" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/PanelContainer/MarginContainer"]
+[node name="Ability" type="RichTextLabel" parent="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
 text = "[color=gray]But you chose your ilk.[/color]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Bio" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Bio"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="HBoxContainer/Bio/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "Bio"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="HBoxContainer/Bio/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Name"
+alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/Bio/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Previous" type="Button" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxEmpty_v6bxy")
+icon = ExtResource("21_xw2kr")
+expand_icon = true
+script = ExtResource("22_5f0br")
+metadata/_custom_type_script = "uid://cmb2b78oofeeh"
+
+[node name="Next" type="Button" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxEmpty_xw2kr")
+icon = ExtResource("22_ujcxx")
+expand_icon = true
+script = ExtResource("22_5f0br")
+metadata/_custom_type_script = "uid://cmb2b78oofeeh"
+
 [node name="Continue" type="Button" parent="."]
 layout_mode = 2
 disabled = true
 text = "Continue"
 
-[connection signal="item_selected" from="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/Kins" to="." method="_on_kin_list_item_selected"]
-[connection signal="item_selected" from="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/Ilks" to="." method="_on_ilk_list_item_selected"]
+[connection signal="item_selected" from="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer/Kins" to="." method="_on_kin_list_item_selected"]
+[connection signal="item_selected" from="HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer/Ilks" to="." method="_on_ilk_list_item_selected"]
 [connection signal="pressed" from="Continue" to="." method="_on_continue_pressed"]

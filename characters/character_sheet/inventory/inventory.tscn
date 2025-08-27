@@ -37,7 +37,6 @@ layout_mode = 2
 
 [node name="ItemContainer1" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LeftContainer" instance=ExtResource("2_8swrj")]
 layout_mode = 2
-label = "Satchel"
 
 [node name="ItemContainer3" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LeftContainer" instance=ExtResource("2_8swrj")]
 layout_mode = 2
@@ -51,75 +50,119 @@ label = "Bag"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="NoLoad" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_bottom = 16
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad"]
+[node name="NoLoad" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(0.827, 0.827, 0.827, 1)
-layout_mode = 2
-alignment = 1
-
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 texture = ExtResource("3_8swrj")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -11.5
+offset_right = 30.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad/PanelContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 1
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad/PanelContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
 text = "No load"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LightLoad" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_bottom = 16
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad"]
-modulate = Color(1, 0.827451, 0.556863, 1)
-layout_mode = 2
-alignment = 1
-
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad/VBoxContainer"]
+[node name="LightLoad" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(1, 0.827, 0.557, 1)
 layout_mode = 2
 size_flags_vertical = 3
 texture = ExtResource("4_0mc4m")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -39.5
+offset_top = -12.5
+offset_right = 39.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad/PanelContainer"]
 layout_mode = 2
-text = "-1 to all attributes"
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 1
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad/PanelContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "+1 weight"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HeavyLoad" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_bottom = 16
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad"]
-modulate = Color(0.999991, 0.278493, 0.375978, 1)
-layout_mode = 2
-alignment = 1
-
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad/VBoxContainer"]
+[node name="HeavyLoad" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(1, 0.278, 0.376, 1)
 layout_mode = 2
 size_flags_vertical = 3
 texture = ExtResource("5_0cqav")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -39.5
+offset_top = -12.5
+offset_right = 39.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad/PanelContainer"]
 layout_mode = 2
-text = "-2 to all attributes"
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 1
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad/PanelContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "+2 weight"
 horizontal_alignment = 1
 vertical_alignment = 1
 
