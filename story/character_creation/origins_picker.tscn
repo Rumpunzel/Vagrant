@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://0mji1mdlk5op"]
+[gd_scene load_steps=21 format=3 uid="uid://0mji1mdlk5op"]
 
 [ext_resource type="Script" uid="uid://dytsvtmv8gt68" path="res://story/character_creation/origins_picker.gd" id="1_gr0sf"]
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="2_biqa6"]
@@ -20,13 +20,6 @@
 [ext_resource type="Texture2D" uid="uid://u83ycsrxsky0" path="res://characters/origins/icons/pointy-hat.svg" id="11_u031w"]
 [ext_resource type="Texture2D" uid="uid://cv8uurjbynyom" path="res://characters/origins/icons/frog-mouth-helm.svg" id="13_4t8ms"]
 [ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://characters/character_sheet/inventory/inventory.tscn" id="19_110h8"]
-[ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="21_xw2kr"]
-[ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/editor/hover_button.gd" id="22_5f0br"]
-[ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="22_ujcxx"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v6bxy"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xw2kr"]
 
 [node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_kin_list", "_ilk_list", "_kin_ability", "_ilk_ability", "_continue")]
 offset_right = 1483.0
@@ -223,58 +216,6 @@ bbcode_enabled = true
 text = "[color=gray]But you chose your ilk.[/color]"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Bio" type="PanelContainer" parent="HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Bio"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="HBoxContainer/Bio/VBoxContainer"]
-layout_mode = 2
-theme_type_variation = &"HeaderMedium"
-text = "Bio"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="LineEdit" type="LineEdit" parent="HBoxContainer/Bio/VBoxContainer"]
-layout_mode = 2
-placeholder_text = "Name"
-alignment = 1
-
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/Bio/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-expand_mode = 1
-stretch_mode = 6
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-
-[node name="Previous" type="Button" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/normal = SubResource("StyleBoxEmpty_v6bxy")
-icon = ExtResource("21_xw2kr")
-expand_icon = true
-script = ExtResource("22_5f0br")
-metadata/_custom_type_script = "uid://cmb2b78oofeeh"
-
-[node name="Next" type="Button" parent="HBoxContainer/Bio/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/normal = SubResource("StyleBoxEmpty_xw2kr")
-icon = ExtResource("22_ujcxx")
-expand_icon = true
-script = ExtResource("22_5f0br")
-metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
 [node name="Continue" type="Button" parent="."]
 layout_mode = 2

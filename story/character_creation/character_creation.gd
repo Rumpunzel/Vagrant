@@ -7,6 +7,7 @@ extends Node
 @export var _stage: Stage
 @export var _attributes_roller: AttributesRoller
 @export var _origins_picker: OriginsPicker
+@export var _bio_editor: BioEditor
 
 var _attribute_scores: Dictionary[CharacterAttribute, AttributeScore]
 var _kin: Origin
@@ -23,6 +24,8 @@ func _on_attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, Attr
 	for attribute_score: AttributeScore in _attribute_scores.values():
 		if attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
 	_origins_picker.setup(doubles_rolled)
+	# TODO: animate this
+	_bio_editor.show()
 
 func _on_origins_picked(kin: Origin, ilk: Origin) -> void:
 	_kin = kin

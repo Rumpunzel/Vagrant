@@ -43,8 +43,6 @@ func collapse() -> void:
 	_continue.disabled = true
 	# TODO: animate this
 	_continue.visible = false
-	#for attribute_score_roller: AttributeScoreRoller in _roller_container.get_children():
-		#attribute_score_roller.collapse()
 	size_flags_vertical = Control.SIZE_FILL
 
 func _is_ready() -> bool:

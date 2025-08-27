@@ -12,6 +12,7 @@ offset_right = 600.0
 offset_bottom = 650.0
 size_flags_horizontal = 3
 script = ExtResource("1_swy6m")
+metadata/_custom_type_script = "uid://e2idwn4erjnm"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -50,15 +51,18 @@ label = "Bag"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="NoLoad" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
-modulate = Color(0.827, 0.827, 0.827, 1)
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="NoLoad" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/MarginContainer"]
+modulate = Color(0.827, 0.827, 0.827, 1)
+layout_mode = 2
 texture = ExtResource("3_8swrj")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad"]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/MarginContainer/NoLoad"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -74,7 +78,7 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/MarginContainer/NoLoad/PanelContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -83,7 +87,7 @@ theme_override_constants/margin_top = 1
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad/PanelContainer/MarginContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/MarginContainer/NoLoad/PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "No load"

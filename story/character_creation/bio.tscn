@@ -1,0 +1,109 @@
+[gd_scene load_steps=8 format=3 uid="uid://p4lx6exsethc"]
+
+[ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio.gd" id="1_furgd"]
+[ext_resource type="Texture2D" uid="uid://bf87yj3lgiyek" path="res://story/portraits/HE-MF-2H-M117/Fulllength.png" id="2_1khh3"]
+[ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
+[ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
+[ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/editor/hover_button.gd" id="3_c7qpy"]
+[ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="4_1khh3"]
+[ext_resource type="Texture2D" uid="uid://k8k7mhb6md3e" path="res://icons/editor/card-random.svg" id="6_c7qpy"]
+
+[node name="BioEditor" type="VBoxContainer" node_paths=PackedStringArray("_name", "_portrait", "_sex_button", "_random_button")]
+offset_right = 480.0
+offset_bottom = 817.0
+theme_override_constants/separation = 32
+script = ExtResource("1_furgd")
+_portraits_directory = "res://story/portraits"
+_name = NodePath("PanelContainer/MarginContainer/VBoxContainer/LineEdit")
+_portrait = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Portrait")
+_sex_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Sex")
+_random_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Random")
+metadata/_custom_type_script = "uid://be2c5murx8xba"
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Bio"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+placeholder_text = "Name"
+alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Portrait" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+texture = ExtResource("2_1khh3")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Sex" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
+layout_mode = 2
+size_flags_vertical = 3
+icon = ExtResource("3_1khh3")
+flat = true
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("3_c7qpy")
+_hover_neighbors = [NodePath("../HBoxContainer/Previous"), NodePath("../HBoxContainer/Next"), NodePath("../Random")]
+metadata/_custom_type_script = "uid://cmb2b78oofeeh"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="Previous" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("2_furgd")
+flat = true
+expand_icon = true
+script = ExtResource("3_c7qpy")
+_hover_neighbors = [NodePath("../../Sex"), NodePath("../Next"), NodePath("../../Random")]
+metadata/_custom_type_script = "uid://cmb2b78oofeeh"
+
+[node name="Next" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("4_1khh3")
+flat = true
+expand_icon = true
+script = ExtResource("3_c7qpy")
+_hover_neighbors = [NodePath("../../Sex"), NodePath("../Previous"), NodePath("../../Random")]
+metadata/_custom_type_script = "uid://cmb2b78oofeeh"
+
+[node name="Random" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
+layout_mode = 2
+size_flags_vertical = 3
+icon = ExtResource("6_c7qpy")
+flat = true
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("3_c7qpy")
+_hover_neighbors = [NodePath("../Sex"), NodePath("../HBoxContainer/Previous"), NodePath("../HBoxContainer/Next")]
+metadata/_custom_type_script = "uid://cmb2b78oofeeh"
+
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Sex" to="." method="_on_sex_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/Previous" to="." method="_on_previous_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/Next" to="." method="_on_next_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Random" to="." method="_on_random_pressed"]
