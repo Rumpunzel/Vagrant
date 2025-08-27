@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://0mji1mdlk5op"]
+[gd_scene load_steps=20 format=3 uid="uid://0mji1mdlk5op"]
 
 [ext_resource type="Script" uid="uid://dytsvtmv8gt68" path="res://story/character_creation/origins_picker.gd" id="1_gr0sf"]
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="2_biqa6"]
@@ -11,16 +11,18 @@
 [ext_resource type="Texture2D" uid="uid://cdsc4strj6fui" path="res://characters/origins/icons/badger.svg" id="6_4t8ms"]
 [ext_resource type="Texture2D" uid="uid://6mmns06hkyd7" path="res://characters/origins/icons/pirate-captain.svg" id="6_loh28"]
 [ext_resource type="Texture2D" uid="uid://blcffdsjp6tdv" path="res://characters/origins/icons/hood.svg" id="7_hqqb3"]
+[ext_resource type="Texture2D" uid="uid://bebxh1esrq3yj" path="res://characters/origins/icons/old-wagon.svg" id="7_pqbml"]
 [ext_resource type="Texture2D" uid="uid://cf181o5jyh3vl" path="res://characters/origins/icons/graduate-cap.svg" id="7_x4kkx"]
 [ext_resource type="Texture2D" uid="uid://bjus5vac11gdv" path="res://characters/origins/icons/crenel-crown.svg" id="8_3fxev"]
 [ext_resource type="Texture2D" uid="uid://d073jvxfp62ln" path="res://characters/origins/icons/barbute.svg" id="10_gg73k"]
 [ext_resource type="Texture2D" uid="uid://vo5h0q8e31bp" path="res://characters/origins/icons/sun-priest.svg" id="11_pqbml"]
 [ext_resource type="Texture2D" uid="uid://u83ycsrxsky0" path="res://characters/origins/icons/pointy-hat.svg" id="11_u031w"]
 [ext_resource type="Texture2D" uid="uid://cv8uurjbynyom" path="res://characters/origins/icons/frog-mouth-helm.svg" id="13_4t8ms"]
+[ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://characters/character_sheet/inventory/inventory.tscn" id="19_110h8"]
 
 [node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_kin_list", "_ilk_list", "_kin_ability", "_ilk_ability", "_continue")]
-offset_right = 1413.0
-offset_bottom = 567.0
+offset_right = 1488.0
+offset_bottom = 678.0
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 script = ExtResource("1_gr0sf")
@@ -63,10 +65,11 @@ vertical_alignment = 1
 [node name="Kins" type="ItemList" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+allow_reselect = true
 auto_width = true
 auto_height = true
-item_count = 16
-max_columns = 5
+item_count = 17
+max_columns = 4
 same_column_width = true
 icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
@@ -81,33 +84,35 @@ item_3/icon = ExtResource("4_aeon6")
 item_3/disabled = true
 item_4/text = "Hunter"
 item_4/icon = ExtResource("6_4t8ms")
-item_5/text = "Minstrel"
-item_5/icon = ExtResource("5_3rtwe")
-item_6/text = "Noble"
-item_6/icon = ExtResource("8_3fxev")
-item_6/disabled = true
-item_7/text = "Outlaw"
-item_7/icon = ExtResource("4_gg73k")
+item_5/text = "Merchant"
+item_5/icon = ExtResource("7_pqbml")
+item_6/text = "Minstrel"
+item_6/icon = ExtResource("5_3rtwe")
+item_7/text = "Noble"
+item_7/icon = ExtResource("8_3fxev")
 item_7/disabled = true
-item_8/text = "Peasant"
-item_8/icon = ExtResource("3_x4kkx")
-item_9/text = "Priest"
-item_9/icon = ExtResource("11_pqbml")
-item_9/disabled = true
-item_10/text = "Sailor"
-item_10/icon = ExtResource("6_loh28")
-item_11/text = "Scholar"
-item_11/icon = ExtResource("7_x4kkx")
-item_11/disabled = true
-item_12/text = "Sorcerer"
-item_12/icon = ExtResource("11_u031w")
+item_8/text = "Outlaw"
+item_8/icon = ExtResource("4_gg73k")
+item_8/disabled = true
+item_9/text = "Peasant"
+item_9/icon = ExtResource("3_x4kkx")
+item_10/text = "Priest"
+item_10/icon = ExtResource("11_pqbml")
+item_10/disabled = true
+item_11/text = "Sailor"
+item_11/icon = ExtResource("6_loh28")
+item_12/text = "Scholar"
+item_12/icon = ExtResource("7_x4kkx")
 item_12/disabled = true
-item_13/text = "Thief"
-item_13/icon = ExtResource("7_hqqb3")
-item_14/text = "Veteran"
-item_14/icon = ExtResource("13_4t8ms")
-item_15/text = "Warrior"
-item_15/icon = ExtResource("10_gg73k")
+item_13/text = "Sorcerer"
+item_13/icon = ExtResource("11_u031w")
+item_13/disabled = true
+item_14/text = "Thief"
+item_14/icon = ExtResource("7_hqqb3")
+item_15/text = "Veteran"
+item_15/icon = ExtResource("13_4t8ms")
+item_16/text = "Warrior"
+item_16/icon = ExtResource("10_gg73k")
 
 [node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Kin/VBoxContainer"]
 layout_mode = 2
@@ -123,19 +128,8 @@ text = "[color=gray]You did not choose your kin.[/color]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Inventory" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+[node name="Inventory" parent="PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("19_110h8")]
 layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Inventory"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/Inventory/VBoxContainer"]
-layout_mode = 2
-theme_type_variation = &"HeaderMedium"
-text = "Inventory"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="Ilk" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -153,10 +147,11 @@ vertical_alignment = 1
 [node name="Ilks" type="ItemList" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+allow_reselect = true
 auto_width = true
 auto_height = true
-item_count = 16
-max_columns = 5
+item_count = 17
+max_columns = 4
 same_column_width = true
 icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
@@ -171,33 +166,35 @@ item_3/icon = ExtResource("4_aeon6")
 item_3/disabled = true
 item_4/text = "Hunter"
 item_4/icon = ExtResource("6_4t8ms")
-item_5/text = "Minstrel"
-item_5/icon = ExtResource("5_3rtwe")
-item_6/text = "Noble"
-item_6/icon = ExtResource("8_3fxev")
-item_6/disabled = true
-item_7/text = "Outlaw"
-item_7/icon = ExtResource("4_gg73k")
+item_5/text = "Merchant"
+item_5/icon = ExtResource("7_pqbml")
+item_6/text = "Minstrel"
+item_6/icon = ExtResource("5_3rtwe")
+item_7/text = "Noble"
+item_7/icon = ExtResource("8_3fxev")
 item_7/disabled = true
-item_8/text = "Peasant"
-item_8/icon = ExtResource("3_x4kkx")
-item_9/text = "Priest"
-item_9/icon = ExtResource("11_pqbml")
-item_9/disabled = true
-item_10/text = "Sailor"
-item_10/icon = ExtResource("6_loh28")
-item_11/text = "Scholar"
-item_11/icon = ExtResource("7_x4kkx")
-item_11/disabled = true
-item_12/text = "Sorcerer"
-item_12/icon = ExtResource("11_u031w")
+item_8/text = "Outlaw"
+item_8/icon = ExtResource("4_gg73k")
+item_8/disabled = true
+item_9/text = "Peasant"
+item_9/icon = ExtResource("3_x4kkx")
+item_10/text = "Priest"
+item_10/icon = ExtResource("11_pqbml")
+item_10/disabled = true
+item_11/text = "Sailor"
+item_11/icon = ExtResource("6_loh28")
+item_12/text = "Scholar"
+item_12/icon = ExtResource("7_x4kkx")
 item_12/disabled = true
-item_13/text = "Thief"
-item_13/icon = ExtResource("7_hqqb3")
-item_14/text = "Veteran"
-item_14/icon = ExtResource("13_4t8ms")
-item_15/text = "Warrior"
-item_15/icon = ExtResource("10_gg73k")
+item_13/text = "Sorcerer"
+item_13/icon = ExtResource("11_u031w")
+item_13/disabled = true
+item_14/text = "Thief"
+item_14/icon = ExtResource("7_hqqb3")
+item_15/text = "Veteran"
+item_15/icon = ExtResource("13_4t8ms")
+item_16/text = "Warrior"
+item_16/icon = ExtResource("10_gg73k")
 
 [node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer/Ilk/VBoxContainer"]
 layout_mode = 2

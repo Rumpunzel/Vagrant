@@ -1,0 +1,147 @@
+[gd_scene load_steps=7 format=3 uid="uid://im1nhm5y1kim"]
+
+[ext_resource type="Script" uid="uid://e2idwn4erjnm" path="res://characters/character_sheet/inventory/inventory.gd" id="1_swy6m"]
+[ext_resource type="PackedScene" uid="uid://xajwnnco3s5h" path="res://characters/character_sheet/inventory/item_container.tscn" id="2_8swrj"]
+[ext_resource type="Texture2D" uid="uid://ds47ublr148rv" path="res://icons/knapsack.svg" id="3_8swrj"]
+[ext_resource type="Texture2D" uid="uid://c8sel5eeu6bo3" path="res://icons/backpack.svg" id="4_0mc4m"]
+[ext_resource type="Texture2D" uid="uid://c4nfw1eoy5wcn" path="res://icons/chest.svg" id="5_0cqav"]
+[ext_resource type="Texture2D" uid="uid://dlbqtdfwdtmiu" path="res://icons/donkey.svg" id="6_0cqav"]
+
+[node name="Inventory" type="PanelContainer"]
+offset_right = 600.0
+offset_bottom = 650.0
+size_flags_horizontal = 3
+script = ExtResource("1_swy6m")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "Inventory"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="LeftContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="ItemContainer1" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LeftContainer" instance=ExtResource("2_8swrj")]
+layout_mode = 2
+label = "Satchel"
+
+[node name="ItemContainer3" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LeftContainer" instance=ExtResource("2_8swrj")]
+layout_mode = 2
+label = "Pouch"
+
+[node name="ItemContainer5" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LeftContainer" instance=ExtResource("2_8swrj")]
+layout_mode = 2
+label = "Bag"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NoLoad" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad"]
+modulate = Color(0.827, 0.827, 0.827, 1)
+layout_mode = 2
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("3_8swrj")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/NoLoad/VBoxContainer"]
+layout_mode = 2
+text = "No load"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LightLoad" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad"]
+modulate = Color(1, 0.827451, 0.556863, 1)
+layout_mode = 2
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("4_0mc4m")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad/VBoxContainer"]
+layout_mode = 2
+text = "-1 to all attributes"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HeavyLoad" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad"]
+modulate = Color(0.999991, 0.278493, 0.375978, 1)
+layout_mode = 2
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("5_0cqav")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad/VBoxContainer"]
+layout_mode = 2
+text = "-2 to all attributes"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="ItemContainer2" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/RightContainer" instance=ExtResource("2_8swrj")]
+layout_mode = 2
+label = "Belt"
+
+[node name="ItemContainer4" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/RightContainer" instance=ExtResource("2_8swrj")]
+layout_mode = 2
+label = "Backpack"
+
+[node name="ItemContainer6" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/RightContainer" instance=ExtResource("2_8swrj")]
+layout_mode = 2
+label = "Another Backpack"
+
+[node name="Miscellaneous" type="ItemList" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+item_count = 1
+fixed_icon_size = Vector2i(32, 32)
+item_0/text = "Donkey"
+item_0/icon = ExtResource("6_0cqav")

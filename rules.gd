@@ -19,6 +19,7 @@ const ATTRIBUTES: Array[CharacterAttribute] = [
 
 const ORIGINS: Array[Origin] = [
 	preload("uid://ciavtykggnu43"), # adventurer
+	preload("uid://d21lprrjx41il"), # archer
 	preload("uid://7uemslxbeu5b"), # artisan
 	preload("uid://dqjtp62n331s7"), # cook
 	preload("uid://dgikjtge36uha"), # doctor

@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://xajwnnco3s5h"]
+
+[ext_resource type="Texture2D" uid="uid://b35ccxg84k67k" path="res://icons/wooden-crate.svg" id="1_3i0w7"]
+[ext_resource type="Script" uid="uid://cin4002ehs4cx" path="res://characters/character_sheet/inventory/item_container.gd" id="1_haulj"]
+
+[node name="ItemContainer" type="VBoxContainer" node_paths=PackedStringArray("_label")]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_haulj")
+_label = NodePath("Label")
+
+[node name="ItemList" type="ItemList" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+auto_width = true
+auto_height = true
+item_count = 3
+max_columns = 3
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2i(64, 64)
+item_0/icon = ExtResource("1_3i0w7")
+item_1/icon = ExtResource("1_3i0w7")
+item_2/icon = ExtResource("1_3i0w7")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Satchel"
+horizontal_alignment = 1
+vertical_alignment = 1
