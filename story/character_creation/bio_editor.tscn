@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=3 uid="uid://p4lx6exsethc"]
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
-[ext_resource type="Texture2D" uid="uid://dww4i7oxvwi67" path="res://story/portraits/HE-PC-PL-M104/Fulllength.png" id="2_1khh3"]
 [ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
+[ext_resource type="Texture2D" uid="uid://bypo3xhh3f36f" path="res://story/portraits/HE-AR-AR-M022/Fulllength.png" id="2_k6q65"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
-[ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/editor/hover_button.gd" id="3_c7qpy"]
+[ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/user_interface/hover_button.gd" id="3_c7qpy"]
 [ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="4_1khh3"]
 [ext_resource type="Texture2D" uid="uid://k8k7mhb6md3e" path="res://icons/editor/card-random.svg" id="6_c7qpy"]
 
@@ -14,7 +14,7 @@ offset_bottom = 817.0
 theme_override_constants/separation = 32
 script = ExtResource("1_furgd")
 _portraits_directory = "res://story/portraits"
-_name = NodePath("PanelContainer/MarginContainer/VBoxContainer/LineEdit")
+_name = NodePath("PanelContainer/MarginContainer/VBoxContainer/Name")
 _portrait = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Portrait")
 _sex_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Sex")
 _random_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Random")
@@ -38,7 +38,7 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Name" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 placeholder_text = "Name"
@@ -50,7 +50,7 @@ size_flags_vertical = 3
 
 [node name="Portrait" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
-texture = ExtResource("2_1khh3")
+texture = ExtResource("2_k6q65")
 expand_mode = 3
 stretch_mode = 5
 
@@ -105,6 +105,7 @@ script = ExtResource("3_c7qpy")
 _hover_neighbors = [NodePath("../Sex"), NodePath("../HBoxContainer/Previous"), NodePath("../HBoxContainer/Next")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
+[connection signal="text_changed" from="PanelContainer/MarginContainer/VBoxContainer/Name" to="." method="_on_name_changed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Sex" to="." method="_on_sex_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/Previous" to="." method="_on_previous_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/Next" to="." method="_on_next_pressed"]

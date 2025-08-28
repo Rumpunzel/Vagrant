@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=3 uid="uid://djjmsn1ujgubu"]
+
+[ext_resource type="Script" uid="uid://ce156jxbb2grx" path="res://story/character_creation/character_confirmation.gd" id="1_4or8n"]
+
+[node name="CharacterConfirmation" type="ConfirmationDialog" node_paths=PackedStringArray("_name")]
+auto_translate_mode = 1
+position = Vector2i(960, 540)
+size = Vector2i(512, 162)
+visible = true
+borderless = true
+min_size = Vector2i(512, 0)
+ok_button_text = "Finish"
+script = ExtResource("1_4or8n")
+_name = NodePath("MarginContainer/VBoxContainer/Name")
+metadata/_custom_type_script = "uid://ce156jxbb2grx"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 504.0
+offset_bottom = 113.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Please choose a name."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Name" type="LineEdit" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+placeholder_text = "Name"
+alignment = 1
+
+[connection signal="confirmed" from="." to="." method="_on_confirmed"]
+[connection signal="text_changed" from="MarginContainer/VBoxContainer/Name" to="." method="_on_name_changed"]

@@ -21,3 +21,6 @@ extends PanelContainer
 @export var _name: LineEdit
 @export var _attributes: CharacterAttributesPanel
 @export var _hit_dice: HitDiceSelectionButtons
+
+func _ready() -> void:
+	character = Characters.characters.values().front()

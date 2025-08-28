@@ -13,8 +13,8 @@ const GROUP: StringName = "Characters"
 		character_profile = new_character_profile
 		name = character_profile.name
 		portrait = character_profile.portrait
-		attribute_scores = character_profile.get_attribute_scores()
-		hit_dice = character_profile.get_hit_dice()
+		attribute_scores = character_profile.attribute_scores
+		hit_dice = character_profile.get_breath_dice()
 		character_profile_changed.emit(character_profile)
 
 var portrait: Texture

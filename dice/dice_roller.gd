@@ -22,7 +22,7 @@ func roll_sum(dice_pool: Array[Die], play_sound: bool = true) -> int:
 
 func roll_attribute() -> AttributeScore:
 	var rolled_dice: Array[Die] = DiceRoller.roll_dice(Rules.d6.get_dice_pool(2))
-	return AttributeScore.new(rolled_dice)
+	return AttributeScore.create(rolled_dice)
 
 func roll_save(dice_pool: Array[Die], save_request: SaveRequest) -> SaveResult:
 	var character: Character = save_request.character
@@ -34,11 +34,8 @@ func roll_save(dice_pool: Array[Die], save_request: SaveRequest) -> SaveResult:
 	save_rolled.emit(save_result)
 	return save_result
 
-func generate_dice_pool(d4_amount: int, d6_amount: int, d8_amount: int, d10_amount: int, d12_amount: int) -> Array[Die]:
+func generate_dice_pool(dice: Dictionary[DieType, int]) -> Array[Die]:
 	var dice_pool: Array[Die] = [ ]
-	dice_pool += Rules.d4.get_dice_pool(d4_amount)
-	dice_pool += Rules.d6.get_dice_pool(d6_amount)
-	dice_pool += Rules.d8.get_dice_pool(d8_amount)
-	dice_pool += Rules.d10.get_dice_pool(d10_amount)
-	dice_pool += Rules.d12.get_dice_pool(d12_amount)
+	for die_type: DieType in dice:
+		dice_pool += die_type.get_dice_pool(dice[die_type])
 	return dice_pool

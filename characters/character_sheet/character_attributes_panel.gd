@@ -16,7 +16,6 @@ func update_attributes(character: Character) -> void:
 		attribute_score.score = character.get_attribute_score(attribute)
 
 func _setup() -> void:
-	assert(_attribute_scores.is_empty())
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
 		var attribute_score: CharacterSheetAttributeScore = _attribute_score.instantiate()
 		attribute_score.attribute = attribute as CharacterAttribute

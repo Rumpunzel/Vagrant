@@ -1,18 +1,8 @@
 extends Node
 
-const PROTAGONIST_PROFILE: CharacterProfile = preload("res://characters/protagonist.tres")
-
 @export var _character: PackedScene
-@export var eleanor: CharacterProfile = preload("res://characters/eleanor.tres")
 
-var characters: Dictionary[CharacterProfile, Character]= { }
-
-func _ready() -> void:
-	create_character(PROTAGONIST_PROFILE)
-	create_character(eleanor)
-
-func get_protagonist() -> Character:
-	return get_character(PROTAGONIST_PROFILE)
+var characters: Dictionary[CharacterProfile, Character] = { }
 
 func get_character(character_profile: CharacterProfile, create_if_nonexistant: bool = false) -> Character:
 	var character: Character = characters[character_profile]

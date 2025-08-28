@@ -9,8 +9,10 @@ enum Type {
 
 @export var rolled_dice: Array[Die]
 
-func _init(new_rolled_dice: Array[Die]) -> void:
-	rolled_dice = new_rolled_dice
+static func create(new_rolled_dice: Array[Die]) -> AttributeScore:
+	var new_attribute_score: AttributeScore = AttributeScore.new()
+	new_attribute_score.rolled_dice = new_rolled_dice
+	return new_attribute_score
 
 func get_score() -> int:
 	var score: int = 0

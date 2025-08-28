@@ -2,33 +2,28 @@ class_name CharacterProfile
 extends Resource
 
 @export_placeholder("Name") var name: String
-@export var portrait: Texture = preload("res://assets/portraits/knight.jpeg")
+@export var portrait: Texture2D = preload("res://assets/portraits/knight.jpeg")
 
-@export_group("Attributes")
-## The character's strength score. Will be rolled with 2d6 if null.
-@export var _strength: AttributeScore
-## The character's agility score. Will be rolled with 2d6 if null.
-@export var _agility: AttributeScore
-## The character's intelligence score. Will be rolled with 2d6 if null.
-@export var _intelligence: AttributeScore
+## The character's attribute scores. Will be rolled with 2d6 if null.
+@export var attribute_scores: Dictionary[CharacterAttribute, AttributeScore] = {
+	Rules.STRENGTH: null,
+	Rules.AGILITY: null,
+	Rules.INTELLIGENCE: null,
+}
+@export var test: AttributeScore
 
-@export_group("Hit Dice")
-@export var _d4_hit_dice: int = 1
-@export var _d6_hit_dice: int = 1
-@export var _d8_hit_dice: int = 1
-@export var _d10_hit_dice: int = 1
-@export var _d12_hit_dice: int = 1
+@export var _breath_dice: Dictionary[DieType, int] = {
+	Rules.d4: 1,
+	Rules.d6: 1,
+	Rules.d8: 1,
+	Rules.d10: 1,
+	Rules.d12: 1,
+}
 
-func get_attribute_scores() -> Dictionary[CharacterAttribute, AttributeScore]:
-	return {
-		Rules.STRENGTH: _strength,
-		Rules.AGILITY: _agility,
-		Rules.INTELLIGENCE: _intelligence,
-	}
+func _init(new_name: String, new_portrait: Texture2D, new_attribute_scores: Dictionary[CharacterAttribute, AttributeScore]) -> void:
+	name = new_name
+	portrait = new_portrait
+	attribute_scores = new_attribute_scores
 
-func get_hit_dice() -> Array[Die]:
-	return DiceRoller.generate_dice_pool(_d4_hit_dice, _d6_hit_dice, _d8_hit_dice, _d10_hit_dice, _d12_hit_dice)
-
-# WARNING: This may return a randomly rolled attribute
-func get_attribute_score(attribute: CharacterAttribute) -> AttributeScore:
-	return get_attribute_scores()[attribute]
+func get_breath_dice() -> Array[Die]:
+	return DiceRoller.generate_dice_pool(_breath_dice)

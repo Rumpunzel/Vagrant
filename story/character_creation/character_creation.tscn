@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cc3qx1qt3ie00"]
+[gd_scene load_steps=18 format=3 uid="uid://cc3qx1qt3ie00"]
 
 [ext_resource type="Script" uid="uid://lb6h1lmdmt18" path="res://story/character_creation/character_creation.gd" id="1_x4txh"]
 [ext_resource type="PackedScene" uid="uid://rhjhk5tcywjv" path="res://story/character_creation/attributes_roller.tscn" id="2_dbv81"]
@@ -16,16 +16,29 @@
 [ext_resource type="Texture2D" uid="uid://i10g17t78dnu" path="res://assets/landscapes/wilderness_calm.jpg" id="10_junfj"]
 [ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://characters/character_sheet/inventory/inventory.tscn" id="15_b7plt"]
 [ext_resource type="PackedScene" uid="uid://p4lx6exsethc" path="res://story/character_creation/bio_editor.tscn" id="15_gqnl0"]
+[ext_resource type="PackedScene" uid="uid://djjmsn1ujgubu" path="res://story/character_creation/character_confirmation.tscn" id="17_fixuy"]
 
-[node name="CharacterCreation" type="Node" node_paths=PackedStringArray("_stage", "_attributes_roller", "_origins_picker", "_inventory", "_bio_editor", "_continue")]
+[node name="CharacterCreation" type="MarginContainer" node_paths=PackedStringArray("_stage", "_attributes_roller", "_origins_picker", "_inventory", "_bio_editor", "_continue", "_character_confirmation")]
+physics_interpolation_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 128
+theme_override_constants/margin_top = 96
+theme_override_constants/margin_right = 128
+theme_override_constants/margin_bottom = 96
 script = ExtResource("1_x4txh")
 _backgrounds = Array[Texture2D]([ExtResource("3_hvcdy"), ExtResource("3_5karf"), ExtResource("4_gqnl0"), ExtResource("5_b7plt"), ExtResource("6_fixuy"), ExtResource("7_gbe42"), ExtResource("3_5qsh5"), ExtResource("9_7l4gq"), ExtResource("10_junfj")])
 _stage = NodePath("Stage")
-_attributes_roller = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller")
-_origins_picker = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker")
-_inventory = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Stats/Inventory")
-_bio_editor = NodePath("MarginContainer/VBoxContainer/HBoxContainer/BioEditor")
-_continue = NodePath("MarginContainer/VBoxContainer/Continue")
+_attributes_roller = NodePath("VBoxContainer/HBoxContainer/Stats/AttributesRoller")
+_origins_picker = NodePath("VBoxContainer/HBoxContainer/Stats/OriginsPicker")
+_inventory = NodePath("VBoxContainer/HBoxContainer/Stats/Inventory")
+_bio_editor = NodePath("VBoxContainer/HBoxContainer/BioEditor")
+_continue = NodePath("VBoxContainer/Continue")
+_character_confirmation = NodePath("CharacterConfirmation")
+metadata/_custom_type_script = "uid://lb6h1lmdmt18"
 
 [node name="BackgroundTimer" type="Timer" parent="."]
 wait_time = 7.0
@@ -35,52 +48,50 @@ autostart = true
 background = ExtResource("3_5qsh5")
 music = ExtResource("4_hvcdy")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-offset_right = 1920.0
-offset_bottom = 1080.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 128
-theme_override_constants/margin_top = 96
-theme_override_constants/margin_right = 128
-theme_override_constants/margin_bottom = 96
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 48
 
-[node name="Stats" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Stats" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 32
 
-[node name="AttributesRoller" parent="MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("2_dbv81")]
+[node name="AttributesRoller" parent="VBoxContainer/HBoxContainer/Stats" instance=ExtResource("2_dbv81")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="OriginsPicker" parent="MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("5_s0bgh")]
+[node name="OriginsPicker" parent="VBoxContainer/HBoxContainer/Stats" instance=ExtResource("5_s0bgh")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Inventory" parent="MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("15_b7plt")]
+[node name="Inventory" parent="VBoxContainer/HBoxContainer/Stats" instance=ExtResource("15_b7plt")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BioEditor" parent="MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("15_gqnl0")]
+[node name="BioEditor" parent="VBoxContainer/HBoxContainer" instance=ExtResource("15_gqnl0")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Continue" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="Continue" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
+disabled = true
 text = "Continue"
 
+[node name="CharacterConfirmation" parent="." instance=ExtResource("17_fixuy")]
+visible = false
+
 [connection signal="timeout" from="BackgroundTimer" to="." method="_on_background_timer_timeout"]
-[connection signal="attributes_rolled" from="MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller" to="." method="_on_attributes_rolled"]
-[connection signal="origins_picked" from="MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker" to="." method="_on_origins_picked"]
-[connection signal="origins_unpicked" from="MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker" to="." method="_on_origins_unpicked"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Continue" to="." method="_on_continue_pressed"]
+[connection signal="attributes_rolled" from="VBoxContainer/HBoxContainer/Stats/AttributesRoller" to="." method="_on_attributes_rolled"]
+[connection signal="origins_picked" from="VBoxContainer/HBoxContainer/Stats/OriginsPicker" to="." method="_on_origins_picked"]
+[connection signal="origins_unpicked" from="VBoxContainer/HBoxContainer/Stats/OriginsPicker" to="." method="_on_origins_unpicked"]
+[connection signal="details_changed" from="VBoxContainer/HBoxContainer/BioEditor" to="." method="_on_details_changed"]
+[connection signal="pressed" from="VBoxContainer/Continue" to="." method="_on_continue_pressed"]
+[connection signal="character_confirmed" from="CharacterConfirmation" to="." method="_on_character_confirmed"]
+[connection signal="name_changed" from="CharacterConfirmation" to="VBoxContainer/HBoxContainer/BioEditor" method="_on_character_name_changed"]

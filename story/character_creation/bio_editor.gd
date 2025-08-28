@@ -2,6 +2,8 @@
 class_name BioEditor
 extends VBoxContainer
 
+signal details_changed(character_name: String, portrait: Texture2D)
+
 enum Sex {
 	ANY,
 	MALE,
@@ -55,8 +57,11 @@ func _ready() -> void:
 func randomize_portrait() -> void:
 	var new_portrait: Texture2D = _portrait.texture
 	while new_portrait == _portrait.texture: new_portrait = _portraits[_sex].pick_random()
-	_portrait.texture = new_portrait
-	_portrait_index = _portraits[_sex].find(new_portrait)
+	_set_portrait(new_portrait)
+
+func appear() -> void:
+	# TODO: animate this
+	visible = true
 
 func get_available_portraits(sex: Sex, directory_path: String = _portraits_directory) -> Array[Texture2D]:
 	var available_portraits: Array[Texture2D] = []
@@ -81,25 +86,34 @@ func get_available_portraits(sex: Sex, directory_path: String = _portraits_direc
 		file_name = portraits_directory.get_next()
 	return available_portraits
 
-func appear() -> void:
-	# TODO: animate this
-	visible = true
-
 func _load_portraits() -> void:
 	for sex: Sex in Sex.values():
 		_portraits[sex] = get_available_portraits(sex)
 	_random_button.tooltip_text = "%d Portraits" % _portraits[_sex].size()
+
+func _set_portrait(new_portrait: Texture2D) -> void:
+	_portrait.texture = new_portrait
+	_portrait_index = _portraits[_sex].find(new_portrait)
+	details_changed.emit(_name.text, _portrait.texture)
+
+func _on_name_changed(new_text: String) -> void:
+	details_changed.emit(new_text, _portrait.texture)
 
 func _on_sex_pressed() -> void:
 	_sex = (_sex + 1) % Sex.size() as Sex
 
 func _on_previous_pressed() -> void:
 	_portrait_index = (_portrait_index - 1 + _portraits[_sex].size()) % _portraits[_sex].size()
-	_portrait.texture = _portraits[_sex][_portrait_index]
+	var portrait: Texture2D = _portraits[_sex][_portrait_index]
+	_set_portrait(portrait)
 
 func _on_next_pressed() -> void:
 	_portrait_index = (_portrait_index + 1) % _portraits[_sex].size()
-	_portrait.texture = _portraits[_sex][_portrait_index]
+	var portrait: Texture2D = _portraits[_sex][_portrait_index]
+	_set_portrait(portrait)
 
 func _on_random_pressed() -> void:
 	randomize_portrait()
+
+func _on_character_name_changed(character_name: String) -> void:
+	_name.text = character_name

@@ -37,24 +37,24 @@ _character_sheet = ExtResource("4_2poxt")
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="VSplitContainer" type="VSplitContainer" parent="MarginContainer/HSplitContainer"]
+[node name="Game" type="VSplitContainer" parent="MarginContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 48
 
-[node name="StoryBook" parent="MarginContainer/HSplitContainer/VSplitContainer" instance=ExtResource("5_p35e8")]
+[node name="StoryBook" parent="MarginContainer/HSplitContainer/Game" instance=ExtResource("5_p35e8")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="GameInfo" type="TabContainer" parent="MarginContainer/HSplitContainer/VSplitContainer"]
+[node name="GameInfo" type="TabContainer" parent="MarginContainer/HSplitContainer/Game"]
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="DiceLog" type="MarginContainer" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo"]
+[node name="DiceLog" type="MarginContainer" parent="MarginContainer/HSplitContainer/Game/GameInfo"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="DiceLog" parent="MarginContainer/HSplitContainer/VSplitContainer/GameInfo/DiceLog" instance=ExtResource("6_hg7gt")]
+[node name="DiceLog" parent="MarginContainer/HSplitContainer/Game/GameInfo/DiceLog" instance=ExtResource("6_hg7gt")]
 visible = false
 layout_mode = 2

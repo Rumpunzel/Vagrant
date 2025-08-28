@@ -27,7 +27,6 @@ _page_history = NodePath("StoryPages/PanelContainer/ScrollContainer/MarginContai
 _story_page_entry = ExtResource("2_x8uvv")
 
 [node name="Stage" parent="." instance=ExtResource("3_cnyp4")]
-unique_name_in_owner = true
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -36,7 +35,6 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 45)
 layout_mode = 2
 focus_mode = 2
@@ -52,7 +50,6 @@ script = ExtResource("4_kbsk1")
 _characters_per_minute = 1000.0
 
 [node name="Subtitle" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 focus_mode = 2
@@ -76,7 +73,6 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="ScrollContainer" type="ScrollContainer" parent="StoryPages/PanelContainer"]
-unique_name_in_owner = true
 layout_mode = 2
 follow_focus = true
 horizontal_scroll_mode = 0
@@ -87,7 +83,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="PageHistory" type="VBoxContainer" parent="StoryPages/PanelContainer/ScrollContainer/MarginContainer"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 24
