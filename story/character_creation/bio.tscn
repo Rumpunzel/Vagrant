@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://p4lx6exsethc"]
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio.gd" id="1_furgd"]
-[ext_resource type="Texture2D" uid="uid://b02lnhaea3yo3" path="res://story/portraits/HE-DR-DD-F106/Fulllength.png" id="2_1khh3"]
+[ext_resource type="Texture2D" uid="uid://dww4i7oxvwi67" path="res://story/portraits/HE-PC-PL-M104/Fulllength.png" id="2_1khh3"]
 [ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
 [ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/editor/hover_button.gd" id="3_c7qpy"]
@@ -96,7 +96,7 @@ metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 [node name="Random" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
 layout_mode = 2
 size_flags_vertical = 3
-tooltip_text = "46 Portraits"
+tooltip_text = "63 Portraits"
 icon = ExtResource("6_c7qpy")
 flat = true
 icon_alignment = 1

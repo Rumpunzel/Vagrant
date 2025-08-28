@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://bsirn3lij5psg"]
+
+[ext_resource type="Script" uid="uid://b1pn3swob1ayj" path="res://story/character_creation/ability_label.gd" id="1_a44ll"]
+[ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="2_rc6wx"]
+
+[node name="AbilityLabel" type="PanelContainer" node_paths=PackedStringArray("_icon", "_label")]
+offset_right = 280.0
+offset_bottom = 157.0
+mouse_filter = 1
+script = ExtResource("1_a44ll")
+_placeholder = "[color=gray]You did not choose your kin.[/color]"
+_icon = NodePath("Icon")
+_label = NodePath("MarginContainer/Label")
+metadata/_custom_type_script = "uid://b1pn3swob1ayj"
+
+[node name="Icon" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.1)
+layout_mode = 2
+texture = ExtResource("2_rc6wx")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="RichTextLabel" parent="MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=gray]You did not choose your kin.[/color]"
+horizontal_alignment = 1
+vertical_alignment = 1

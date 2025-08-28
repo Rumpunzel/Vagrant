@@ -10,7 +10,7 @@ signal origins_unpicked
 
 @export_group("Configuration")
 @export var _origins_list: ItemList
-@export var _abilities: Array[RichTextLabel]
+@export var _ability_labels: Array[AbilityLabel]
 
 var _selected_origins: Array[Origin] = [null, null]
 var _origin_indexes: Dictionary[Origin, int] = {}
@@ -19,8 +19,9 @@ var _available_doubles: int
 @onready var _available_origins: Array[Origin] = get_available_origins()
 
 func _ready() -> void:
+	assert(_ability_labels.size() == _selected_origins.size())
+	_update_ability_labels()
 	if not Engine.is_editor_hint(): return
-	assert(_abilities.size() == _selected_origins.size())
 	setup(0)
 
 func setup(rare_options: int) -> void:
@@ -90,15 +91,12 @@ func _update_origins() -> void:
 		var available: bool = _selected_origins.has(selected_origin) or _is_available(selected_origin.type)
 		_origins_list.set_item_disabled(origin_index, not available)
 
-func _update_abilities() -> void:
+func _update_ability_labels() -> void:
 	for origin_index: int in _selected_origins.size():
 		var origin: Origin = _selected_origins[origin_index]
-		var ability: RichTextLabel = _abilities[origin_index]
-		if origin: ability.text = origin.ability
-		else: ability.text = ""
+		_ability_labels[origin_index].origin = origin
 
 func _is_available(type: Origin.Type) -> bool:
-	var remaining: int
 	match type:
 		Origin.Type.NORMAL: if _selected_origins.size() - _available_doubles <= 0: return false
 		Origin.Type.RARE: if _available_doubles <= 0: return false
@@ -129,4 +127,4 @@ func _on_origins_multi_selected(index: int, selected: bool) -> void:
 		if _is_ready(): origins_picked.emit(_selected_origins)
 	assert(_selected_origins.size() == 2)
 	_update_origins()
-	_update_abilities()
+	_update_ability_labels()

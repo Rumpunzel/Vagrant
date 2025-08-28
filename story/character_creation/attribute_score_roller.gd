@@ -1,6 +1,6 @@
 @tool
 class_name AttributeScoreRoller
-extends MarginContainer
+extends PanelContainer
 
 signal attribute_score_rolled(attribute: CharacterAttribute, attribute_score: AttributeScore)
 

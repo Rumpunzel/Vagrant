@@ -3,57 +3,53 @@
 [ext_resource type="Script" uid="uid://cg0o8nr4etsys" path="res://story/character_creation/attribute_score_roller.gd" id="1_ugieg"]
 [ext_resource type="Texture2D" uid="uid://cdri43vl0xt70" path="res://characters/attributes/icons/hand-bandage.svg" id="2_ugieg"]
 
-[node name="AttributeScoreRoller" type="MarginContainer" node_paths=PackedStringArray("_icon", "_button", "_descriptor", "_details", "_color", "_score")]
+[node name="AttributeScoreRoller" type="PanelContainer" node_paths=PackedStringArray("_icon", "_button", "_descriptor", "_details", "_color", "_score")]
 offset_right = 452.0
 offset_bottom = 332.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_left = 0
-theme_override_constants/margin_top = 0
-theme_override_constants/margin_right = 0
-theme_override_constants/margin_bottom = 0
+mouse_filter = 1
 script = ExtResource("1_ugieg")
 _icon = NodePath("Icon")
 _button = NodePath("Button")
-_descriptor = NodePath("PanelContainer/MarginContainer/VBoxContainer/Descriptor")
-_details = NodePath("PanelContainer/MarginContainer/VBoxContainer/Details")
-_color = NodePath("PanelContainer/MarginContainer/VBoxContainer/ColorRect")
-_score = NodePath("PanelContainer/MarginContainer/VBoxContainer/Score")
+_descriptor = NodePath("MarginContainer/VBoxContainer/Descriptor")
+_details = NodePath("MarginContainer/VBoxContainer/Details")
+_color = NodePath("MarginContainer/VBoxContainer/ColorRect")
+_score = NodePath("MarginContainer/VBoxContainer/Score")
 metadata/_custom_type_script = "uid://cg0o8nr4etsys"
-
-[node name="Icon" type="TextureRect" parent="."]
-layout_mode = 2
-texture = ExtResource("2_ugieg")
-expand_mode = 1
-stretch_mode = 6
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="Icon" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.1)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_ugieg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 8
-
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
-layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_right = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="Descriptor" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Descriptor" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_type_variation = &"HeaderMedium"
 text = "Muscle"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ColorRect" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(4, 4)
 layout_mode = 2
 
-[node name="Details" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Details" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 bbcode_enabled = true
@@ -61,7 +57,7 @@ text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Score" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Score" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Roll!"
 horizontal_alignment = 1
