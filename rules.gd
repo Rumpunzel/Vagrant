@@ -19,11 +19,12 @@ const ATTRIBUTES: Array[CharacterAttribute] = [
 
 const ORIGINS: Array[Origin] = [
 	preload("uid://ciavtykggnu43"), # adventurer
-	preload("uid://d21lprrjx41il"), # archer
 	preload("uid://7uemslxbeu5b"), # artisan
 	preload("uid://dqjtp62n331s7"), # cook
 	preload("uid://dgikjtge36uha"), # doctor
+	preload("uid://cawcb1f8r3nb8"), # grunt
 	preload("uid://cskgqp6fm3x52"), # hunter
+	preload("uid://d21lprrjx41il"), # leader
 	preload("uid://1n7f7ltq8e42"), # merchant
 	preload("uid://de62kh1q4mybj"), # minstrel
 	preload("uid://bax71w1etiyel"), # noble
@@ -35,5 +36,4 @@ const ORIGINS: Array[Origin] = [
 	preload("uid://yct1dsuv2io1"), # sorcerer
 	preload("uid://bj6k6l430dyvn"), # thief
 	preload("uid://45sbhcfyenlm"), # veteran
-	preload("uid://cawcb1f8r3nb8"), # soldier
 ]

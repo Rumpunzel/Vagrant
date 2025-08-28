@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("2_fs7tf")
-name = "Cook"
+name = "Cook?"
 icon = ExtResource("1_31iba")
 type = 0
 color = Color(0, 0, 0, 1)

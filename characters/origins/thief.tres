@@ -10,5 +10,6 @@ icon = ExtResource("1_as3l5")
 type = 0
 color = Color(0, 0, 0, 1)
 details = ""
-ability = "Feats of thievery go unanswered."
+ability = "+1 company infamy
+Feats of thievery go unanswered."
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

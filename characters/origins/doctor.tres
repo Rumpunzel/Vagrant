@@ -5,9 +5,9 @@
 
 [resource]
 script = ExtResource("2_ehs31")
-name = "Doctor"
+name = "Doctor?"
 icon = ExtResource("1_2esmf")
-type = 1
+type = 0
 color = Color(0, 0, 0, 1)
 details = ""
 ability = ""

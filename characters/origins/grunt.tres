@@ -5,10 +5,11 @@
 
 [resource]
 script = ExtResource("2_j0cvg")
-name = "Warrior"
+name = "Grunt"
 icon = ExtResource("1_l3qjt")
 type = 0
 color = Color(0, 0, 0, 1)
 details = ""
-ability = "When you pass a Guts save, regain 1 breath die."
+ability = "Feats of strength go unanswered.
+When you pass a Guts save, regain 1 breath die."
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

@@ -7,7 +7,7 @@ wet = 0.2
 
 [resource]
 bus/0/mute = true
-bus/0/volume_db = -6.92183
+bus/0/volume_db = -6.57885
 bus/1/name = &"Ambience"
 bus/1/solo = false
 bus/1/mute = false

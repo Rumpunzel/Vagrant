@@ -10,5 +10,6 @@ icon = ExtResource("1_ppnlf")
 type = 0
 color = Color(0, 0, 0, 1)
 details = ""
-ability = "Double all vantage you gain against foes."
+ability = "+1 weapon die.
+Double all vantage you gain against foes."
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"
