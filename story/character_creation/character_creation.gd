@@ -4,7 +4,6 @@ extends Node
 enum CreationStage {
 	ATTRIBUTES,
 	ORIGINS,
-	DETAILS,
 	DONE,
 }
 
@@ -64,8 +63,7 @@ func _on_continue_pressed() -> void:
 			_bio_editor.appear()
 		CreationStage.ORIGINS:
 			_creation_stage = _creation_stage + 1 as CreationStage
-		CreationStage.DETAILS:
-			_creation_stage = _creation_stage + 1 as CreationStage
+		CreationStage.DONE: assert(false, "CreationStage already DONE!" % _creation_stage)
 		_: assert(false, "CreationStage %s not supported!" % _creation_stage)
 	_deactivate_continue()
 

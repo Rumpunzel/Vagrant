@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://p4lx6exsethc"]
 
-[ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio.gd" id="1_furgd"]
+[ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
 [ext_resource type="Texture2D" uid="uid://dww4i7oxvwi67" path="res://story/portraits/HE-PC-PL-M104/Fulllength.png" id="2_1khh3"]
 [ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]

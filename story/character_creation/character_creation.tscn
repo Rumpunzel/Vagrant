@@ -15,7 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://d2rojivoai6ui" path="res://assets/landscapes/waterfall.jpg" id="9_7l4gq"]
 [ext_resource type="Texture2D" uid="uid://i10g17t78dnu" path="res://assets/landscapes/wilderness_calm.jpg" id="10_junfj"]
 [ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://characters/character_sheet/inventory/inventory.tscn" id="15_b7plt"]
-[ext_resource type="PackedScene" uid="uid://p4lx6exsethc" path="res://story/character_creation/bio.tscn" id="15_gqnl0"]
+[ext_resource type="PackedScene" uid="uid://p4lx6exsethc" path="res://story/character_creation/bio_editor.tscn" id="15_gqnl0"]
 
 [node name="CharacterCreation" type="Node" node_paths=PackedStringArray("_stage", "_attributes_roller", "_origins_picker", "_inventory", "_bio_editor", "_continue")]
 script = ExtResource("1_x4txh")
