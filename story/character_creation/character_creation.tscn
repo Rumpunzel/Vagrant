@@ -82,4 +82,5 @@ text = "Continue"
 [connection signal="timeout" from="BackgroundTimer" to="." method="_on_background_timer_timeout"]
 [connection signal="attributes_rolled" from="MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller" to="." method="_on_attributes_rolled"]
 [connection signal="origins_picked" from="MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker" to="." method="_on_origins_picked"]
+[connection signal="origins_unpicked" from="MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker" to="." method="_on_origins_unpicked"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Continue" to="." method="_on_continue_pressed"]

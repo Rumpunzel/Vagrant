@@ -20,15 +20,14 @@ enum CreationStage {
 
 var _creation_stage: CreationStage = CreationStage.ATTRIBUTES
 var _attribute_scores: Dictionary[CharacterAttribute, AttributeScore]
-var _kin: Origin
-var _ilk: Origin
+var _origins: Array[Origin]
 
 func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	_origins_picker.visible = false
 	_inventory.visible = false
 	_bio_editor.visible = false
-	_deactive_continue()
+	_deactivate_continue()
 	_attributes_roller.setup()
 
 func _activate_continue() -> void:
@@ -36,7 +35,7 @@ func _activate_continue() -> void:
 	_continue.focus_mode = Control.FOCUS_ALL
 	_continue.grab_focus()
 
-func _deactive_continue() -> void:
+func _deactivate_continue() -> void:
 	_continue.disabled = true
 	_continue.focus_mode = Control.FOCUS_NONE
 
@@ -48,25 +47,27 @@ func _on_attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, Attr
 	_origins_picker.setup(doubles_rolled)
 	_activate_continue()
 
-func _on_origins_picked(kin: Origin, ilk: Origin) -> void:
-	_kin = kin
-	_ilk = ilk
+func _on_origins_picked(origins: Array[Origin]) -> void:
+	_origins = origins
 	_activate_continue()
+
+func _on_origins_unpicked() -> void:
+	_deactivate_continue()
 
 func _on_continue_pressed() -> void:
 	match _creation_stage:
 		CreationStage.ATTRIBUTES:
-			_creation_stage += 1
+			_creation_stage = _creation_stage + 1 as CreationStage
 			_attributes_roller.collapse()
 			_origins_picker.appear()
 			_inventory.appear()
 			_bio_editor.appear()
 		CreationStage.ORIGINS:
-			_creation_stage += 1
+			_creation_stage = _creation_stage + 1 as CreationStage
 		CreationStage.DETAILS:
-			_creation_stage += 1
+			_creation_stage = _creation_stage + 1 as CreationStage
 		_: assert(false, "CreationStage %s not supported!" % _creation_stage)
-	_deactive_continue()
+	_deactivate_continue()
 
 func _on_background_timer_timeout() -> void:
 	if _backgrounds.is_empty(): return

@@ -2,82 +2,131 @@
 class_name OriginsPicker
 extends VBoxContainer
 
-signal origins_picked(kin: Origin, ilk: Origin)
+signal origins_picked(origins: Array[Origin])
+signal origins_unpicked
 
-@export var _kin_list: ItemList
-@export var _ilk_list: ItemList
-@export var _kin_ability: RichTextLabel
-@export var _ilk_ability: RichTextLabel
-@export var _continue: Button
+@export_dir var _origins_directory: String
+@export var _search_recursively: bool = true
 
-var _selected_kin: Origin = null
-var _selected_ilk: Origin = null
+@export_group("Configuration")
+@export var _origins_list: ItemList
+@export var _abilities: Array[RichTextLabel]
+
+var _selected_origins: Array[Origin] = [null, null]
+var _origin_indexes: Dictionary[Origin, int] = {}
 var _available_doubles: int
+
+@onready var _available_origins: Array[Origin] = get_available_origins()
 
 func _ready() -> void:
 	if not Engine.is_editor_hint(): return
+	assert(_abilities.size() == _selected_origins.size())
 	setup(0)
 
 func setup(rare_options: int) -> void:
-	_kin_list.clear()
-	_ilk_list.clear()
+	_origins_list.clear()
+	_available_doubles = rare_options
+	for origin: Origin in _available_origins:
+		var origin_index: int = _origins_list.add_item(origin.name, origin.icon)
+		_origin_indexes[origin] = origin_index
+		_origins_list.set_item_metadata(origin_index, origin)
+		_origins_list.set_item_tooltip(origin_index, origin.details)
+		if origin.type == Origin.Type.RARE: _origins_list.set_item_icon_modulate(origin_index, Color.GOLD)
+		_update_origins()
+
+func appear() -> void:
 	# TODO: animate this
 	visible = true
-	size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_available_doubles = rare_options
-	for origin: Origin in Rules.ORIGINS:
-		var kin_index: int = _kin_list.add_item(origin.name, origin.icon)
-		var ilk_index: int = _ilk_list.add_item(origin.name, origin.icon)
-		_kin_list.set_item_metadata(kin_index, origin)
-		_ilk_list.set_item_metadata(ilk_index, origin)
-		_kin_list.set_item_tooltip(kin_index, origin.details)
-		_ilk_list.set_item_tooltip(ilk_index, origin.details)
-		if not origin.type == Origin.Type.RARE: continue
-		_kin_list.set_item_icon_modulate(kin_index, Color.GOLD)
-		_ilk_list.set_item_icon_modulate(ilk_index, Color.GOLD)
-		if _available_doubles > 0: continue
-		_kin_list.set_item_disabled(kin_index, true)
-		_ilk_list.set_item_disabled(ilk_index, true)
 
-func collapse() -> void:
-	_continue.disabled = true
-	# TODO: animate this
-	_continue.visible = false
-	size_flags_vertical = Control.SIZE_FILL
+func get_available_origins(directory_path: String = _origins_directory) -> Array[Origin]:
+	var available_origins: Array[Origin] = []
+	var origins_directory: DirAccess = DirAccess.open(directory_path)
+	if not origins_directory:
+		printerr("Could not open portraits_directory at path: %s" % directory_path)
+		return []
+	origins_directory.list_dir_begin()
+	var file_name: String = origins_directory.get_next()
+	while not file_name.is_empty():
+		var file_path: String = directory_path.path_join(file_name)
+		if origins_directory.current_is_dir():
+			if _search_recursively:
+				available_origins.append_array(get_available_origins(file_path))
+		elif file_name.get_extension() == "tres":
+			var origin: Origin = load(file_path)
+			assert(origin is Origin)
+			available_origins.append(origin)
+		file_name = origins_directory.get_next()
+	return available_origins
+
+func _unpick_origin(origin: Origin) -> void:
+	var origin_index: int = _selected_origins.find(origin)
+	assert(origin_index >= 0)
+	_selected_origins.pop_at(origin_index)
+	_selected_origins.push_back(null)
+	origins_unpicked.emit()
+
+func _override_oldest_origin(origin: Origin) -> void:
+	var oldest_origin: Origin = null
+	for origin_index: int in _selected_origins.size():
+		var selected_origin: Origin = _selected_origins[origin_index]
+		if selected_origin and selected_origin.type == origin.type:
+			oldest_origin = selected_origin
+			break
+	if not oldest_origin: oldest_origin = _selected_origins.front()
+	var oldest_index: int = _selected_origins.find(oldest_origin)
+	_selected_origins.pop_at(oldest_index)
+	_origins_list.deselect(_origin_indexes[oldest_origin])
+	_selected_origins.push_back(origin)
+	_selected_origins.sort_custom(func(first: Origin, second: Origin) -> bool: return first != null and second == null)
 
 func _is_ready() -> bool:
-	if not _selected_kin or not _selected_ilk: return false
-	var selected_rares: int = 0
-	if _selected_kin.type == Origin.Type.RARE: selected_rares += 1
-	if _selected_ilk.type == Origin.Type.RARE: selected_rares += 1
-	return selected_rares == 2 or selected_rares == _available_doubles
+	for type: Origin.Type in Origin.Type.values():
+		if _get_remaining(type) > 0: return false
+	return true
 
-func _after_on_select(selected: Origin, other_list: ItemList) -> void:
-	assert(selected)
-	for index: int in other_list.item_count:
-		var origin: Origin = other_list.get_item_metadata(index)
-		other_list.set_item_disabled(index, origin == selected)
-	if not _is_ready(): return
-	_continue.disabled = false
-	_continue.grab_focus()
+func _update_origins() -> void:
+	for origin_index: int in _origins_list.item_count:
+		var selected_origin: Origin = _origins_list.get_item_metadata(origin_index)
+		var available: bool = _selected_origins.has(selected_origin) or _is_available(selected_origin.type)
+		_origins_list.set_item_disabled(origin_index, not available)
 
-func _update_rare_origins(list: ItemList, rares_selected_in_other_lists: int) -> void:
-	var available: bool = _available_doubles - rares_selected_in_other_lists > 0
-	for index: int in list.item_count:
-		var origin: Origin = list.get_item_metadata(index)
-		if origin.type == Origin.Type.RARE: list.set_item_disabled(index, not available)
+func _update_abilities() -> void:
+	for origin_index: int in _selected_origins.size():
+		var origin: Origin = _selected_origins[origin_index]
+		var ability: RichTextLabel = _abilities[origin_index]
+		if origin: ability.text = origin.ability
+		else: ability.text = ""
 
-func _on_kin_list_item_selected(index: int) -> void:
-	_selected_kin = _kin_list.get_item_metadata(index)
-	_kin_ability.text = _selected_kin.ability
-	_after_on_select(_selected_kin, _ilk_list)
-	_update_rare_origins(_ilk_list, 1 if _selected_kin.type == Origin.Type.RARE else 0)
+func _is_available(type: Origin.Type) -> bool:
+	var remaining: int
+	match type:
+		Origin.Type.NORMAL: if _selected_origins.size() - _available_doubles <= 0: return false
+		Origin.Type.RARE: if _available_doubles <= 0: return false
+		_: assert(false, "Origin.Type %s is not supported!" % type)
+	return _get_remaining(type) >= 0
 
-func _on_ilk_list_item_selected(index: int) -> void:
-	_selected_ilk = _ilk_list.get_item_metadata(index)
-	_ilk_ability.text = _selected_ilk.ability
-	_after_on_select(_selected_ilk, _kin_list)
-	_update_rare_origins(_kin_list, 1 if _selected_ilk.type == Origin.Type.RARE else 0)
+func _get_remaining(type: Origin.Type) -> int:
+	var remaining: int
+	match type:
+		Origin.Type.NORMAL: remaining = _selected_origins.size() - _available_doubles
+		Origin.Type.RARE: remaining = _available_doubles
+		_: assert(false, "Origin.Type %s is not supported!" % type)
+	for origin: Origin in _selected_origins:
+		if origin and origin.type == type: remaining -= 1
+	return remaining
 
-func _on_continue_pressed() -> void:
-	origins_picked.emit(_selected_kin, _selected_ilk)
+func _on_origins_multi_selected(index: int, selected: bool) -> void:
+	assert(_selected_origins.size() == 2)
+	var origin: Origin = _origins_list.get_item_metadata(index)
+	if not selected: _unpick_origin(origin)
+	elif not _selected_origins.has(null) or _get_remaining(origin.type) == 0:
+		_override_oldest_origin(origin)
+	else:
+		for slot_index: int in _selected_origins.size():
+			if not _selected_origins[slot_index]:
+				_selected_origins[slot_index] = origin
+				break
+		if _is_ready(): origins_picked.emit(_selected_origins)
+	assert(_selected_origins.size() == 2)
+	_update_origins()
+	_update_abilities()

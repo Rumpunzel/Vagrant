@@ -34,5 +34,4 @@ func _is_ready() -> bool:
 
 func _on_attribute_score_rolled(attribute: CharacterAttribute, attribute_score: AttributeScore) -> void:
 	_attribute_scores[attribute] = attribute_score
-	if not _is_ready(): return
-	attributes_rolled.emit(_attribute_scores)
+	if _is_ready(): attributes_rolled.emit(_attribute_scores)

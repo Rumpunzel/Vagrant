@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://dqjtp62n331s7"]
 
-[ext_resource type="Texture2D" uid="uid://clqto2bouwcbi" path="res://characters/origins/icons/chef-toque.svg" id="1_31iba"]
+[ext_resource type="Texture2D" uid="uid://cdsc4strj6fui" path="res://characters/origins/icons/badger.svg" id="1_31iba"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_fs7tf"]
 
 [resource]
 script = ExtResource("2_fs7tf")
-name = "Cook?"
+name = "Tamer"
 icon = ExtResource("1_31iba")
 type = 0
 color = Color(0, 0, 0, 1)

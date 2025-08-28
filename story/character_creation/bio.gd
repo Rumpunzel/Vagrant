@@ -62,7 +62,7 @@ func get_available_portraits(sex: Sex, directory_path: String = _portraits_direc
 	var available_portraits: Array[Texture2D] = []
 	var portraits_directory: DirAccess = DirAccess.open(directory_path)
 	if not portraits_directory:
-		printerr("Could not open portraits_directory at path: %s" % _portraits_directory)
+		printerr("Could not open portraits_directory at path: %s" % directory_path)
 		return []
 	portraits_directory.list_dir_begin()
 	var file_name: String = portraits_directory.get_next()
