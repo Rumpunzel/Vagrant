@@ -8,61 +8,47 @@
 [ext_resource type="Texture2D" uid="uid://dlbqtdfwdtmiu" path="res://icons/donkey.svg" id="6_0cqav"]
 
 [node name="Inventory" type="PanelContainer"]
-offset_right = 600.0
-offset_bottom = 650.0
-size_flags_horizontal = 3
+offset_right = 268.0
+offset_bottom = 678.0
 script = ExtResource("1_swy6m")
 metadata/_custom_type_script = "uid://e2idwn4erjnm"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 theme_type_variation = &"HeaderMedium"
 text = "Inventory"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="LeftContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="NoLoad" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="ItemContainer1" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LeftContainer" instance=ExtResource("2_8swrj")]
-layout_mode = 2
-
-[node name="ItemContainer3" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LeftContainer" instance=ExtResource("2_8swrj")]
-layout_mode = 2
-label = "Pouch"
-
-[node name="ItemContainer5" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LeftContainer" instance=ExtResource("2_8swrj")]
-layout_mode = 2
-label = "Bag"
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="NoLoad" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/MarginContainer"]
+[node name="Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/NoLoad"]
+visible = false
 modulate = Color(0.827, 0.827, 0.827, 1)
 layout_mode = 2
+size_flags_horizontal = 3
 texture = ExtResource("3_8swrj")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/MarginContainer/NoLoad"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/NoLoad/Icon"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -78,7 +64,7 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/MarginContainer/NoLoad/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/NoLoad/Icon/PanelContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -87,22 +73,38 @@ theme_override_constants/margin_top = 1
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/MarginContainer/NoLoad/PanelContainer/MarginContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/NoLoad/Icon/PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "No load"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LightLoad" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/NoLoad"]
+layout_mode = 2
+
+[node name="ItemContainer2" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/NoLoad/VBoxContainer" instance=ExtResource("2_8swrj")]
+layout_mode = 2
+label = "Belt"
+
+[node name="ItemContainer3" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/NoLoad/VBoxContainer" instance=ExtResource("2_8swrj")]
+visible = false
+layout_mode = 2
+label = "Pouch"
+
+[node name="LightLoad" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LightLoad"]
+visible = false
 modulate = Color(1, 0.827, 0.557, 1)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
 texture = ExtResource("4_0mc4m")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LightLoad/Icon"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -116,7 +118,7 @@ offset_bottom = 12.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LightLoad/Icon/PanelContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -125,22 +127,38 @@ theme_override_constants/margin_top = 1
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/LightLoad/PanelContainer/MarginContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LightLoad/Icon/PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "+1 weight"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HeavyLoad" type="TextureRect" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LightLoad"]
+layout_mode = 2
+
+[node name="ItemContainer1" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LightLoad/VBoxContainer" instance=ExtResource("2_8swrj")]
+layout_mode = 2
+label = "Knapsack"
+
+[node name="ItemContainer5" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/LightLoad/VBoxContainer" instance=ExtResource("2_8swrj")]
+visible = false
+layout_mode = 2
+label = "Bag"
+
+[node name="HeavyLoad" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/HeavyLoad"]
+visible = false
 modulate = Color(1, 0.278, 0.376, 1)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
 texture = ExtResource("5_0cqav")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/HeavyLoad/Icon"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -154,7 +172,7 @@ offset_bottom = 12.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/HeavyLoad/Icon/PanelContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -163,29 +181,26 @@ theme_override_constants/margin_top = 1
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/HeavyLoad/PanelContainer/MarginContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/HeavyLoad/Icon/PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "+2 weight"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RightContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/HeavyLoad"]
 layout_mode = 2
 
-[node name="ItemContainer2" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/RightContainer" instance=ExtResource("2_8swrj")]
-layout_mode = 2
-label = "Belt"
-
-[node name="ItemContainer4" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/RightContainer" instance=ExtResource("2_8swrj")]
+[node name="ItemContainer4" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/HeavyLoad/VBoxContainer" instance=ExtResource("2_8swrj")]
 layout_mode = 2
 label = "Backpack"
 
-[node name="ItemContainer6" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/RightContainer" instance=ExtResource("2_8swrj")]
+[node name="ItemContainer6" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/HeavyLoad/VBoxContainer" instance=ExtResource("2_8swrj")]
+visible = false
 layout_mode = 2
 label = "Another Backpack"
 
-[node name="Miscellaneous" type="ItemList" parent="VBoxContainer"]
+[node name="Miscellaneous" type="ItemList" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 item_count = 1

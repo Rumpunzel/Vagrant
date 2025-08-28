@@ -6,6 +6,6 @@
 [resource]
 script = ExtResource("1_27sg8")
 descriptor = "Guts"
-details = "Used to resist with strength, endurance, and grit."
-color = Color(0, 0, 0, 1)
 icon = ExtResource("1_ga1e2")
+color = Color(0, 0, 0, 1)
+details = "Resist with strength, endurance, and grit."

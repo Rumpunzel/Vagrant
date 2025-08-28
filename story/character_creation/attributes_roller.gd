@@ -5,8 +5,6 @@ extends VBoxContainer
 signal attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, AttributeScore])
 
 @export var _roller_container: Container
-@export var _continue: Button
-
 @export var _attribute_score_roller: PackedScene
 
 var _attribute_scores: Dictionary[CharacterAttribute, AttributeScore] = { }
@@ -19,7 +17,6 @@ func setup() -> void:
 	for attribute_score_roller: AttributeScoreRoller in _roller_container.get_children():
 		_roller_container.remove_child(attribute_score_roller)
 		attribute_score_roller.queue_free()
-	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
 		var attribute_score_roller: AttributeScoreRoller = _attribute_score_roller.instantiate()
 		attribute_score_roller.attribute = attribute as CharacterAttribute
@@ -27,9 +24,6 @@ func setup() -> void:
 		_roller_container.add_child(attribute_score_roller)
 
 func collapse() -> void:
-	_continue.disabled = true
-	# TODO: animate this
-	_continue.visible = false
 	for attribute_score_roller: AttributeScoreRoller in _roller_container.get_children():
 		attribute_score_roller.collapse()
 	size_flags_vertical = Control.SIZE_FILL
@@ -41,8 +35,4 @@ func _is_ready() -> bool:
 func _on_attribute_score_rolled(attribute: CharacterAttribute, attribute_score: AttributeScore) -> void:
 	_attribute_scores[attribute] = attribute_score
 	if not _is_ready(): return
-	_continue.disabled = false
-	_continue.grab_focus()
-
-func _on_continue_pressed() -> void:
 	attributes_rolled.emit(_attribute_scores)

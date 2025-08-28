@@ -81,6 +81,10 @@ func get_available_portraits(sex: Sex, directory_path: String = _portraits_direc
 		file_name = portraits_directory.get_next()
 	return available_portraits
 
+func appear() -> void:
+	# TODO: animate this
+	visible = true
+
 func _load_portraits() -> void:
 	for sex: Sex in Sex.values():
 		_portraits[sex] = get_available_portraits(sex)

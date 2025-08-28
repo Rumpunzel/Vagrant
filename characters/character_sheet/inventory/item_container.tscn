@@ -4,11 +4,12 @@
 [ext_resource type="Script" uid="uid://cin4002ehs4cx" path="res://characters/character_sheet/inventory/item_container.gd" id="1_haulj"]
 
 [node name="ItemContainer" type="VBoxContainer" node_paths=PackedStringArray("_label")]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 273.0
+offset_bottom = 171.0
 script = ExtResource("1_haulj")
 label = "Satchel"
 _label = NodePath("Label")
+metadata/_custom_type_script = "uid://cin4002ehs4cx"
 
 [node name="ItemList" type="ItemList" parent="."]
 layout_mode = 2
@@ -17,7 +18,7 @@ size_flags_vertical = 4
 theme_override_constants/icon_margin = 0
 auto_width = true
 auto_height = true
-item_count = 3
+item_count = 6
 max_columns = 3
 same_column_width = true
 icon_mode = 0
@@ -25,6 +26,9 @@ fixed_icon_size = Vector2i(64, 64)
 item_0/icon = ExtResource("1_3i0w7")
 item_1/icon = ExtResource("1_3i0w7")
 item_2/icon = ExtResource("1_3i0w7")
+item_3/icon = ExtResource("1_3i0w7")
+item_4/icon = ExtResource("1_3i0w7")
+item_5/icon = ExtResource("1_3i0w7")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 2

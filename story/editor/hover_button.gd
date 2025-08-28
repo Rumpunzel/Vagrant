@@ -2,8 +2,8 @@
 class_name HoverButton
 extends Button
 
+@export var _neighbor_hover_color: Color = Color(1.0, 1.0, 1.0, 0.25)
 @export var _hover_neighbors: Array[HoverButton]
-@export var _neighbor_hover_color: Color = Color(1.0, 1.0, 1.0, 0.5)
 
 @onready var _modulate: Color = modulate
 @onready var _icon: Texture2D = icon :
