@@ -4,12 +4,13 @@ extends TabContainer
 
 func _ready() -> void:
 	_update_character_list()
+	Characters.characters_updated.connect(_update_character_list)
 
 func _update_character_list() -> void:
 	for character_sheet: CharacterSheet in get_children():
 		remove_child(character_sheet)
 		character_sheet.queue_free()
-	for character: Character in get_tree().get_nodes_in_group(Character.GROUP):
+	for character: Character in Characters.characters.values():
 		var character_sheet: CharacterSheet = _character_sheet.instantiate()
 		add_child(character_sheet)
 		character_sheet.character = character

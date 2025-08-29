@@ -39,3 +39,4 @@ alignment = 1
 
 [connection signal="confirmed" from="." to="." method="_on_confirmed"]
 [connection signal="text_changed" from="MarginContainer/VBoxContainer/Name" to="." method="_on_name_changed"]
+[connection signal="text_submitted" from="MarginContainer/VBoxContainer/Name" to="." method="_on_name_submitted"]

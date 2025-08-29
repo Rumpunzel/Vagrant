@@ -28,12 +28,6 @@ var score: AttributeScore :
 		if score.get_type() == AttributeScore.Type.DOUBLE: _set_font_colors(Color.GOLD)
 		_button.disabled = true
 
-func collapse() -> void:
-	pass
-	# TODO: animate this
-	#_roll.visible = false
-	#_details.visible = false
-
 func _set_font_colors(color: Color) -> void:
 	_score.add_theme_color_override("font_color", color)
 	_score.add_theme_color_override("font_disabled_color", color)
@@ -42,9 +36,9 @@ func _set_font_colors(color: Color) -> void:
 
 func _on_button_pressed() -> void:
 	_button.disabled = true
+	_button.focus_mode = Control.FOCUS_NONE
 	score = DiceRoller.roll_attribute()
 	attribute_score_rolled.emit(attribute, score)
 	var next: Control = find_valid_focus_neighbor(SIDE_RIGHT)
 	if not next: next = find_valid_focus_neighbor(SIDE_LEFT)
 	if next: next.grab_focus()
-	focus_mode = Control.FOCUS_NONE

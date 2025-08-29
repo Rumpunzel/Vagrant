@@ -24,8 +24,6 @@ func setup() -> void:
 		_roller_container.add_child(attribute_score_roller)
 
 func collapse() -> void:
-	for attribute_score_roller: AttributeScoreRoller in _roller_container.get_children():
-		attribute_score_roller.collapse()
 	size_flags_vertical = Control.SIZE_FILL
 
 func _is_ready() -> bool:

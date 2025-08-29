@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://14h1hukjjol7"]
 
-[ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://assets/portraits/knight.jpeg" id="1_fnfma"]
 [ext_resource type="Script" uid="uid://dkwi26f6nf1xj" path="res://characters/character_sheet/character_sheet.gd" id="1_uqhlh"]
+[ext_resource type="Texture2D" uid="uid://pla8unhxi8j7" path="res://story/portraits/HE-MF-DW-F104/Fulllength.png" id="2_sp54v"]
 [ext_resource type="PackedScene" uid="uid://dgk1ipqq2uypw" path="res://characters/character_sheet/attributes.tscn" id="3_hgrxd"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection/hit_dice_selection_buttons.tscn" id="4_gaha4"]
 
@@ -15,10 +15,9 @@ _attributes = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginConta
 _hit_dice = NodePath("MarginContainer/VBoxContainer/HitDice")
 
 [node name="Portrait" type="TextureRect" parent="."]
-unique_name_in_owner = true
 show_behind_parent = true
 layout_mode = 2
-texture = ExtResource("1_fnfma")
+texture = ExtResource("2_sp54v")
 expand_mode = 1
 stretch_mode = 6
 
@@ -32,11 +31,13 @@ theme_override_constants/margin_bottom = 16
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="Name" type="LineEdit" parent="MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
-placeholder_text = "Name"
-alignment = 1
+theme_type_variation = &"HeaderMedium"
+text = "Name"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2

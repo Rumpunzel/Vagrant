@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
 [ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
-[ext_resource type="Texture2D" uid="uid://bypo3xhh3f36f" path="res://story/portraits/HE-AR-AR-M022/Fulllength.png" id="2_k6q65"]
+[ext_resource type="Texture2D" uid="uid://dnymufw3d86pi" path="res://story/portraits/HE-RO-KM-M102/Fulllength.png" id="2_k6q65"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
 [ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/user_interface/hover_button.gd" id="3_c7qpy"]
 [ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="4_1khh3"]

@@ -18,9 +18,6 @@ extends PanelContainer
 
 @export_group("Configuration")
 @export var _portrait: TextureRect
-@export var _name: LineEdit
+@export var _name: Label
 @export var _attributes: CharacterAttributesPanel
 @export var _hit_dice: HitDiceSelectionButtons
-
-func _ready() -> void:
-	character = Characters.characters.values().front()

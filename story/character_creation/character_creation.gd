@@ -84,8 +84,8 @@ func _on_continue_pressed() -> void:
 			_deactivate_continue()
 		CreationStage.ORIGINS:
 			_creation_stage = _creation_stage + 1 as CreationStage
-			_character_confirmation.popup_centered()
-		CreationStage.DONE: _character_confirmation.popup_centered()
+			_character_confirmation.confirm()
+		CreationStage.DONE: _character_confirmation.confirm()
 		_: assert(false, "CreationStage %s not supported!" % _creation_stage)
 
 func _on_background_timer_timeout() -> void:
