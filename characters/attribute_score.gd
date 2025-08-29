@@ -23,20 +23,24 @@ static func create_with_modifiers(new_attribute: CharacterAttribute, new_base: B
 	return new_attribute_score
 
 func get_score() -> int:
-	var score: int = base.get_score() 
+	var score: int = base.get_score()  if base else 0
 	for modifier: Modifier in modifiers:
 		score += modifier.modifier.score_modifiers[attribute]
 	return score
 
 func get_details(icon_size: int = 32) -> String:
-	var details: String = "[ %s ]"
+	var details: String = ""
+	if get_type() == AttributeScore.Type.DOUBLE: details += "[color=gold]"
+	details += "[ %s ]"
+	details += " [img=32x32,center,center]%s[/img]"
+	if get_type() == AttributeScore.Type.DOUBLE: details += "[/color]"
 	var modifiers_details: Array[String] = []
 	for modifier: Modifier in modifiers:
 		var modifier_details: String = modifier.get_details(attribute, icon_size)
 		if not modifier_details.is_empty(): modifiers_details.append(modifier_details)
 	if not modifiers_details.is_empty(): details += " "
 	details += "%s"
-	return details % [base.get_dice(), " ".join(modifiers_details)]
+	return details % [base.get_dice() if base else "-", "uid://dpmwlpo7a7q1r", " ".join(modifiers_details)]
 
 func get_type() -> Type:
 	return base.get_type()

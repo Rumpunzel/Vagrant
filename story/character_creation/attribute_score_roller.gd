@@ -24,7 +24,6 @@ var attribute: CharacterAttribute :
 var score: BaseAttributeScore :
 	set(new_score):
 		score = new_score
-		if score.get_type() == AttributeScore.Type.DOUBLE: _set_font_colors(Color.GOLD)
 		_button.disabled = true  
 		update()
 
@@ -42,12 +41,6 @@ func update() -> void:
 
 func _get_attribute_score() -> AttributeScore:
 	return AttributeScore.create_with_modifiers(attribute, score, modifiers)
-
-func _set_font_colors(color: Color) -> void:
-	_score.add_theme_color_override("font_color", color)
-	_score.add_theme_color_override("font_disabled_color", color)
-	_score.add_theme_color_override("font_pressed_color", color)
-	_score.add_theme_color_override("font_hover_color", color)
 
 func _on_button_pressed() -> void:
 	_button.disabled = true
