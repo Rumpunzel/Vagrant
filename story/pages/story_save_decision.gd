@@ -6,8 +6,7 @@ extends StoryDecision
 @export_multiline var details: String
 @export var failure_transition: StoryPageReference
 
-func to_save_request() -> SaveRequest:
-	var protagonist: Character = Characters.get_protagonist()
+func to_save_request(protagonist: Character) -> SaveRequest:
 	return SaveRequest.new(protagonist, attribute, difficulty, details)
 
 func to_dialog_button_text() -> String:

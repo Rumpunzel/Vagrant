@@ -1,3 +1,4 @@
+class_name Characters
 extends Node
 
 signal characters_updated

@@ -11,16 +11,15 @@ config_version=5
 [application]
 
 config/name="Vagrant"
-run/main_scene="res://story/adventure.tscn"
+run/main_scene="uid://baflfbgcr5cbu"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icons/fantasy/map.png"
 
 [autoload]
 
 Rules="*res://rules.gd"
-DiceRoller="*res://dice/dice_roller.tscn"
-Characters="*res://characters/characters.tscn"
-Story="*res://story/story.gd"
+DiceRoller="*res://dice/dice_roller.gd"
+DiceRollSounds="*res://dice/dice_roll_sounds.gd"
 
 [debug]
 

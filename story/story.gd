@@ -1,3 +1,4 @@
+class_name Story
 extends Node
 
 signal decision_made(story_decision: StoryDecision, selected_how_many_times: int)

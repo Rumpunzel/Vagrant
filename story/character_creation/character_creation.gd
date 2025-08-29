@@ -1,6 +1,6 @@
 @tool
 class_name CharacterCreation
-extends MarginContainer
+extends VBoxContainer
 
 signal character_created(characterprofile: CharacterProfile)
 
@@ -70,8 +70,6 @@ func _on_character_confirmed(character_name: String) -> void:
 	_name = character_name
 	var character_profile: CharacterProfile = CharacterProfile.new(_name, _portrait, _attribute_scores)
 	character_created.emit(character_profile)
-	Characters.create_character(character_profile)
-	get_tree().change_scene_to_file("res://story/adventure.tscn")
 
 func _on_continue_pressed() -> void:
 	match _creation_stage:

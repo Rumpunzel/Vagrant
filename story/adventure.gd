@@ -1,10 +1,11 @@
 class_name Adventure
-extends Node
+extends HSplitContainer
 
 @export var adventure: AdventureTome
 
 var current_page: StoryPage
 
+var _story: Story
 # StoryDecision -> int (how many times the decision has been made)
 var _decision_log: Dictionary[StoryDecision, int] = { }
 # StorySaveDecision -> Array[SaveResult]
@@ -13,12 +14,13 @@ var _save_decision_log: Dictionary[StorySaveDecision, Array]= { }
 var _page_log: Dictionary[StoryPage, int] = { }
 var _page_stack: Array[StoryPage] = [ ]
 
-func _ready() -> void:
-	Story.start_adventure(self)
+func start(story: Story) -> void:
+	_story = story
 
 func get_how_often_decision_has_been_made(story_decision: StoryDecision) -> int:
 	if story_decision is StorySaveDecision:
-		return _save_decision_log.get(story_decision, [ ]).size()
+		var save_decision_results: Array[SaveResult] = _save_decision_log.get(story_decision, [ ])
+		return save_decision_results.size()
 	return _decision_log.get(story_decision, 0)
 
 func get_how_often_page_has_been_entered(story_page: StoryPage) -> int:
@@ -42,7 +44,7 @@ func update_page_log(story_page: StoryPage) -> StoryPage:
 		print_debug("Already on page: <%s>!" % current_page)
 		return
 	_page_log[story_page] = get_how_often_page_has_been_entered(story_page) + 1
-	for event: StoryPage in story_page.get_events():
+	for event: StoryPage in story_page.get_events(_story):
 		_page_log[event] = get_how_often_page_has_been_entered(event) + 1
 	_page_stack.push_back(current_page)
 	current_page = story_page
