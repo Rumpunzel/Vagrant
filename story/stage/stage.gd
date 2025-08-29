@@ -7,19 +7,15 @@ extends CanvasLayer
 @export var music: AudioStream : set = _set_music
 
 @export_group("Configuration")
-@export var _story: Story
 @export var _ambience: AudioStreamPlayer
 @export var _music: AudioStreamPlayer
 @export var _background: PackedScene
 
 var _current_background: TextureRect
 
-var story_page: StoryPage :
-	set(new_story_page):
-		if story_page == new_story_page: return
-		story_page = new_story_page
-		_set_background(story_page.get_background(_story))
-		_set_ambience(story_page.get_ambience(_story))
+func set_story_page(story_page: StoryPage, story: Story) -> void:
+	_set_background(story_page.get_background(story))
+	_set_ambience(story_page.get_ambience(story))
 
 func _set_background(background_texture: Texture) -> void:
 	background = background_texture

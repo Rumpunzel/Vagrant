@@ -17,6 +17,9 @@ signal save_requested(save_request: SaveRequest, source: StoryDecision)
 @export var _description: TypingLabel
 @export var _shortcuts: Array[Shortcut] = [ ]
 
+var _story: Story
+var _characters: Characters
+
 var _hovered: bool = false
 var _selected: bool = false :
 	set(new_selected):
@@ -24,11 +27,14 @@ var _selected: bool = false :
 		if _selected: _index.text = "✔"
 		else: _set_index()
 
-func _enter_tree() -> void:
-	Story.decision_made.connect(_on_decision_made)
+func setup(story: Story, characters: Characters, new_story_decision: StoryDecision) -> void:
+	_story = story
+	_characters = characters
+	story_decision = new_story_decision
+	_story.decision_made.connect(_on_decision_made)
 
 func _exit_tree() -> void:
-	if Story.decision_made.is_connected(_on_decision_made): Story.decision_made.disconnect(_on_decision_made)
+	if _story.decision_made.is_connected(_on_decision_made): _story.decision_made.disconnect(_on_decision_made)
 
 func _ready() -> void:
 	visible = false
@@ -75,7 +81,7 @@ func _get_text_font_color() -> Color:
 	elif button_pressed:
 		if _hovered: text_color = get_theme_color("font_hover_pressed_color")
 		else: text_color = get_theme_color("font_pressed_color")
-	elif Story.get_how_often_decision_has_been_made(story_decision) > 0:
+	elif _story.get_how_often_decision_has_been_made(story_decision) > 0:
 		text_color = get_theme_color("font_disabled_color")
 	elif _hovered: text_color = get_theme_color("font_hover_color")
 	elif has_focus(): text_color = get_theme_color("font_focus_color")
@@ -83,11 +89,11 @@ func _get_text_font_color() -> Color:
 
 func _on_pressed() -> void:
 	if story_decision is StorySaveDecision:
-		var save_request: SaveRequest = (story_decision as StorySaveDecision).to_save_request()
+		var save_request: SaveRequest = (story_decision as StorySaveDecision).to_save_request(_characters.get_protagonist())
 		save_requested.emit(save_request, story_decision)
 	else:
 		save_requested.emit(null, story_decision)
-		Story.make_decision(story_decision)
+		_story.make_decision(story_decision)
 
 func _on_description_finished_typing() -> void:
 	finished_setup.emit()
@@ -101,7 +107,7 @@ func _on_decision_made(selected_story_decision: StoryDecision, _selected_how_man
 	disabled = true
 	release_focus()
 	_update_font_colors()
-	Story.decision_made.disconnect(_on_decision_made)
+	_story.decision_made.disconnect(_on_decision_made)
 
 func _on_container_minimum_size_changed() -> void:
 	_resize_to_fit_children()

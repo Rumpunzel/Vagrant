@@ -1,20 +1,20 @@
-[gd_scene load_steps=7 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=6 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
-[ext_resource type="Resource" uid="uid://dw1vkutmmhnao" path="res://story/adventures/test_adventure.tres" id="2_sj31b"]
 [ext_resource type="Script" uid="uid://dlr4addkwoige" path="res://characters/character_sheet/character_sheets.gd" id="3_4lj7w"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://characters/character_sheet/character_sheet.tscn" id="4_2poxt"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/book/story_book.tscn" id="5_p35e8"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="6_hg7gt"]
 
-[node name="Adventure" type="HSplitContainer"]
+[node name="Adventure" type="HSplitContainer" node_paths=PackedStringArray("_character_sheets", "_story_book")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_bnng7")
-adventure = ExtResource("2_sj31b")
+_character_sheets = NodePath("CharacterSheets")
+_story_book = NodePath("Game/StoryBook")
 metadata/_custom_type_script = "uid://cjud36jst3ajk"
 
 [node name="CharacterSheets" type="TabContainer" parent="."]
@@ -38,7 +38,6 @@ size_flags_horizontal = 3
 
 [node name="GameInfo" type="TabContainer" parent="Game"]
 layout_mode = 2
-size_flags_vertical = 3
 current_tab = 0
 
 [node name="DiceLog" type="MarginContainer" parent="Game/GameInfo"]
@@ -46,4 +45,7 @@ layout_mode = 2
 metadata/_tab_index = 0
 
 [node name="DiceLog" parent="Game/GameInfo/DiceLog" instance=ExtResource("6_hg7gt")]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
+
+[connection signal="page_entered" from="Game/StoryBook" to="." method="_on_story_book_page_entered"]

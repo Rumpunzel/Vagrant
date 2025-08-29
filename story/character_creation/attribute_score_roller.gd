@@ -26,7 +26,10 @@ var score: AttributeScore :
 		score = new_score
 		_score.text = "[ %s ] = %d" % [score.get_dice(), score.get_score()]
 		if score.get_type() == AttributeScore.Type.DOUBLE: _set_font_colors(Color.GOLD)
-		_button.disabled = true
+		_button.disabled = true  
+
+func _ready() -> void:
+	if not get_viewport().gui_get_focus_owner(): _button.grab_focus()
 
 func _set_font_colors(color: Color) -> void:
 	_score.add_theme_color_override("font_color", color)

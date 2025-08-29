@@ -21,8 +21,7 @@ var _available_doubles: int
 func _ready() -> void:
 	assert(_ability_labels.size() == _selected_origins.size())
 	_update_ability_labels()
-	if not Engine.is_editor_hint(): return
-	setup(0)
+	if Engine.is_editor_hint(): setup(0)
 
 func setup(rare_options: int) -> void:
 	_origins_list.clear()
@@ -33,7 +32,13 @@ func setup(rare_options: int) -> void:
 		_origins_list.set_item_metadata(origin_index, origin)
 		_origins_list.set_item_tooltip(origin_index, origin.details)
 		if origin.type == Origin.Type.RARE: _origins_list.set_item_icon_modulate(origin_index, Color.GOLD)
-		_update_origins()
+	# Pick random origins
+	while _selected_origins.has(null):
+		var origin_index: int = randi_range(0, _origins_list.item_count)
+		var random_origin: Origin = _origins_list.get_item_metadata(origin_index)
+		if _selected_origins.has(random_origin) or not _is_available(random_origin.type): continue
+		_origins_list.select(origin_index, false)
+		_on_origins_multi_selected(origin_index, true)
 
 func appear() -> void:
 	# TODO: animate this

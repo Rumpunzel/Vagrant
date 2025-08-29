@@ -2,7 +2,7 @@
 class_name CharacterCreation
 extends VBoxContainer
 
-signal character_created(characterprofile: CharacterProfile)
+signal character_created(character_profile: CharacterProfile)
 
 enum CreationStage {
 	ATTRIBUTES,
@@ -10,10 +10,7 @@ enum CreationStage {
 	DONE,
 }
 
-@export var _backgrounds: Array[Texture2D]
-
 @export_group("Configuration")
-@export var _stage: Stage
 @export var _attributes_roller: AttributesRoller
 @export var _origins_picker: OriginsPicker
 @export var _inventory: Inventory
@@ -79,13 +76,8 @@ func _on_continue_pressed() -> void:
 			_origins_picker.appear()
 			_inventory.appear()
 			_bio_editor.appear()
-			_deactivate_continue()
 		CreationStage.ORIGINS:
 			_creation_stage = _creation_stage + 1 as CreationStage
 			_character_confirmation.confirm()
 		CreationStage.DONE: _character_confirmation.confirm()
 		_: assert(false, "CreationStage %s not supported!" % _creation_stage)
-
-func _on_background_timer_timeout() -> void:
-	if _backgrounds.is_empty(): return
-	_stage.background = _backgrounds.pick_random()

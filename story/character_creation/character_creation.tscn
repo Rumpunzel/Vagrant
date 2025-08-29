@@ -1,17 +1,8 @@
-[gd_scene load_steps=16 format=3 uid="uid://cc3qx1qt3ie00"]
+[gd_scene load_steps=7 format=3 uid="uid://cc3qx1qt3ie00"]
 
 [ext_resource type="Script" uid="uid://lb6h1lmdmt18" path="res://story/character_creation/character_creation.gd" id="1_x4txh"]
 [ext_resource type="PackedScene" uid="uid://rhjhk5tcywjv" path="res://story/character_creation/attributes_roller.tscn" id="2_dbv81"]
-[ext_resource type="Texture2D" uid="uid://yiscdc14pxtb" path="res://assets/landscapes/dark_forest.png" id="3_5karf"]
-[ext_resource type="Texture2D" uid="uid://c56fr4gg3616i" path="res://assets/landscapes/tavern.png" id="3_5qsh5"]
-[ext_resource type="Texture2D" uid="uid://73v62w6fwsm8" path="res://assets/landscapes/castle.jpg" id="3_hvcdy"]
-[ext_resource type="Texture2D" uid="uid://dc4iirnu6n1q7" path="res://assets/landscapes/forest.jpg" id="4_gqnl0"]
-[ext_resource type="Texture2D" uid="uid://bbkefa2pm00ha" path="res://assets/landscapes/monument_tree.jpg" id="5_b7plt"]
 [ext_resource type="PackedScene" uid="uid://0mji1mdlk5op" path="res://story/character_creation/origins_picker.tscn" id="5_s0bgh"]
-[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://assets/landscapes/ruin.jpg" id="6_fixuy"]
-[ext_resource type="Texture2D" uid="uid://dmxhv3vydqpry" path="res://assets/landscapes/swamp.jpg" id="7_gbe42"]
-[ext_resource type="Texture2D" uid="uid://d2rojivoai6ui" path="res://assets/landscapes/waterfall.jpg" id="9_7l4gq"]
-[ext_resource type="Texture2D" uid="uid://i10g17t78dnu" path="res://assets/landscapes/wilderness_calm.jpg" id="10_junfj"]
 [ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://characters/character_sheet/inventory/inventory.tscn" id="15_b7plt"]
 [ext_resource type="PackedScene" uid="uid://p4lx6exsethc" path="res://story/character_creation/bio_editor.tscn" id="15_gqnl0"]
 [ext_resource type="PackedScene" uid="uid://djjmsn1ujgubu" path="res://story/character_creation/character_confirmation.tscn" id="17_fixuy"]
@@ -25,7 +16,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 32
 script = ExtResource("1_x4txh")
-_backgrounds = Array[Texture2D]([ExtResource("3_hvcdy"), ExtResource("3_5karf"), ExtResource("4_gqnl0"), ExtResource("5_b7plt"), ExtResource("6_fixuy"), ExtResource("7_gbe42"), ExtResource("3_5qsh5"), ExtResource("9_7l4gq"), ExtResource("10_junfj")])
 _attributes_roller = NodePath("HBoxContainer/Stats/AttributesRoller")
 _origins_picker = NodePath("HBoxContainer/Stats/OriginsPicker")
 _inventory = NodePath("HBoxContainer/Stats/Inventory")

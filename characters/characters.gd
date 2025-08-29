@@ -1,7 +1,7 @@
 class_name Characters
 extends Node
 
-signal characters_updated
+signal characters_updated(characters: Dictionary[CharacterProfile, Character])
 
 @export var _character: PackedScene
 
@@ -14,7 +14,7 @@ func create_character(character_profile: CharacterProfile) -> Character:
 	add_child(character)
 	character.character_profile = character_profile
 	characters[character_profile] = character
-	characters_updated.emit()
+	characters_updated.emit(characters)
 	return character
 
 func get_protagonist() -> Character:

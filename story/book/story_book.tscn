@@ -1,11 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=4 format=3 uid="uid://coh7y85ggx45i"]
 
 [ext_resource type="Script" uid="uid://bob1fhstr1o06" path="res://story/book/story_book.gd" id="1_cts4e"]
 [ext_resource type="PackedScene" uid="uid://cy2ymcfk2tejn" path="res://story/book/story_page_entry.tscn" id="2_x8uvv"]
-[ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage/stage.tscn" id="3_cnyp4"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="4_kbsk1"]
 
-[node name="StoryBook" type="VBoxContainer" node_paths=PackedStringArray("_stage", "_title", "_sub_title", "_story_pages", "_page_history")]
+[node name="StoryBook" type="VBoxContainer" node_paths=PackedStringArray("_title", "_sub_title", "_story_pages", "_page_history")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -19,14 +18,12 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 32
 script = ExtResource("1_cts4e")
-_stage = NodePath("Stage")
 _title = NodePath("MarginContainer/VBoxContainer/Title")
 _sub_title = NodePath("MarginContainer/VBoxContainer/Subtitle")
 _story_pages = NodePath("StoryPages")
 _page_history = NodePath("StoryPages/PanelContainer/ScrollContainer/MarginContainer/PageHistory")
 _story_page_entry = ExtResource("2_x8uvv")
-
-[node name="Stage" parent="." instance=ExtResource("3_cnyp4")]
+metadata/_custom_type_script = "uid://bob1fhstr1o06"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -71,6 +68,7 @@ size_flags_vertical = 3
 [node name="PanelContainer" type="PanelContainer" parent="StoryPages"]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
 
 [node name="ScrollContainer" type="ScrollContainer" parent="StoryPages/PanelContainer"]
 layout_mode = 2
@@ -84,5 +82,4 @@ size_flags_vertical = 3
 
 [node name="PageHistory" type="VBoxContainer" parent="StoryPages/PanelContainer/ScrollContainer/MarginContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_constants/separation = 24

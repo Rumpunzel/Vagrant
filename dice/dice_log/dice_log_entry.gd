@@ -21,7 +21,7 @@ func initialize_save_result(save_result: SaveResult) -> void:
 	_entry.type_text("%s: %s" % [attribute_prefix, message])
 
 func _get_attribute_prefix(character: Character, attribute: CharacterAttribute) -> String:
-	var hint: String = "%s: %d" % [attribute, character.get_attribute_score(attribute)]
+	var hint: String = "%s: %d" % [attribute, character.get_attribute_score(attribute).get_score()]
 	return "[hint=%s][%s][/hint]" % [hint, attribute]
 
 func _get_dice_results(save_result: SaveResult) -> String:

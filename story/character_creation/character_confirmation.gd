@@ -12,7 +12,7 @@ func _ready() -> void:
 
 func confirm() -> void:
 	popup_centered()
-	_name.grab_focus()
+	if _name.text.is_empty(): _name.grab_focus()
 
 func set_character_name(character_name: String) -> void:
 	_name.text = character_name

@@ -1,16 +1,25 @@
-[gd_scene load_steps=6 format=3 uid="uid://baflfbgcr5cbu"]
+[gd_scene load_steps=10 format=3 uid="uid://baflfbgcr5cbu"]
 
 [ext_resource type="Script" uid="uid://df2le2goabm8t" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage/stage.tscn" id="1_80nbo"]
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="1_feb5d"]
 [ext_resource type="Texture2D" uid="uid://c56fr4gg3616i" path="res://assets/landscapes/tavern.png" id="2_e2o6t"]
 [ext_resource type="Script" uid="uid://ff8rnwb5cmjw" path="res://characters/characters.gd" id="2_fc0e3"]
+[ext_resource type="Resource" uid="uid://dw1vkutmmhnao" path="res://story/adventures/test_adventure.tres" id="2_vef74"]
+[ext_resource type="PackedScene" uid="uid://cc3qx1qt3ie00" path="res://story/character_creation/character_creation.tscn" id="6_eow3j"]
+[ext_resource type="PackedScene" uid="uid://bl0pdxri24fnh" path="res://characters/character.tscn" id="6_j5wjh"]
+[ext_resource type="PackedScene" uid="uid://db6oui711vqep" path="res://story/adventure.tscn" id="7_j5wjh"]
 
-[node name="Game" type="Node" node_paths=PackedStringArray("_story", "_characters", "_game")]
+[node name="Game" type="Node" node_paths=PackedStringArray("_story", "_characters", "_stage", "_game")]
 script = ExtResource("1_7jktm")
+_default_adventure = ExtResource("2_vef74")
+_character_creation = ExtResource("6_eow3j")
+_adventure = ExtResource("7_j5wjh")
 _story = NodePath("Story")
 _characters = NodePath("Characters")
+_stage = NodePath("Stage")
 _game = NodePath("Game")
+metadata/_custom_type_script = "uid://df2le2goabm8t"
 
 [node name="Story" type="Node" parent="."]
 script = ExtResource("1_feb5d")
@@ -18,11 +27,11 @@ metadata/_custom_type_script = "uid://dccrmadulf3fx"
 
 [node name="Characters" type="Node" parent="."]
 script = ExtResource("2_fc0e3")
+_character = ExtResource("6_j5wjh")
 metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
 
-[node name="Stage" parent="." node_paths=PackedStringArray("_story") instance=ExtResource("1_80nbo")]
+[node name="Stage" parent="." instance=ExtResource("1_80nbo")]
 background = ExtResource("2_e2o6t")
-_story = NodePath("../Story")
 
 [node name="Game" type="MarginContainer" parent="."]
 anchors_preset = 15
