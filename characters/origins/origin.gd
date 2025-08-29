@@ -12,4 +12,4 @@ enum Type {
 @export var type: Type
 @export var color: Color
 @export_multiline var details: String
-@export_multiline var ability: String
+@export_multiline var abilities: Array[String]

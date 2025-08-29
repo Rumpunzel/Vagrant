@@ -8,7 +8,7 @@ var _current_adventure: Adventure
 var _current_adventure_tome: AdventureTome :
 	get: return _current_adventure.adventure_tome
 
-func start_adventure(characters: Characters, adventure: Adventure) -> void:
+func start_adventure(adventure: Adventure) -> void:
 	if _current_adventure != null:
 		print_debug("Trying to start an adventure while there is already an ongoing one!")
 		return

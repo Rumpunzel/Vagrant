@@ -27,7 +27,7 @@ func _enter_adventure(protagonist_profile: CharacterProfile) -> void:
 	adventure.story_book_page_entered.connect(_stage.set_story_page)
 	_game.add_child(adventure)
 	adventure.setup(_story, _characters, _default_adventure)
-	_story.start_adventure(_characters, adventure)
+	_story.start_adventure(adventure)
 
 func _clean_game() -> void:
 	while _game.get_child_count() > 0:

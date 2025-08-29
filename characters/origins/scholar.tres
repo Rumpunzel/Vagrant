@@ -9,7 +9,6 @@ name = "Scholar"
 icon = ExtResource("1_vh0is")
 type = 1
 color = Color(0, 0, 0, 1)
-details = "+4 expertise.
-+1 to all other expertises."
-ability = ""
+details = ""
+abilities = Array[String](["+4 expertise.", "+1 to all other expertises."])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

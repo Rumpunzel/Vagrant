@@ -10,6 +10,5 @@ icon = ExtResource("1_ppnlf")
 type = 0
 color = Color(0, 0, 0, 1)
 details = ""
-ability = "+1 weapon die.
-Double vantage against foes."
+abilities = Array[String](["+1 weapon die.", "Double vantage against foes."])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

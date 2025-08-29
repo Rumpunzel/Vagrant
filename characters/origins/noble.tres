@@ -10,5 +10,5 @@ icon = ExtResource("1_ur7u2")
 type = 1
 color = Color(0, 0, 0, 1)
 details = ""
-ability = "+3 company renown"
+abilities = Array[String](["+3 company renown"])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

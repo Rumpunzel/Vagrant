@@ -10,5 +10,5 @@ icon = ExtResource("1_luphl")
 type = 1
 color = Color(0, 0, 0, 1)
 details = ""
-ability = "Your other ability becomes a company ability."
+abilities = Array[String](["Your other ability becomes a company ability."])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

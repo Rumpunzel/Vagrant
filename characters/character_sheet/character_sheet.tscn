@@ -12,8 +12,8 @@ offset_bottom = 412.0
 script = ExtResource("1_uqhlh")
 _portrait = NodePath("Portrait")
 _name = NodePath("MarginContainer/VBoxContainer/Name")
-_attributes = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Attributes")
-_hit_dice = NodePath("MarginContainer/VBoxContainer/HitDice")
+_attributes = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/Attributes")
+_hit_dice = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HitDice")
 _ability_labels = NodePath("MarginContainer/VBoxContainer/AbilityLabels")
 
 [node name="Portrait" type="TextureRect" parent="."]
@@ -32,6 +32,7 @@ theme_override_constants/margin_bottom = 16
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
 visible = false
@@ -41,20 +42,23 @@ text = "Name"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Attributes" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer" instance=ExtResource("3_hgrxd")]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="HitDice" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
+[node name="Attributes" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer" instance=ExtResource("3_hgrxd")]
+layout_mode = 2
+
+[node name="HitDice" parent="MarginContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
 layout_mode = 2
 size_flags_vertical = 1
 
-[node name="Wounds" type="LineEdit" parent="MarginContainer/VBoxContainer"]
+[node name="Wounds" type="LineEdit" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 placeholder_text = "Wounds"
 alignment = 1

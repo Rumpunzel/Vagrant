@@ -10,6 +10,5 @@ icon = ExtResource("1_l3qjt")
 type = 0
 color = Color(0, 0, 0, 1)
 details = ""
-ability = "Feats of strength go unanswered.
-When you pass a Guts save, regain 1 breath die."
+abilities = Array[String](["Feats of strength go unanswered.", "When you pass a Guts save, regain 1 breath die."])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

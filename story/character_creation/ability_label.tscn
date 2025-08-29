@@ -3,14 +3,13 @@
 [ext_resource type="Script" uid="uid://b1pn3swob1ayj" path="res://story/character_creation/ability_label.gd" id="1_a44ll"]
 [ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="2_rc6wx"]
 
-[node name="AbilityLabel" type="PanelContainer" node_paths=PackedStringArray("_icon", "_name", "_label")]
-offset_right = 280.0
-offset_bottom = 157.0
+[node name="AbilityLabel" type="PanelContainer" node_paths=PackedStringArray("_icon", "_name", "_abilities")]
+offset_right = 310.0
+offset_bottom = 165.0
 script = ExtResource("1_a44ll")
-_placeholder = "[color=gray]You did not choose your kin.[/color]"
 _icon = NodePath("Icon")
 _name = NodePath("MarginContainer/VBoxContainer/Name")
-_label = NodePath("MarginContainer/VBoxContainer/Label")
+_abilities = NodePath("MarginContainer/VBoxContainer/Abilities")
 metadata/_custom_type_script = "uid://b1pn3swob1ayj"
 
 [node name="Icon" type="TextureRect" parent="."]
@@ -25,6 +24,7 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 12
 
 [node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -33,11 +33,7 @@ text = "Origin"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="Abilities" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-bbcode_enabled = true
-text = "[color=gray]You did not choose your kin.[/color]"
-fit_content = true
-horizontal_alignment = 1
-vertical_alignment = 1
+size_flags_vertical = 6
+theme_override_constants/separation = 8

@@ -10,6 +10,5 @@ icon = ExtResource("1_6a56u")
 type = 0
 color = Color(0, 0, 0, 1)
 details = ""
-ability = "All supplies.
-Another ability"
+abilities = Array[String](["All supplies.", "Another ability"])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"
