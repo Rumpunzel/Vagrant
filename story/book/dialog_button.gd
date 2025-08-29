@@ -70,6 +70,8 @@ func _get_index_font_color() -> Color:
 	elif button_pressed:
 		if _hovered: index_color = get_theme_color("font_hover_pressed_color")
 		else: index_color = get_theme_color("font_pressed_color")
+	elif _story.get_how_often_decision_has_been_made(story_decision) > 0:
+		index_color = get_theme_color("font_disabled_color")
 	elif _hovered: index_color = get_theme_color("font_hover_color")
 	elif has_focus(): index_color = get_theme_color("font_focus_color")
 	return index_color

@@ -84,16 +84,17 @@ unicode = 48
 events = [SubResource("InputEventKey_glou3")]
 
 [node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
-visible = false
-custom_minimum_size = Vector2(45, 514)
+custom_minimum_size = Vector2(45, 31)
 offset_right = 333.0
-offset_bottom = 31.0
+offset_bottom = 514.0
+shortcut = SubResource("Shortcut_4452u")
 flat = true
 script = ExtResource("1_smxr3")
 _container = NodePath("MarginContainer")
 _index = NodePath("MarginContainer/HBoxContainer/Index")
 _description = NodePath("MarginContainer/HBoxContainer/Description")
 _shortcuts = Array[Shortcut]([SubResource("Shortcut_4452u"), SubResource("Shortcut_fg3ec"), SubResource("Shortcut_5aiqg"), SubResource("Shortcut_ypkvd"), SubResource("Shortcut_o3aia"), SubResource("Shortcut_jht22"), SubResource("Shortcut_2q0j8"), SubResource("Shortcut_giagg"), SubResource("Shortcut_uumch"), SubResource("Shortcut_akluy")])
+metadata/_custom_type_script = "uid://1rnnvyy1byjt"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -131,6 +132,7 @@ text = "Hide in the shipwreck."
 fit_content = true
 scroll_active = false
 script = ExtResource("2_g8jf2")
+metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
 [connection signal="button_down" from="." to="." method="_update_font_colors"]
 [connection signal="button_up" from="." to="." method="_update_font_colors"]
