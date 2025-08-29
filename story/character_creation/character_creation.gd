@@ -33,6 +33,9 @@ func _ready() -> void:
 	_deactivate_continue()
 	_attributes_roller.setup()
 
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event.is_action_released("debug_restart"): get_tree().reload_current_scene()
+
 func _activate_continue() -> void:
 	_continue.disabled = false
 	_continue.focus_mode = Control.FOCUS_ALL

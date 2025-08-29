@@ -1,12 +1,44 @@
-[gd_scene load_steps=8 format=3 uid="uid://p4lx6exsethc"]
+[gd_scene load_steps=16 format=3 uid="uid://p4lx6exsethc"]
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
 [ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
-[ext_resource type="Texture2D" uid="uid://l7mml7i6dump" path="res://story/portraits/HE-RO-RT-M104/Fulllength.png" id="2_k6q65"]
+[ext_resource type="Texture2D" uid="uid://b0v3jfcmnfmwp" path="res://story/portraits/HE-BA-BR-M111/Fulllength.png" id="2_k6q65"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
 [ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/user_interface/hover_button.gd" id="3_c7qpy"]
 [ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="4_1khh3"]
 [ext_resource type="Texture2D" uid="uid://k8k7mhb6md3e" path="res://icons/editor/card-random.svg" id="6_c7qpy"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_puilj"]
+device = -1
+keycode = 65
+unicode = 97
+
+[sub_resource type="InputEventKey" id="InputEventKey_gdvnu"]
+device = -1
+keycode = 4194319
+
+[sub_resource type="Shortcut" id="Shortcut_3p0bc"]
+events = [SubResource("InputEventKey_puilj"), SubResource("InputEventKey_gdvnu")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_dekt0"]
+device = -1
+keycode = 68
+unicode = 100
+
+[sub_resource type="InputEventKey" id="InputEventKey_xbko4"]
+device = -1
+keycode = 4194321
+
+[sub_resource type="Shortcut" id="Shortcut_nu3qc"]
+events = [SubResource("InputEventKey_dekt0"), SubResource("InputEventKey_xbko4")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_k6q65"]
+device = -1
+keycode = 82
+unicode = 114
+
+[sub_resource type="Shortcut" id="Shortcut_puilj"]
+events = [SubResource("InputEventKey_k6q65")]
 
 [node name="BioEditor" type="VBoxContainer" node_paths=PackedStringArray("_name", "_portrait", "_sex_button", "_random_button")]
 offset_right = 480.0
@@ -77,6 +109,7 @@ size_flags_stretch_ratio = 2.0
 [node name="Previous" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
 layout_mode = 2
 size_flags_horizontal = 3
+shortcut = SubResource("Shortcut_3p0bc")
 icon = ExtResource("2_furgd")
 flat = true
 expand_icon = true
@@ -87,6 +120,7 @@ metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 [node name="Next" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
 layout_mode = 2
 size_flags_horizontal = 3
+shortcut = SubResource("Shortcut_nu3qc")
 icon = ExtResource("4_1khh3")
 flat = true
 expand_icon = true
@@ -98,6 +132,7 @@ metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 layout_mode = 2
 size_flags_vertical = 3
 tooltip_text = "63 Portraits"
+shortcut = SubResource("Shortcut_puilj")
 icon = ExtResource("6_c7qpy")
 flat = true
 icon_alignment = 1
