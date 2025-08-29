@@ -28,9 +28,10 @@ func _clear() -> void:
 
 func _add(ability: String) -> void:
 	var label: RichTextLabel = RichTextLabel.new()
-	label.text = ability
+	label.bbcode_enabled = true
 	label.fit_content = true
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	label.text = ability
 	_abilities.add_child(label)

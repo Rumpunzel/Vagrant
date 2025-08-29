@@ -5,7 +5,7 @@ extends Resource
 @export var portrait: Texture2D = preload("res://assets/portraits/knight.jpeg")
 
 ## The character's attribute scores. Will be rolled with 2d6 if null.
-@export var attribute_scores: Dictionary[CharacterAttribute, AttributeScore] = {
+@export var base_attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore] = {
 	Rules.STRENGTH: null,
 	Rules.AGILITY: null,
 	Rules.INTELLIGENCE: null,
@@ -24,13 +24,23 @@ extends Resource
 func _init(
 	new_name: String,
 	new_portrait: Texture2D,
-	new_attribute_scores: Dictionary[CharacterAttribute, AttributeScore],
+	new_base_attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore],
 	new_origins: Array[Origin],
 ) -> void:
 	name = new_name
 	portrait = new_portrait
-	attribute_scores = new_attribute_scores
+	base_attribute_scores = new_base_attribute_scores
 	origins = new_origins
+
+func get_attribute_scores() -> Dictionary[CharacterAttribute, AttributeScore]:
+	var attibute_scores: Dictionary[CharacterAttribute, AttributeScore] = {}
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
+		var modifiers: Array[AttributeScore.Modifier] = []
+		for origin: Origin in origins:
+			modifiers.append_array(origin.get_attribute_score_modifiers())
+		attibute_scores[attribute] = AttributeScore.create_with_modifiers(attribute, base_attribute_scores[attribute], modifiers)
+	assert(attibute_scores.size() == Rules.ATTRIBUTES.size())
+	return attibute_scores
 
 func get_breath_dice() -> Array[Die]:
 	return DiceRoller.generate_dice_pool(_breath_dice)

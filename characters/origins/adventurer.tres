@@ -1,7 +1,21 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://ciavtykggnu43"]
+[gd_resource type="Resource" script_class="Origin" load_steps=9 format=3 uid="uid://ciavtykggnu43"]
 
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="1_khty3"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_vwydo"]
+[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/attribute_score_modifier.gd" id="2_xg6bx"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="3_lle2d"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="4_i5qiv"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="5_o65md"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="6_slfn3"]
+
+[sub_resource type="Resource" id="Resource_0okdk"]
+script = ExtResource("2_xg6bx")
+score_modifiers = Dictionary[ExtResource("3_lle2d"), int]({
+ExtResource("4_i5qiv"): 1,
+ExtResource("5_o65md"): 1,
+ExtResource("6_slfn3"): 1
+})
+metadata/_custom_type_script = "uid://dsrjqjh4js5i5"
 
 [resource]
 script = ExtResource("1_vwydo")
@@ -11,4 +25,5 @@ type = 0
 color = Color(0, 0, 0, 1)
 details = ""
 abilities = Array[String](["+1 to all attributes."])
+modifiers = Array[ExtResource("2_xg6bx")]([SubResource("Resource_0okdk")])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

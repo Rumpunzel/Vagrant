@@ -22,7 +22,7 @@ var _creation_stage: CreationStage = CreationStage.ATTRIBUTES
 
 var _name: String
 var _portrait: Texture2D
-var _attribute_scores: Dictionary[CharacterAttribute, AttributeScore]
+var _attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore]
 var _origins: Array[Origin] = []
 
 func _ready() -> void:
@@ -42,20 +42,24 @@ func _deactivate_continue() -> void:
 	_continue.disabled = true
 	_continue.focus_mode = Control.FOCUS_NONE
 
-func _on_attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, AttributeScore]) -> void:
+func _get_attribute_modifiers() -> Array[AttributeScore.Modifier]:
+	var modifiers: Array[AttributeScore.Modifier] = []
+	for origin: Origin in _origins:
+		modifiers.append_array(origin.get_attribute_score_modifiers())
+	return modifiers
+
+func _on_attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore]) -> void:
 	_attribute_scores = attribute_scores
-	var doubles_rolled: int = 0
-	for attribute_score: AttributeScore in _attribute_scores.values():
-		if attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
-	_origins_picker.setup(doubles_rolled)
 	_activate_continue()
 
 func _on_origins_picked(origins: Array[Origin]) -> void:
 	_origins = origins
+	_attributes_roller.update_modifiers(_get_attribute_modifiers())
 	_activate_continue()
 
 func _on_origins_unpicked() -> void:
 	_origins = []
+	_attributes_roller.update_modifiers(_get_attribute_modifiers())
 	_deactivate_continue()
 
 func _on_details_changed(character_name: String, portrait: Texture2D) -> void:
@@ -72,6 +76,10 @@ func _on_continue_pressed() -> void:
 	match _creation_stage:
 		CreationStage.ATTRIBUTES:
 			_creation_stage = _creation_stage + 1 as CreationStage
+			var doubles_rolled: int = 0
+			for attribute_score: BaseAttributeScore in _attribute_scores.values():
+				if attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
+			_origins_picker.setup(doubles_rolled)
 			_attributes_roller.collapse()
 			_origins_picker.appear()
 			_inventory.appear()

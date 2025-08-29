@@ -8,4 +8,4 @@ script = ExtResource("1_3pd1w")
 descriptor = "Blood"
 icon = ExtResource("1_oehal")
 color = Color(0.705882, 0.0470588, 0.0470588, 1)
-details = "Resist with speed, reflexes, and prowess."
+details = "Speed, reflexes, and prowess."

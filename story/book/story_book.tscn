@@ -35,6 +35,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 45)
 layout_mode = 2
 focus_mode = 2
+theme_type_variation = &"HeaderLarge"
 theme_override_constants/shadow_outline_size = 4
 theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true

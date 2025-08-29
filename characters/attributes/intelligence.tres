@@ -8,4 +8,4 @@ script = ExtResource("1_wgpsi")
 descriptor = "Nerves"
 icon = ExtResource("1_rkmxj")
 color = Color(1, 0.976471, 0.976471, 1)
-details = "Resist with precision, composure, and stealth."
+details = "Precision, composure, and stealth."

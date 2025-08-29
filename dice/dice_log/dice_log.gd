@@ -1,3 +1,4 @@
+class_name DiceLog
 extends PanelContainer
 
 signal entry_added(entry: Control)

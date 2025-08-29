@@ -84,6 +84,7 @@ func _override_oldest_origin(origin: Origin) -> void:
 	_origins_list.deselect(_origin_indexes[oldest_origin])
 	_selected_origins.push_back(origin)
 	_selected_origins.sort_custom(func(first: Origin, second: Origin) -> bool: return first != null and second == null)
+	if _is_ready(): origins_picked.emit(_selected_origins)
 
 func _is_ready() -> bool:
 	for type: Origin.Type in Origin.Type.values():

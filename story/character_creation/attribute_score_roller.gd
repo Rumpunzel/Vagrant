@@ -2,7 +2,7 @@
 class_name AttributeScoreRoller
 extends PanelContainer
 
-signal attribute_score_rolled(attribute: CharacterAttribute, attribute_score: AttributeScore)
+signal attribute_score_rolled(attribute: CharacterAttribute, attribute_score: BaseAttributeScore)
 
 @export_group("Configuration")
 @export var _icon: TextureRect
@@ -10,7 +10,7 @@ signal attribute_score_rolled(attribute: CharacterAttribute, attribute_score: At
 @export var _descriptor: Label
 @export var _details: RichTextLabel
 @export var _color: ColorRect
-@export var _score: Label
+@export var _score: RichTextLabel
 
 var attribute: CharacterAttribute :
 	set(new_attribute):
@@ -21,15 +21,27 @@ var attribute: CharacterAttribute :
 		_color.color = attribute.color
 		tooltip_text = attribute.details
 
-var score: AttributeScore :
+var score: BaseAttributeScore :
 	set(new_score):
 		score = new_score
-		_score.text = "[ %s ] = %d" % [score.get_dice(), score.get_score()]
 		if score.get_type() == AttributeScore.Type.DOUBLE: _set_font_colors(Color.GOLD)
 		_button.disabled = true  
+		update()
+
+var modifiers: Array[AttributeScore.Modifier] = [] :
+	set(new_modifiers):
+		modifiers = new_modifiers
+		update()
 
 func _ready() -> void:
 	if not get_viewport().gui_get_focus_owner(): _button.grab_focus()
+
+func update() -> void:
+	var attribute_score: AttributeScore = _get_attribute_score()
+	_score.text = "%s = %d" % [attribute_score.get_details(), attribute_score.get_score()]
+
+func _get_attribute_score() -> AttributeScore:
+	return AttributeScore.create_with_modifiers(attribute, score, modifiers)
 
 func _set_font_colors(color: Color) -> void:
 	_score.add_theme_color_override("font_color", color)

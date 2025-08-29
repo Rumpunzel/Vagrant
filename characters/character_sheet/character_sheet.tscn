@@ -15,6 +15,7 @@ _name = NodePath("MarginContainer/VBoxContainer/Name")
 _attributes = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/Attributes")
 _hit_dice = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HitDice")
 _ability_labels = NodePath("MarginContainer/VBoxContainer/AbilityLabels")
+metadata/_custom_type_script = "uid://dkwi26f6nf1xj"
 
 [node name="Portrait" type="TextureRect" parent="."]
 show_behind_parent = true

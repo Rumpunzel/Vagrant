@@ -24,6 +24,7 @@ current_tab = 0
 drag_to_rearrange_enabled = true
 script = ExtResource("3_4lj7w")
 _character_sheet = ExtResource("4_2poxt")
+metadata/_custom_type_script = "uid://dlr4addkwoige"
 
 [node name="CharacterSheet" parent="CharacterSheets" instance=ExtResource("4_2poxt")]
 layout_mode = 2

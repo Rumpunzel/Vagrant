@@ -6,7 +6,7 @@ extends PanelContainer
 @export var _color: ColorRect
 @export var _icon: TextureRect
 @export var _descriptor: Label
-@export var _score: Label
+@export var _score: RichTextLabel
 
 var attribute: CharacterAttribute :
 	set(new_attribute):
@@ -19,4 +19,4 @@ var score: AttributeScore :
 	set(new_score):
 		score = new_score
 		_score.text = "%d" % score.get_score()
-		tooltip_text = "[ %s ]" % score.get_dice()
+		_score.tooltip_text = score.get_details()

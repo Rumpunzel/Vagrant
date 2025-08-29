@@ -8,10 +8,10 @@ offset_right = 259.0
 offset_bottom = 73.0
 size_flags_horizontal = 3
 script = ExtResource("1_2xwy7")
-_color = NodePath("MarginContainer/VBoxContainer/ColorRect")
+_color = NodePath("VBoxContainer/ColorRect")
 _icon = NodePath("Icon")
-_descriptor = NodePath("MarginContainer/VBoxContainer/Descriptor")
-_score = NodePath("MarginContainer/VBoxContainer/Score")
+_descriptor = NodePath("VBoxContainer/MarginContainer/Descriptor")
+_score = NodePath("VBoxContainer/MarginContainer2/PanelContainer/MarginContainer/Score")
 metadata/_custom_type_script = "uid://c071oa3mjavbs"
 
 [node name="Icon" type="TextureRect" parent="."]
@@ -22,30 +22,39 @@ texture = ExtResource("2_dl4v5")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 2
-theme_override_constants/margin_left = 2
-theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 2
-theme_override_constants/margin_bottom = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 0
 
-[node name="Descriptor" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
-text = "Muscle"
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer2"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer2/PanelContainer"]
+layout_mode = 2
+
+[node name="Score" type="RichTextLabel" parent="VBoxContainer/MarginContainer2/PanelContainer/MarginContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+bbcode_enabled = true
+text = "-"
+fit_content = true
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer"]
+[node name="ColorRect" type="ColorRect" parent="VBoxContainer"]
 custom_minimum_size = Vector2(4, 4)
 layout_mode = 2
 
-[node name="Score" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
-theme_type_variation = &"HeaderLarge"
-text = "-"
+
+[node name="Descriptor" type="Label" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+text = "Muscle"
 horizontal_alignment = 1
 vertical_alignment = 1
