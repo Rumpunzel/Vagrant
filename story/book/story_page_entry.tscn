@@ -8,7 +8,7 @@
 
 [node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]
 offset_right = 641.0
-offset_bottom = 182.0
+offset_bottom = 260.0
 size_flags_vertical = 3
 script = ExtResource("1_xif0c")
 _background = NodePath("Background")
@@ -17,6 +17,7 @@ _choices = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Choices")
 _hit_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/HitDiceSelection")
 _hit_dice_selection_cc = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
 _dialog_button = ExtResource("2_6tquj")
+metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
 
 [node name="Background" type="TextureRect" parent="."]
 visible = false
@@ -41,7 +42,6 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 16
 
 [node name="Description" type="RichTextLabel" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 2
 bbcode_enabled = true
@@ -51,9 +51,9 @@ fit_content = true
 scroll_active = false
 selection_enabled = true
 script = ExtResource("3_pf20m")
+metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
 [node name="Choices" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 2
@@ -65,7 +65,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(392, 126)
+custom_minimum_size = Vector2(392, 204)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -75,9 +75,9 @@ folding_direction_preset = 10
 sizing_constraint = 1
 auto_update_size = 1
 sizing_node = NodePath("HitDiceSelection")
+metadata/_custom_type_script = "uid://ral4tq3ea3w4"
 
 [node name="HitDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("5_15pgc")]
-unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0

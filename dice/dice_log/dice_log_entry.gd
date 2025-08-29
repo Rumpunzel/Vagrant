@@ -9,11 +9,11 @@ func initialize_die_result(die: Die) -> void:
 
 func initialize_save_request(save_request: SaveRequest) -> void:
 	var attribute_prefix: String = _get_attribute_prefix(save_request.character, save_request.attribute)
-	_entry.type_text("%s: Choose Hit Dice…" % attribute_prefix)
+	_entry.type_text("%s: Choose Breath Dice…" % attribute_prefix)
 
 func initialize_save_result(save_result: SaveResult) -> void:
 	var attribute_prefix: String = _get_attribute_prefix(save_result.character, save_result.attribute)
-	var message: String = "No Hit Dice!"
+	var message: String = "No Breath Dice!"
 	if not save_result.highest_dice.is_empty():
 		var dice_results: String = _get_dice_results(save_result)
 		var difficulty: String = _get_difficulty(save_result)
@@ -22,7 +22,7 @@ func initialize_save_result(save_result: SaveResult) -> void:
 
 func _get_attribute_prefix(character: Character, attribute: CharacterAttribute) -> String:
 	var hint: String = "%s: %d" % [attribute, character.get_attribute_score(attribute).get_score()]
-	return "[hint=%s][%s][/hint]" % [hint, attribute]
+	return "[hint=%s][color=#%s][%s][/color][/hint]" % [hint, attribute.color.to_html(), attribute]
 
 func _get_dice_results(save_result: SaveResult) -> String:
 	var dice_results: String = ""

@@ -20,7 +20,6 @@ metadata/_custom_type_script = "uid://7mksap2q7pd0"
 layout_mode = 2
 
 [node name="HitDiceButtons" type="HBoxContainer" parent="MarginContainer"]
-unique_name_in_owner = true
 layout_mode = 2
 
 [node name="d4" parent="MarginContainer/HitDiceButtons" instance=ExtResource("2_3dl60")]
