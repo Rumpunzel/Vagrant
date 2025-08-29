@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://1ps6colw5iqa"]
+[gd_scene load_steps=4 format=3 uid="uid://1ps6colw5iqa"]
 
 [ext_resource type="Script" uid="uid://c071oa3mjavbs" path="res://characters/character_sheet/character_sheet_attribute_score.gd" id="1_2xwy7"]
 [ext_resource type="Texture2D" uid="uid://b63k46cjhugpr" path="res://icons/old_dice/dead-eye.png" id="2_dl4v5"]
+[ext_resource type="Script" uid="uid://coqwnstoj346c" path="res://addons/tooltips_pro/scripts/tooltip_trigger.gd" id="3_ktfhn"]
 
-[node name="AttributeScore" type="PanelContainer" node_paths=PackedStringArray("_color", "_icon", "_descriptor", "_score")]
+[node name="AttributeScore" type="PanelContainer" node_paths=PackedStringArray("_color", "_icon", "_descriptor", "_score", "_tooltip_trigger")]
 offset_right = 259.0
 offset_bottom = 73.0
 size_flags_horizontal = 3
@@ -12,6 +13,7 @@ _color = NodePath("VBoxContainer/ColorRect")
 _icon = NodePath("Icon")
 _descriptor = NodePath("VBoxContainer/MarginContainer/Descriptor")
 _score = NodePath("VBoxContainer/MarginContainer2/PanelContainer/MarginContainer/Score")
+_tooltip_trigger = NodePath("VBoxContainer/MarginContainer2/PanelContainer")
 metadata/_custom_type_script = "uid://c071oa3mjavbs"
 
 [node name="Icon" type="TextureRect" parent="."]
@@ -32,16 +34,21 @@ layout_mode = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer2"]
 layout_mode = 2
+script = ExtResource("3_ktfhn")
+origin = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer2/PanelContainer"]
 layout_mode = 2
 
 [node name="Score" type="RichTextLabel" parent="VBoxContainer/MarginContainer2/PanelContainer/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"HeaderLarge"
 bbcode_enabled = true
 text = "-"
 fit_content = true
+scroll_active = false
+autowrap_mode = 0
 horizontal_alignment = 1
 vertical_alignment = 1
 
