@@ -37,7 +37,6 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Score" type="RichTextLabel" parent="VBoxContainer/MarginContainer2/PanelContainer/MarginContainer"]
-custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 theme_type_variation = &"HeaderLarge"
 bbcode_enabled = true

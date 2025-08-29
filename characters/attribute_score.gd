@@ -43,7 +43,7 @@ func get_details(icon_size: int = 32) -> String:
 	return details % [base.get_dice() if base else "-", "uid://dpmwlpo7a7q1r", " ".join(modifiers_details)]
 
 func get_type() -> Type:
-	return base.get_type()
+	return base.get_type() if base else Type.NORMAL
 
 class Modifier extends RefCounted:
 	var modifier: AttributeScoreModifier
