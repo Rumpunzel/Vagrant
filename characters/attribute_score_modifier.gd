@@ -15,8 +15,7 @@ func get_details(attribute: CharacterAttribute, source: Origin, icon_size: int) 
 	if score_modifier > 0: details += "+ [color=green]"
 	elif score_modifier == 0: details += "+ "
 	else: details += "- [color=red]"
-	
 	details += "%d" % score_modifier
-	if source.icon: details += "[img=%dx%d,center,center]%s[/img]" % [icon_size, icon_size, source.icon.resource_path]
 	if score_modifier != 0: details += "[/color]"
+	if source.icon: details += "[img=%dx%d,center,center]%s[/img]" % [icon_size, icon_size, source.icon.resource_path]
 	return details

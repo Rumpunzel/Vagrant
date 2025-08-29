@@ -34,7 +34,7 @@ func setup(rare_options: int) -> void:
 		if origin.type == Origin.Type.RARE: _origins_list.set_item_icon_modulate(origin_index, Color.GOLD)
 	# Pick random origins
 	while _selected_origins.has(null):
-		var origin_index: int = randi_range(0, _origins_list.item_count)
+		var origin_index: int = randi_range(0, _origins_list.item_count - 1)
 		var random_origin: Origin = _origins_list.get_item_metadata(origin_index)
 		if _selected_origins.has(random_origin) or not _is_available(random_origin.type): continue
 		_origins_list.select(origin_index, false)
