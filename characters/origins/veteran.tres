@@ -11,5 +11,5 @@ type = 0
 color = Color(0, 0, 0, 1)
 details = ""
 ability = "+1 weapon die.
-Double all vantage you gain against foes."
+Double vantage against foes."
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

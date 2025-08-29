@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://cjdgl0lvge2cl"]
+
+[ext_resource type="Script" uid="uid://bv86opi5sjoo" path="res://characters/character_sheet/ability_labels.gd" id="1_wctj3"]
+[ext_resource type="PackedScene" uid="uid://bsirn3lij5psg" path="res://story/character_creation/ability_label.tscn" id="2_we4xw"]
+
+[node name="AbilityLabels" type="VBoxContainer"]
+script = ExtResource("1_wctj3")
+_ability_label = ExtResource("2_we4xw")
+metadata/_custom_type_script = "uid://bv86opi5sjoo"

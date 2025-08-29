@@ -1,11 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://14h1hukjjol7"]
+[gd_scene load_steps=6 format=3 uid="uid://14h1hukjjol7"]
 
 [ext_resource type="Script" uid="uid://dkwi26f6nf1xj" path="res://characters/character_sheet/character_sheet.gd" id="1_uqhlh"]
 [ext_resource type="Texture2D" uid="uid://pla8unhxi8j7" path="res://story/portraits/HE-MF-DW-F104/Fulllength.png" id="2_sp54v"]
 [ext_resource type="PackedScene" uid="uid://dgk1ipqq2uypw" path="res://characters/character_sheet/attributes.tscn" id="3_hgrxd"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection/hit_dice_selection_buttons.tscn" id="4_gaha4"]
+[ext_resource type="PackedScene" uid="uid://cjdgl0lvge2cl" path="res://characters/character_sheet/ability_labels.tscn" id="5_davb4"]
 
-[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_attributes", "_hit_dice")]
+[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_attributes", "_hit_dice", "_ability_labels")]
 offset_right = 412.0
 offset_bottom = 412.0
 script = ExtResource("1_uqhlh")
@@ -13,6 +14,7 @@ _portrait = NodePath("Portrait")
 _name = NodePath("MarginContainer/VBoxContainer/Name")
 _attributes = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Attributes")
 _hit_dice = NodePath("MarginContainer/VBoxContainer/HitDice")
+_ability_labels = NodePath("MarginContainer/VBoxContainer/AbilityLabels")
 
 [node name="Portrait" type="TextureRect" parent="."]
 show_behind_parent = true
@@ -56,3 +58,7 @@ size_flags_vertical = 1
 layout_mode = 2
 placeholder_text = "Wounds"
 alignment = 1
+
+[node name="AbilityLabels" parent="MarginContainer/VBoxContainer" instance=ExtResource("5_davb4")]
+layout_mode = 2
+size_flags_vertical = 3

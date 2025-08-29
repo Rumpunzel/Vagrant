@@ -10,7 +10,8 @@ extends Resource
 	Rules.AGILITY: null,
 	Rules.INTELLIGENCE: null,
 }
-@export var test: AttributeScore
+
+@export var origins: Array[Origin]
 
 @export var _breath_dice: Dictionary[DieType, int] = {
 	Rules.d4: 1,
@@ -20,10 +21,16 @@ extends Resource
 	Rules.d12: 1,
 }
 
-func _init(new_name: String, new_portrait: Texture2D, new_attribute_scores: Dictionary[CharacterAttribute, AttributeScore]) -> void:
+func _init(
+	new_name: String,
+	new_portrait: Texture2D,
+	new_attribute_scores: Dictionary[CharacterAttribute, AttributeScore],
+	new_origins: Array[Origin],
+) -> void:
 	name = new_name
 	portrait = new_portrait
 	attribute_scores = new_attribute_scores
+	origins = new_origins
 
 func get_breath_dice() -> Array[Die]:
 	return DiceRoller.generate_dice_pool(_breath_dice)

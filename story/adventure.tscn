@@ -19,6 +19,7 @@ metadata/_custom_type_script = "uid://cjud36jst3ajk"
 
 [node name="CharacterSheets" type="TabContainer" parent="."]
 layout_mode = 2
+tab_alignment = 1
 current_tab = 0
 script = ExtResource("3_4lj7w")
 _character_sheet = ExtResource("4_2poxt")
@@ -45,7 +46,7 @@ layout_mode = 2
 metadata/_tab_index = 0
 
 [node name="DiceLog" parent="Game/GameInfo/DiceLog" instance=ExtResource("6_hg7gt")]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 
 [connection signal="page_entered" from="Game/StoryBook" to="." method="_on_story_book_page_entered"]

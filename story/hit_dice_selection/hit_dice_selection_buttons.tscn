@@ -14,6 +14,7 @@ offset_bottom = 125.0
 size_flags_vertical = 3
 script = ExtResource("1_0p7wt")
 _hit_dice_buttons = NodePath("MarginContainer/HitDiceButtons")
+metadata/_custom_type_script = "uid://7mksap2q7pd0"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
