@@ -34,7 +34,7 @@ func show_icon(color_modulate: Color = _modulate) -> void:
 func hide_icon() -> void:
 	icon = null
 	modulate = _modulate
-	release_focus()
+	if is_inside_tree() and has_focus(): release_focus()
 
 func get_state() -> State:
 	return State.SHOWING if icon else State.HIDDEN

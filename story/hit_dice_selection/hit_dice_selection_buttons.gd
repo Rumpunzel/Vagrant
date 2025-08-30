@@ -1,18 +1,16 @@
 class_name HitDiceSelectionButtons
 extends PanelContainer
 
-@export var _display_results: HitDieSelectionButton.DisplayResults = HitDieSelectionButton.DisplayResults.NEVER
-
 @export_group("Configuration")
 @export var _hit_dice_buttons: Container
 
 func update_hit_dice(available_hit_dice: Array[Die]) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():
-		button_group.update_hit_dice(available_hit_dice, _display_results)
+		button_group.update_hit_dice(available_hit_dice)
 
 func update_save_result(save_result: SaveResult) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():
-		button_group.update_save_result(save_result, _display_results)
+		button_group.update_save_result(save_result)
 
 func select_all_available_buttons(select_buttons: bool = true) -> void:
 	for button_group: HitDiceSelectionButtonGroup in _get_hit_dice_button_groups():

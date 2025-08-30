@@ -29,7 +29,7 @@ func enter_page(story: Story, characters: Characters, new_story_page: StoryPage)
 	_story.decision_made.connect(_on_decision_made)
 
 func _exit_tree() -> void:
-	if _story.decision_made.is_connected(_on_decision_made): _story.decision_made.disconnect(_on_decision_made)
+	if _story and _story.decision_made.is_connected(_on_decision_made): _story.decision_made.disconnect(_on_decision_made)
 
 func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for dialog_button: DialogButton in _choices.get_children():

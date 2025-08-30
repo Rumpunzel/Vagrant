@@ -1,12 +1,8 @@
+@tool
 class_name HitDieSelectionButton
 extends DisplayButton
 
 signal changed_disabled(disabled: bool)
-
-enum DisplayResults {
-	NEVER,
-	ALWAYS,
-}
 
 var die: Die :
 	set(new_die):
@@ -17,14 +13,12 @@ var die: Die :
 		_on_die_changed(die)
 		_on_toggled(button_pressed)
 
-var display_results: DisplayResults = DisplayResults.NEVER
-
 func update_for_save_result(save_result: SaveResult) -> void:
 	if not save_result:
 		text = ""
 		_remove_font_colors()
 		return
-	if not display_results or not die.is_selected(): return
+	if not die.is_selected(): return
 	text = "%d" % die.result
 	_set_font_colors(save_result.get_die_color(die))
 
@@ -58,9 +52,7 @@ func _on_die_changed(new_die: Die) -> void:
 	changed_disabled.emit(disabled)
 
 func _on_die_save_selection_changed(die_state: Die.State) -> void:
-	active = die_state >= Die.State.ARMED
 	button_pressed = die_state >= Die.State.SELECTED
 
 func _on_toggled(toggled_on: bool) -> void:
-	if not die.is_armed(): return
-	die.state = Die.State.SELECTED if toggled_on else Die.State.ARMED
+	die.state = Die.State.SELECTED if toggled_on else Die.State.ALIVE

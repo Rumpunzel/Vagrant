@@ -8,9 +8,7 @@ enum State {
 	LOST = -8,
 	EXHAUSTED = -1,
 	ALIVE,
-	# If the die could be put into a dice pool
-	ARMED = 8,
-	SELECTED = 16,
+	SELECTED,
 }
 
 @export var die_type: DieType
@@ -35,7 +33,7 @@ func roll_save(attribute_score: int, play_sound: bool = true) -> int:
 
 func update_state(attribute_score: AttributeScore) -> void:
 	if not is_alive(): return
-	state = State.SELECTED if attribute_score.get_score() >= die_type.faces else State.ARMED
+	state = State.SELECTED if attribute_score.get_score() >= die_type.faces else State.ALIVE
 
 func deselect() -> void:
 	if not is_alive(): return
@@ -43,9 +41,6 @@ func deselect() -> void:
 
 func is_alive() -> bool:
 	return state >= State.ALIVE
-
-func is_armed() -> bool:
-	return state >= State.ARMED
 
 func is_selected() -> bool:
 	return state == State.SELECTED

@@ -11,7 +11,7 @@ extends VBoxContainer
 @export var _all_button: DisplayButton
 @export var _hit_die_selection_button: PackedScene
 
-func update_hit_dice(available_hit_dice: Array[Die], display_results: HitDieSelectionButton.DisplayResults, save_result: SaveResult = null) -> void:
+func update_hit_dice(available_hit_dice: Array[Die], save_result: SaveResult = null) -> void:
 	var all_buttons_auto_selected: bool = true
 	var relevant_hit_dice: Array[Die] = [ ]
 	for die: Die in available_hit_dice:
@@ -27,7 +27,6 @@ func update_hit_dice(available_hit_dice: Array[Die], display_results: HitDieSele
 		var button: HitDieSelectionButton = _hit_die_selection_button.instantiate()
 		_buttons.add_child(button)
 		button.die = hit_die
-		button.display_results = display_results
 		button.update_for_save_result(save_result)
 		all_buttons_auto_selected = all_buttons_auto_selected and hit_die.is_selected()
 		button.toggled.connect(_on_button_toggled)
@@ -40,8 +39,8 @@ func update_hit_dice(available_hit_dice: Array[Die], display_results: HitDieSele
 	visible = not relevant_hit_dice.is_empty()
 	_all_button.visible = relevant_hit_dice.size() > 1
 
-func update_save_result(save_result: SaveResult, display_results: HitDieSelectionButton.DisplayResults) -> void:
-	update_hit_dice(save_result.dice, display_results, save_result)
+func update_save_result(save_result: SaveResult) -> void:
+	update_hit_dice(save_result.dice, save_result)
 
 func select_all_available_buttons(select_buttons: bool = true) -> void:
 	_all_button.set_pressed_no_signal(select_buttons)

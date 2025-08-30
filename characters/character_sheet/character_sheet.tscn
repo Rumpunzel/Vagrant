@@ -58,6 +58,7 @@ layout_mode = 2
 [node name="HitDice" parent="MarginContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
 layout_mode = 2
 size_flags_vertical = 1
+_display_results = 1
 
 [node name="Wounds" type="LineEdit" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
