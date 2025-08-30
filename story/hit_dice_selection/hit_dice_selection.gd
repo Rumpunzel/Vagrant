@@ -23,7 +23,7 @@ func request_save(save_request: SaveRequest) -> void:
 	_description.type_text(_save_request.description)
 	_enable_hud()
 	_all_in_button.set_pressed_no_signal(false)
-	_hit_dice_selection_buttons.update_hit_dice(available_hit_dice, save_request.difficulty)
+	_hit_dice_selection_buttons.update_hit_dice(available_hit_dice)
 	_dice_log_entry.initialize_save_request(save_request)
 	_ok_button.grab_focus()
 
