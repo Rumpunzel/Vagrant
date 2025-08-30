@@ -19,11 +19,11 @@ metadata/_custom_type_script = "uid://dsrjqjh4js5i5"
 
 [resource]
 script = ExtResource("1_vwydo")
-name = "Adventurer"
-icon = ExtResource("1_khty3")
-type = 0
-color = Color(0, 0, 0, 1)
-details = ""
 abilities = Array[String](["+1 to all attributes."])
 modifiers = Array[ExtResource("2_xg6bx")]([SubResource("Resource_0okdk")])
+type = 0
+name = "Adventurer"
+icon = ExtResource("1_khty3")
+color = Color(0, 0, 0, 1)
+details = ""
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

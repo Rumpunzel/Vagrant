@@ -6,11 +6,11 @@
 
 [resource]
 script = ExtResource("2_medmp")
+abilities = Array[String](["No question limit for one subject.", "+1 to all other expertises."])
+modifiers = Array[ExtResource("2_adaqc")]([])
+type = 0
 name = "Scholar"
 icon = ExtResource("1_vh0is")
-type = 0
 color = Color(0, 0, 0, 1)
 details = ""
-abilities = Array[String](["+4 expertise.", "+1 to all other expertises."])
-modifiers = Array[ExtResource("2_adaqc")]([])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"
