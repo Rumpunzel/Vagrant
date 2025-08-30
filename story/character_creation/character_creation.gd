@@ -68,7 +68,7 @@ func _on_details_changed(character_name: String, character_title: String, portra
 
 func _on_character_confirmed(character_name: String) -> void:
 	_name = character_name
-	var character_profile: CharacterProfile = CharacterProfile.new(_name, _title, _portrait, _attribute_scores, _origins)
+	var character_profile: CharacterProfile = CharacterProfile.create(_name, _portrait, _attribute_scores, _origins, _title)
 	character_created.emit(character_profile)
 
 func _on_continue_pressed() -> void:
