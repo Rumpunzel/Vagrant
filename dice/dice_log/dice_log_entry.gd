@@ -29,7 +29,7 @@ func _get_dice_results(save_result: SaveResult) -> String:
 	var highest_dice: Array[Die] = save_result.highest_dice
 	for index: int in highest_dice.size():
 		var die: Die = highest_dice[index]
-		var color: Color = die.get_die_color(save_result.difficulty)
+		var color: Color = save_result.get_die_color(die)
 		dice_results += "[color=#%s]%s[/color]" % [color.to_html(), die.die_type]
 		if index < highest_dice.size() - 1: dice_results += ", "
 	var hint: String = ""

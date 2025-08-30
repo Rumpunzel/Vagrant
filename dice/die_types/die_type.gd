@@ -14,7 +14,9 @@ func roll(play_sound: bool) -> int:
 	return result
 
 func get_die() -> Die:
-	return Die.new(self)
+	var new_die: Die = Die.new()
+	new_die.die_type = self
+	return new_die
 
 func get_dice_pool(amount: int) -> Array[Die]:
 	var dice_pool: Array[Die] = [ ]

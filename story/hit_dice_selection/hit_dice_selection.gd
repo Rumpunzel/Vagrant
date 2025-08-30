@@ -12,7 +12,13 @@ signal save_evaluated(save_result: SaveResult)
 @export var _dice_log_entry: DiceLogEntry
 
 var _save_request: SaveRequest = null
-var _save_result: SaveResult = null
+var _save_result: SaveResult = null :
+	set(new_save_result):
+		_save_result = new_save_result
+		if not _save_result: return
+		_hit_dice_selection_buttons.update_save_result(_save_result)
+		_hit_dice_selection_buttons.disable_buttons()
+		_disable_hud()
 
 func request_save(save_request: SaveRequest) -> void:
 	_save_request = save_request
@@ -32,13 +38,17 @@ func _roll_save(dice_to_roll: Array[Die]) -> void:
 	_dice_log_entry.initialize_save_result(_save_result)
 	save_evaluated.emit(_save_result)
 
-func _enable_hud(set_to_enabled: bool = true) -> void:
-	_ok_button.disabled = not set_to_enabled
-	_ok_button.active = set_to_enabled
-	_all_in_button.disabled = not set_to_enabled
-	_all_in_button.active = set_to_enabled
+func _enable_hud() -> void:
+	_ok_button.disabled = false
+	_ok_button.active = true
+	_all_in_button.disabled = false
+	_all_in_button.active = true
+
+func _disable_hud() -> void:
+	_ok_button.disabled = true
+	_ok_button.active = false
+	_all_in_button.disabled = true
+	_all_in_button.active = false
 
 func _on_confirmed() -> void:
 	_roll_save(_hit_dice_selection_buttons.get_selected_dice())
-	_hit_dice_selection_buttons.disable_buttons()
-	_enable_hud(false)

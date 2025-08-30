@@ -14,4 +14,4 @@ func _init(new_character: Character, new_attribute: CharacterAttribute, new_diff
 	var available_hit_dice: Array[Die] = character.get_available_hit_dice()
 	for hit_die: Die in available_hit_dice:
 		var attribute_score: AttributeScore = character.get_attribute_score(attribute)
-		hit_die.auto_update_state(attribute_score)
+		hit_die.update_state(attribute_score)

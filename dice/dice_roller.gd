@@ -29,7 +29,7 @@ func roll_save(dice_pool: Array[Die], save_request: SaveRequest) -> SaveResult:
 	var attribute: CharacterAttribute = save_request.attribute
 	var attribute_score: AttributeScore = character.get_attribute_score(attribute)
 	for die: Die in dice_pool: die.roll_save(attribute_score.get_score())
-	var save_result: SaveResult = SaveResult.new(character, attribute, save_request.difficulty, dice_pool)
+	var save_result: SaveResult = SaveResult.new(character, attribute, save_request.difficulty)
 	save_rolled.emit(save_result)
 	return save_result
 
