@@ -1,13 +1,16 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://cy17lbnstbpf2"]
+[gd_resource type="Resource" script_class="Origin" load_steps=4 format=3 uid="uid://cy17lbnstbpf2"]
 
-[ext_resource type="Texture2D" uid="uid://6mmns06hkyd7" path="res://characters/origins/icons/pirate-captain.svg" id="1_w83bb"]
+[ext_resource type="Texture2D" uid="uid://bq7tflh2rtogc" path="res://characters/origins/icons/ship-wheel.svg" id="1_u05ct"]
+[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/attribute_score_modifier.gd" id="2_f3sbk"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_u05ct"]
 
 [resource]
 script = ExtResource("2_u05ct")
 name = "Sailor"
-icon = ExtResource("1_w83bb")
+icon = ExtResource("1_u05ct")
 type = 0
 color = Color(0, 0, 0, 1)
 details = ""
+abilities = Array[String]([])
+modifiers = Array[ExtResource("2_f3sbk")]([])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"
