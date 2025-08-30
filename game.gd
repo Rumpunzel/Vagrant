@@ -14,6 +14,11 @@ extends Node
 func _ready() -> void:
 	_enter_character_creation()
 
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event.is_action_released("debug_restart"):
+		get_viewport().set_input_as_handled()
+		get_tree().change_scene_to_file(ProjectSettings.get_setting("application/run/main_scene"))
+
 func _enter_character_creation() -> void:
 	_clean_game()
 	var character_creation: CharacterCreation = _character_creation.instantiate()

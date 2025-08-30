@@ -21,6 +21,7 @@ metadata/_custom_type_script = "uid://cg0o8nr4etsys"
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_constants/icon_max_width = 128
 icon = ExtResource("2_q74jc")
 icon_alignment = 1

@@ -34,11 +34,13 @@ layout_mode = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer2"]
 layout_mode = 2
+mouse_default_cursor_shape = 16
 script = ExtResource("3_ktfhn")
 origin = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer2/PanelContainer"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="Score" type="RichTextLabel" parent="VBoxContainer/MarginContainer2/PanelContainer/MarginContainer"]
 layout_mode = 2

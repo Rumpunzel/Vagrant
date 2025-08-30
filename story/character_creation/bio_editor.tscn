@@ -2,19 +2,11 @@
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
 [ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
-[ext_resource type="Texture2D" uid="uid://dx7f74hjtc3bw" path="res://story/portraits/HE-DR-DD-F118/Fulllength.png" id="2_k6q65"]
+[ext_resource type="Texture2D" uid="uid://ortynh6u52b1" path="res://story/portraits/HE-MF-MS-F121/Fulllength.png" id="2_puilj"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
 [ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/user_interface/hover_button.gd" id="3_c7qpy"]
 [ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="4_1khh3"]
 [ext_resource type="Texture2D" uid="uid://k8k7mhb6md3e" path="res://icons/editor/card-random.svg" id="6_c7qpy"]
-
-[sub_resource type="InputEventKey" id="InputEventKey_k6q65"]
-device = -1
-keycode = 82
-unicode = 114
-
-[sub_resource type="Shortcut" id="Shortcut_puilj"]
-events = [SubResource("InputEventKey_k6q65")]
 
 [sub_resource type="InputEventKey" id="InputEventKey_puilj"]
 device = -1
@@ -27,6 +19,14 @@ keycode = 4194319
 
 [sub_resource type="Shortcut" id="Shortcut_3p0bc"]
 events = [SubResource("InputEventKey_puilj"), SubResource("InputEventKey_gdvnu")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_k6q65"]
+device = -1
+keycode = 82
+unicode = 114
+
+[sub_resource type="Shortcut" id="Shortcut_puilj"]
+events = [SubResource("InputEventKey_k6q65")]
 
 [sub_resource type="InputEventKey" id="InputEventKey_dekt0"]
 device = -1
@@ -48,8 +48,8 @@ script = ExtResource("1_furgd")
 _portraits_directory = "res://story/portraits"
 _name = NodePath("PanelContainer/MarginContainer/VBoxContainer/Name")
 _portrait = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Portrait")
-_sex_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Sex")
-_random_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Random")
+_sex_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/Sex")
+_random_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/Random")
 metadata/_custom_type_script = "uid://be2c5murx8xba"
 
 [node name="Title" type="Label" parent="."]
@@ -83,66 +83,83 @@ size_flags_vertical = 3
 
 [node name="Portrait" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
-texture = ExtResource("2_k6q65")
+tooltip_text = "res://story/portraits/HE-MF-MS-F121/Fulllength.png"
+mouse_default_cursor_shape = 16
+texture = ExtResource("2_puilj")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
+mouse_filter = 2
 
-[node name="Random" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Previous" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+shortcut = SubResource("Shortcut_3p0bc")
+icon = ExtResource("2_furgd")
+flat = true
+expand_icon = true
+script = ExtResource("3_c7qpy")
+_hover_neighbors = [NodePath("../VBoxContainer/Sex"), NodePath("../Next"), NodePath("../VBoxContainer/Random")]
+metadata/_custom_type_script = "uid://cmb2b78oofeeh"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Random" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
 layout_mode = 2
 size_flags_vertical = 3
-tooltip_text = "63 Portraits"
+tooltip_text = "107 Portraits"
+mouse_default_cursor_shape = 2
 shortcut = SubResource("Shortcut_puilj")
 icon = ExtResource("6_c7qpy")
 flat = true
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("3_c7qpy")
-_hover_neighbors = [NodePath("../Sex"), NodePath("../HBoxContainer/Previous"), NodePath("../HBoxContainer/Next")]
+_hover_neighbors = [NodePath("../Sex"), NodePath("../../Previous"), NodePath("../../Next")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 2.0
+mouse_filter = 2
 
-[node name="Previous" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
-layout_mode = 2
-size_flags_horizontal = 3
-shortcut = SubResource("Shortcut_3p0bc")
-icon = ExtResource("2_furgd")
-flat = true
-expand_icon = true
-script = ExtResource("3_c7qpy")
-_hover_neighbors = [NodePath("../../Sex"), NodePath("../Next"), NodePath("../../Random")]
-metadata/_custom_type_script = "uid://cmb2b78oofeeh"
-
-[node name="Next" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
-layout_mode = 2
-size_flags_horizontal = 3
-shortcut = SubResource("Shortcut_nu3qc")
-icon = ExtResource("4_1khh3")
-flat = true
-expand_icon = true
-script = ExtResource("3_c7qpy")
-_hover_neighbors = [NodePath("../../Sex"), NodePath("../Previous"), NodePath("../../Random")]
-metadata/_custom_type_script = "uid://cmb2b78oofeeh"
-
-[node name="Sex" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
+[node name="Sex" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_default_cursor_shape = 2
 icon = ExtResource("3_1khh3")
 flat = true
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("3_c7qpy")
-_hover_neighbors = [NodePath("../HBoxContainer/Previous"), NodePath("../HBoxContainer/Next"), NodePath("../Random")]
+_hover_neighbors = [NodePath("../../Previous"), NodePath("../../Next"), NodePath("../Random")]
+metadata/_custom_type_script = "uid://cmb2b78oofeeh"
+
+[node name="Next" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+shortcut = SubResource("Shortcut_nu3qc")
+icon = ExtResource("4_1khh3")
+flat = true
+expand_icon = true
+script = ExtResource("3_c7qpy")
+_hover_neighbors = [NodePath("../VBoxContainer/Sex"), NodePath("../Previous"), NodePath("../VBoxContainer/Random")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
 [connection signal="text_changed" from="PanelContainer/MarginContainer/VBoxContainer/Name" to="." method="_on_name_changed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Random" to="." method="_on_random_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/Previous" to="." method="_on_previous_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/Next" to="." method="_on_next_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Sex" to="." method="_on_sex_pressed"]
+[connection signal="gui_input" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Portrait" to="." method="_on_portrait_gui_input"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Previous" to="." method="_on_previous_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/Random" to="." method="_on_random_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/Sex" to="." method="_on_sex_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Next" to="." method="_on_next_pressed"]

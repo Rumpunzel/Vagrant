@@ -60,6 +60,12 @@ func _on_die_changed(_die: Die) -> void:
 	icon = die.die_type.icon
 	text = ""
 	disabled = not die.is_alive()
+	if disabled:
+		tooltip_text = "This die is exhausted."
+		mouse_default_cursor_shape = Control.CURSOR_HELP
+	else:
+		tooltip_text = "[%s]" % die.die_type
+		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	_on_die_save_selection_changed()
 	changed_disabled.emit(disabled)
 

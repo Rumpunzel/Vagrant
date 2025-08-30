@@ -84,9 +84,11 @@ unicode = 48
 events = [SubResource("InputEventKey_glou3")]
 
 [node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
+visible = false
 custom_minimum_size = Vector2(45, 31)
 offset_right = 333.0
 offset_bottom = 514.0
+mouse_default_cursor_shape = 2
 shortcut = SubResource("Shortcut_4452u")
 flat = true
 script = ExtResource("1_smxr3")
@@ -116,7 +118,7 @@ mouse_filter = 2
 [node name="Index" type="Label" parent="MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.875, 0.875, 0.875, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "1."
 horizontal_alignment = 2
 vertical_alignment = 1
