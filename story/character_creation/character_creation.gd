@@ -46,6 +46,7 @@ func _deactivate_continue() -> void:
 func _get_attribute_modifiers() -> Array[AttributeScore.Modifier]:
 	var modifiers: Array[AttributeScore.Modifier] = []
 	for origin: Origin in _origins:
+		if not origin: continue
 		modifiers.append_array(origin.get_attribute_score_modifiers())
 	return modifiers
 
@@ -56,12 +57,8 @@ func _on_attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, Base
 func _on_origins_picked(origins: Array[Origin]) -> void:
 	_origins = origins
 	_attributes_roller.update_modifiers(_get_attribute_modifiers())
-	_activate_continue()
-
-func _on_origins_unpicked() -> void:
-	_origins = []
-	_attributes_roller.update_modifiers(_get_attribute_modifiers())
-	_deactivate_continue()
+	if origins.size() == 2: _activate_continue()
+	else: _deactivate_continue()
 
 func _on_details_changed(character_name: String, character_title: String, portrait: Texture2D) -> void:
 	_name = character_name

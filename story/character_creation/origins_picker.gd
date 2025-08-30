@@ -3,7 +3,6 @@ class_name OriginsPicker
 extends VBoxContainer
 
 signal origins_picked(origins: Array[Origin])
-signal origins_unpicked
 
 @export_dir var _origins_directory: String
 @export var _search_recursively: bool = false
@@ -51,7 +50,7 @@ func _unpick_origin(origin: Origin) -> void:
 	assert(origin_index >= 0)
 	_selected_origins.pop_at(origin_index)
 	_selected_origins.push_back(null)
-	origins_unpicked.emit()
+	origins_picked.emit(_selected_origins)
 
 func _override_oldest_origin(origin: Origin) -> void:
 	var oldest_origin: Origin = null

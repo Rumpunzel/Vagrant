@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="OriginCombination" load_steps=6 format=3 uid="uid://cdsbw4jko6gt8"]
+
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_6rnhd"]
+[ext_resource type="Texture2D" uid="uid://cv8uurjbynyom" path="res://characters/origins/icons/frog-mouth-helm.svg" id="1_t7b0y"]
+[ext_resource type="Script" uid="uid://dfd1xm8wp1i2n" path="res://characters/origins/combinations/origin_combination.gd" id="2_d38u7"]
+[ext_resource type="Resource" uid="uid://bax71w1etiyel" path="res://characters/origins/noble.tres" id="2_n31kl"]
+[ext_resource type="Resource" uid="uid://45sbhcfyenlm" path="res://characters/origins/veteran.tres" id="3_t7b0y"]
+
+[resource]
+script = ExtResource("2_d38u7")
+name = "Knight"
+icon = ExtResource("1_t7b0y")
+color = Color(0, 0, 0, 1)
+origins = Array[ExtResource("1_6rnhd")]([ExtResource("2_n31kl"), ExtResource("3_t7b0y")])
+details = ""
+metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"

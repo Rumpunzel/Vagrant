@@ -1,24 +1,26 @@
 @tool
 class_name Origin
-extends Resource
+extends Background
 
 enum Type {
 	NORMAL,
 	RARE,
 }
 
-@export_placeholder("Name") var name: String
-@export var icon: Texture2D
-@export var type: Type
-@export var color: Color
-@export_multiline var details: String
 @export_multiline var abilities: Array[String]
 @export var modifiers: Array[AttributeScoreModifier]
+@export var type: Type
 
 static func concatenate(origins: Array[Origin]) -> String:
+	var combination: OriginCombination = OriginCombination.find_combination(origins)
+	if combination: return combination.name
 	return " — ".join(origins.map(func(origin: Origin) -> String: return origin.name))
 
 static func concatenate_with_icons(origins: Array[Origin]) -> String:
+	var combination: OriginCombination = OriginCombination.find_combination(origins)
+	if combination:
+		if combination.icon: return "%s" % combination
+		else: return (" %s " % combination.name).join(origins.map(func(origin: Origin) -> String: return "[img=32x32,center,center]%s[/img]" % origin.icon.resource_path))
 	var origins_with_icons: Array[String] = []
 	for index: int in origins.size():
 		var origin: Origin = origins[index]
@@ -37,6 +39,3 @@ func get_attribute_score_modifiers() -> Array[AttributeScore.Modifier]:
 	for modifier: AttributeScoreModifier in modifiers:
 		mods.append(AttributeScore.Modifier.new(modifier, self))
 	return mods
-
-func _to_string() -> String:
-	return "[img=32x32,center,center]%s[/img] %s" % [icon.resource_path, name]

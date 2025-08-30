@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="OriginCombination" load_steps=5 format=3 uid="uid://cbwdjov5dbadi"]
+
+[ext_resource type="Resource" uid="uid://dqjtp62n331s7" path="res://characters/origins/tamer.tres" id="2_3ykwt"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_4tehg"]
+[ext_resource type="Resource" uid="uid://cskgqp6fm3x52" path="res://characters/origins/hunter.tres" id="3_mpfdd"]
+[ext_resource type="Script" uid="uid://dfd1xm8wp1i2n" path="res://characters/origins/combinations/origin_combination.gd" id="5_f6j2q"]
+
+[resource]
+script = ExtResource("5_f6j2q")
+origins = Array[ExtResource("2_4tehg")]([ExtResource("2_3ykwt"), ExtResource("3_mpfdd")])
+name = "Ranger"
+color = Color(0, 0, 0, 1)
+details = ""
+metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"
