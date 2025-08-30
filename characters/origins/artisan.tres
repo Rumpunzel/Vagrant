@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://yhiugls1lady" path="res://characters/origins/icons/anvil-impact.svg" id="1_8gose"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_8gose"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/attribute_score_modifier.gd" id="2_iaw8r"]
+[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_iaw8r"]
 
 [resource]
 script = ExtResource("2_8gose")

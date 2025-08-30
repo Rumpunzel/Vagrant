@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="OriginCombination" load_steps=5 format=3 uid="uid://y0viwldq2ev2"]
+
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_vw0nf"]
+[ext_resource type="Resource" uid="uid://de62kh1q4mybj" path="res://characters/origins/minstrel.tres" id="2_1ekeb"]
+[ext_resource type="Resource" uid="uid://45sbhcfyenlm" path="res://characters/origins/veteran.tres" id="3_vw0nf"]
+[ext_resource type="Script" uid="uid://dfd1xm8wp1i2n" path="res://characters/origins/combinations/origin_combination.gd" id="4_ltsfk"]
+
+[resource]
+script = ExtResource("4_ltsfk")
+origins = Array[ExtResource("1_vw0nf")]([ExtResource("2_1ekeb"), ExtResource("3_vw0nf")])
+name = "Charlatan"
+color = Color(0, 0, 0, 1)
+details = ""
+metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"

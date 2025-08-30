@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://c826roaqk8774" path="res://characters/origins/icons/stone-throne.svg" id="1_r7mih"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_400pu"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/attribute_score_modifier.gd" id="2_hhp2e"]
+[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_hhp2e"]
 
 [resource]
 script = ExtResource("2_400pu")
