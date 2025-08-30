@@ -2,7 +2,8 @@ class_name CharacterProfile
 extends Resource
 
 @export_placeholder("Name") var name: String
-@export_placeholder("Title") var title: String
+@export_placeholder("Title") var title: String :
+	get: return Origin.concatenate_with_icons(origins) if title.is_empty() else title
 @export var portrait: Texture2D = preload("res://assets/portraits/knight.jpeg")
 
 ## The character's attribute scores. Will be rolled with 2d6 if null.

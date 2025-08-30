@@ -20,8 +20,8 @@ extends PanelContainer
 
 @export_group("Configuration")
 @export var _portrait: TextureRect
-@export var _name: Label
-@export var _title: Label
+@export var _name: RichTextLabel
+@export var _title: RichTextLabel
 @export var _attributes: CharacterAttributesPanel
 @export var _hit_dice: HitDiceSelectionButtons
 @export var _ability_labels: AbilityLabels

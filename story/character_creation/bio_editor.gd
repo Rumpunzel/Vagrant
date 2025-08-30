@@ -54,7 +54,7 @@ var _portrait_index: int = 0 :
 		var portrait: Texture2D = load(portrait_path)
 		_portrait.texture = portrait
 		_portrait.tooltip_text = portrait_path
-		details_changed.emit(_name.text,_get_title(), _portrait.texture)
+		details_changed.emit(_name.text, _title.text, _portrait.texture)
 
 func _ready() -> void:
 	_compiled_portrait_pattern = RegEx.new()
@@ -82,16 +82,11 @@ func _load_portraits() -> void:
 	_sex_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()
 	_random_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()
 
-func _get_title() -> String:
-	var title: String = _title.text
-	if title.is_empty(): title = _title.placeholder_text
-	return title
-
 func _on_name_changed(new_text: String) -> void:
-	details_changed.emit(new_text, _get_title(), _portrait.texture)
+	details_changed.emit(new_text, _title.text, _portrait.texture)
 
 func _on_title_changed(_new_text: String) -> void:
-	details_changed.emit(_name.text, _get_title(), _portrait.texture)
+	details_changed.emit(_name.text, _title.text, _portrait.texture)
 
 func _on_sex_pressed() -> void:
 	_sex = (_sex + 1) % Sex.size() as Sex
@@ -112,8 +107,7 @@ func _on_character_title_changed(character_title: String) -> void:
 	_title.text = character_title
 
 func _on_origins_picked(origins: Array[Origin]) -> void:
-	_title.placeholder_text = "test — test"
-	details_changed.emit(_name.text, _get_title(), _portrait.texture)
+	_title.placeholder_text = Origin.concatenate(origins)
 
 func _on_portrait_gui_input(event: InputEvent) -> void:
 	if event is not InputEventMouseButton: return

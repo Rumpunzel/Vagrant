@@ -20,7 +20,7 @@ const ATTRIBUTES: Array[CharacterAttribute] = [
 static func list_all_directories(
 	directory_path: String,
 	search_recursively: bool = true,
-	filter: Callable = func(directory_name: String) -> bool: return true,
+	filter: Callable = func(_directory_name: String) -> bool: return true,
 ) -> Array[String]:
 	var directories: Array[String] = []
 	var directory: DirAccess = DirAccess.open(directory_path)
