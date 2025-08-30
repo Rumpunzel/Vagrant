@@ -6,7 +6,7 @@ signal attribute_score_rolled(attribute: CharacterAttribute, attribute_score: Ba
 
 @export_group("Configuration")
 @export var _icon: TextureRect
-@export var _button: Button
+@export var _button: DisplayButton
 @export var _descriptor: Label
 @export var _details: RichTextLabel
 @export var _color: ColorRect
@@ -39,12 +39,15 @@ func update() -> void:
 	var attribute_score: AttributeScore = _get_attribute_score()
 	_score.text = "%s = %d" % [attribute_score.get_details(), attribute_score.get_score()]
 
+func collapse() -> void:
+	_button.icon = null
+
 func _get_attribute_score() -> AttributeScore:
 	return AttributeScore.create_with_modifiers(attribute, score, modifiers)
 
 func _on_button_pressed() -> void:
 	_button.disabled = true
-	_button.focus_mode = Control.FOCUS_NONE
+	_button.active = false
 	score = DiceRoller.roll_attribute()
 	attribute_score_rolled.emit(attribute, score)
 	var next: Control = find_valid_focus_neighbor(SIDE_RIGHT)

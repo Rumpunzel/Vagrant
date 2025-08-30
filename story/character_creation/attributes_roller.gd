@@ -30,6 +30,8 @@ func update_modifiers(modifers: Array[AttributeScore.Modifier]) -> void:
 
 func collapse() -> void:
 	size_flags_vertical = Control.SIZE_FILL
+	for attribute_score_roller: AttributeScoreRoller in _roller_container.get_children():
+		attribute_score_roller.collapse()
 
 func _is_ready() -> bool:
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: if not _attribute_scores.has(attribute): return false
