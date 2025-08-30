@@ -6,7 +6,7 @@ signal origins_picked(origins: Array[Origin])
 signal origins_unpicked
 
 @export_dir var _origins_directory: String
-@export var _search_recursively: bool = true
+@export var _search_recursively: bool = false
 
 @export_group("Configuration")
 @export var _origins_list: ItemList
@@ -16,10 +16,12 @@ var _selected_origins: Array[Origin] = [null, null]
 var _origin_indexes: Dictionary[Origin, int] = {}
 var _available_doubles: int
 
-@onready var _available_origins: Array[Origin] = get_available_origins()
+@onready var _available_origins: Array[Origin]
 
 func _ready() -> void:
 	assert(_ability_labels.size() == _selected_origins.size())
+	var origin_files: Array[String] = Rules.list_all_files(_origins_directory, _search_recursively, func(file_name: String) -> bool: return file_name.get_extension() == "tres")
+	_available_origins.assign(origin_files.map(func(origin_file: String) -> Origin: return load(origin_file)))
 	_update_ability_labels()
 	if Engine.is_editor_hint(): setup(0)
 
@@ -43,26 +45,6 @@ func setup(rare_options: int) -> void:
 func appear() -> void:
 	# TODO: animate this
 	visible = true
-
-func get_available_origins(directory_path: String = _origins_directory) -> Array[Origin]:
-	var available_origins: Array[Origin] = []
-	var origins_directory: DirAccess = DirAccess.open(directory_path)
-	if not origins_directory:
-		printerr("Could not open portraits_directory at path: %s" % directory_path)
-		return []
-	origins_directory.list_dir_begin()
-	var file_name: String = origins_directory.get_next()
-	while not file_name.is_empty():
-		var file_path: String = directory_path.path_join(file_name)
-		if origins_directory.current_is_dir():
-			if _search_recursively:
-				available_origins.append_array(get_available_origins(file_path))
-		elif file_name.get_extension() == "tres":
-			var origin: Origin = load(file_path)
-			assert(origin is Origin)
-			available_origins.append(origin)
-		file_name = origins_directory.get_next()
-	return available_origins
 
 func _unpick_origin(origin: Origin) -> void:
 	var origin_index: int = _selected_origins.find(origin)

@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bsirn3lij5psg" path="res://story/character_creation/ability_label.tscn" id="2_110h8"]
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="2_biqa6"]
 [ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="3_x4kkx"]
-[ext_resource type="Resource" uid="uid://7uemslxbeu5b" path="res://characters/origins/artisan.tres" id="3_xw2kr"]
+[ext_resource type="Resource" uid="uid://1n7f7ltq8e42" path="res://characters/origins/merchant.tres" id="3_xw2kr"]
 [ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="4_aeon6"]
 [ext_resource type="Texture2D" uid="uid://b1nrbvek1tou5" path="res://characters/origins/icons/executioner-hood.svg" id="4_gg73k"]
 [ext_resource type="Texture2D" uid="uid://cpio2dgd5kcva" path="res://characters/origins/icons/drama-masks.svg" id="5_3rtwe"]
@@ -21,7 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://c826roaqk8774" path="res://characters/origins/icons/stone-throne.svg" id="12_5f0br"]
 [ext_resource type="Texture2D" uid="uid://bq7tflh2rtogc" path="res://characters/origins/icons/ship-wheel.svg" id="16_64w77"]
 [ext_resource type="Texture2D" uid="uid://o266jm48qawt" path="res://characters/origins/icons/spartan-helmet.svg" id="21_jodaj"]
-[ext_resource type="Resource" uid="uid://ciavtykggnu43" path="res://characters/origins/adventurer.tres" id="22_esnn3"]
+[ext_resource type="Resource" uid="uid://cawcb1f8r3nb8" path="res://characters/origins/grunt.tres" id="22_ujcxx"]
 
 [node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_origins_list", "_ability_labels")]
 offset_right = 1241.0
@@ -29,7 +29,6 @@ offset_bottom = 383.0
 theme_override_constants/separation = 8
 script = ExtResource("1_gr0sf")
 _origins_directory = "res://characters/origins"
-_search_recursively = false
 _origins_list = NodePath("Kin/MarginContainer/HBoxContainer/Origins")
 _ability_labels = [NodePath("Kin/MarginContainer/HBoxContainer/Kin"), NodePath("Kin/MarginContainer/HBoxContainer/Ilk")]
 metadata/_custom_type_script = "uid://dytsvtmv8gt68"
@@ -114,7 +113,7 @@ item_17/icon = ExtResource("21_jodaj")
 [node name="Ilk" parent="Kin/MarginContainer/HBoxContainer" instance=ExtResource("2_110h8")]
 layout_mode = 2
 size_flags_horizontal = 3
-origin = ExtResource("22_esnn3")
+origin = ExtResource("22_ujcxx")
 
 [connection signal="item_selected" from="Kin/MarginContainer/HBoxContainer/Origins" to="." method="_on_kin_list_item_selected"]
 [connection signal="multi_selected" from="Kin/MarginContainer/HBoxContainer/Origins" to="." method="_on_origins_multi_selected"]
