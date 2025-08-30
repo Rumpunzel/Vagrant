@@ -24,6 +24,12 @@ func _ready() -> void:
 	_update_ability_labels()
 	if Engine.is_editor_hint(): setup(0)
 
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event.is_action_pressed("debug_random"):
+		_selected_origins = [null, null]
+		setup(_available_doubles)
+		get_viewport().set_input_as_handled()
+
 func setup(rare_options: int) -> void:
 	_origins_list.clear()
 	_available_doubles = rare_options
