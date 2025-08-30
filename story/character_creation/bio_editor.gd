@@ -11,7 +11,7 @@ enum Sex {
 }
 
 @export_dir var _portraits_directory: String
-@export var _portrait_pattern: String = "Fulllength.png$"
+@export var _portrait_file_name: String = "Fulllength.png"
 @export var _search_recursively: bool = true
 
 @export_group("Sex")
@@ -29,8 +29,9 @@ enum Sex {
 	set(new_sex):
 		_sex = new_sex
 		_sex_button._icon = _icons[_sex]
-		_random_button.tooltip_text = "%d Portraits" % _portraits[_sex].size()
-		if not _portraits[_sex].has(_portrait.texture): randomize_portrait()
+		_sex_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()
+		_random_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()
+		randomize_portrait()
 
 @export_group("Configruation")
 @export var _name: LineEdit
@@ -41,13 +42,21 @@ enum Sex {
 var _compiled_portrait_pattern: RegEx
 var _compiled_patterns: Dictionary[Sex, RegEx]
 
-var _portraits: Dictionary[Sex, Array] = {}
-var _portrait_directories: Dictionary[Texture2D, String] = {}
-var _portrait_index: int = 0
+# Dictionary[Sex, Array[String]]
+var _portrait_directories: Dictionary[Sex, Array] = {}
+var _portrait_index: int = 0 :
+	set(new_portrait_index):
+		_portrait_index = new_portrait_index
+		_portrait_index %= _portrait_directories[_sex].size()
+		var directory_path: String = _portrait_directories[_sex][_portrait_index]
+		var portrait_path: String = directory_path.path_join(_portrait_file_name)
+		var portrait: Texture2D = load(portrait_path)
+		_portrait.texture = portrait
+		_portrait.tooltip_text = portrait_path
+		details_changed.emit(_name.text, _portrait.texture)
 
 func _ready() -> void:
 	_compiled_portrait_pattern = RegEx.new()
-	_compiled_portrait_pattern.compile(_portrait_pattern)
 	for sex: Sex in Sex.values():
 		var regex: RegEx = RegEx.new()
 		regex.compile(_patterns[sex])
@@ -56,51 +65,21 @@ func _ready() -> void:
 	randomize_portrait()
 
 func randomize_portrait() -> void:
-	var new_portrait: Texture2D = _portrait.texture
-	while new_portrait == _portrait.texture: new_portrait = _portraits[_sex].pick_random()
-	_set_portrait(new_portrait)
+	var new_portrait_index: int = _portrait_index
+	while new_portrait_index == _portrait_index: new_portrait_index = randi_range(0, _portrait_directories[_sex].size() - 1)
+	_portrait_index = new_portrait_index
 
 func appear() -> void:
 	# TODO: animate this
 	visible = true
 
-func get_available_portraits(sex: Sex, directory_path: String = _portraits_directory) -> Dictionary[Texture2D, String]:
-	var available_portraits: Dictionary[Texture2D, String] = {}
-	var portraits_directory: DirAccess = DirAccess.open(directory_path)
-	if not portraits_directory:
-		printerr("Could not open portraits_directory at path: %s" % directory_path)
-		return {}
-	portraits_directory.list_dir_begin()
-	var file_name: String = portraits_directory.get_next()
-	while not file_name.is_empty():
-		var file_path: String = directory_path.path_join(file_name)
-		if portraits_directory.current_is_dir():
-			if _search_recursively:
-				var result: RegExMatch = _compiled_patterns[sex].search(file_name)
-				if result: available_portraits.merge(get_available_portraits(sex, file_path))
-		else:
-			var result: RegExMatch = _compiled_portrait_pattern.search(file_name)
-			if result:
-				var portrait: Texture2D = load(file_path)
-				assert(portrait is Texture2D)
-				available_portraits[portrait] = file_path
-		file_name = portraits_directory.get_next()
-	return available_portraits
-
 func _load_portraits() -> void:
-	_portraits.clear()
 	_portrait_directories.clear()
 	for sex: Sex in Sex.values():
-		var available_portraits: Dictionary[Texture2D, String] = get_available_portraits(sex)
-		_portrait_directories.merge(available_portraits)
-		_portraits[sex] = available_portraits.keys()
-	_random_button.tooltip_text = "%d Portraits" % _portraits[_sex].size()
-
-func _set_portrait(new_portrait: Texture2D) -> void:
-	_portrait.texture = new_portrait
-	_portrait.tooltip_text = _portrait_directories[new_portrait]
-	_portrait_index = _portraits[_sex].find(new_portrait)
-	details_changed.emit(_name.text, _portrait.texture)
+		var portrait_directories: Array[String] = Rules.list_all_directories(_portraits_directory, _search_recursively, func(directory_name: String) -> bool: return _compiled_patterns[sex].search(directory_name) != null)
+		_portrait_directories[sex] = portrait_directories
+	_sex_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()
+	_random_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()
 
 func _on_name_changed(new_text: String) -> void:
 	details_changed.emit(new_text, _portrait.texture)
@@ -109,14 +88,10 @@ func _on_sex_pressed() -> void:
 	_sex = (_sex + 1) % Sex.size() as Sex
 
 func _on_previous_pressed() -> void:
-	_portrait_index = (_portrait_index - 1 + _portraits[_sex].size()) % _portraits[_sex].size()
-	var portrait: Texture2D = _portraits[_sex][_portrait_index]
-	_set_portrait(portrait)
+	_portrait_index -= 1
 
 func _on_next_pressed() -> void:
-	_portrait_index = (_portrait_index + 1) % _portraits[_sex].size()
-	var portrait: Texture2D = _portraits[_sex][_portrait_index]
-	_set_portrait(portrait)
+	_portrait_index += 1
 
 func _on_random_pressed() -> void:
 	randomize_portrait()
@@ -128,5 +103,6 @@ func _on_portrait_gui_input(event: InputEvent) -> void:
 	if event is not InputEventMouseButton: return
 	var mouse_event: InputEventMouseButton = event
 	if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.double_click:
-		var global_portrait_path: String = ProjectSettings.globalize_path(_portrait_directories[_portrait.texture])
+		var portrait_path: String = _portrait_directories[_sex][_portrait_index]
+		var global_portrait_path: String = ProjectSettings.globalize_path(portrait_path)
 		OS.shell_show_in_file_manager(global_portrait_path)

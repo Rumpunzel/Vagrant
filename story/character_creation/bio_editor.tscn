@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
 [ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
-[ext_resource type="Texture2D" uid="uid://ortynh6u52b1" path="res://story/portraits/HE-MF-MS-F121/Fulllength.png" id="2_puilj"]
+[ext_resource type="Texture2D" uid="uid://l7mml7i6dump" path="res://story/portraits/HE-RO-RT-M104/Fulllength.png" id="2_k6q65"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
 [ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/user_interface/hover_button.gd" id="3_c7qpy"]
 [ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="4_1khh3"]
@@ -83,9 +83,9 @@ size_flags_vertical = 3
 
 [node name="Portrait" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
-tooltip_text = "res://story/portraits/HE-MF-MS-F121/Fulllength.png"
+tooltip_text = "res://story/portraits/HE-RO-RT-M104/Fulllength.png"
 mouse_default_cursor_shape = 16
-texture = ExtResource("2_puilj")
+texture = ExtResource("2_k6q65")
 expand_mode = 3
 stretch_mode = 5
 
@@ -136,6 +136,7 @@ mouse_filter = 2
 [node name="Sex" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
 layout_mode = 2
 size_flags_vertical = 3
+tooltip_text = "107 Portraits"
 mouse_default_cursor_shape = 2
 icon = ExtResource("3_1khh3")
 flat = true

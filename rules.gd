@@ -16,3 +16,23 @@ const ATTRIBUTES: Array[CharacterAttribute] = [
 	AGILITY,
 	INTELLIGENCE,
 ]
+
+static func list_all_directories(
+	directory_path: String,
+	search_recursively: bool = true,
+	filter: Callable = func(directory_name: String) -> bool: return true,
+) -> Array[String]:
+	var directories: Array[String] = []
+	var directory: DirAccess = DirAccess.open(directory_path)
+	if not directory:
+		printerr("Could not open portraits_directory at path: %s" % directory_path)
+		return []
+	directory.list_dir_begin()
+	var file_name: String = directory.get_next()
+	while not file_name.is_empty():
+		if directory.current_is_dir():
+			var file_path: String = directory_path.path_join(file_name)
+			if filter.call(file_name): directories.append(file_path)
+			if search_recursively: directories.append_array(list_all_directories(file_path, search_recursively, filter))
+		file_name = directory.get_next()
+	return directories
