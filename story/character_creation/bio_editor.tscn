@@ -22,8 +22,8 @@ events = [SubResource("InputEventKey_puilj"), SubResource("InputEventKey_gdvnu")
 
 [sub_resource type="InputEventKey" id="InputEventKey_k6q65"]
 device = -1
-keycode = 82
-unicode = 114
+keycode = 80
+unicode = 112
 
 [sub_resource type="Shortcut" id="Shortcut_puilj"]
 events = [SubResource("InputEventKey_k6q65")]

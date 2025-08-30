@@ -14,13 +14,13 @@ enum Type {
 static func concatenate(origins: Array[Origin]) -> String:
 	var combination: OriginCombination = OriginCombination.find_combination(origins)
 	if combination: return combination.name
-	return " — ".join(origins.map(func(origin: Origin) -> String: return origin.name))
+	return " — ".join(origins.filter(func(origin: Origin) -> bool: return origin != null).map(func(origin: Origin) -> String: return origin.name))
 
 static func concatenate_with_icons(origins: Array[Origin]) -> String:
 	var combination: OriginCombination = OriginCombination.find_combination(origins)
 	if combination:
 		if combination.icon: return "%s" % combination
-		else: return (" %s " % combination.name).join(origins.map(func(origin: Origin) -> String: return "[img=32x32,center,center]%s[/img]" % origin.icon.resource_path))
+		else: return (" %s " % combination.name).join(origins.filter(func(origin: Origin) -> bool: return origin != null).map(func(origin: Origin) -> String: return "[img=32x32,center,center]%s[/img]" % origin.icon.resource_path))
 	var origins_with_icons: Array[String] = []
 	for index: int in origins.size():
 		var origin: Origin = origins[index]

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="OriginCombination" load_steps=6 format=3 uid="uid://dof1h1qqd8xqp"]
+
+[ext_resource type="Texture2D" uid="uid://cciklu4j70sjt" path="res://characters/origins/icons/closed-barbute.svg" id="1_aauyi"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_rt5lx"]
+[ext_resource type="Resource" uid="uid://45sbhcfyenlm" path="res://characters/origins/veteran.tres" id="3_kslg0"]
+[ext_resource type="Resource" uid="uid://cawcb1f8r3nb8" path="res://characters/origins/grunt.tres" id="4_n8q1g"]
+[ext_resource type="Script" uid="uid://dfd1xm8wp1i2n" path="res://characters/origins/combinations/origin_combination.gd" id="4_pbo55"]
+
+[resource]
+script = ExtResource("4_pbo55")
+origins = Array[ExtResource("1_rt5lx")]([ExtResource("3_kslg0"), ExtResource("4_n8q1g")])
+name = "Soldier"
+icon = ExtResource("1_aauyi")
+color = Color(0, 0, 0, 1)
+details = ""
+metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"

@@ -5,7 +5,7 @@ extends Background
 @export var origins: Array[Origin]
 
 static func find_combination(selected_origins: Array[Origin]) -> OriginCombination:
-	var combination_files: Array[String] = Rules.list_all_files("res://characters/origins/combinations/", false, func(file_name: String) -> bool: return file_name.get_extension() == "tres")
+	var combination_files: Array[String] = Rules.list_all_files("res://characters/origins/combinations/", true, func(file_name: String) -> bool: return file_name.get_extension() == "tres")
 	var combinations: Array[OriginCombination] = []
 	combinations.assign(combination_files.map(func(origin_combination_file: String) -> OriginCombination: return load(origin_combination_file)))
 	for combination: OriginCombination in combinations:
