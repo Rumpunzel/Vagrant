@@ -60,6 +60,7 @@ visible = false
 
 [connection signal="attributes_rolled" from="HBoxContainer/Stats/AttributesRoller" to="." method="_on_attributes_rolled"]
 [connection signal="origins_picked" from="HBoxContainer/Stats/OriginsPicker" to="." method="_on_origins_picked"]
+[connection signal="origins_picked" from="HBoxContainer/Stats/OriginsPicker" to="HBoxContainer/BioEditor" method="_on_origins_picked"]
 [connection signal="origins_unpicked" from="HBoxContainer/Stats/OriginsPicker" to="." method="_on_origins_unpicked"]
 [connection signal="details_changed" from="HBoxContainer/BioEditor" to="." method="_on_details_changed"]
 [connection signal="pressed" from="Continue" to="." method="_on_continue_pressed"]

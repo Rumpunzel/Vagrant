@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
 [ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
-[ext_resource type="Texture2D" uid="uid://l7mml7i6dump" path="res://story/portraits/HE-RO-RT-M104/Fulllength.png" id="2_k6q65"]
+[ext_resource type="Texture2D" uid="uid://cwwmbxhrjfamj" path="res://story/portraits/HE-WS-MS-M107/Fulllength.png" id="2_k6q65"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
 [ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/user_interface/hover_button.gd" id="3_c7qpy"]
 [ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="4_1khh3"]
@@ -40,13 +40,14 @@ keycode = 4194321
 [sub_resource type="Shortcut" id="Shortcut_nu3qc"]
 events = [SubResource("InputEventKey_dekt0"), SubResource("InputEventKey_xbko4")]
 
-[node name="BioEditor" type="VBoxContainer" node_paths=PackedStringArray("_name", "_portrait", "_sex_button", "_random_button")]
+[node name="BioEditor" type="VBoxContainer" node_paths=PackedStringArray("_name", "_title", "_portrait", "_sex_button", "_random_button")]
 offset_right = 480.0
 offset_bottom = 817.0
 theme_override_constants/separation = 32
 script = ExtResource("1_furgd")
 _portraits_directory = "res://story/portraits"
 _name = NodePath("PanelContainer/MarginContainer/VBoxContainer/Name")
+_title = NodePath("PanelContainer/MarginContainer/VBoxContainer/Title")
 _portrait = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Portrait")
 _sex_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/Sex")
 _random_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/Random")
@@ -77,13 +78,18 @@ text = "The Vagrant"
 placeholder_text = "Name"
 alignment = 1
 
+[node name="Title" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Kin — Ilk"
+alignment = 1
+
 [node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Portrait" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
-tooltip_text = "res://story/portraits/HE-RO-RT-M104/Fulllength.png"
+tooltip_text = "res://story/portraits/HE-WS-MS-M107/Fulllength.png"
 mouse_default_cursor_shape = 16
 texture = ExtResource("2_k6q65")
 expand_mode = 3
@@ -159,6 +165,7 @@ _hover_neighbors = [NodePath("../VBoxContainer/Sex"), NodePath("../Previous"), N
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
 [connection signal="text_changed" from="PanelContainer/MarginContainer/VBoxContainer/Name" to="." method="_on_name_changed"]
+[connection signal="text_changed" from="PanelContainer/MarginContainer/VBoxContainer/Title" to="." method="_on_title_changed"]
 [connection signal="gui_input" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Portrait" to="." method="_on_portrait_gui_input"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/Previous" to="." method="_on_previous_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/Random" to="." method="_on_random_pressed"]

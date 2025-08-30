@@ -2,6 +2,7 @@ class_name CharacterProfile
 extends Resource
 
 @export_placeholder("Name") var name: String
+@export_placeholder("Title") var title: String
 @export var portrait: Texture2D = preload("res://assets/portraits/knight.jpeg")
 
 ## The character's attribute scores. Will be rolled with 2d6 if null.
@@ -23,11 +24,13 @@ extends Resource
 
 func _init(
 	new_name: String,
+	new_title: String,
 	new_portrait: Texture2D,
 	new_base_attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore],
 	new_origins: Array[Origin],
 ) -> void:
 	name = new_name
+	title = new_title
 	portrait = new_portrait
 	base_attribute_scores = new_base_attribute_scores
 	origins = new_origins

@@ -6,12 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/hit_dice_selection/hit_dice_selection_buttons.tscn" id="4_gaha4"]
 [ext_resource type="PackedScene" uid="uid://cjdgl0lvge2cl" path="res://characters/character_sheet/ability_labels.tscn" id="5_davb4"]
 
-[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_attributes", "_hit_dice", "_ability_labels")]
+[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_title", "_attributes", "_hit_dice", "_ability_labels")]
 offset_right = 412.0
 offset_bottom = 412.0
 script = ExtResource("1_uqhlh")
 _portrait = NodePath("Portrait")
-_name = NodePath("MarginContainer/VBoxContainer/Name")
+_name = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Name")
+_title = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Title")
 _attributes = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/Attributes")
 _hit_dice = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HitDice")
 _ability_labels = NodePath("MarginContainer/VBoxContainer/AbilityLabels")
@@ -35,11 +36,28 @@ theme_override_constants/margin_bottom = 16
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
-visible = false
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_type_variation = &"HeaderMedium"
 text = "Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Title"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -58,7 +76,6 @@ layout_mode = 2
 [node name="HitDice" parent="MarginContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
 layout_mode = 2
 size_flags_vertical = 1
-_display_results = 1
 
 [node name="Wounds" type="LineEdit" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2

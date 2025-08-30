@@ -13,6 +13,7 @@ extends PanelContainer
 		name = character.name
 		_portrait.texture = character.portrait
 		_name.text = character.name
+		_title.text = character.character_profile.title
 		_attributes.update_attributes(character)
 		_hit_dice.update_hit_dice(character.hit_dice)
 		_ability_labels.update_abilities(character.character_profile.origins)
@@ -20,6 +21,7 @@ extends PanelContainer
 @export_group("Configuration")
 @export var _portrait: TextureRect
 @export var _name: Label
+@export var _title: Label
 @export var _attributes: CharacterAttributesPanel
 @export var _hit_dice: HitDiceSelectionButtons
 @export var _ability_labels: AbilityLabels

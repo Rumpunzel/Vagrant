@@ -21,6 +21,7 @@ enum CreationStage {
 var _creation_stage: CreationStage = CreationStage.ATTRIBUTES
 
 var _name: String
+var _title: String
 var _portrait: Texture2D
 var _attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore]
 var _origins: Array[Origin] = []
@@ -62,14 +63,15 @@ func _on_origins_unpicked() -> void:
 	_attributes_roller.update_modifiers(_get_attribute_modifiers())
 	_deactivate_continue()
 
-func _on_details_changed(character_name: String, portrait: Texture2D) -> void:
+func _on_details_changed(character_name: String, character_title: String, portrait: Texture2D) -> void:
 	_name = character_name
+	_title = character_title
 	_portrait = portrait
 	_character_confirmation.set_character_name(_name)
 
 func _on_character_confirmed(character_name: String) -> void:
 	_name = character_name
-	var character_profile: CharacterProfile = CharacterProfile.new(_name, _portrait, _attribute_scores, _origins)
+	var character_profile: CharacterProfile = CharacterProfile.new(_name, _title, _portrait, _attribute_scores, _origins)
 	character_created.emit(character_profile)
 
 func _on_continue_pressed() -> void:
