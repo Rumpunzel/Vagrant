@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_ada5o"]
 [ext_resource type="Resource" uid="uid://bax71w1etiyel" path="res://characters/origins/noble.tres" id="2_5s4v5"]
-[ext_resource type="Resource" uid="uid://dqjtp62n331s7" path="res://characters/origins/tamer.tres" id="3_en1aj"]
+[ext_resource type="Resource" uid="uid://de62kh1q4mybj" path="res://characters/origins/minstrel.tres" id="3_75fx0"]
 [ext_resource type="Script" uid="uid://dfd1xm8wp1i2n" path="res://characters/origins/combinations/origin_combination.gd" id="4_7qtvu"]
 
 [resource]
 script = ExtResource("4_7qtvu")
-origins = Array[ExtResource("1_ada5o")]([ExtResource("2_5s4v5"), ExtResource("3_en1aj")])
+origins = Array[ExtResource("1_ada5o")]([ExtResource("2_5s4v5"), ExtResource("3_75fx0")])
 name = "Jester"
 color = Color(0, 0, 0, 1)
 details = ""

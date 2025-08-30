@@ -19,7 +19,7 @@ static func concatenate(origins: Array[Origin]) -> String:
 static func concatenate_with_icons(origins: Array[Origin]) -> String:
 	var combination: OriginCombination = OriginCombination.find_combination(origins)
 	if combination:
-		if combination.icon: return "%s" % combination
+		if combination.icon: return "%s [img=32x32,center,center]%s[/img]" % [combination, combination.icon.resource_path]
 		else: return (" %s " % combination.name).join(origins.filter(func(origin: Origin) -> bool: return origin != null).map(func(origin: Origin) -> String: return "[img=32x32,center,center]%s[/img]" % origin.icon.resource_path))
 	var origins_with_icons: Array[String] = []
 	for index: int in origins.size():

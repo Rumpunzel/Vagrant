@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="OriginCombination" load_steps=5 format=3 uid="uid://cv36tblakibgf"]
+
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_edvwt"]
+[ext_resource type="Resource" uid="uid://binkm27w771kw" path="res://characters/origins/outlaw.tres" id="2_edvwt"]
+[ext_resource type="Resource" uid="uid://d21lprrjx41il" path="res://characters/origins/captain.tres" id="3_vnd6h"]
+[ext_resource type="Script" uid="uid://dfd1xm8wp1i2n" path="res://characters/origins/combinations/origin_combination.gd" id="4_13ofb"]
+
+[resource]
+script = ExtResource("4_13ofb")
+origins = Array[ExtResource("1_edvwt")]([ExtResource("2_edvwt"), ExtResource("3_vnd6h")])
+name = "Robin Hood"
+color = Color(0, 0, 0, 1)
+details = ""
+metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"
