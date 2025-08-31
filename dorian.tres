@@ -1,0 +1,80 @@
+[gd_resource type="Resource" script_class="CharacterProfile" load_steps=27 format=3]
+
+[ext_resource type="Script" path="res://dice/die_types/die_type.gd" id="1_phsde"]
+[ext_resource type="Resource" path="res://dice/die_types/d4.tres" id="2_ru31n"]
+[ext_resource type="Resource" path="res://dice/die_types/d6.tres" id="3_wa8fo"]
+[ext_resource type="Resource" path="res://dice/die_types/d8.tres" id="4_dmj07"]
+[ext_resource type="Resource" path="res://dice/die_types/d10.tres" id="5_73k2y"]
+[ext_resource type="Resource" path="res://dice/die_types/d12.tres" id="6_ws2or"]
+[ext_resource type="Script" path="res://characters/attributes/character_attribute.gd" id="7_26oka"]
+[ext_resource type="Script" path="res://characters/base_attribute_score.gd" id="8_ijf3i"]
+[ext_resource type="Resource" path="res://characters/attributes/strength.tres" id="9_1jxcb"]
+[ext_resource type="Script" path="res://dice/die.gd" id="10_gmgy5"]
+[ext_resource type="Resource" path="res://characters/attributes/agility.tres" id="11_38m1i"]
+[ext_resource type="Resource" path="res://characters/attributes/intelligence.tres" id="12_vsf3q"]
+[ext_resource type="Script" path="res://characters/origins/origin.gd" id="13_gam16"]
+[ext_resource type="Resource" path="res://characters/origins/scoundrel.tres" id="14_1atq2"]
+[ext_resource type="Resource" path="res://characters/origins/veteran.tres" id="15_60rk6"]
+[ext_resource type="Texture2D" path="res://story/portraits/HE-MF-2H-M116/Fulllength.png" id="16_rt0sg"]
+[ext_resource type="Script" path="res://characters/character_profile.gd" id="17_ckreo"]
+
+[sub_resource type="Resource" id="Resource_oxain"]
+script = ExtResource("10_gmgy5")
+die_type = ExtResource("3_wa8fo")
+result = 2
+
+[sub_resource type="Resource" id="Resource_cj5u8"]
+script = ExtResource("10_gmgy5")
+die_type = ExtResource("3_wa8fo")
+result = 6
+
+[sub_resource type="Resource" id="Resource_k6cmj"]
+script = ExtResource("8_ijf3i")
+dice = Array[ExtResource("10_gmgy5")]([SubResource("Resource_oxain"), SubResource("Resource_cj5u8")])
+
+[sub_resource type="Resource" id="Resource_d1kt5"]
+script = ExtResource("10_gmgy5")
+die_type = ExtResource("3_wa8fo")
+result = 6
+
+[sub_resource type="Resource" id="Resource_0oqch"]
+script = ExtResource("10_gmgy5")
+die_type = ExtResource("3_wa8fo")
+result = 5
+
+[sub_resource type="Resource" id="Resource_auy6q"]
+script = ExtResource("8_ijf3i")
+dice = Array[ExtResource("10_gmgy5")]([SubResource("Resource_d1kt5"), SubResource("Resource_0oqch")])
+
+[sub_resource type="Resource" id="Resource_ay5a8"]
+script = ExtResource("10_gmgy5")
+die_type = ExtResource("3_wa8fo")
+result = 3
+
+[sub_resource type="Resource" id="Resource_wlln0"]
+script = ExtResource("10_gmgy5")
+die_type = ExtResource("3_wa8fo")
+result = 4
+
+[sub_resource type="Resource" id="Resource_q8koy"]
+script = ExtResource("8_ijf3i")
+dice = Array[ExtResource("10_gmgy5")]([SubResource("Resource_ay5a8"), SubResource("Resource_wlln0")])
+
+[resource]
+script = ExtResource("17_ckreo")
+name = "Dorian"
+portrait = ExtResource("16_rt0sg")
+attribute_scores = Dictionary[ExtResource("7_26oka"), ExtResource("8_ijf3i")]({
+ExtResource("9_1jxcb"): SubResource("Resource_k6cmj"),
+ExtResource("11_38m1i"): SubResource("Resource_auy6q"),
+ExtResource("12_vsf3q"): SubResource("Resource_q8koy")
+})
+origins = Array[ExtResource("13_gam16")]([ExtResource("14_1atq2"), ExtResource("15_60rk6")])
+_title = "Test Adventurer"
+_breath_dice = Dictionary[ExtResource("1_phsde"), int]({
+ExtResource("2_ru31n"): 1,
+ExtResource("3_wa8fo"): 1,
+ExtResource("4_dmj07"): 1,
+ExtResource("5_73k2y"): 1,
+ExtResource("6_ws2or"): 1
+})

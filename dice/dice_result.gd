@@ -4,7 +4,8 @@ extends Resource
 
 @export var dice: Array[Die]
 
-func _init(rolled_dice: Array[Die]) -> void:
+## This has a default parameter so it can easily be deserialized with [ResourceLoader]
+func _init(rolled_dice: Array[Die] = []) -> void:
 	dice = rolled_dice
 
 func get_sum() -> int:
