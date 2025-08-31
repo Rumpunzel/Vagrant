@@ -16,9 +16,6 @@ var breath_die: BreathDie :
 		breath_die.rolled.connect(_on_die_rolled)
 		breath_die.state_changed.connect(_on_die_state_changed)
 
-func _ready() -> void:
-	disable()
-
 func update() -> void:
 	disabled = not breath_die.is_alive()
 	if disabled:
