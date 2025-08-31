@@ -14,14 +14,10 @@ func roll(play_sound: bool) -> int:
 	return result
 
 func get_die() -> Die:
-	var new_die: Die = Die.new()
-	new_die.die_type = self
-	return new_die
+	return Die.new(self)
 
 func get_breath_die() -> BreathDie:
-	var new_die: BreathDie = BreathDie.new()
-	new_die.die_type = self
-	return new_die
+	return BreathDie.new(self)
 
 func get_dice_pool(amount: int) -> Array[Die]:
 	var dice_pool: Array[Die] = [ ]
