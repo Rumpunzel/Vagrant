@@ -77,7 +77,7 @@ func appear() -> void:
 func _load_portraits() -> void:
 	_portrait_directories.clear()
 	for sex: Sex in Sex.values():
-		var portrait_directories: Array[String] = Rules.list_all_directories(_portraits_directory, _search_recursively, func(directory_name: String) -> bool: return _compiled_patterns[sex].search(directory_name) != null)
+		var portrait_directories: Array[String] = Files.list_all_directories(_portraits_directory, _search_recursively, func(directory_name: String) -> bool: return _compiled_patterns[sex].search(directory_name) != null)
 		_portrait_directories[sex] = portrait_directories
 	_sex_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()
 	_random_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()

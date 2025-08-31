@@ -19,7 +19,7 @@ var _available_doubles: int
 
 func _ready() -> void:
 	assert(_ability_labels.size() == _selected_origins.size())
-	var origin_files: Array[String] = Rules.list_all_files(_origins_directory, _search_recursively, func(file_name: String) -> bool: return file_name.get_extension() == "tres")
+	var origin_files: Array[String] = Files.list_all_files(_origins_directory, _search_recursively, func(file_name: String) -> bool: return file_name.get_extension() == "tres")
 	_available_origins.assign(origin_files.map(func(origin_file: String) -> Origin: return load(origin_file)))
 	_update_ability_labels()
 	if Engine.is_editor_hint(): setup(0)
