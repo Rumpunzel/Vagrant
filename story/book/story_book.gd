@@ -7,7 +7,6 @@ signal page_entered(story_page: StoryPage)
 @export var _title: TypingLabel
 @export var _sub_title: TypingLabel
 @export var _story_pages: Container
-@export var _page_history: Container
 @export var _story_page_entry: PackedScene
 
 var _story: Story
@@ -24,12 +23,14 @@ func _exit_tree() -> void:
 	_story.page_entered.disconnect(_on_page_entered)
 
 func _on_page_entered(story_page: StoryPage) -> void:
-	if _current_story_page_entry != null:
-		_story_pages.remove_child(_current_story_page_entry)
-		_page_history.add_child(_current_story_page_entry)
-		_current_story_page_entry.size_flags_vertical = Control.SIZE_FILL
-		_page_history.move_child(_current_story_page_entry, 0)
-		if _page_history.get_child_count() > 1: _current_story_page_entry.add_sibling(HSeparator.new())
+	if _current_story_page_entry:
+		#_story_pages.remove_child(_current_story_page_entry)
+		#_page_history.add_child(_current_story_page_entry)
+		#_current_story_page_entry.size_flags_vertical = Control.SIZE_FILL
+		#_page_history.move_child(_current_story_page_entry, 0)
+		var separator: HSeparator = HSeparator.new()
+		_story_pages.add_child(separator)
+		_story_pages.move_child(separator, 0)
 	_current_story_page_entry = _story_page_entry.instantiate()
 	_story_pages.add_child(_current_story_page_entry)
 	_story_pages.move_child(_current_story_page_entry, 0)

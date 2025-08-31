@@ -1,7 +1,6 @@
-[gd_scene load_steps=23 format=3 uid="uid://d0ecexfpobl4m"]
+[gd_scene load_steps=22 format=3 uid="uid://d0ecexfpobl4m"]
 
 [ext_resource type="Script" uid="uid://1rnnvyy1byjt" path="res://story/book/dialog_button.gd" id="1_smxr3"]
-[ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="2_g8jf2"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_w0yih"]
 device = -1
@@ -84,7 +83,6 @@ unicode = 48
 events = [SubResource("InputEventKey_glou3")]
 
 [node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
-visible = false
 custom_minimum_size = Vector2(45, 31)
 offset_right = 333.0
 offset_bottom = 514.0
@@ -133,8 +131,6 @@ bbcode_enabled = true
 text = "Hide in the shipwreck."
 fit_content = true
 scroll_active = false
-script = ExtResource("2_g8jf2")
-metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
 [connection signal="button_down" from="." to="." method="_update_font_colors"]
 [connection signal="button_up" from="." to="." method="_update_font_colors"]
@@ -144,4 +140,3 @@ metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="pressed" from="." to="." method="_on_pressed"]
 [connection signal="minimum_size_changed" from="MarginContainer" to="." method="_on_container_minimum_size_changed"]
-[connection signal="finished_typing" from="MarginContainer/HBoxContainer/Description" to="." method="_on_description_finished_typing"]

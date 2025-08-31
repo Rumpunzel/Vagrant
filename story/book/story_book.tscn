@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cy2ymcfk2tejn" path="res://story/book/story_page_entry.tscn" id="2_x8uvv"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="4_kbsk1"]
 
-[node name="StoryBook" type="VBoxContainer" node_paths=PackedStringArray("_title", "_sub_title", "_story_pages", "_page_history")]
+[node name="StoryBook" type="VBoxContainer" node_paths=PackedStringArray("_title", "_sub_title", "_story_pages")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -20,8 +20,7 @@ theme_override_constants/separation = 32
 script = ExtResource("1_cts4e")
 _title = NodePath("MarginContainer/VBoxContainer/Title")
 _sub_title = NodePath("MarginContainer/VBoxContainer/Subtitle")
-_story_pages = NodePath("StoryPages")
-_page_history = NodePath("StoryPages/PanelContainer/ScrollContainer/MarginContainer/PageHistory")
+_story_pages = NodePath("PanelContainer/MarginContainer/ScrollContainer/MarginContainer/StoryPages")
 _story_page_entry = ExtResource("2_x8uvv")
 metadata/_custom_type_script = "uid://bob1fhstr1o06"
 
@@ -32,55 +31,62 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 45)
 layout_mode = 2
+size_flags_horizontal = 4
 focus_mode = 2
 theme_type_variation = &"HeaderLarge"
 theme_override_constants/shadow_outline_size = 4
 theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true
-text = "[center]Title[/center]"
+text = "Title"
+fit_content = true
 scroll_active = false
+autowrap_mode = 0
 horizontal_alignment = 1
 vertical_alignment = 1
 selection_enabled = true
+visible_characters_behavior = 1
 script = ExtResource("4_kbsk1")
 _characters_per_minute = 1000.0
+metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
 [node name="Subtitle" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
+size_flags_horizontal = 4
 focus_mode = 2
 theme_type_variation = &"Subtitles"
 theme_override_colors/default_color = Color(0.827, 0.827, 0.827, 1)
 bbcode_enabled = true
-text = "[center]Subtitle — Details[/center]"
+text = "Subtitle — Details"
+fit_content = true
 scroll_active = false
+autowrap_mode = 0
 horizontal_alignment = 1
 vertical_alignment = 1
 selection_enabled = true
+visible_characters_behavior = 1
 script = ExtResource("4_kbsk1")
 _characters_per_minute = 1000.0
+metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="StoryPages" type="VSplitContainer" parent="."]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="PanelContainer" type="PanelContainer" parent="StoryPages"]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5
 
-[node name="ScrollContainer" type="ScrollContainer" parent="StoryPages/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 follow_focus = true
 horizontal_scroll_mode = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="StoryPages/PanelContainer/ScrollContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="PageHistory" type="VBoxContainer" parent="StoryPages/PanelContainer/ScrollContainer/MarginContainer"]
+[node name="StoryPages" type="VBoxContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 24

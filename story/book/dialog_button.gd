@@ -2,7 +2,6 @@
 class_name DialogButton
 extends Button
 
-signal finished_setup
 signal save_requested(save_request: SaveRequest, source: StoryDecision)
 
 @export var story_decision: StoryDecision :
@@ -11,10 +10,12 @@ signal save_requested(save_request: SaveRequest, source: StoryDecision)
 		_description.text = story_decision.to_dialog_button_text()
 		_update_font_colors()
 
+@export_range(0.0, 1.0, 0.05) var _fade_in_duration: float = 0.25
+
 @export_group("Configuration")
 @export var _container: Container
 @export var _index: Label
-@export var _description: TypingLabel
+@export var _description: RichTextLabel
 @export var _shortcuts: Array[Shortcut] = [ ]
 
 var _story: Story
@@ -37,19 +38,19 @@ func _exit_tree() -> void:
 	if _story.decision_made.is_connected(_on_decision_made): _story.decision_made.disconnect(_on_decision_made)
 
 func _ready() -> void:
-	visible = false
 	_update_font_colors()
 	_resize_to_fit_children()
 	_set_index()
 	var index: int = get_index()
 	if index >= _shortcuts.size(): return
 	shortcut = _shortcuts[index]
+	if Engine.is_editor_hint(): return
+	modulate.a = 0.0
 
-func popup(set_to_visible: bool = true) -> void:
-	visible = set_to_visible
-	if not set_to_visible: return
-	_description.type_text(story_decision.to_dialog_button_text())
-	finished_setup.emit()
+func popup(delay: float) -> void:
+	_description.text = story_decision.to_dialog_button_text()
+	var tween: Tween = get_tree().create_tween()
+	tween.tween_property(self, "modulate:a", 1.0, _fade_in_duration).set_delay(delay)
 
 func _set_index() -> int:
 	var index: int = get_index() + 1
@@ -94,9 +95,6 @@ func _on_pressed() -> void:
 		var save_request: SaveRequest = (story_decision as StorySaveDecision).to_save_request(_characters.get_protagonist())
 		save_requested.emit(save_request, story_decision)
 	else: _story.make_decision(story_decision)
-
-func _on_description_finished_typing() -> void:
-	finished_setup.emit()
 
 func _on_decision_made(selected_story_decision: StoryDecision, _selected_how_many_times: int) -> void:
 	_selected = selected_story_decision == story_decision

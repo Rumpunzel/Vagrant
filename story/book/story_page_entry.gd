@@ -4,6 +4,8 @@ extends PanelContainer
 
 @export var story_page: StoryPage
 
+@export_range(0.0, 1.0, 0.05) var _dialog_options_fade_in_delay: float = 0.1
+
 @export_group("Configuration")
 @export var _background: TextureRect
 @export var _description: TypingLabel
@@ -64,11 +66,14 @@ func _on_save_evaluated(save_result: SaveResult) -> void:
 	_story.make_save_decision(_selected_story_decision as StorySaveDecision, _save_result)
 
 func _on_description_finished_typing() -> void:
-	for button: DialogButton in _choices.get_children():
-		button.popup()
-		await button.finished_setup
+	var buttons: Array[DialogButton] = []
+	buttons.assign(_choices.get_children())
+	for index: int in buttons.size():
+		var button: DialogButton = buttons[index]
+		button.popup(_dialog_options_fade_in_delay * index)
 
 func _on_decision_made(_story_decision: StoryDecision, _selected_how_many_times: int) -> void:
+	_description.set_text_normally()
 	custom_minimum_size = Vector2.ZERO
 	_background.visible = true
 	_story.decision_made.disconnect(_on_decision_made)
