@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ddmbyf84dylsk"
-path="res://.godot/imported/Medium.png-2cda31bd8fdda47bd981c08d3f230160.ctex"
+uid="uid://dnkduqly8vdh0"
+path="res://.godot/imported/shadow.jpg-8409b8d4b150600067a4ebc8f00d04a9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://story/monster_portraits/OR-MF-MS-M109/Medium.png"
-dest_files=["res://.godot/imported/Medium.png-2cda31bd8fdda47bd981c08d3f230160.ctex"]
+source_file="res://assets/monster_portraits/shadow.jpg"
+dest_files=["res://.godot/imported/shadow.jpg-8409b8d4b150600067a4ebc8f00d04a9.ctex"]
 
 [params]
 

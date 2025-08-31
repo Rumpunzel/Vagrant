@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0jp6r4v85vhw"
-path="res://.godot/imported/Fulllength.png-0c43dd2d4b05f0f4be4e3ce59ef8eaa4.ctex"
+uid="uid://dw7iv7lhtdsw1"
+path="res://.godot/imported/slime.png-1253691f750b3d597887624634c7ac28.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://story/monster_portraits/OR-MF-MS-M109/Fulllength.png"
-dest_files=["res://.godot/imported/Fulllength.png-0c43dd2d4b05f0f4be4e3ce59ef8eaa4.ctex"]
+source_file="res://assets/monster_portraits/slime.png"
+dest_files=["res://.godot/imported/slime.png-1253691f750b3d597887624634c7ac28.ctex"]
 
 [params]
 

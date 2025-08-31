@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcd2s1wnl07gk"
-path="res://.godot/imported/knight.jpeg-78d74e470dee334772fb5964a85d17e6.ctex"
+uid="uid://e5mx4r2ak0u5"
+path="res://.godot/imported/oracle.jpeg-a4405392b0a45a38384a9aac1f53b5bb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/portraits/knight.jpeg"
-dest_files=["res://.godot/imported/knight.jpeg-78d74e470dee334772fb5964a85d17e6.ctex"]
+source_file="res://assets/monster_portraits/oracle.jpeg"
+dest_files=["res://.godot/imported/oracle.jpeg-a4405392b0a45a38384a9aac1f53b5bb.ctex"]
 
 [params]
 

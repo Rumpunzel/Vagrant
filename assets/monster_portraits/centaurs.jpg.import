@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://beqvdqaa8t4cq"
-path="res://.godot/imported/Fulllength.png-0d2292927c3c7408d32bfc6f270389da.ctex"
+uid="uid://bylf6d10k3ejw"
+path="res://.godot/imported/centaurs.jpg-3d1e4de038d2da7e76f9a4689260db44.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://story/monster_portraits/TF-MF-MS-M103/Fulllength.png"
-dest_files=["res://.godot/imported/Fulllength.png-0d2292927c3c7408d32bfc6f270389da.ctex"]
+source_file="res://assets/monster_portraits/centaurs.jpg"
+dest_files=["res://.godot/imported/centaurs.jpg-3d1e4de038d2da7e76f9a4689260db44.ctex"]
 
 [params]
 

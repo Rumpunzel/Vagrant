@@ -2,7 +2,7 @@ class_name CharacterProfile
 extends Resource
 
 @export_placeholder("Name") var name: String
-@export var portrait: Texture2D = preload("res://assets/portraits/knight.jpeg")
+@export var portrait: Texture2D
 
 @export var attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore] = {
 	Rules.STRENGTH: null,

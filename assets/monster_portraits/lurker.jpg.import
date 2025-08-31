@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dxf2ac0wjp1jm"
-path="res://.godot/imported/Fulllength.png-8749ec61fd8648831e72becad6d844d0.ctex"
+uid="uid://bc6smekfx7nam"
+path="res://.godot/imported/lurker.jpg-62023b6425546a3aa5a308d35efd27f0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://story/monster_portraits/GH-GO-MS-M111/Fulllength.png"
-dest_files=["res://.godot/imported/Fulllength.png-8749ec61fd8648831e72becad6d844d0.ctex"]
+source_file="res://assets/monster_portraits/lurker.jpg"
+dest_files=["res://.godot/imported/lurker.jpg-62023b6425546a3aa5a308d35efd27f0.ctex"]
 
 [params]
 

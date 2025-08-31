@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://gnjgro0mfsma"
-path="res://.godot/imported/Small.png-c3cef44ec8ddf3545e33091a75e757b2.ctex"
+uid="uid://u2y0fgfdhbaw"
+path="res://.godot/imported/goblin.jpg-03254295dc11aeb0ccd006280829b101.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://story/monster_portraits/TF-AR-MS-M101/Small.png"
-dest_files=["res://.godot/imported/Small.png-c3cef44ec8ddf3545e33091a75e757b2.ctex"]
+source_file="res://assets/monster_portraits/goblin.jpg"
+dest_files=["res://.godot/imported/goblin.jpg-03254295dc11aeb0ccd006280829b101.ctex"]
 
 [params]
 
