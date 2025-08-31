@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MonsterProfile" load_steps=8 format=3 uid="uid://bgt5q8uo31yh0"]
+
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="1_tycht"]
+[ext_resource type="Texture2D" uid="uid://u2y0fgfdhbaw" path="res://assets/monster_portraits/goblin.jpg" id="2_aqmhw"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="2_mrpg6"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="3_tycht"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="4_87jrq"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="5_fa74d"]
+[ext_resource type="Script" uid="uid://1342yb3eb2bh" path="res://characters/monsters/monster_profile.gd" id="8_5aed7"]
+
+[resource]
+script = ExtResource("8_5aed7")
+name = "Goblin"
+portrait = ExtResource("2_aqmhw")
+attribute_scores = Dictionary[ExtResource("2_mrpg6"), int]({
+ExtResource("3_tycht"): 7,
+ExtResource("4_87jrq"): 7,
+ExtResource("5_fa74d"): 7
+})
+_breath_dice_size = ExtResource("1_tycht")
+_breath_dice_amount = 3
+metadata/_custom_type_script = "uid://1342yb3eb2bh"
