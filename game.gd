@@ -1,18 +1,20 @@
 class_name Game
 extends Node
 
+@export var _default_character: CharacterProfile
 @export var _default_adventure: AdventureTome
-@export var _character_creation: PackedScene
-@export var _adventure: PackedScene
 
 @export_group("Configuration")
 @export var _story: Story
 @export var _characters: Characters
 @export var _stage: Stage
 @export var _game: Control
+@export var _character_creation: PackedScene
+@export var _adventure: PackedScene
 
 func _ready() -> void:
-	_enter_character_creation()
+	if not _default_character: _enter_character_creation()
+	else: _enter_adventure(_default_character)
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_released("debug_restart"):
@@ -28,7 +30,7 @@ func _enter_character_creation() -> void:
 
 func _enter_adventure(protagonist_profile: CharacterProfile) -> void:
 	_clean_game()
-	_characters.create_character(protagonist_profile)
+	_characters.create_protagonist(protagonist_profile)
 	var adventure: Adventure = _adventure.instantiate()
 	adventure.story_book_page_entered.connect(_stage.set_story_page)
 	_game.add_child(adventure)
@@ -42,5 +44,4 @@ func _clean_game() -> void:
 		child.queue_free()
 
 func _on_character_created(character_profile: CharacterProfile) -> void:
-	_characters.protagonist_profile = character_profile
 	_enter_adventure(character_profile)
