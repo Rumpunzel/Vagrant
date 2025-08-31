@@ -29,6 +29,6 @@ func get_highest_breath_dice() -> Array[BreathDie]:
 func get_die_color(die: BreathDie) -> Color:
 	match get_save_outcome():
 		Outcome.SUCCESS: return Color.LIME_GREEN if die.is_alive() else Color.CORNFLOWER_BLUE
-		Outcome.FAILURE: return Color.ORANGE if die.is_alive() else Color.FIREBRICK
+		Outcome.FAILURE: Color.FIREBRICK
 		_: assert(false, "SaveResult.Outcome %s is not supported!" % get_save_outcome())
 	return Color.BLACK

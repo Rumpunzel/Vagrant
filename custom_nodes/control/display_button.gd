@@ -7,7 +7,7 @@ signal activation_changed(new_status: bool)
 @export var active_mouse_cursor: Control.CursorShape = Control.CURSOR_POINTING_HAND
 @export var inactive_mouse_cursor: Control.CursorShape = Control.CURSOR_ARROW
 
-var active: bool = true :
+@export var active: bool = true :
 	set(new_status):
 		if new_status == active: return
 		active = new_status

@@ -20,10 +20,12 @@ size_flags_vertical = 3
 
 [node name="AllButton" type="Button" parent="."]
 layout_mode = 2
-mouse_default_cursor_shape = 2
+focus_mode = 0
 toggle_mode = true
+button_mask = 0
 text = "All"
 script = ExtResource("3_qcqnq")
+active = false
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
-[connection signal="toggled" from="AllButton" to="." method="select_all_available_buttons"]
+[connection signal="toggled" from="AllButton" to="." method="_on_all_button_toggled"]

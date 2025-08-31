@@ -66,11 +66,6 @@ func _on_details_changed(character_name: String, character_title: String, portra
 	_portrait = portrait
 	_character_confirmation.set_character_name(_name)
 
-func _on_character_confirmed(character_name: String) -> void:
-	_name = character_name
-	var character_profile: CharacterProfile = CharacterProfile.create(_name, _portrait, _attribute_scores, _origins, _title)
-	character_created.emit(character_profile)
-
 func _on_continue_pressed() -> void:
 	match _creation_stage:
 		CreationStage.ATTRIBUTES:
@@ -88,3 +83,8 @@ func _on_continue_pressed() -> void:
 			_character_confirmation.confirm()
 		CreationStage.DONE: _character_confirmation.confirm()
 		_: assert(false, "CreationStage %s not supported!" % _creation_stage)
+
+func _on_character_confirmed(character_name: String) -> void:
+	_name = character_name
+	var character_profile: CharacterProfile = CharacterProfile.create(_name, _portrait, _attribute_scores, _origins, _title)
+	character_created.emit(character_profile)

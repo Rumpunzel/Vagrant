@@ -1,6 +1,6 @@
 @tool
 class_name HitDiceSelectionButtonGroup
-extends HitDiceSelectionButtonImplement
+extends VBoxContainer
 
 @export var breath_die_type: DieType :
 	set(new_breath_die_type):
@@ -12,72 +12,47 @@ extends HitDiceSelectionButtonImplement
 @export var _all_button: DisplayButton
 @export var _breath_die_selection_button: PackedScene
 
-func update_breath_dice(available_breath_dice: Array[BreathDie], save_result: SaveResult = null) -> void:
-	var all_buttons_auto_selected: bool = true
-	var relevant_breath_dice: Array[BreathDie] = [ ]
-	for die: BreathDie in available_breath_dice:
-		if die.die_type == breath_die_type: relevant_breath_dice.append(die)
-	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
-		button.toggled.disconnect(_on_button_toggled)
-		#button.changed_disabled.disconnect(_on_button_changed_disabled)
-		button.activation_changed.disconnect(_on_button_activation_changed)
-		_buttons.remove_child(button)
-		button.queue_free()
-	
-	for breath_die: BreathDie in relevant_breath_dice:
-		var button: HitDieSelectionButton = _breath_die_selection_button.instantiate()
-		_buttons.add_child(button)
-		button.breath_die = breath_die
-		print(save_result)
-		button.update_save_result(save_result)
-		#all_buttons_auto_selected = all_buttons_auto_selected and breath_die.is_selected()
-		button.toggled.connect(_on_button_toggled)
-		#button.changed_disabled.connect(_on_button_changed_disabled)
-		button.activation_changed.connect(_on_button_activation_changed)
-	
-	_on_button_toggled()
-	_on_button_changed_disabled()
-	_on_button_activation_changed()
-	visible = not relevant_breath_dice.is_empty()
-	_all_button.visible = relevant_breath_dice.size() > 1
+var _button: Dictionary[DieType, HitDieSelectionButton] = {}
+
+func add_button(breath_die: BreathDie) -> void:
+	var button: HitDieSelectionButton = _breath_die_selection_button.instantiate()
+	button.breath_die = breath_die
+	_button[breath_die.die_type] = button
+	button.toggled.connect(_on_button_toggled)
+	_all_button.visible = not _get_buttons().is_empty()
+	_buttons.add_child(button)
 
 func update_save_request(save_request: SaveRequest) -> void:
-	pass
+	_all_button.active = true
+	for button: HitDieSelectionButton in _get_buttons(): button.update_save_request(save_request)
 
 func update_save_result(save_result: SaveResult) -> void:
-	update_breath_dice(save_result.get_breath_dice(), save_result)
+	for button: HitDieSelectionButton in _get_buttons(): button.update_save_result(save_result)
 
-func select() -> void:
+func select_all() -> void:
 	_all_button.set_pressed_no_signal(true)
-	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
-		button.select()
+	for button: HitDieSelectionButton in _get_buttons(): button.select()
 
-func deselect() -> void:
+func deselect_all() -> void:
 	_all_button.set_pressed_no_signal(false)
-	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
-		button.deselect()
+	for button: HitDieSelectionButton in _get_buttons(): button.deselect()
 
 func disable() -> void:
-	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
-		button.active = false
+	_all_button.active = false
+	_all_button.disabled = true
+	for button: HitDieSelectionButton in _get_buttons(): button.disable()
 
-func _get_breath_die_selection_buttons() -> Array[Node]:
-	return _buttons.get_children()
+func _get_buttons() -> Array[HitDieSelectionButton]:
+	var buttons: Array[HitDieSelectionButton] = []
+	buttons.assign(_buttons.get_children())
+	return buttons
 
 func _on_button_toggled(_toggled_on: bool = false) -> void:
 	var all_buttons_selected: bool = true
-	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
+	for button: HitDieSelectionButton in _get_buttons():
 		all_buttons_selected = all_buttons_selected and button.button_pressed
 	_all_button.set_pressed_no_signal(all_buttons_selected)
 
-func _on_button_changed_disabled(_disabled: bool = false) -> void:
-	var all_buttons_disabled: bool = true
-	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
-		all_buttons_disabled = all_buttons_disabled and button.disabled
-	_all_button.disabled = all_buttons_disabled
-
-func _on_button_activation_changed(_new_status: bool = false) -> void:
-	var all_buttons_active: bool = true
-	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
-		all_buttons_active = all_buttons_active and button.active
-	_all_button.active = all_buttons_active
+func _on_all_button_toggled(toggled_on: bool) -> void:
+	if toggled_on: for button: HitDieSelectionButton in _get_buttons(): button.select()
+	else: for button: HitDieSelectionButton in _get_buttons(): button.deselect()
