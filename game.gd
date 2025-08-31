@@ -16,6 +16,13 @@ func _ready() -> void:
 	if not _default_character: _enter_character_creation()
 	else: _enter_adventure(_default_character)
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton: return
+	var mouse_event: InputEventMouseButton = event
+	if mouse_event.is_released():
+		get_viewport().gui_release_focus()
+		get_viewport().set_input_as_handled()
+
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_released("debug_restart"):
 		get_viewport().set_input_as_handled()
