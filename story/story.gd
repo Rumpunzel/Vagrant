@@ -9,6 +9,7 @@ var _current_adventure_tome: AdventureTome :
 	get: return _current_adventure.adventure_tome
 
 func start_adventure(adventure: Adventure) -> void:
+	assert(adventure)
 	if _current_adventure != null:
 		print_debug("Trying to start an adventure while there is already an ongoing one!")
 		return
@@ -16,6 +17,7 @@ func start_adventure(adventure: Adventure) -> void:
 	enter_page(_current_adventure_tome.starting_page)
 
 func make_decision(story_decision: StoryDecision) -> int:
+	assert(story_decision)
 	var selected_how_many_times: int = -1
 	if story_decision != StoryDecision.get_continue():
 		selected_how_many_times = _current_adventure.update_decision_log(story_decision)
@@ -24,6 +26,8 @@ func make_decision(story_decision: StoryDecision) -> int:
 	return selected_how_many_times
 
 func make_save_decision(story_save_decision: StorySaveDecision, save_result: SaveResult) -> int:
+	assert(story_save_decision)
+	assert(save_result)
 	var selected_how_many_times: int = _current_adventure.update_save_decision_log(story_save_decision, save_result)
 	decision_made.emit(story_save_decision, selected_how_many_times)
 	if save_result.get_save_outcome() != SaveResult.Outcome.FAILURE:
@@ -33,6 +37,7 @@ func make_save_decision(story_save_decision: StorySaveDecision, save_result: Sav
 	return selected_how_many_times
 
 func enter_page(story_page: StoryPage) -> StoryPage:
+	assert(story_page)
 	var current_page: StoryPage = _current_adventure.update_page_log(story_page)
 	page_entered.emit(current_page)
 	return current_page
