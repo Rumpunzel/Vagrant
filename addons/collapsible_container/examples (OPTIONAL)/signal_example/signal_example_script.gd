@@ -31,7 +31,7 @@ extends Node
 @onready var tween_amount_changed_tween : Tween = create_tween()
 @onready var tween_interrupted_tween : Tween = create_tween()
 
-# Unnecessary error ptint if don't stop all the tweens now. 
+# Unnecessary error print if don't stop all the tweens now. 
 func _ready() -> void:
 	state_set_tween.stop()
 	tween_started_tween.stop()
@@ -236,4 +236,3 @@ func _tween_label_modulate(label : Label, label_tween : Tween) -> void:
 	label.set_self_modulate(Color.LIME_GREEN)
 	label_tween.tween_property(label, "self_modulate", Color.WHITE, 1)
 	label_tween.play()
-

@@ -65,44 +65,68 @@ extends Control
 ## you set the duration to. For example, tween may run for 0.71 seconds instead 
 ## of 0.7 seconds precisely. Keep this in mind if you need precise timing.
 ## [br]
-## [br]Usage:
+## [br]Quick Start
 ## [codeblock]
 ##func _ready() -> void:
 ##   var collapsible := CollapsibleContainer.new()
-##
+##   
+##   # Create button to toggle the collapsible
+##   var button := Button.new()
+##   button.set_text("Collapsible Button")
+##   button.connect("pressed", collapsible.open_tween_toggle) # Connect signal to collapsible
+##   add_child(button)
+##   
+##   # Create and child node you want to collapse.
+##   var label := Label.new()
+##   label.set_text("Hide Me!")
+##   collapsible.add_child(label)
+##   
+##   # Add collapsible to scene with custom settings.
+##   add_child(collapsible)
+##   collapsible.set_sizing_node_path(label.get_path())
+##   collapsible.set_folding_direction_preset(CollapsibleContainer.FoldingPreset.PRESET_TOP_WIDE)
+##   collapsible.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+## [/codeblock]
+## [br]
+## [br]Detailed Usage:
+## [codeblock]
+##func _ready() -> void:
+##   var collapsible := CollapsibleContainer.new()
+##   
 ##   # Decide if you want the collapsible node to start opened or start closed.
 ##   collapsible.starts_opened = false # Will start closed.
-##
-##   # Create/get node you want to hide. Here, we just create a label node.
+##   
+##   # Create/get node you want to hide/collapse. Here, we just create a label node.
 ##   var label_node := Label.new()
-##   label_node.set_text("This is an example!")
+##   label_node.set_text("Hide Me!")
 ##   
 ##   # Add the node as a child to the collapsible. Now it can be hidden/revealed.
 ##   collapsible.add_child(label_node)
-##
+##   
 ##   # Alternatively, you can get a node which is already in the scene tree,
 ##   # remove it from its current parent and child it to the collapsible.
 ##   #var already_created_node = get_node(...)
 ##   #already_created_node.get_parent().remove_child(already_created_node)
 ##   #collapsible.add_child(already_created_node)
-##
+##   
 ##   # Add the collapsible to the scene tree.
 ##   add_child(collapsible)
-##
+##   
 ##   # Alternatively, instead of simply adding the collapsible, you can parent the 
 ##   # collapsible to a Container to use more folding directions! 
-##   # Should give the parent Containter a minimum size of the "open" size
+##   # Should give the parent Container a minimum size of the "open" size
 ##   # for the intended effect. 
-##   #var parent_container := MarginContainer.new()
+##   #ar parent_container := MarginContainer.new()
+##   #parent_container.set_size(Vector2(20, 20))
 ##   #parent_container.add_child(collapsible)
 ##   #add_child(parent_container)
-##
+##   
 ##   # Set the sizing_node or set the custom size values. 
 ##   # Here, we just set the label as the sizing_node. Now, the label's size will be 
 ##   # used as the size the collapsible sets itself to when opened. In other words,
-##   # the label's size is set as CollapsibleContainer's "open" size.
+##   # the CollapsibleContainer's "open_size" value is set to the label's size.
 ##   collapsible.set_sizing_node_path(label_node.get_path())
-##
+##   
 ##   # Alternatively, to use custom size values instead:   
 ##   #collapsible.use_custom_open_size = true 
 ##   #collapsible.use_custom_close_size = true 
@@ -119,13 +143,25 @@ extends Control
 ##   # parent Container. 
 ##   collapsible.set_folding_direction_preset(CollapsibleContainer.FoldingPreset.PRESET_TOP_WIDE)
 ##   
-##   # Set desired the tween settings. Can also set tween_transition_type and tween_ease_type.
-##   collapsible.tween_duration_sec = 0.7
+##   # Can set your custom tween settings if you want to use different values from the default.
+##   collapsible.tween_duration_sec = 0.5
+##   collapsible.tween_transition_type = Tween.TRANS_LINEAR
+##   collapsible.tween_ease_type = Tween.EASE_IN
 ##   
-##   # Call open_tween() to start the tween.
+##   # Call open_tween() to start the open tween whenever you want.
 ##   # Should use call_deferred() if attempting to call open_tween() right after
-##   # setting the LayoutPreset/FoldingPreset, sizing_constraint or container size flags.
-##   collapsible.call_deferred("open_tween")
+##   # setting the sizing_constraint, container size flags, or LayoutPreset/FoldingPreset (which we did in this example).
+##   collapsible.call_deferred("open_tween") 
+##   
+##   # If you want a button to toggle the collapsible open and closed:
+##   var button := Button.new()
+##   button.text = "Collapsible Button"
+##   button.set_anchors_preset(Control.PRESET_CENTER)
+##   add_child(button)
+##   
+##   # Any time the button is pressed, will toggle the collapsible's open/close tween functions.
+##   # The collapsible keeps track of its open/closed state so you don't have to.
+##   button.connect("pressed", collapsible.open_tween_toggle)
 ## [/codeblock]
 ##
 ## @tutorial: https://youtu.be/o2qTSv0QmKA
@@ -251,7 +287,7 @@ enum FoldingPreset {
 ## open size changes, the node will size itself to that new open size.
 ## [br][br][b]Note[/b]: If already tweening and a new open size is detected,
 ## this will interrupt the current tween (with a warning) if the tween's 
-## target size is different from the new, auti-detected size change.
+## target size is different from the new, auto-detected size change.
 @export var auto_update_size := AutoUpdateSizeOptions.WITHOUT_TWEEN:
 		set = set_auto_update_size, get = get_auto_update_size
 
@@ -347,10 +383,8 @@ enum FoldingPreset {
 ## [member _preview_always_process_in_editor] once in game.
 @export var starts_with_process_mode : ProcessMode = PROCESS_MODE_INHERIT:
 	set(x):
-		#if _in_game():
 		starts_with_process_mode = x
 		process_mode = starts_with_process_mode
-		#print ("set process mode")
 
 ## Can be gotten to know the current opened state (see, [enum OpenedStates]).
 ## [br][br][b]Warning:[/b] Should NOT be set externally (may break something).
@@ -366,7 +400,7 @@ var _tween_state := TweenStates.NOT_TWEENING
 var _tween_elapsed_time := 0.0
 
 # Calculated inside of [member _increment_tween].
-# Emited on each [member _emit_tween_amount_changed]
+# Emitted on each [member _emit_tween_amount_changed]
 # Used by [signal tweening_amount_changed]
 var _tween_time_left := 0.0
 
@@ -400,7 +434,8 @@ var _folding_direction_preset := FoldingPreset.PRESET_TOP_LEFT:
 			_update_inspector() 
 
 # Added by collapsible_container_plugin_loader.gd
-var _editor_plugin : EditorPlugin
+# Remove Type Hint or will throw error on exports.
+var _editor_plugin #: EditorPlugin
 
 # Connects [signal Control.resized] signal to a function that emits the
 # [signal tweening_amount_changed] signal.
@@ -421,7 +456,6 @@ func _init() -> void:
 	
 	if _in_game():
 		process_mode = starts_with_process_mode
-		#print ("process mode set: ", process_mode)
 	if _in_editor():
 		if _preview_always_process_in_editor:
 			process_mode = Node.PROCESS_MODE_ALWAYS
@@ -520,8 +554,6 @@ func get_folding_direction_preset() -> FoldingPreset:
 	
 	var container_sizing_flags : Array[SizeFlags] = [get_v_size_flags(), get_h_size_flags()]
 	
-	#print ("container_sizing_flags: ", container_sizing_flags)
-	
 	match container_sizing_flags:
 		# Tops
 		[Control.SIZE_SHRINK_BEGIN, Control.SIZE_SHRINK_BEGIN]:
@@ -597,8 +629,6 @@ func get_folding_direction_preset() -> FoldingPreset:
 ## Hence, only the needed direction will open/close.
 func set_folding_direction_preset(direction : FoldingPreset, change_sizing_constraint : bool = true) -> void:
 	if not is_node_ready():
-		#print ("not ready")
-		#await ready
 		return
 	
 	if direction == FoldingPreset.UNDEFINED:
@@ -694,7 +724,17 @@ func set_folding_direction_preset(direction : FoldingPreset, change_sizing_const
 			_:
 				sizing_constraint = SizingConstraintOptions.BOTH
 
-
+# When [setting_node] changes,
+# sets the [member sizing_node]'s [tree_exiting] to [_sizing_node_exiting],
+# and sets the [member sizing_node]'s [resized] to [_sizing_node_resized].
+func _connect_sizing_node_signals(node_path : NodePath) -> void:
+	if not is_node_ready():
+		await ready
+	
+	if node_path != NodePath(""):
+		var new_sizing_node = get_node(node_path)
+		new_sizing_node.connect("tree_exiting", _sizing_node_exiting)
+		new_sizing_node.connect("resized", _sizing_node_resized)
 
 # Connects sizing_nodes resized signal to [method _auto_size_to_full].
 # Connects its tree_exiting signal to [method _sizing_node_exiting]
@@ -709,19 +749,9 @@ func set_sizing_node_path(node_path : NodePath) -> void:
 	
 	var previous_sizing_node = get_node_or_null(sizing_node)
 	
-	# Callable: Called when sizing node is set to something valid.
-	var set_new_sizing_node = func () -> void:
-		var new_sizing_node = get_node(node_path)
-		new_sizing_node.connect("resized", _sizing_node_resized)
-		new_sizing_node.connect("tree_exiting", _sizing_node_exiting)
-	
 	# Node just entered tree in-game:
 	if not is_node_ready():
-		await ready
-		sizing_node = node_path
-		if node_path != NodePath(""):
-			set_new_sizing_node.call()
-			return
+		_connect_sizing_node_signals(node_path)
 	else:
 		# Do nothing if the same node:
 		if node_path == sizing_node:
@@ -739,7 +769,7 @@ func set_sizing_node_path(node_path : NodePath) -> void:
 		if node_path == NodePath(""):
 			if not use_custom_open_size or not use_custom_close_size:
 				# The following error emits even when the scene is changing.
-				# opting to remove it for now. Should only emit when the szing_node is unparented.
+				# opting to remove it for now. Should only emit when the sizing_node is unparented.
 				#_print_warning_in_game_or_err_in_editor("No sizing node detected: may size incorrectly.")
 				pass
 		# New node is set to something:
@@ -751,7 +781,7 @@ func set_sizing_node_path(node_path : NodePath) -> void:
 			# NewNode is s control, connects its signals.
 			else:
 				# Connect new sizing_nodes resized signal.
-				set_new_sizing_node.call()
+				_connect_sizing_node_signals(node_path)
 				
 				# Set to full size!
 				_auto_size_to_full.call_deferred()
@@ -821,14 +851,14 @@ func get_closed_size_or_null(): #-> Vector2:
 func set_use_custom_open_size(use_custom : bool) -> void:
 	use_custom_open_size = use_custom
 	_auto_size_to_full.call_deferred()
-	_update_inspector() # Update's insector to show the [member custom_open_size] vector option.
+	_update_inspector() # Update's inspector to show the [member custom_open_size] vector option.
 	update_configuration_warnings()
 
 ## Enables usage of [member custom_close_size]. Can auto resize if [member auto_update_size] is enabled.
 func set_use_custom_close_size(use_custom : bool) -> void:
 	use_custom_close_size = use_custom
 	_auto_size_to_full.call_deferred()
-	_update_inspector() # Update's insector to show the [member custom_close_size] vector option.
+	_update_inspector() # Update's inspector to show the [member custom_close_size] vector option.
 	update_configuration_warnings()
 
 ## Sets [member custom_open_size]. Can auto resize if [member auto_update_size] is enabled.
@@ -1164,7 +1194,6 @@ func _auto_size_to_full() -> void:
 	var target_values = _get_full_size_or_null_and_target_opened()
 	var full_size = target_values[0]
 	var target_opened_state : OpenedStates = target_values[1] 
-	#print ("full size: ", full_size)
 	
 	# For signals:
 	var previous_opened_state : OpenedStates = _opened_state
@@ -1210,7 +1239,6 @@ func _auto_size_to_full() -> void:
 			# Set to new _opened_state.
 			previous_opened_state = _opened_state
 			_opened_state = target_opened_state
-			#print ("new opened state: ", _opened_state)
 			
 			# Emit tween interrupted signal if necessary.  
 			if previous_tween_state != TweenStates.NOT_TWEENING:
@@ -1574,7 +1602,6 @@ func _set_to_size(target_size : Vector2) -> void:
 
 # Calls [member Object.notify_property_list_changed]. Improves readability.
 func _update_inspector() -> void:
-	#print ("updating inspector")
 	notify_property_list_changed()
 
 # Check if in editor. Improves readability.
