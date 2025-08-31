@@ -19,7 +19,3 @@ func deselect() -> void:
 
 func disable() -> void:
 	assert(false, "Not implemented, needs to be overriden!")
-
-func get_selected() -> Array[BreathDie]:
-	assert(false, "Not implemented, needs to be overriden!")
-	return []

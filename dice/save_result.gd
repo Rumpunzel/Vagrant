@@ -11,8 +11,7 @@ enum Outcome {
 
 func _init(for_save_request: SaveRequest) -> void:
 	save_request = for_save_request
-	super(save_request.snapshot_dice())
-	#for breath_die: BreathDie in character.breath_dice: breath_die.deselect()
+	super(save_request.selected_breath_die_as_dice())
 
 func get_breath_dice() -> Array[BreathDie]:
 	var breath_dice: Array[BreathDie]

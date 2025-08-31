@@ -37,14 +37,22 @@ static func create(
 static func _is_breath_die_auto_selected(die: BreathDie, attribute_score: AttributeScore) -> bool:
 	return attribute_score.get_score() >= die.die_type.faces
 
+func select_breath_die(breath_die: BreathDie) -> void:
+	if selected_breath_dice.has(breath_die): return
+	selected_breath_dice.append(breath_die)
+	selected_breath_dice.sort_custom(func(first_die: BreathDie, second_die: BreathDie) -> bool: return first_die.die_type.faces < second_die.die_type.faces)
+
+func deselect_breath_die(breath_die: BreathDie) -> void:
+	selected_breath_dice.erase(breath_die)
+
 func roll_save(character_resolver: Callable) -> SaveResult:
 	var character: Character = character_resolver.call(character_profile)
 	var attribute_score: AttributeScore = character.get_attribute_score(attribute)
 	for die: BreathDie in selected_breath_dice: die.roll_save(attribute_score.get_score())
+	character.continue_with_new_breath_dice()
 	return SaveResult.new(self)
 
-func snapshot_dice() -> Array[Die]:
+func selected_breath_die_as_dice() -> Array[Die]:
 	var dice_snapshot: Array[Die] = []
-	selected_breath_dice.assign(selected_breath_dice.map(func(die: BreathDie) -> Die: return die.duplicate()))
 	dice_snapshot.assign(selected_breath_dice)
 	return dice_snapshot

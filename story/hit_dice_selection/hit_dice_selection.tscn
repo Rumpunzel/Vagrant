@@ -83,5 +83,5 @@ text = "Roll Dice!"
 script = ExtResource("5_bhkt5")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
-[connection signal="toggled" from="MarginContainer/VBoxContainer/HBoxContainer/AllInButton" to="MarginContainer/VBoxContainer/HitDiceSelectionButtons" method="select_all_available_buttons"]
+[connection signal="toggled" from="MarginContainer/VBoxContainer/HBoxContainer/AllInButton" to="MarginContainer/VBoxContainer/HitDiceSelectionButtons" method="select_all"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/OKButton" to="." method="_on_confirmed"]

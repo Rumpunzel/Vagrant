@@ -39,7 +39,7 @@ func get_details(icon_size: int = 32) -> String:
 		if not modifier_details.is_empty(): modifiers_details.append(modifier_details)
 	if not modifiers_details.is_empty(): details += " "
 	details += "%s"
-	return details % [base if base else "-", "uid://dpmwlpo7a7q1r", " ".join(modifiers_details)]
+	return details % [base.to_string() if base else "-", "uid://dpmwlpo7a7q1r", " ".join(modifiers_details)]
 
 func get_type() -> Type:
 	return base.get_type() if base else Type.NORMAL

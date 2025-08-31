@@ -31,6 +31,11 @@ var breath_dice: Array[BreathDie] :
 		breath_dice = new_breath_dice
 		breath_dice_changed.emit(breath_dice)
 
+# The dice used for saves remain forever "laid on the table"
+# Hence the charater may receive a new copy of thier breath dice to continue their adventure
+func continue_with_new_breath_dice() -> void:
+	breath_dice.assign(breath_dice.map(func(die: BreathDie) -> BreathDie: return die.duplicate()))
+
 func get_attribute_score(attribute: CharacterAttribute) -> AttributeScore:
 	return attribute_scores.get(attribute)
 

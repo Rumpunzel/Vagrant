@@ -22,23 +22,14 @@ func update_save_result(save_result: SaveResult) -> void:
 	for button_group: HitDieSelectionButton in _get_breath_dice_button_implements():
 		button_group.update_save_result(save_result)
 
-func select_all() -> void:
+func select_all(selected: bool = true) -> void:
 	for button_group: HitDieSelectionButton in _get_breath_dice_button_implements():
-		button_group.select_all()
-
-func deselect_all() -> void:
-	for button_group: HitDieSelectionButton in _get_breath_dice_button_implements():
-		button_group.deselect_all()
+		if selected: button_group.select()
+		else: button_group.deselect()
 
 func disable_buttons() -> void:
 	for button_group: HitDieSelectionButton in _get_breath_dice_button_implements():
 		button_group.disable()
-
-func get_selected_dice() -> Array[BreathDie]:
-	var selected_dice: Array[BreathDie] = [ ]
-	for button_group: HitDieSelectionButton in _get_breath_dice_button_implements():
-		selected_dice.append_array(button_group.get_selected())
-	return selected_dice
 
 func _clear() -> void:
 	for child: Node in _breath_dice_buttons.get_children():

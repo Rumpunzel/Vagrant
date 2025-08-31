@@ -17,15 +17,15 @@ var _save_request: SaveRequest :
 		assert(new_save_request)
 		_save_request = new_save_request
 		_description.type_text(_save_request.description)
-		_enable_hud()
-		_all_in_button.set_pressed_no_signal(false)
 		_dice_log_save_request_entry.initialize_save_request(_save_request, _character_resolver)
 		_dice_log_save_request_entry.visible = true
 		_dice_log_save_result_entry.visible = false
-		_breath_dice_selection_buttons.update_save_request(_save_request)
 		var character: Character = _character_resolver.call(_save_request.character_profile)
-		_breath_dice_selection_buttons.setup_breath_dice(character.breath_dice)
 		_portrait.texture = character.portrait
+		_breath_dice_selection_buttons.setup_breath_dice(character.breath_dice)
+		_breath_dice_selection_buttons.update_save_request(_save_request)
+		_enable_hud()
+		_all_in_button.set_pressed_no_signal(false)
 		_ok_button.grab_focus()
 	
 var _save_result: SaveResult :

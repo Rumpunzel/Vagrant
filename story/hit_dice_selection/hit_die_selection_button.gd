@@ -2,16 +2,16 @@
 class_name HitDieSelectionButton
 extends DisplayButton
 
-signal changed_disabled(disabled: bool)
+signal breath_die_selected(breath_die: BreathDie)
+signal breath_die_deselected(breath_die: BreathDie)
 
 var breath_die: BreathDie :
-	set(new_bewth_die):
-		assert(new_bewth_die)
-		assert(new_bewth_die != breath_die)
-		breath_die = new_bewth_die
+	set(new_breath_die):
+		assert(new_breath_die)
+		assert(new_breath_die != breath_die)
+		breath_die = new_breath_die
 		icon = breath_die.die_type.icon
 		text = ""
-		_on_toggled(button_pressed)
 		update()
 		breath_die.rolled.connect(_on_die_rolled)
 		breath_die.state_changed.connect(_on_die_state_changed)
@@ -27,19 +27,19 @@ func update() -> void:
 	else:
 		tooltip_text = "[%s]" % breath_die.die_type
 		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	#button_pressed = breath_die.state >= BreathDie.State.SELECTED
-	changed_disabled.emit(disabled)
 
 func update_save_request(save_request: SaveRequest) -> void:
+	assert(save_request)
 	active = true
 	button_pressed = save_request.selected_breath_dice.has(breath_die)
+	breath_die_selected.connect(save_request.select_breath_die)
+	breath_die_deselected.connect(save_request.deselect_breath_die)
 
 func update_save_result(save_result: SaveResult) -> void:
-	if not save_result:
-		text = ""
-		_remove_font_colors()
-		return
-	#if not breath_die.is_selected(): return
+	assert(save_result)
+	breath_die_selected.disconnect(save_result.save_request.select_breath_die)
+	breath_die_deselected.disconnect(save_result.save_request.deselect_breath_die)
+	#if not save_result.save_request.selected_breath_dice.has(breath_die): return
 	text = "%d" % breath_die.result
 	_set_font_colors(save_result.get_die_color(breath_die))
 
@@ -51,10 +51,6 @@ func deselect() -> void:
 
 func disable() -> void:
 	active = false
-
-func get_selected() -> Array[BreathDie]:
-	if button_pressed: return [breath_die]
-	return []
 
 func _set_font_colors(color: Color) -> void:
 	add_theme_color_override("font_color", color)
@@ -75,5 +71,5 @@ func _on_die_state_changed(_die_state: BreathDie.State) -> void:
 	update()
 
 func _on_toggled(toggled_on: bool) -> void:
-	pass
-	#die.state = BreathDie.State.SELECTED if toggled_on else BreathDie.State.ALIVE
+	if toggled_on: breath_die_selected.emit(breath_die)
+	else: breath_die_deselected.emit(breath_die)
