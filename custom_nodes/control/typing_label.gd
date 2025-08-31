@@ -38,10 +38,11 @@ func _enter_tree() -> void:
 	_typing_timer.timeout.connect(_type_next_character)
 	_erasing_timer.timeout.connect(_erase_previous_character)
 
-func _process(_delta: float) -> void:
+func _unhandled_key_input(event: InputEvent) -> void:
 	if visible_ratio >= 1.0: return
-	if Input.is_action_pressed("skip_dialog_typing"):
-		set_text_normally(_text_to_type)
+	if event.is_action_released("skip_dialog_typing"):
+		set_text_normally()
+		get_viewport().set_input_as_handled()
 
 ## To use this script, simply call this method from anywhere with the text you want it to type
 func type_text(new_text: String, erase_text_first: bool = false) -> void:
@@ -57,7 +58,7 @@ func type_text(new_text: String, erase_text_first: bool = false) -> void:
 		visible_characters = 0
 		_type_next_character()
 
-func set_text_normally(new_text: String) -> void:
+func set_text_normally(new_text: String = _text_to_type) -> void:
 	_text_to_type = new_text
 	text = _text_to_type
 	visible_characters = -1

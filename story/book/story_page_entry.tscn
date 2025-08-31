@@ -9,7 +9,6 @@
 [node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_cc")]
 offset_right = 641.0
 offset_bottom = 260.0
-size_flags_vertical = 3
 script = ExtResource("1_xif0c")
 _background = NodePath("Background")
 _description = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Description")
@@ -50,6 +49,7 @@ Second line."
 fit_content = true
 scroll_active = false
 selection_enabled = true
+visible_characters_behavior = 1
 script = ExtResource("3_pf20m")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 

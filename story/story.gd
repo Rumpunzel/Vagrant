@@ -37,7 +37,6 @@ func make_save_decision(story_save_decision: StorySaveDecision, save_result: Sav
 	return selected_how_many_times
 
 func enter_page(story_page: StoryPage) -> StoryPage:
-	assert(story_page)
 	var current_page: StoryPage = _current_adventure.update_page_log(story_page)
 	page_entered.emit(current_page)
 	return current_page

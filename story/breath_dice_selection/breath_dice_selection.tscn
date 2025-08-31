@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://bpqkh512g0nmb"]
+[gd_scene load_steps=7 format=3 uid="uid://bpqkh512g0nmb"]
 
 [ext_resource type="Script" uid="uid://dfxwf0abq0203" path="res://story/breath_dice_selection/breath_dice_selection.gd" id="1_6stf5"]
-[ext_resource type="Texture2D" uid="uid://bcd2s1wnl07gk" path="res://assets/portraits/knight.jpeg" id="2_h0l3f"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="3_06obj"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/breath_dice_selection/breath_dice_selection_buttons.tscn" id="3_gpl86"]
 [ext_resource type="PackedScene" uid="uid://dcy2roj1wv5vr" path="res://dice/dice_log/dice_log_save_request_entry.tscn" id="4_tj3a7"]
@@ -23,7 +22,6 @@ metadata/_custom_type_script = "uid://dfxwf0abq0203"
 
 [node name="Portrait" type="TextureRect" parent="."]
 layout_mode = 2
-texture = ExtResource("2_h0l3f")
 expand_mode = 1
 stretch_mode = 6
 
