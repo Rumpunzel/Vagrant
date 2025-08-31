@@ -20,8 +20,12 @@ func get_die() -> Die:
 
 func get_dice_pool(amount: int) -> Array[Die]:
 	var dice_pool: Array[Die] = [ ]
-	for _index: int in range(amount):
-		dice_pool.append(get_die())
+	for _index: int in range(amount): dice_pool.append(get_die())
+	return dice_pool
+
+func get_breath_dice_pool(amount: int) -> Array[BreathDie]:
+	var dice_pool: Array[BreathDie] = [ ]
+	for _index: int in range(amount): dice_pool.append(get_die())
 	return dice_pool
 
 func _to_string() -> String:

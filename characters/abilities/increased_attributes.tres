@@ -8,10 +8,10 @@
 
 [resource]
 script = ExtResource("5_f500k")
+description = "+1 to all attributes."
 score_modifiers = Dictionary[ExtResource("1_2jrsn"), int]({
 ExtResource("2_qx2uw"): 1,
 ExtResource("3_r0q6n"): 1,
 ExtResource("4_5bjtw"): 1
 })
-description = "+1 to all attributes."
 metadata/_custom_type_script = "uid://dsrjqjh4js5i5"

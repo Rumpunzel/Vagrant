@@ -47,8 +47,8 @@ func get_attribute_scores() -> Dictionary[CharacterAttribute, AttributeScore]:
 	assert(attibute_scores.size() == Rules.ATTRIBUTES.size())
 	return attibute_scores
 
-func get_breath_dice() -> Array[Die]:
-	return DiceRoller.generate_dice_pool(_breath_dice)
+func get_breath_dice() -> Array[BreathDie]:
+	return DiceRoller.generate_breath_dice_pool(_breath_dice)
 
 func get_title() -> String:
 	return Origin.concatenate_with_icons(origins) if _title.is_empty() else _title

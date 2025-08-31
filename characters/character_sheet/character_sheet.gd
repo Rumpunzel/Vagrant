@@ -7,21 +7,21 @@ extends PanelContainer
 		if character != null:
 			character.character_profile_changed.disconnect(_on_character_profile_changed)
 			character.attribute_scores_changed.disconnect(_attributes.update_attributes)
-			character.hit_dice_changed.disconnect(_hit_dice.update_hit_dice)
+			character.breath_dice_changed.disconnect(_breath_dice.update_breath_dice)
 		character = new_character
 		character.character_profile_changed.connect(_on_character_profile_changed)
 		character.attribute_scores_changed.connect(_attributes.update_attributes)
-		character.hit_dice_changed.connect(_hit_dice.update_hit_dice)
+		character.breath_dice_changed.connect(_breath_dice.update_breath_dice)
 		_update()
 		_attributes.update_attributes(character)
-		_hit_dice.update_hit_dice(character.hit_dice)
+		_breath_dice.update_breath_dice(character.breath_dice)
 
 @export_group("Configuration")
 @export var _portrait: TextureRect
 @export var _name: RichTextLabel
 @export var _title: RichTextLabel
 @export var _attributes: CharacterAttributesPanel
-@export var _hit_dice: HitDiceSelectionButtons
+@export var _breath_dice: HitDiceSelectionButtons
 @export var _ability_labels: AbilityLabels
 
 func _update() -> void:

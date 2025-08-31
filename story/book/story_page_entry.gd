@@ -8,8 +8,8 @@ extends PanelContainer
 @export var _background: TextureRect
 @export var _description: TypingLabel
 @export var _choices: Container
-@export var _hit_dice_selection: HitDiceSelection
-@export var _hit_dice_selection_cc: CollapsibleContainer
+@export var _breath_dice_selection: HitDiceSelection
+@export var _breath_dice_selection_cc: CollapsibleContainer
 @export var _dialog_button: PackedScene
 
 var _story: Story
@@ -50,12 +50,12 @@ func _create_dialog_button(story_decision: StoryDecision) -> DialogButton:
 func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
 	_save_request = save_request
 	_selected_story_decision = source
-	_hit_dice_selection.request_save(_save_request)
+	_breath_dice_selection.request_save(_save_request)
 	if _save_request != null:
 		await get_tree().process_frame
-		_hit_dice_selection_cc.open_tween()
+		_breath_dice_selection_cc.open_tween()
 	else:
-		_hit_dice_selection_cc.close()
+		_breath_dice_selection_cc.close()
 
 func _on_save_evaluated(save_result: SaveResult) -> void:
 	assert(_selected_story_decision is StorySaveDecision)

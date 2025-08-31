@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://c0ckr8il0i4ct" path="res://icons/editor/save.svg" id="6_i22xi"]
 [ext_resource type="Texture2D" uid="uid://cg3jqm5s4qxhx" path="res://icons/editor/load.svg" id="7_mkqqw"]
 
-[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_title", "_attributes", "_hit_dice", "_ability_labels")]
+[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_title", "_attributes", "_ability_labels")]
 offset_right = 412.0
 offset_bottom = 412.0
 script = ExtResource("1_uqhlh")
@@ -16,7 +16,6 @@ _portrait = NodePath("Portrait")
 _name = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Name")
 _title = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Title")
 _attributes = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/Attributes")
-_hit_dice = NodePath("MarginContainer/VBoxContainer/VBoxContainer/HitDice")
 _ability_labels = NodePath("MarginContainer/VBoxContainer/AbilityLabels")
 metadata/_custom_type_script = "uid://dkwi26f6nf1xj"
 
