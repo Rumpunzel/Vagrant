@@ -5,6 +5,9 @@ signal character_profile_changed(character_profile: CharacterProfile)
 signal attribute_scores_changed(character: Character)
 signal breath_dice_changed(breath_dice: Array[BreathDie])
 
+signal save_requested(save_request: SaveRequest)
+signal save_rolled(save_result: SaveResult)
+
 const GROUP: StringName = "Characters"
 
 @export var character_profile: CharacterProfile :

@@ -19,7 +19,7 @@ func update_breath_dice(available_breath_dice: Array[BreathDie], save_result: Sa
 		if die.die_type == breath_die_type: relevant_breath_dice.append(die)
 	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
 		button.toggled.disconnect(_on_button_toggled)
-		button.changed_disabled.disconnect(_on_button_changed_disabled)
+		#button.changed_disabled.disconnect(_on_button_changed_disabled)
 		button.activation_changed.disconnect(_on_button_activation_changed)
 		_buttons.remove_child(button)
 		button.queue_free()
@@ -29,10 +29,10 @@ func update_breath_dice(available_breath_dice: Array[BreathDie], save_result: Sa
 		_buttons.add_child(button)
 		button.breath_die = breath_die
 		print(save_result)
-		button.update_for_save_result(save_result)
+		button.update_save_result(save_result)
 		#all_buttons_auto_selected = all_buttons_auto_selected and breath_die.is_selected()
 		button.toggled.connect(_on_button_toggled)
-		button.changed_disabled.connect(_on_button_changed_disabled)
+		#button.changed_disabled.connect(_on_button_changed_disabled)
 		button.activation_changed.connect(_on_button_activation_changed)
 	
 	_on_button_toggled()
@@ -60,12 +60,6 @@ func deselect() -> void:
 func disable() -> void:
 	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
 		button.active = false
-
-func get_selected() -> Array[BreathDie]:
-	var selected_dice: Array[BreathDie] = [ ]
-	for button: HitDieSelectionButton in _get_breath_die_selection_buttons():
-		if button.button_pressed: selected_dice.append(button.breath_die)
-	return selected_dice
 
 func _get_breath_die_selection_buttons() -> Array[Node]:
 	return _buttons.get_children()

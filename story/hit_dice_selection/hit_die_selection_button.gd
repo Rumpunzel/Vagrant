@@ -31,7 +31,8 @@ func update() -> void:
 func update_save_request(save_request: SaveRequest) -> void:
 	assert(save_request)
 	active = true
-	button_pressed = save_request.selected_breath_dice.has(breath_die)
+	_on_selected_breath_dice_changed(save_request.selected_breath_dice)
+	save_request.selected_breath_dice_changed.connect(_on_selected_breath_dice_changed)
 	breath_die_selected.connect(save_request.select_breath_die)
 	breath_die_deselected.connect(save_request.deselect_breath_die)
 
@@ -39,7 +40,7 @@ func update_save_result(save_result: SaveResult) -> void:
 	assert(save_result)
 	breath_die_selected.disconnect(save_result.save_request.select_breath_die)
 	breath_die_deselected.disconnect(save_result.save_request.deselect_breath_die)
-	#if not save_result.save_request.selected_breath_dice.has(breath_die): return
+	if not save_result.save_request.selected_breath_dice.has(breath_die): return
 	text = "%d" % breath_die.result
 	_set_font_colors(save_result.get_die_color(breath_die))
 
@@ -63,6 +64,9 @@ func _remove_font_colors() -> void:
 	remove_theme_color_override("font_disabled_color")
 	remove_theme_color_override("font_pressed_color")
 	remove_theme_color_override("font_hover_color")
+
+func _on_selected_breath_dice_changed(selected_breath_dice: Array[BreathDie]) -> void:
+	button_pressed = selected_breath_dice.has(breath_die)
 
 func _on_die_rolled(_result: int, _state: BreathDie.State) -> void:
 	update()
