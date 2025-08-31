@@ -83,7 +83,7 @@ unicode = 48
 events = [SubResource("InputEventKey_glou3")]
 
 [node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
-custom_minimum_size = Vector2(45, 31)
+custom_minimum_size = Vector2(45, 514)
 offset_right = 333.0
 offset_bottom = 514.0
 mouse_default_cursor_shape = 2

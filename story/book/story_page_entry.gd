@@ -11,7 +11,7 @@ extends PanelContainer
 @export var _description: TypingLabel
 @export var _choices: Container
 @export var _breath_dice_selection: BreathDiceSelection
-@export var _breath_dice_selection_cc: CollapsibleContainer
+@export var _breath_dice_selection_collapsible_container: CollapsibleContainer
 @export var _dialog_button: PackedScene
 
 var _story: Story
@@ -23,7 +23,7 @@ var _save_request: SaveRequest :
 		_save_request = new_save_request
 		_breath_dice_selection.request_save(_save_request, _characters.get_character)
 		await get_tree().process_frame
-		_breath_dice_selection_cc.open_tween()
+		_breath_dice_selection_collapsible_container.open_tween()
 var _save_result: SaveResult
 
 func enter_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:

@@ -1,21 +1,22 @@
 [gd_scene load_steps=6 format=3 uid="uid://cy2ymcfk2tejn"]
 
 [ext_resource type="Script" uid="uid://7rp8e3m8fvuh" path="res://story/book/story_page_entry.gd" id="1_xif0c"]
-[ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/book/dialog_button.tscn" id="2_6tquj"]
+[ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/book/dialog_button.tscn" id="2_8njw8"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="3_pf20m"]
-[ext_resource type="Script" uid="uid://ral4tq3ea3w4" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_nyvyp"]
+[ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_nyvyp"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/breath_dice_selection/breath_dice_selection.tscn" id="5_15pgc"]
 
-[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_cc")]
-offset_right = 641.0
-offset_bottom = 260.0
+[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_collapsible_container")]
+offset_right = 1524.0
+offset_bottom = 225.0
+size_flags_horizontal = 3
 script = ExtResource("1_xif0c")
 _background = NodePath("Background")
 _description = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Description")
 _choices = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Choices")
 _breath_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/BreathDiceSelection")
-_breath_dice_selection_cc = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
-_dialog_button = ExtResource("2_6tquj")
+_breath_dice_selection_collapsible_container = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
+_dialog_button = ExtResource("2_8njw8")
 metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
 
 [node name="Background" type="TextureRect" parent="."]
@@ -65,7 +66,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(392, 169)
+custom_minimum_size = Vector2(100, 169)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -75,7 +76,6 @@ folding_direction_preset = 10
 sizing_constraint = 1
 auto_update_size = 1
 sizing_node = NodePath("BreathDiceSelection")
-metadata/_custom_type_script = "uid://ral4tq3ea3w4"
 
 [node name="BreathDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("5_15pgc")]
 layout_mode = 1
