@@ -5,7 +5,9 @@ signal character_profile_changed(character_profile: CharacterProfile)
 signal attribute_scores_changed(character: Character)
 signal breath_dice_changed(breath_dice: Array[BreathDie])
 
+@warning_ignore("unused_signal")
 signal save_requested(save_request: SaveRequest)
+@warning_ignore("unused_signal")
 signal save_rolled(save_result: SaveResult)
 
 const GROUP: StringName = "Characters"
@@ -38,6 +40,7 @@ var breath_dice: Array[BreathDie] :
 # Hence the charater may receive a new copy of thier breath dice to continue their adventure
 func continue_with_new_breath_dice() -> void:
 	breath_dice.assign(breath_dice.map(func(die: BreathDie) -> BreathDie: return die.duplicate()))
+	breath_dice_changed.emit(breath_dice)
 
 func get_attribute_score(attribute: CharacterAttribute) -> AttributeScore:
 	return attribute_scores.get(attribute)
