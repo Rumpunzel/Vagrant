@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://ral4tq3ea3w4" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_nyvyp"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/hit_dice_selection/hit_dice_selection.tscn" id="5_15pgc"]
 
-[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_hit_dice_selection", "_hit_dice_selection_cc")]
+[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_cc")]
 offset_right = 641.0
 offset_bottom = 260.0
 size_flags_vertical = 3
@@ -14,8 +14,8 @@ script = ExtResource("1_xif0c")
 _background = NodePath("Background")
 _description = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Description")
 _choices = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Choices")
-_hit_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/HitDiceSelection")
-_hit_dice_selection_cc = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
+_breath_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/HitDiceSelection")
+_breath_dice_selection_cc = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
 _dialog_button = ExtResource("2_6tquj")
 metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
 

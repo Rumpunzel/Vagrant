@@ -7,14 +7,14 @@ extends PanelContainer
 		if character != null:
 			character.character_profile_changed.disconnect(_on_character_profile_changed)
 			character.attribute_scores_changed.disconnect(_attributes.update_attributes)
-			character.breath_dice_changed.disconnect(_breath_dice.update_breath_dice)
+			character.breath_dice_changed.disconnect(_breath_dice.setup_breath_dice)
 		character = new_character
 		character.character_profile_changed.connect(_on_character_profile_changed)
 		character.attribute_scores_changed.connect(_attributes.update_attributes)
-		character.breath_dice_changed.connect(_breath_dice.update_breath_dice)
+		character.breath_dice_changed.connect(_breath_dice.setup_breath_dice)
 		_update()
 		_attributes.update_attributes(character)
-		_breath_dice.update_breath_dice(character.breath_dice)
+		_breath_dice.setup_breath_dice(character.breath_dice)
 
 @export_group("Configuration")
 @export var _portrait: TextureRect

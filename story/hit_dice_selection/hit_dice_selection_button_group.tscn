@@ -11,7 +11,7 @@ size_flags_horizontal = 3
 script = ExtResource("2_nci2h")
 _buttons = NodePath("Buttons")
 _all_button = NodePath("AllButton")
-_hit_die_selection_button = ExtResource("3_6gpjh")
+_breath_die_selection_button = ExtResource("3_6gpjh")
 metadata/_custom_type_script = "uid://c0lefpkt50bgv"
 
 [node name="Buttons" type="VBoxContainer" parent="."]

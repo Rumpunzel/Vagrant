@@ -16,7 +16,12 @@ var _story: Story
 var _characters: Characters
 
 var _selected_story_decision: StoryDecision
-var _save_request: SaveRequest
+var _save_request: SaveRequest :
+	set(new_save_request):
+		_save_request = new_save_request
+		_breath_dice_selection.request_save(_save_request, _characters.get_character)
+		await get_tree().process_frame
+		_breath_dice_selection_cc.open_tween()
 var _save_result: SaveResult
 
 func enter_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:
@@ -48,14 +53,10 @@ func _create_dialog_button(story_decision: StoryDecision) -> DialogButton:
 	return dialog_button
 
 func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
-	_save_request = save_request
+	assert(save_request)
+	assert(source)
 	_selected_story_decision = source
-	_breath_dice_selection.request_save(_save_request)
-	if _save_request != null:
-		await get_tree().process_frame
-		_breath_dice_selection_cc.open_tween()
-	else:
-		_breath_dice_selection_cc.close()
+	_save_request = save_request
 
 func _on_save_evaluated(save_result: SaveResult) -> void:
 	assert(_selected_story_decision is StorySaveDecision)

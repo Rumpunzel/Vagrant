@@ -11,7 +11,7 @@ func get_sum() -> int:
 	return dice.reduce(func(sum: int, die: Die) -> int: return sum + die.result, 0)
 
 func get_highest_result() -> int:
-	return dice.reduce(func(result: int, die: Die) -> int: return die.result if die.result > result else result)
+	return dice.reduce(func(result: int, die: Die) -> int: return die.result if die.result > result else result, 0)
 
 func get_highest_dice() -> Array[Die]:
 	return dice.filter(func(die: Die) -> bool: return die.result == get_highest_result())

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://baflfbgcr5cbu"]
+[gd_scene load_steps=11 format=3 uid="uid://baflfbgcr5cbu"]
 
 [ext_resource type="Script" uid="uid://df2le2goabm8t" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage/stage.tscn" id="1_80nbo"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://cc3qx1qt3ie00" path="res://story/character_creation/character_creation.tscn" id="6_eow3j"]
 [ext_resource type="PackedScene" uid="uid://bl0pdxri24fnh" path="res://characters/character.tscn" id="6_j5wjh"]
 [ext_resource type="PackedScene" uid="uid://db6oui711vqep" path="res://story/adventure.tscn" id="7_j5wjh"]
+[ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="10_hve3p"]
 
 [node name="Game" type="Node" node_paths=PackedStringArray("_story", "_characters", "_stage", "_game")]
 script = ExtResource("1_7jktm")
@@ -43,3 +44,25 @@ theme_override_constants/margin_left = 128
 theme_override_constants/margin_top = 96
 theme_override_constants/margin_right = 128
 theme_override_constants/margin_bottom = 96
+
+[node name="GameInfo" type="TabContainer" parent="."]
+visible = false
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -342.0
+offset_top = -113.0
+grow_horizontal = 0
+grow_vertical = 0
+current_tab = 0
+
+[node name="DiceLog" type="MarginContainer" parent="GameInfo"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="DiceLog" parent="GameInfo/DiceLog" node_paths=PackedStringArray("_characters") instance=ExtResource("10_hve3p")]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+_characters = NodePath("../../../Characters")

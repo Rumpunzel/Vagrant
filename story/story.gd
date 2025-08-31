@@ -26,7 +26,7 @@ func make_decision(story_decision: StoryDecision) -> int:
 func make_save_decision(story_save_decision: StorySaveDecision, save_result: SaveResult) -> int:
 	var selected_how_many_times: int = _current_adventure.update_save_decision_log(story_save_decision, save_result)
 	decision_made.emit(story_save_decision, selected_how_many_times)
-	if save_result.save_outcome != SaveResult.Outcome.FAILURE:
+	if save_result.get_save_outcome() != SaveResult.Outcome.FAILURE:
 		enter_page(story_save_decision.transition.get_story_page())
 	else:
 		enter_page(story_save_decision.failure_transition.get_story_page())

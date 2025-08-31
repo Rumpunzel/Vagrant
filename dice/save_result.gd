@@ -1,38 +1,35 @@
+@tool
 class_name SaveResult
+extends DiceResult
 
 enum Outcome {
-	NORMAL,
 	SUCCESS,
 	FAILURE,
 }
 
-var character: Character
-var attribute: CharacterAttribute
-var difficulty: int
+@export var save_request: SaveRequest
 
-var dice: Array[Die] = []
-var result: int = 0
-var highest_dice: Array[Die] = [ ]
-var save_outcome: Outcome = Outcome.NORMAL
+func _init(for_save_request: SaveRequest) -> void:
+	save_request = for_save_request
+	super(save_request.snapshot_dice())
+	#for breath_die: BreathDie in character.breath_dice: breath_die.deselect()
 
-func _init(new_character: Character, new_attribute: CharacterAttribute, new_difficulty: int) -> void:
-	character = new_character
-	attribute = new_attribute
-	difficulty = new_difficulty
-	
-	# Make a snapshot of the breath dice
-	dice.assign(character.hit_dice.map(func(die: Die) -> Die: return die.duplicate()))
-	
-	for die: Die in dice: if die.result > result: result = die.result
-	for die: Die in dice: if die.result == result: highest_dice.append(die)
-	if difficulty > 0: save_outcome = Outcome.SUCCESS if result >= difficulty else Outcome.FAILURE
-	
-	for hit_die: Die in character.hit_dice: hit_die.deselect()
+func get_breath_dice() -> Array[BreathDie]:
+	var breath_dice: Array[BreathDie]
+	breath_dice.assign(dice)
+	return breath_dice
 
-func get_die_color(die: Die) -> Color:
-	var color: Color = Color.WHITE
-	match save_outcome:
-		Outcome.NORMAL: pass
-		Outcome.SUCCESS: color = Color.LIME_GREEN if die.is_alive() else Color.CORNFLOWER_BLUE
-		Outcome.FAILURE: color = Color.ORANGE if die.is_alive() else Color.FIREBRICK
-	return color
+func get_save_outcome() -> Outcome:
+	return Outcome.SUCCESS if get_highest_result() >= save_request.difficulty else Outcome.FAILURE
+
+func get_highest_breath_dice() -> Array[BreathDie]:
+	var highest_breath_dice: Array[BreathDie] = []
+	highest_breath_dice.assign(get_highest_dice())
+	return highest_breath_dice
+
+func get_die_color(die: BreathDie) -> Color:
+	match get_save_outcome():
+		Outcome.SUCCESS: return Color.LIME_GREEN if die.is_alive() else Color.CORNFLOWER_BLUE
+		Outcome.FAILURE: return Color.ORANGE if die.is_alive() else Color.FIREBRICK
+		_: assert(false, "SaveResult.Outcome %s is not supported!" % get_save_outcome())
+	return Color.BLACK

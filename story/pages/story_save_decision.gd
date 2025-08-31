@@ -7,7 +7,7 @@ extends StoryDecision
 @export var failure_transition: StoryPageReference
 
 func to_save_request(protagonist: Character) -> SaveRequest:
-	return SaveRequest.new(protagonist, attribute, difficulty, details)
+	return SaveRequest.create(details, protagonist, attribute, difficulty)
 
 func to_dialog_button_text() -> String:
 	return "[color=#%s][%s][/color] %s" % [attribute.color.to_html(), attribute, super.to_dialog_button_text()]

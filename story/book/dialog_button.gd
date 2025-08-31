@@ -93,9 +93,7 @@ func _on_pressed() -> void:
 	if story_decision is StorySaveDecision:
 		var save_request: SaveRequest = (story_decision as StorySaveDecision).to_save_request(_characters.get_protagonist())
 		save_requested.emit(save_request, story_decision)
-	else:
-		save_requested.emit(null, story_decision)
-		_story.make_decision(story_decision)
+	else: _story.make_decision(story_decision)
 
 func _on_description_finished_typing() -> void:
 	finished_setup.emit()
