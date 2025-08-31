@@ -12,14 +12,22 @@ signal entry_added(entry: Control)
 @export var _dice_log_entry_group: PackedScene
 
 var _current_entry_group: DiceLogEntryGroup = null
+var _protagonist: Character :
+	set(new_protagonist):
+		if _protagonist: _protagonist.save_rolled.disconnect(_on_save_rolled)
+		_protagonist = new_protagonist
+		_protagonist.save_rolled.connect(_on_save_rolled)
 
 func _ready() -> void:
-	pass
-	#DiceRoller.save_rolled.connect(_on_save_rolled)
+	_characters.characters_updated.connect(_on_characters_updated)
+	DiceRoller.die_rolled.connect(_on_die_rolled)
 
 func _exit_tree() -> void:
-	pass
-	#DiceRoller.save_rolled.disconnect(_on_save_rolled)
+	_characters.characters_updated.disconnect(_on_characters_updated)
+	DiceRoller.die_rolled.disconnect(_on_die_rolled)
+
+func _on_characters_updated(_updated_characters: Dictionary[CharacterProfile, Character]) -> void:
+	_protagonist = _characters.get_protagonist()
 
 func _on_die_rolled(die: Die) -> void:
 	var dice_log_entry: DiceLogDieEntry = _dice_log_die_entry.instantiate()
