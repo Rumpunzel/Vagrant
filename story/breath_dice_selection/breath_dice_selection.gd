@@ -1,4 +1,4 @@
-class_name HitDiceSelection
+class_name BreathDiceSelection
 extends PanelContainer
 
 signal save_evaluated(save_result: SaveResult)
@@ -6,7 +6,7 @@ signal save_evaluated(save_result: SaveResult)
 @export_group("Configuration")
 @export var _portrait: TextureRect
 @export var _description: TypingLabel
-@export var _breath_dice_selection_buttons: HitDiceSelectionButtons
+@export var _breath_dice_selection_buttons: BreathDiceSelectionButtons
 @export var _all_in_button: DisplayButton
 @export var _ok_button: DisplayButton
 @export var _dice_log_save_request_entry: DiceLogSaveRequestEntry

@@ -1,5 +1,5 @@
 @tool
-class_name HitDieSelectionButton
+class_name BreathDieSelectionButton
 extends DisplayButton
 
 signal breath_die_selected(breath_die: BreathDie)

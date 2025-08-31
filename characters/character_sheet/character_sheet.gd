@@ -25,7 +25,7 @@ extends PanelContainer
 @export var _name: RichTextLabel
 @export var _title: RichTextLabel
 @export var _attributes: CharacterAttributesPanel
-@export var _breath_dice: HitDiceSelectionButtons
+@export var _breath_dice: BreathDiceSelectionButtons
 @export var _ability_labels: AbilityLabels
 
 func _update() -> void:

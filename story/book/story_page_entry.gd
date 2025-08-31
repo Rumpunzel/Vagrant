@@ -8,7 +8,7 @@ extends PanelContainer
 @export var _background: TextureRect
 @export var _description: TypingLabel
 @export var _choices: Container
-@export var _breath_dice_selection: HitDiceSelection
+@export var _breath_dice_selection: BreathDiceSelection
 @export var _breath_dice_selection_cc: CollapsibleContainer
 @export var _dialog_button: PackedScene
 
