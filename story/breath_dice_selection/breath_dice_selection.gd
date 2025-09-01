@@ -29,7 +29,7 @@ var _save_request: SaveRequest :
 		_breath_dice_selection_buttons.update_save_request(_save_request)
 		_enable_hud()
 		_all_in_button.set_pressed_no_signal(false)
-		_ok_button.grab_focus()
+		#_ok_button.grab_focus()
 	
 var _save_result: SaveResult :
 	set(new_save_result):
