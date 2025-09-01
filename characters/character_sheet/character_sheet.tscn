@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://14h1hukjjol7"]
 
 [ext_resource type="Script" uid="uid://dkwi26f6nf1xj" path="res://characters/character_sheet/character_sheet.gd" id="1_uqhlh"]
-[ext_resource type="Texture2D" uid="uid://pla8unhxi8j7" path="res://story/portraits/HE-MF-DW-F104/Fulllength.png" id="2_sp54v"]
+[ext_resource type="Texture2D" uid="uid://pla8unhxi8j7" path="res://assets/portraits/HE-MF-DW-F104/Fulllength.png" id="2_sp54v"]
 [ext_resource type="PackedScene" uid="uid://dgk1ipqq2uypw" path="res://characters/character_sheet/attributes.tscn" id="3_hgrxd"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/breath_dice_selection/breath_dice_selection_buttons.tscn" id="4_gaha4"]
 [ext_resource type="PackedScene" uid="uid://cjdgl0lvge2cl" path="res://characters/character_sheet/ability_labels.tscn" id="5_davb4"]

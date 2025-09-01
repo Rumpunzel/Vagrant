@@ -15,7 +15,7 @@
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="13_gam16"]
 [ext_resource type="Resource" uid="uid://bj6k6l430dyvn" path="res://characters/origins/scoundrel.tres" id="14_1atq2"]
 [ext_resource type="Resource" uid="uid://45sbhcfyenlm" path="res://characters/origins/veteran.tres" id="15_60rk6"]
-[ext_resource type="Texture2D" uid="uid://bbd1bbju5drht" path="res://story/portraits/HE-MF-2H-M116/Fulllength.png" id="16_rt0sg"]
+[ext_resource type="Texture2D" uid="uid://bbd1bbju5drht" path="res://assets/portraits/HE-MF-2H-M116/Fulllength.png" id="16_rt0sg"]
 [ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="17_ckreo"]
 
 [sub_resource type="Resource" id="Resource_oxain"]
