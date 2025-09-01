@@ -21,13 +21,14 @@ func set_story_page(story_page: StoryPage, story: Story) -> void:
 func _set_background(background_texture: Texture2D) -> void:
 	background = background_texture
 	if background_texture == null or (_current_background and _current_background.texture == background_texture): return
+	var old_background: BackgroundRect = _current_background
 	var new_background: BackgroundRect = _background.instantiate()
-	_backgrounds_container.add_child(new_background)
 	new_background.texture = background_texture
-	if _current_background:
-		_current_background.fade_out()
-		new_background.fade_in()
 	_current_background = new_background
+	_backgrounds_container.add_child(new_background)
+	if old_background:
+		await new_background.faded_in
+		old_background.fade_out()
 
 func _set_ambience(audio_stream: AudioStream) -> void:
 	if not audio_stream or _ambience.stream == audio_stream: return

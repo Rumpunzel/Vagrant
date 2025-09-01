@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://baflfbgcr5cbu"]
+[gd_scene load_steps=11 format=3 uid="uid://baflfbgcr5cbu"]
 
 [ext_resource type="Script" uid="uid://df2le2goabm8t" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage/stage.tscn" id="1_80nbo"]
@@ -8,7 +8,6 @@
 [ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://story/dorian.tres" id="2_mfdv2"]
 [ext_resource type="Resource" uid="uid://dw1vkutmmhnao" path="res://story/adventures/test_adventure.tres" id="2_vef74"]
 [ext_resource type="PackedScene" uid="uid://cc3qx1qt3ie00" path="res://story/character_creation/character_creation.tscn" id="6_eow3j"]
-[ext_resource type="PackedScene" uid="uid://bl0pdxri24fnh" path="res://characters/character.tscn" id="6_j5wjh"]
 [ext_resource type="PackedScene" uid="uid://db6oui711vqep" path="res://story/adventure.tscn" id="7_j5wjh"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="10_hve3p"]
 
@@ -30,7 +29,6 @@ metadata/_custom_type_script = "uid://dccrmadulf3fx"
 
 [node name="Characters" type="Node" parent="."]
 script = ExtResource("2_fc0e3")
-_character = ExtResource("6_j5wjh")
 metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
 
 [node name="Stage" parent="." instance=ExtResource("1_80nbo")]
