@@ -6,8 +6,8 @@ signal breath_die_selected(breath_die: BreathDie)
 signal breath_die_deselected(breath_die: BreathDie)
 
 @export var _randomly_delay_update: bool = true
-@export_range(0.0, 5.0) var _min_update_delay: float = 0.1
-@export_range(0.0, 5.0) var _max_update_delay: float = 1.0
+@export_range(0.0, 5.0) var _min_update_delay: float = 0.2
+@export_range(0.0, 5.0) var _max_update_delay: float = 2.0
 
 @export_group("Configuration")
 @export var _update_timer: Timer

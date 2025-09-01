@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("2_1xadg")
-abilities = Array[String](["Lose at most [b]1[/b] breath die.", "When you lose a breath die, you find [hint=\"1:    something old and powerful
+abilities = Array[String](["Lose at most your [b]1[/b] highest breath die.", "When you lose a breath die, you find [hint=\"1:    something old and powerful
 2:    a perfectly smooth stone
 3:    a poison mushroom
 4:    a foot of rope
