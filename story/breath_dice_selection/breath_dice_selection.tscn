@@ -1,17 +1,21 @@
-[gd_scene load_steps=8 format=3 uid="uid://bpqkh512g0nmb"]
+[gd_scene load_steps=10 format=3 uid="uid://bpqkh512g0nmb"]
 
 [ext_resource type="Script" uid="uid://dfxwf0abq0203" path="res://story/breath_dice_selection/breath_dice_selection.gd" id="1_6stf5"]
 [ext_resource type="Texture2D" uid="uid://457ox5k8siu6" path="res://assets/portraits/HE-BA-BR-F115/Small.png" id="2_87cfe"]
+[ext_resource type="Material" uid="uid://cf1n1fetmgy8" path="res://characters/character_sheet/small_portrait_vignette.tres" id="2_m1dxb"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="3_06obj"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/breath_dice_selection/breath_dice_selection_buttons.tscn" id="3_gpl86"]
 [ext_resource type="PackedScene" uid="uid://dcy2roj1wv5vr" path="res://dice/dice_log/dice_log_save_request_entry.tscn" id="4_tj3a7"]
 [ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="5_bhkt5"]
 [ext_resource type="PackedScene" uid="uid://cqeuqu32m0rr8" path="res://dice/dice_log/dice_log_save_result_entry.tscn" id="7_oei8s"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m1dxb"]
+
 [node name="BreathDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_save_request_entry", "_dice_log_save_result_entry")]
 offset_right = 177.0
 offset_bottom = 169.0
 mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxEmpty_m1dxb")
 script = ExtResource("1_6stf5")
 _portrait = NodePath("Portrait")
 _description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Description")
@@ -23,7 +27,7 @@ _dice_log_save_result_entry = NodePath("MarginContainer/VBoxContainer/SaveResult
 metadata/_custom_type_script = "uid://dfxwf0abq0203"
 
 [node name="Portrait" type="TextureRect" parent="."]
-show_behind_parent = true
+material = ExtResource("2_m1dxb")
 layout_mode = 2
 texture = ExtResource("2_87cfe")
 expand_mode = 1

@@ -1,11 +1,11 @@
 [gd_scene load_steps=5 format=3 uid="uid://b11javrif3o0h"]
 
-[ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://story/book/fade_vignette.gdshader" id="1_b6pc2"]
-[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://assets/landscapes/ruin.jpg" id="1_t2cgw"]
-[ext_resource type="Script" uid="uid://0inxk2dmireb" path="res://story/stage/background.gd" id="3_b6pc2"]
+[ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://story/book/fade_vignette.gdshader" id="1_01wwo"]
+[ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://assets/landscapes/ruin.jpg" id="2_jufi2"]
+[ext_resource type="Script" uid="uid://0inxk2dmireb" path="res://story/stage/background_rect.gd" id="3_6hvtf"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_b6pc2"]
-shader = ExtResource("1_b6pc2")
+shader = ExtResource("1_01wwo")
 shader_parameter/power = 1.0
 shader_parameter/up = 0.5
 shader_parameter/down = 0.5
@@ -16,15 +16,15 @@ shader_parameter/down_clip = 0.0
 shader_parameter/left_clip = 0.0
 shader_parameter/right_clip = 0.0
 
-[node name="Background" type="TextureRect"]
+[node name="BackgroundRect" type="TextureRect"]
 material = SubResource("ShaderMaterial_b6pc2")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_t2cgw")
+texture = ExtResource("2_jufi2")
 expand_mode = 1
 stretch_mode = 6
-script = ExtResource("3_b6pc2")
+script = ExtResource("3_6hvtf")
 metadata/_custom_type_script = "uid://0inxk2dmireb"

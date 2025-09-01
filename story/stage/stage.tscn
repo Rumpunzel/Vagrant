@@ -1,7 +1,7 @@
 [gd_scene load_steps=13 format=3 uid="uid://l8n866i755ja"]
 
 [ext_resource type="Script" uid="uid://bysk8fr0ekhsg" path="res://story/stage/stage.gd" id="1_gw8ty"]
-[ext_resource type="PackedScene" uid="uid://b11javrif3o0h" path="res://story/stage/background.tscn" id="3_8h6qk"]
+[ext_resource type="PackedScene" uid="uid://b11javrif3o0h" path="res://story/stage/background_rect.tscn" id="3_8h6qk"]
 [ext_resource type="Texture2D" uid="uid://dnhbeovwqw8rn" path="res://assets/old_paper.jpg" id="3_c7u3m"]
 [ext_resource type="Script" uid="uid://8x7jso8c44ri" path="res://story/stage/candle.gd" id="4_oqyx5"]
 [ext_resource type="AudioStream" uid="uid://bd5biskko2bix" path="res://assets/sfx/ambience/the-crackling-sound-of-a-candle-burning.mp3" id="5_h1mbo"]
