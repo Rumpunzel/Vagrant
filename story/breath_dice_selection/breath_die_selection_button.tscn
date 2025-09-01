@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://cfnlwcs3oai0c"]
+[gd_scene load_steps=4 format=3 uid="uid://cfnlwcs3oai0c"]
 
 [ext_resource type="Texture2D" uid="uid://d12l3mfoh65ag" path="res://icons/dice/d4.png" id="1_j8j4o"]
 [ext_resource type="Script" uid="uid://bwyauryle05v0" path="res://story/breath_dice_selection/breath_die_selection_button.gd" id="2_4tkht"]
+[ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="3_o2vdy"]
 
-[node name="BreathDieSelectionButton" type="Button"]
+[node name="BreathDieSelectionButton" type="Button" node_paths=PackedStringArray("_update_timer")]
 custom_minimum_size = Vector2(64, 64)
 offset_right = 64.0
 offset_bottom = 64.0
@@ -21,7 +22,13 @@ icon = ExtResource("1_j8j4o")
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("2_4tkht")
+_update_timer = NodePath("UpdateDelayTimer")
 active = false
 metadata/_custom_type_script = "uid://bwyauryle05v0"
+
+[node name="UpdateDelayTimer" type="Timer" parent="."]
+one_shot = true
+script = ExtResource("3_o2vdy")
+metadata/_custom_type_script = "uid://losc8gq8exf0"
 
 [connection signal="toggled" from="." to="." method="_on_toggled"]

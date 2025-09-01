@@ -21,6 +21,7 @@ size_flags_vertical = 3
 [node name="AllButton" type="Button" parent="."]
 layout_mode = 2
 focus_mode = 0
+mouse_filter = 1
 toggle_mode = true
 button_mask = 0
 text = "All"
