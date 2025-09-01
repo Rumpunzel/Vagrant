@@ -13,6 +13,7 @@ enum State {
 		state = new_state
 		match state:
 			State.PAST:
+				for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = false
 				var tween: Tween = get_tree().create_tween()
 				tween.tween_property(self, "modulate", _past_modulate, _fade_out_duration).set_delay(_dice_fade_out_delay if is_dice_page() else _fade_out_delay)
 				_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -24,6 +25,7 @@ enum State {
 				mouse_entered.connect(_on_mouse_entered)
 				mouse_exited.connect(_on_mouse_exited)
 			State.PRESENT:
+				for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = true
 				modulate = Color.WHITE
 			_: assert(false, "StoryPageEntry.State %s is not supported!" % state)
 

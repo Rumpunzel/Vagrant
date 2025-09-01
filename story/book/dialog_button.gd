@@ -1,6 +1,6 @@
 @tool
 class_name DialogButton
-extends Button
+extends DisplayButton
 
 signal save_requested(save_request: SaveRequest, source: StoryDecision)
 
