@@ -76,7 +76,7 @@ func _on_continue_pressed() -> void:
 			_origins_picker.setup(doubles_rolled)
 			_attributes_roller.collapse()
 			_origins_picker.appear()
-			_inventory.appear()
+			#_inventory.appear()
 			_bio_editor.appear()
 		CreationStage.ORIGINS:
 			_creation_stage = _creation_stage + 1 as CreationStage
