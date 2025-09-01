@@ -14,7 +14,7 @@ extends CanvasLayer
 var _current_background: TextureRect
 
 func set_story_page(story_page: StoryPage, story: Story) -> void:
-	_set_background(story_page.get_background(story))
+	_set_background(story_page.get_area_background())
 	_set_ambience(story_page.get_ambience(story))
 
 func _set_background(background_texture: Texture) -> void:
