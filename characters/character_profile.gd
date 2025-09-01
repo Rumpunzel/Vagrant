@@ -24,7 +24,8 @@ extends Resource
 	set(new_additional_portraits):
 		_additional_portraits = new_additional_portraits
 		if _additional_portraits.is_empty(): return
-		var directory_path: String = _additional_portraits.values().front().resource_path.get_base_dir()
+		var first_additional_portrait: Texture2D = _additional_portraits.values().front()
+		var directory_path: String = first_additional_portrait.resource_path.get_base_dir()
 		if directory_path == _portrait_directory: return
 		_portrait_directory = directory_path
 
