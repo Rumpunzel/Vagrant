@@ -8,6 +8,18 @@ extends PanelContainer
 
 var _button_groups: Dictionary[DieType, BreathDiceSelectionButtonGroup] = {}
 
+func _ready() -> void:
+	if not Engine.is_editor_hint(): return
+	var debug_dice_pool: Dictionary[DieType, int] = {
+		Rules.d4: 1,
+		Rules.d6: 1,
+		Rules.d8: 1,
+		Rules.d10: 1,
+		Rules.d12: 1,
+	}
+	var debug_breath_dice: Array[BreathDie] = DiceRoller.generate_breath_dice_pool(debug_dice_pool)
+	setup_breath_dice(debug_breath_dice)
+
 func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
 	_button_groups.clear()
 	_clear()
