@@ -6,8 +6,7 @@
 
 [resource]
 script = ExtResource("2_1xadg")
-abilities = Array[String](["You always lose your highest breath die but never more.
-If you normally would not have lost that die, you find [hint=\"1:    1 Supply
+abilities = Array[String](["Lose at most [b]1[/b] breath die.", "When you lose a breath die, you find [hint=\"1:    something old and powerful
 2:    a perfectly smooth stone
 3:    a poison mushroom
 4:    a foot of rope
@@ -18,7 +17,7 @@ If you normally would not have lost that die, you find [hint=\"1:    1 Supply
 9:    bones
 10:  something lost
 11:  an omen
-12:  something old and powerful \"]something[/hint] based on the result."])
+12: 1 Supply\"][i]something[/i][/hint] based on the result."])
 modifiers = Array[ExtResource("2_dhy3k")]([])
 type = 0
 name = "Peasant"

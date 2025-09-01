@@ -6,11 +6,11 @@
 
 [resource]
 script = ExtResource("2_6jk6b")
+abilities = Array[String](["[b]+1[/b] weapon die.", "Double vantage against foes."])
+modifiers = Array[ExtResource("2_53ue5")]([])
+type = 0
 name = "Veteran"
 icon = ExtResource("1_nyu4n")
-type = 0
 color = Color(0, 0, 0, 1)
 details = ""
-abilities = Array[String](["+1 weapon die.", "Double vantage against foes."])
-modifiers = Array[ExtResource("2_53ue5")]([])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

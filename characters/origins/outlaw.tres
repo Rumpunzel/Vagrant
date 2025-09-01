@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("2_sq5ij")
-abilities = Array[String](["+3 company infamy"])
+abilities = Array[String](["[b]+3[/b] company infamy"])
 modifiers = Array[ExtResource("2_nkdfw")]([])
 type = 1
 name = "Outlaw"

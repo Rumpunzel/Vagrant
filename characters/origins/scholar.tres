@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("2_medmp")
-abilities = Array[String](["No question limit for one subject.", "+1 to all other expertises."])
+abilities = Array[String](["No question limit for one subject.", "[b]+1[/b] to all other expertises."])
 modifiers = Array[ExtResource("2_adaqc")]([])
 type = 0
 name = "Scholar"

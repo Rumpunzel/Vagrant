@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1_vwydo")
-abilities = Array[String](["+1 to all attributes."])
+abilities = Array[String](["[b]+1[/b] to all attributes."])
 modifiers = Array[ExtResource("2_6f1iy")]([ExtResource("3_0eesl")])
 type = 0
 name = "Adventurer"

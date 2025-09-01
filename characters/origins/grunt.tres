@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("2_j0cvg")
-abilities = Array[String](["Feats of strength go unanswered.", "When you pass a Guts save, regain 1 breath die."])
+abilities = Array[String](["Feats of strength go unanswered.", "When you pass a [b]Guts[/b] save, regain [b]1[/b] breath die."])
 modifiers = Array[ExtResource("2_7ebxt")]([])
 type = 0
 name = "Grunt"

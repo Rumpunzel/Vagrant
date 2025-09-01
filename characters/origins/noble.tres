@@ -6,11 +6,11 @@
 
 [resource]
 script = ExtResource("2_400pu")
+abilities = Array[String](["[b]+3[/b] company renown"])
+modifiers = Array[ExtResource("2_hhp2e")]([])
+type = 1
 name = "Noble"
 icon = ExtResource("1_r7mih")
-type = 1
 color = Color(0, 0, 0, 1)
 details = ""
-abilities = Array[String](["+3 company renown"])
-modifiers = Array[ExtResource("2_hhp2e")]([])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"
