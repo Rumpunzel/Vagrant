@@ -16,45 +16,45 @@ void fragment() {
 	//TODO: Add an "angel" parameter to change the clipping direction
 	
 	float _hor = 1.0;
-	if (_rotated_uv.x<left) {
-		if (left_clip<left && left_clip > 0.0) {
-			if (_rotated_uv.x<left_clip){_hor = 0.0;}
-			else {_hor *= pow( (_rotated_uv.x-left_clip)/(left-left_clip), power);}
+	if (_rotated_uv.x < left) {
+		if (left_clip < left && left_clip > 0.0) {
+			if (_rotated_uv.x < left_clip){_hor = 0.0;}
+			else {_hor *= pow((_rotated_uv.x - left_clip) / (left - left_clip), power);}
 		}
 		else{
-			_hor *= pow( _rotated_uv.x/left, power);
+			_hor *= pow(_rotated_uv.x / left, power);
 		}
 	}
-	if (_rotated_uv.x>1.0-right) {
-		if (right_clip<right && right_clip > 0.0) {
-			if (1.0-_rotated_uv.x < right_clip){_hor = 0.0;}
-			else {_hor *= pow( (1.0-_rotated_uv.x-right_clip)/(right-right_clip), power);}
+	if (_rotated_uv.x > 1.0 - right) {
+		if (right_clip < right && right_clip > 0.0) {
+			if (1.0 - _rotated_uv.x < right_clip) {_hor = 0.0;}
+			else {_hor *= pow((1.0 - _rotated_uv.x - right_clip) / (right - right_clip), power);}
 		}
 		else{
-			_hor *= pow( (1.0-_rotated_uv.x)/right, power);
+			_hor *= pow( (1.0 - _rotated_uv.x) / right, power);
 		}
 	}
 	
 	float _ver = 1.0;
-	if (_rotated_uv.y<up) {
-		if (up_clip<up && up_clip > 0.0) {
-			if (_rotated_uv.y<up_clip){_ver = 0.0;}
-			else {_ver *= pow( (_rotated_uv.y-up_clip)/(up-up_clip), power);}
+	if (_rotated_uv.y < up) {
+		if (up_clip < up && up_clip > 0.0) {
+			if (_rotated_uv.y < up_clip){_ver = 0.0;}
+			else {_ver *= pow((_rotated_uv.y - up_clip) / (up-up_clip), power);}
 		}
 		else{
-			_ver *= pow( _rotated_uv.y/up, power);
+			_ver *= pow(_rotated_uv.y / up, power);
 		}
 	}
-	if (_rotated_uv.y>1.0-down) {
-		if (right_clip<down && down_clip > 0.0) {
-			if (1.0-_rotated_uv.y < down_clip){_ver = 0.0;}
-			else {_ver= pow( (1.0-_rotated_uv.y-down_clip)/(down-down_clip), power);}
+	if (_rotated_uv.y > 1.0-down) {
+		if (right_clip < down && down_clip > 0.0) {
+			if (1.0 - _rotated_uv.y < down_clip) {_ver = 0.0;}
+			else {_ver = pow((1.0 - _rotated_uv.y - down_clip) / (down - down_clip), power);}
 		}
-		else{
-			_ver *= pow( (1.0-_rotated_uv.y)/down, power);
+		else {
+			_ver *= pow((1.0 - _rotated_uv.y) / down, power);
 		}
 	}
 	
-	COLOR = texture(TEXTURE,UV);
-	COLOR.a = min(_hor*_ver, texture(TEXTURE,UV).a);
+	COLOR = texture(TEXTURE, UV);
+	COLOR.a = min(_hor * _ver, texture(TEXTURE, UV).a);
 }

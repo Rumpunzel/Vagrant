@@ -82,7 +82,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(384, 555)
+custom_minimum_size = Vector2(384, 233)
 layout_mode = 2
 size_flags_vertical = 0
 script = ExtResource("4_nyvyp")
