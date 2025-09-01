@@ -17,6 +17,9 @@ enum State {
 				tween.tween_property(self, "modulate", _past_modulate, _fade_out_duration).set_delay(_dice_fade_out_delay if is_dice_page() else _fade_out_delay)
 				var background_tween: Tween = get_tree().create_tween()
 				background_tween.tween_property(_background, "modulate:a", 1.0, _dice_fade_out_delay)
+				await tween.finished
+				mouse_entered.connect(_on_mouse_entered)
+				mouse_exited.connect(_on_mouse_exited)
 			State.PRESENT:
 				modulate = Color.WHITE
 				_background.modulate.a = 0.0
@@ -108,12 +111,12 @@ func _on_decision_made(_story_decision: StoryDecision, _selected_how_many_times:
 	_story.decision_made.disconnect(_on_decision_made)
 
 func _on_mouse_entered() -> void:
-	if not state == State.PAST: return
+	assert(state == State.PAST)
 	var tween: Tween = get_tree().create_tween()
 	tween.tween_property(self, "modulate", Color.WHITE, _fade_in_duration)
 
 func _on_mouse_exited() -> void:
-	if not state == State.PAST: return
+	assert(state == State.PAST)
 	if get_global_rect().has_point(get_viewport().get_mouse_position()): return
 	var tween: Tween = get_tree().create_tween()
 	tween.tween_property(self, "modulate", _past_modulate, _fade_in_duration)

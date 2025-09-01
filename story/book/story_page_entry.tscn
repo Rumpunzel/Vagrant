@@ -68,7 +68,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(384, 233)
+custom_minimum_size = Vector2(384, 169)
 layout_mode = 2
 size_flags_vertical = 0
 script = ExtResource("4_nyvyp")
@@ -87,7 +87,5 @@ offset_right = 0.0
 offset_bottom = 43.0
 grow_horizontal = 2
 
-[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="finished_typing" from="MarginContainer/HBoxContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
 [connection signal="save_evaluated" from="MarginContainer/HBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_save_evaluated"]

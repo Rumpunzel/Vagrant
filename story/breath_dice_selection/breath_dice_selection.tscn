@@ -11,6 +11,7 @@
 [node name="BreathDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_save_request_entry", "_dice_log_save_result_entry")]
 offset_right = 177.0
 offset_bottom = 169.0
+mouse_filter = 1
 script = ExtResource("1_6stf5")
 _portrait = NodePath("Portrait")
 _description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Description")

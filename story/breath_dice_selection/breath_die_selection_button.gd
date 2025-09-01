@@ -20,7 +20,6 @@ var breath_die: BreathDie :
 		icon = breath_die.die_type.icon
 		text = ""
 		_update()
-		#breath_die.rolled.connect(_on_die_rolled)
 		breath_die.state_changed.connect(_on_die_state_changed)
 
 @onready var _update_delay: float = randf_range(_min_update_delay, _max_update_delay)
@@ -77,11 +76,6 @@ func _remove_font_colors() -> void:
 
 func _on_selected_breath_dice_changed(selected_breath_dice: Array[BreathDie]) -> void:
 	button_pressed = selected_breath_dice.has(breath_die)
-
-#func _on_die_rolled(_result: int, _state: BreathDie.State) -> void:
-	## Only update in real time outside of breath die selection
-	#if button_pressed: return
-	#_update()
 
 func _on_die_state_changed(_die_state: BreathDie.State) -> void:
 	# Only update in real time outside of breath die selection
