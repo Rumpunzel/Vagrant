@@ -1,6 +1,7 @@
-[gd_scene load_steps=22 format=3 uid="uid://d0ecexfpobl4m"]
+[gd_scene load_steps=24 format=3 uid="uid://d0ecexfpobl4m"]
 
 [ext_resource type="Script" uid="uid://1rnnvyy1byjt" path="res://story/book/dialog_button.gd" id="1_smxr3"]
+[ext_resource type="AudioStream" uid="uid://1j01m4qmcdw4" path="res://assets/sfx/match-lighting-candle.mp3" id="2_rbcg6"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_w0yih"]
 device = -1
@@ -82,6 +83,12 @@ unicode = 48
 [sub_resource type="Shortcut" id="Shortcut_akluy"]
 events = [SubResource("InputEventKey_glou3")]
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_rbcg6"]
+random_pitch = 1.1
+random_volume_offset_db = 2.0
+streams_count = 1
+stream_0/stream = ExtResource("2_rbcg6")
+
 [node name="DialogButton" type="Button" node_paths=PackedStringArray("_container", "_index", "_description")]
 custom_minimum_size = Vector2(45, 31)
 offset_right = 333.0
@@ -95,6 +102,11 @@ _index = NodePath("MarginContainer/HBoxContainer/Index")
 _description = NodePath("MarginContainer/HBoxContainer/Description")
 _shortcuts = Array[Shortcut]([SubResource("Shortcut_4452u"), SubResource("Shortcut_fg3ec"), SubResource("Shortcut_5aiqg"), SubResource("Shortcut_ypkvd"), SubResource("Shortcut_o3aia"), SubResource("Shortcut_jht22"), SubResource("Shortcut_2q0j8"), SubResource("Shortcut_giagg"), SubResource("Shortcut_uumch"), SubResource("Shortcut_akluy")])
 metadata/_custom_type_script = "uid://1rnnvyy1byjt"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_rbcg6")
+pitch_scale = 0.7
+bus = &"SFX"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -139,4 +151,5 @@ scroll_active = false
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="pressed" from="." to="." method="_on_pressed"]
+[connection signal="pressed" from="." to="AudioStreamPlayer" method="play"]
 [connection signal="minimum_size_changed" from="MarginContainer" to="." method="_on_container_minimum_size_changed"]
