@@ -1,8 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://b11javrif3o0h"]
+[gd_scene load_steps=4 format=3 uid="uid://b11javrif3o0h"]
 
+[ext_resource type="Material" uid="uid://cuyjjufrw85md" path="res://story/stage/background_material.tres" id="1_b6pc2"]
 [ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://assets/landscapes/ruin.jpg" id="1_t2cgw"]
+[ext_resource type="Script" uid="uid://0inxk2dmireb" path="res://story/stage/background.gd" id="3_b6pc2"]
 
 [node name="Background" type="TextureRect"]
+material = ExtResource("1_b6pc2")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,3 +14,5 @@ grow_vertical = 2
 texture = ExtResource("1_t2cgw")
 expand_mode = 1
 stretch_mode = 6
+script = ExtResource("3_b6pc2")
+metadata/_custom_type_script = "uid://0inxk2dmireb"

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bysk8fr0ekhsg" path="res://story/stage/stage.gd" id="1_gw8ty"]
 [ext_resource type="PackedScene" uid="uid://b11javrif3o0h" path="res://story/stage/background.tscn" id="3_8h6qk"]
-[ext_resource type="Texture2D" uid="uid://c56fr4gg3616i" path="res://assets/landscapes/tavern.png" id="5_7i01a"]
+[ext_resource type="Texture2D" uid="uid://dnhbeovwqw8rn" path="res://assets/old_paper.jpg" id="3_c7u3m"]
 [ext_resource type="Shader" uid="uid://chm2iklhnb1pg" path="res://story/stage/blur.gdshader" id="5_hdi0x"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_515v2"]
@@ -23,11 +23,12 @@ fill_from = Vector2(0.5, 1)
 fill_to = Vector2(0.6, 0.4)
 metadata/_snap_enabled = true
 
-[node name="Stage" type="CanvasLayer" node_paths=PackedStringArray("_ambience", "_music")]
+[node name="Stage" type="CanvasLayer" node_paths=PackedStringArray("_ambience", "_music", "_backgrounds_container")]
 layer = -100
 script = ExtResource("1_gw8ty")
 _ambience = NodePath("Ambience")
 _music = NodePath("Music")
+_backgrounds_container = NodePath("MarginContainer/Backgrounds")
 _background = ExtResource("3_8h6qk")
 metadata/_custom_type_script = "uid://bysk8fr0ekhsg"
 
@@ -39,19 +40,36 @@ bus = &"Ambience"
 autoplay = true
 bus = &"Music"
 
-[node name="Blur" type="TextureRect" parent="."]
-material = SubResource("ShaderMaterial_515v2")
+[node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("5_7i01a")
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
 
-[node name="Gradient" type="TextureRect" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Book" type="TextureRect" parent="MarginContainer"]
+modulate = Color(0.2, 0.2, 0.2, 1)
+layout_mode = 2
+texture = ExtResource("3_c7u3m")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Backgrounds" type="MarginContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="Blur" type="ColorRect" parent="MarginContainer"]
+visible = false
+material = SubResource("ShaderMaterial_515v2")
+layout_mode = 2
+
+[node name="Gradient" type="TextureRect" parent="MarginContainer"]
+layout_mode = 2
 texture = SubResource("GradientTexture2D_2xsor")

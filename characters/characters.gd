@@ -3,8 +3,6 @@ extends Node
 
 signal characters_updated(characters: Dictionary[CharacterProfile, Character])
 
-@export var _character: PackedScene
-
 var characters: Dictionary[CharacterProfile, Character] = { }
 
 var _protagonist_profile: CharacterProfile

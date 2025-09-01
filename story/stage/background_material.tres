@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cuyjjufrw85md"]
+
+[ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://story/book/fade_vignette.gdshader" id="1_o8bkf"]
+
+[resource]
+shader = ExtResource("1_o8bkf")
+shader_parameter/power = 1.0
+shader_parameter/up = 0.1
+shader_parameter/down = 0.1
+shader_parameter/left = 0.1
+shader_parameter/right = 0.1
+shader_parameter/up_clip = 0.0
+shader_parameter/down_clip = 0.0
+shader_parameter/left_clip = 0.0
+shader_parameter/right_clip = 0.0

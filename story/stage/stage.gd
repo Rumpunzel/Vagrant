@@ -9,33 +9,28 @@ extends CanvasLayer
 @export_group("Configuration")
 @export var _ambience: AudioStreamPlayer
 @export var _music: AudioStreamPlayer
+@export var _backgrounds_container: Container
 @export var _background: PackedScene
 
-var _current_background: TextureRect
+var _current_background: BackgroundRect
 
 func set_story_page(story_page: StoryPage, story: Story) -> void:
 	_set_background(story_page.get_area_background())
 	_set_ambience(story_page.get_ambience(story))
 
-func _set_background(background_texture: Texture) -> void:
+func _set_background(background_texture: Texture2D) -> void:
 	background = background_texture
-	if background_texture == null or (_current_background!= null and _current_background.texture == background_texture): return
-	var new_background: TextureRect = _background.instantiate()
-	if _current_background:
-		_current_background.add_sibling(new_background)
-	else:
-		_ambience.add_sibling(new_background)
+	if background_texture == null or (_current_background and _current_background.texture == background_texture): return
+	var new_background: BackgroundRect = _background.instantiate()
+	_backgrounds_container.add_child(new_background)
 	new_background.texture = background_texture
-	if _current_background != null:
-		var tween: Tween = create_tween()
-		tween.tween_property(new_background, "modulate:a", 1.0, 2.0).from(0.0)
-		await tween.finished
-		remove_child(_current_background)
-		_current_background.queue_free()
+	if _current_background:
+		_current_background.fade_out()
+		new_background.fade_in()
 	_current_background = new_background
 
 func _set_ambience(audio_stream: AudioStream) -> void:
-	if audio_stream == null or _ambience.stream == audio_stream: return
+	if not audio_stream or _ambience.stream == audio_stream: return
 	ambience = audio_stream
 	_ambience.stream = audio_stream
 	if not Engine.is_editor_hint() and is_inside_tree(): _ambience.play()
