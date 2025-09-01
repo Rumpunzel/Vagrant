@@ -1,3 +1,4 @@
+@tool
 class_name BreathDiceSelection
 extends PanelContainer
 
@@ -43,6 +44,18 @@ var _save_result: SaveResult :
 		_disable_hud()
 
 var _character_resolver: Callable
+
+func _ready() -> void:
+	if not Engine.is_editor_hint(): return
+	var debug_dice_pool: Dictionary[DieType, int] = {
+		Rules.d4: 1,
+		Rules.d6: 1,
+		Rules.d8: 1,
+		Rules.d10: 1,
+		Rules.d12: 1,
+	}
+	var debug_breath_dice: Array[BreathDie] = DiceRoller.generate_breath_dice_pool(debug_dice_pool)
+	_breath_dice_selection_buttons.setup_breath_dice(debug_breath_dice)
 
 func request_save(save_request: SaveRequest, character_resolver: Callable) -> void:
 	assert(save_request)
