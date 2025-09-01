@@ -3,6 +3,8 @@ extends PanelContainer
 
 signal save_evaluated(save_result: SaveResult)
 
+@export var _portrait_identifier: String = "Small.png"
+
 @export_group("Configuration")
 @export var _portrait: TextureRect
 @export var _description: TypingLabel
@@ -17,11 +19,11 @@ var _save_request: SaveRequest :
 		assert(new_save_request)
 		_save_request = new_save_request
 		_description.type_text(_save_request.description)
+		_portrait.texture = _save_request.character_profile.get_portrait(_portrait_identifier)
 		_dice_log_save_request_entry.initialize_save_request(_save_request, _character_resolver)
 		_dice_log_save_request_entry.visible = true
 		_dice_log_save_result_entry.visible = false
 		var character: Character = _character_resolver.call(_save_request.character_profile)
-		_portrait.texture = character.portrait
 		_breath_dice_selection_buttons.setup_breath_dice(character.breath_dice)
 		_breath_dice_selection_buttons.update_save_request(_save_request)
 		_enable_hud()

@@ -1,8 +1,32 @@
+@tool
 class_name CharacterProfile
 extends Resource
 
 @export_placeholder("Name") var name: String
-@export var portrait: Texture2D
+
+@export var portrait: Texture2D :
+	set(new_portrait):
+		portrait = new_portrait
+		if not portrait: return
+		var directory_path: String = portrait.resource_path.get_base_dir()
+		if directory_path == _portrait_directory: return
+		_portrait_directory = directory_path
+
+@export_dir var _portrait_directory: String :
+	set(new_portrait_directory):
+		_portrait_directory = new_portrait_directory
+		portrait = load(_portrait_directory.path_join(_portrait_file_name)) if _portrait_directory else null
+		_additional_portraits.clear()
+		for portrait_file_name: String in _additional_portrait_file_names:
+			_additional_portraits[portrait_file_name] = load(_portrait_directory.path_join(portrait_file_name))
+
+@export var _additional_portraits: Dictionary[String, Texture2D] :
+	set(new_additional_portraits):
+		_additional_portraits = new_additional_portraits
+		if _additional_portraits.is_empty(): return
+		var directory_path: String = _additional_portraits.values().front().resource_path.get_base_dir()
+		if directory_path == _portrait_directory: return
+		_portrait_directory = directory_path
 
 @export var attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore] = {
 	Rules.STRENGTH: null,
@@ -20,6 +44,10 @@ extends Resource
 	Rules.d10: 1,
 	Rules.d12: 1,
 }
+
+@export_group("Configuration")
+@export var _portrait_file_name: String = "Fulllength.png"
+@export var _additional_portrait_file_names: Array[String] = ["Medium.png", "Small.png"]
 
 static func create(
 	new_name: String,
@@ -51,3 +79,6 @@ func get_breath_dice() -> Array[BreathDie]:
 
 func get_title() -> String:
 	return Origin.concatenate_with_icons(origins) if _title.is_empty() else _title
+
+func get_portrait(identifier: String) -> Texture2D:
+	return _additional_portraits.get(identifier, portrait)

@@ -68,13 +68,12 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(728, 169)
+custom_minimum_size = Vector2(177, 491)
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 0
 script = ExtResource("4_nyvyp")
 starts_opened = false
-folding_direction_preset = 10
+folding_direction_preset = 15
 sizing_constraint = 1
 auto_update_size = 1
 sizing_node = NodePath("BreathDiceSelection")
@@ -84,7 +83,7 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_right = 0.0
-offset_bottom = 126.0
+offset_bottom = 43.0
 grow_horizontal = 2
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
