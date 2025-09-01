@@ -1,3 +1,4 @@
+@tool
 class_name StoryPage
 extends StoryPageReference
 
@@ -49,11 +50,15 @@ func get_background(story: Story) -> Texture:
 	for event: StoryPage in _events:
 		if event.are_all_prerequisites_fullfilled(story):
 			var event_background: Texture = event.get_background(story)
-			if event_background != null: return event_background
-	var area_background: Texture = _area.background if _area != null else null
-	return _background if _background != null else area_background
+			if event_background: return event_background
+	var area_background: Texture = _area.background if _area else null
+	return _background if _background else area_background
 
-func get_ambience(_story: Story) -> AudioStream:
+func get_ambience(story: Story) -> AudioStream:
+	for event: StoryPage in _events:
+		if event.are_all_prerequisites_fullfilled(story):
+			var event_ambience: AudioStream = event.get_ambience(story)
+			if event_ambience != null: return event_ambience
 	var area_ambience: AudioStream = _area.ambience if _area != null else null
 	return _ambience if _ambience != null else area_ambience
 

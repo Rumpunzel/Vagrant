@@ -30,7 +30,7 @@ enum State {
 
 @export_range(0.0, 3.0) var _fade_out_duration: float = 1.0
 @export_range(0.0, 1.0) var _fade_out_delay: float = 0.5
-@export_range(0.0, 5.0) var _dice_fade_out_delay: float = 2.0
+@export_range(0.0, 5.0) var _dice_fade_out_delay: float = 3.0
 @export var _past_modulate: Color = Color(1.0, 1.0, 1.0, 0.25)
 
 @export_group("Configuration")

@@ -35,7 +35,7 @@ func _set_background(background_texture: Texture) -> void:
 	_current_background = new_background
 
 func _set_ambience(audio_stream: AudioStream) -> void:
-	if _ambience.stream == audio_stream: return
+	if audio_stream == null or _ambience.stream == audio_stream: return
 	ambience = audio_stream
 	_ambience.stream = audio_stream
 	if not Engine.is_editor_hint() and is_inside_tree(): _ambience.play()
