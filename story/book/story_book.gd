@@ -13,14 +13,17 @@ signal page_entered(story_page: StoryPage)
 @export var _story_pages: Container
 @export var _story_page_entry: PackedScene
 
+var _adventure_tome: AdventureTome
 var _story: Story
 var _characters: Characters
 
 var _current_story_page_entry: StoryPageEntry
 
-func setup(story: Story, characters: Characters) -> void:
+func setup(adventure_tome: AdventureTome, story: Story, characters: Characters) -> void:
+	_adventure_tome = adventure_tome
 	_story = story
 	_characters = characters
+	_title.type_text(adventure_tome.title)
 	_story.page_entered.connect(_on_page_entered)
 
 func _exit_tree() -> void:

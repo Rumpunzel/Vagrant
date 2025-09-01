@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cy2ymcfk2tejn"]
+[gd_scene load_steps=10 format=3 uid="uid://cy2ymcfk2tejn"]
 
 [ext_resource type="Script" uid="uid://7rp8e3m8fvuh" path="res://story/book/story_page_entry.gd" id="1_xif0c"]
 [ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/book/dialog_button.tscn" id="2_8njw8"]
@@ -7,8 +7,9 @@
 [ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://story/book/fade_vignette.gdshader" id="3_yb0s4"]
 [ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_nyvyp"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/breath_dice_selection/breath_dice_selection.tscn" id="5_15pgc"]
+[ext_resource type="Script" uid="uid://0inxk2dmireb" path="res://story/stage/background_rect.gd" id="5_hkhw8"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hkhw8"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_l4g70"]
 shader = ExtResource("3_yb0s4")
 shader_parameter/power = 1.0
 shader_parameter/up = 0.1
@@ -20,12 +21,13 @@ shader_parameter/down_clip = 0.0
 shader_parameter/left_clip = 0.0
 shader_parameter/right_clip = 0.0
 
-[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_collapsible_container")]
+[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_body_container", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_collapsible_container")]
 offset_right = 1524.0
 offset_bottom = 225.0
 size_flags_horizontal = 3
 script = ExtResource("1_xif0c")
 _background = NodePath("Background")
+_body_container = NodePath("MarginContainer")
 _description = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Description")
 _choices = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Choices")
 _breath_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/BreathDiceSelection")
@@ -35,11 +37,13 @@ metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
 
 [node name="Background" type="TextureRect" parent="."]
 show_behind_parent = true
-material = SubResource("ShaderMaterial_hkhw8")
+material = SubResource("ShaderMaterial_l4g70")
 layout_mode = 2
 texture = ExtResource("3_n3f3l")
 expand_mode = 1
 stretch_mode = 6
+script = ExtResource("5_hkhw8")
+metadata/_custom_type_script = "uid://0inxk2dmireb"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2

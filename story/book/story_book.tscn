@@ -101,6 +101,6 @@ theme_override_constants/margin_bottom = 32
 
 [node name="StoryPages" type="VBoxContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 32
+theme_override_constants/separation = 48
 
 [connection signal="timeout" from="PageTurnDelay" to="." method="_on_page_turn_delay_timeout"]

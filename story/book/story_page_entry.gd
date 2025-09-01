@@ -14,13 +14,12 @@ enum State {
 		match state:
 			State.PAST:
 				for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = false
-				var tween: Tween = get_tree().create_tween()
-				tween.tween_property(self, "modulate", _past_modulate, _fade_out_duration).set_delay(_dice_fade_out_delay if is_dice_page() else _fade_out_delay)
 				_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 				if not _background.texture:
 					_background.texture = story_page.get_area_background()
-					var background_tween: Tween = get_tree().create_tween()
-					background_tween.tween_property(_background, "modulate:a", 1.0, _dice_fade_out_delay)
+					_background.fade_in()
+				var tween: Tween = get_tree().create_tween()
+				tween.tween_property(_body_container, "modulate", _past_modulate, _fade_out_duration).set_delay(_dice_fade_out_delay if is_dice_page() else _fade_out_delay)
 				await tween.finished
 				mouse_entered.connect(_on_mouse_entered)
 				mouse_exited.connect(_on_mouse_exited)
@@ -38,7 +37,8 @@ enum State {
 @export var _past_modulate: Color = Color(1.0, 1.0, 1.0, 0.25)
 
 @export_group("Configuration")
-@export var _background: TextureRect
+@export var _background: BackgroundRect
+@export var _body_container: Container
 @export var _description: TypingLabel
 @export var _choices: Container
 @export var _breath_dice_selection: BreathDiceSelection
@@ -125,11 +125,11 @@ func _on_mouse_entered() -> void:
 	assert(state == State.PAST)
 	if story_page.get_background(_story): _background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
 	var tween: Tween = get_tree().create_tween()
-	tween.tween_property(self, "modulate", Color.WHITE, _fade_in_duration)
+	tween.tween_property(_body_container, "modulate", Color.WHITE, _fade_in_duration)
 
 func _on_mouse_exited() -> void:
 	assert(state == State.PAST)
 	if get_global_rect().has_point(get_viewport().get_mouse_position()): return
 	_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	var tween: Tween = get_tree().create_tween()
-	tween.tween_property(self, "modulate", _past_modulate, _fade_in_duration)
+	tween.tween_property(_body_container, "modulate", _past_modulate, _fade_in_duration)

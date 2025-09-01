@@ -5,8 +5,6 @@ extends Node
 @export var _default_adventure: AdventureTome
 
 @export_group("Configuration")
-@export var _story: Story
-@export var _characters: Characters
 @export var _stage: Stage
 @export var _game: Control
 @export var _character_creation: PackedScene
@@ -37,12 +35,10 @@ func _enter_character_creation() -> void:
 
 func _enter_adventure(protagonist_profile: CharacterProfile) -> void:
 	_clean_game()
-	_characters.create_protagonist(protagonist_profile)
 	var adventure: Adventure = _adventure.instantiate()
 	adventure.story_book_page_entered.connect(_stage.set_story_page)
 	_game.add_child(adventure)
-	adventure.setup(_story, _characters, _default_adventure)
-	_story.start_adventure(adventure)
+	adventure.setup(_default_adventure, protagonist_profile)
 
 func _clean_game() -> void:
 	while _game.get_child_count() > 0:

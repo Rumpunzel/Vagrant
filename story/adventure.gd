@@ -1,19 +1,19 @@
 @tool
 class_name Adventure
-extends HSplitContainer
+extends HBoxContainer
 
 signal story_book_page_entered(story_page: StoryPage)
 
 @export var adventure_tome: AdventureTome
 
 @export_group("Configuration")
+@export var _story: Story
+@export var _characters: Characters
 @export var _character_sheets: CharacterSheets
 @export var _story_book: StoryBook
 
 var current_page: StoryPage
 
-var _story: Story
-var _characters: Characters
 # StoryDecision -> int (how many times the decision has been made)
 var _decision_log: Dictionary[StoryDecision, int] = { }
 # StorySaveDecision -> Array[SaveResult]
@@ -22,12 +22,12 @@ var _save_decision_log: Dictionary[StorySaveDecision, Array]= { }
 var _page_log: Dictionary[StoryPage, int] = { }
 var _page_stack: Array[StoryPage] = [ ]
 
-func setup(story: Story, characters: Characters, new_adventure_tome: AdventureTome) -> void:
-	_story = story
-	_characters = characters
+func setup(new_adventure_tome: AdventureTome, protagonist_profile: CharacterProfile) -> void:
 	adventure_tome = new_adventure_tome
+	_characters.create_protagonist(protagonist_profile)
 	_character_sheets.setup(_characters)
-	_story_book.setup(_story, _characters)
+	_story_book.setup(adventure_tome, _story, _characters)
+	_story.start_adventure(self)
 
 func get_how_often_decision_has_been_made(story_decision: StoryDecision) -> int:
 	if story_decision is StorySaveDecision:

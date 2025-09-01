@@ -1,35 +1,23 @@
-[gd_scene load_steps=11 format=3 uid="uid://baflfbgcr5cbu"]
+[gd_scene load_steps=9 format=3 uid="uid://baflfbgcr5cbu"]
 
 [ext_resource type="Script" uid="uid://df2le2goabm8t" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage/stage.tscn" id="1_80nbo"]
-[ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="1_feb5d"]
 [ext_resource type="Texture2D" uid="uid://c56fr4gg3616i" path="res://assets/landscapes/tavern.png" id="2_e2o6t"]
-[ext_resource type="Script" uid="uid://ff8rnwb5cmjw" path="res://characters/characters.gd" id="2_fc0e3"]
 [ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://story/dorian.tres" id="2_mfdv2"]
 [ext_resource type="Resource" uid="uid://dw1vkutmmhnao" path="res://story/adventures/test_adventure.tres" id="2_vef74"]
 [ext_resource type="PackedScene" uid="uid://cc3qx1qt3ie00" path="res://story/character_creation/character_creation.tscn" id="6_eow3j"]
 [ext_resource type="PackedScene" uid="uid://db6oui711vqep" path="res://story/adventure.tscn" id="7_j5wjh"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="10_hve3p"]
 
-[node name="Game" type="Node" node_paths=PackedStringArray("_story", "_characters", "_stage", "_game")]
+[node name="Game" type="Node" node_paths=PackedStringArray("_stage", "_game")]
 script = ExtResource("1_7jktm")
 _default_character = ExtResource("2_mfdv2")
 _default_adventure = ExtResource("2_vef74")
-_story = NodePath("Story")
-_characters = NodePath("Characters")
 _stage = NodePath("Stage")
 _game = NodePath("Game")
 _character_creation = ExtResource("6_eow3j")
 _adventure = ExtResource("7_j5wjh")
 metadata/_custom_type_script = "uid://df2le2goabm8t"
-
-[node name="Story" type="Node" parent="."]
-script = ExtResource("1_feb5d")
-metadata/_custom_type_script = "uid://dccrmadulf3fx"
-
-[node name="Characters" type="Node" parent="."]
-script = ExtResource("2_fc0e3")
-metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
 
 [node name="Stage" parent="." instance=ExtResource("1_80nbo")]
 background = ExtResource("2_e2o6t")
@@ -62,7 +50,6 @@ current_tab = 0
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="DiceLog" parent="GameInfo/DiceLog" node_paths=PackedStringArray("_characters") instance=ExtResource("10_hve3p")]
+[node name="DiceLog" parent="GameInfo/DiceLog" instance=ExtResource("10_hve3p")]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-_characters = NodePath("../../../Characters")
