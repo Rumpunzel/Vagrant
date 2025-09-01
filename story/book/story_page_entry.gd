@@ -13,17 +13,22 @@ enum State {
 		state = new_state
 		match state:
 			State.PAST:
-				modulate = _past_modulate
 				var tween: Tween = get_tree().create_tween()
-				tween.tween_property(_background, "modulate:a", 1.0, _past_modulate.a)
+				tween.tween_property(self, "modulate", _past_modulate, _fade_out_duration).set_delay(_dice_fade_out_delay if is_dice_page() else _fade_out_delay)
+				var background_tween: Tween = get_tree().create_tween()
+				background_tween.tween_property(_background, "modulate:a", 1.0, _dice_fade_out_delay)
 			State.PRESENT:
 				modulate = Color.WHITE
 				_background.modulate.a = 0.0
 			_: assert(false, "StoryPageEntry.State %s is not supported!" % state)
 
-@export var _past_modulate: Color = Color(1.0, 1.0, 1.0, 0.25)
 @export_range(0.0, 1.0) var _fade_in_duration: float = 0.1
 @export_range(0.0, 1.0) var _dialog_options_fade_in_delay: float = 0.1
+
+@export_range(0.0, 3.0) var _fade_out_duration: float = 1.0
+@export_range(0.0, 1.0) var _fade_out_delay: float = 0.5
+@export_range(0.0, 5.0) var _dice_fade_out_delay: float = 2.0
+@export var _past_modulate: Color = Color(1.0, 1.0, 1.0, 0.25)
 
 @export_group("Configuration")
 @export var _background: TextureRect
@@ -45,17 +50,23 @@ var _save_request: SaveRequest :
 		_breath_dice_selection_collapsible_container.open_tween()
 var _save_result: SaveResult
 
-func enter_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:
+func setup_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:
 	_story = story
 	_characters = characters
 	story_page = new_story_page
 	_background.texture = story_page.get_background(_story)
-	_description.type_text(story_page.get_description(_story))
 	_update_decisions(story_page.get_decisions(_story))
+
+func enter_page() -> void:
+	_description.type_text(story_page.get_description(_story))
 	_story.decision_made.connect(_on_decision_made)
 
 func _exit_tree() -> void:
 	if _story and _story.decision_made.is_connected(_on_decision_made): _story.decision_made.disconnect(_on_decision_made)
+
+func is_dice_page() -> bool:
+	assert(not _save_result or _save_request)
+	return _save_result != null
 
 func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for dialog_button: DialogButton in _choices.get_children():

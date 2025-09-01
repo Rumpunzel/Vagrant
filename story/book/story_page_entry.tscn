@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_nyvyp"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/breath_dice_selection/breath_dice_selection.tscn" id="5_15pgc"]
 
-[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_collapsible_container")]
+[node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_collapsible_container")]
 offset_right = 1524.0
 offset_bottom = 225.0
 size_flags_horizontal = 3
@@ -68,7 +68,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(177, 169)
+custom_minimum_size = Vector2(384, 233)
 layout_mode = 2
 size_flags_vertical = 0
 script = ExtResource("4_nyvyp")
@@ -77,6 +77,7 @@ folding_direction_preset = 15
 sizing_constraint = 1
 auto_update_size = 1
 sizing_node = NodePath("BreathDiceSelection")
+metadata/_custom_type_script = "uid://btlh4wrv04rc3"
 
 [node name="BreathDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("5_15pgc")]
 layout_mode = 1

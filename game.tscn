@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="1_feb5d"]
 [ext_resource type="Texture2D" uid="uid://c56fr4gg3616i" path="res://assets/landscapes/tavern.png" id="2_e2o6t"]
 [ext_resource type="Script" uid="uid://ff8rnwb5cmjw" path="res://characters/characters.gd" id="2_fc0e3"]
-[ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://dorian.tres" id="2_mfdv2"]
+[ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://story/dorian.tres" id="2_mfdv2"]
 [ext_resource type="Resource" uid="uid://dw1vkutmmhnao" path="res://story/adventures/test_adventure.tres" id="2_vef74"]
 [ext_resource type="PackedScene" uid="uid://cc3qx1qt3ie00" path="res://story/character_creation/character_creation.tscn" id="6_eow3j"]
 [ext_resource type="PackedScene" uid="uid://bl0pdxri24fnh" path="res://characters/character.tscn" id="6_j5wjh"]
