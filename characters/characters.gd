@@ -15,6 +15,7 @@ func create_character(character_profile: CharacterProfile) -> Character:
 	add_child(character)
 	character.character_profile = character_profile
 	characters[character_profile] = character
+	character.character_profile_changed.connect(_on_character_profile_changed.bind(character))
 	characters_updated.emit(characters)
 	return character
 
@@ -30,3 +31,11 @@ func get_character(character_profile: CharacterProfile, create_if_nonexistant: b
 	var character: Character = characters[character_profile]
 	if character == null and create_if_nonexistant: character = create_character(character_profile)
 	return character
+
+func _on_character_profile_changed(character_profile: CharacterProfile, character: Character) -> void:
+	assert(character_profile == character.character_profile)
+	var old_profile: CharacterProfile = characters.find_key(character)
+	assert(old_profile)
+	characters.erase(old_profile)
+	characters[character_profile] = character
+	if _protagonist_profile == old_profile: _protagonist_profile = character_profile
