@@ -1,5 +1,5 @@
 class_name Character
-extends Node
+extends Resource
 
 signal character_profile_changed(character_profile: CharacterProfile)
 signal attribute_scores_changed(character: Character)
@@ -10,13 +10,10 @@ signal save_requested(save_request: SaveRequest)
 @warning_ignore("unused_signal")
 signal save_rolled(save_result: SaveResult)
 
-const GROUP: StringName = "Characters"
-
 @export var character_profile: CharacterProfile :
 	set(new_character_profile):
 		if new_character_profile == character_profile: return
 		character_profile = new_character_profile
-		name = character_profile.name
 		portrait = character_profile.portrait
 		attribute_scores = character_profile.get_attribute_scores()
 		breath_dice = character_profile.get_breath_dice()
@@ -35,6 +32,9 @@ var breath_dice: Array[BreathDie] :
 		if new_breath_dice == breath_dice: return
 		breath_dice = new_breath_dice
 		breath_dice_changed.emit(breath_dice)
+
+func _init(new_character_profile: CharacterProfile = null) -> void:
+	character_profile = new_character_profile
 
 # The dice used for saves remain forever "laid on the table"
 # Hence the charater may receive a new copy of thier breath dice to continue their adventure

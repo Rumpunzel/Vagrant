@@ -29,11 +29,12 @@ extends PanelContainer
 @export var _ability_labels: AbilityLabels
 
 func _update() -> void:
-	name = character.name
-	_portrait.texture = character.portrait
-	_name.text = character.name
-	_title.text = character.character_profile.get_title()
-	_ability_labels.update_abilities(character.character_profile.origins)
+	var character_profile: CharacterProfile = character.character_profile
+	name = character_profile.name
+	_portrait.texture = character_profile.portrait
+	_name.text = character_profile.name
+	_title.text = character_profile.get_title()
+	_ability_labels.update_abilities(character_profile.origins)
 
 func _on_character_profile_changed(_character_profile: CharacterProfile) -> void:
 	_update()
