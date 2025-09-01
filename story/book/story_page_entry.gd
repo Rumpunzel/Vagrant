@@ -2,9 +2,28 @@
 class_name StoryPageEntry
 extends PanelContainer
 
-@export var story_page: StoryPage
+enum State {
+	PAST = -1,
+	PRESENT,
+}
 
-@export_range(0.0, 1.0, 0.05) var _dialog_options_fade_in_delay: float = 0.1
+@export var story_page: StoryPage
+@export var state: State = State.PRESENT :
+	set(new_state):
+		state = new_state
+		match state:
+			State.PAST:
+				modulate = _past_modulate
+				var tween: Tween = get_tree().create_tween()
+				tween.tween_property(_background, "modulate:a", 1.0, _past_modulate.a)
+			State.PRESENT:
+				modulate = Color.WHITE
+				_background.modulate.a = 0.0
+			_: assert(false, "StoryPageEntry.State %s is not supported!" % state)
+
+@export var _past_modulate: Color = Color(1.0, 1.0, 1.0, 0.25)
+@export_range(0.0, 1.0) var _fade_in_duration: float = 0.1
+@export_range(0.0, 1.0) var _dialog_options_fade_in_delay: float = 0.1
 
 @export_group("Configuration")
 @export var _background: TextureRect
@@ -74,6 +93,16 @@ func _on_description_finished_typing() -> void:
 
 func _on_decision_made(_story_decision: StoryDecision, _selected_how_many_times: int) -> void:
 	_description.set_text_normally()
-	custom_minimum_size = Vector2.ZERO
-	_background.visible = true
+	state = State.PAST
 	_story.decision_made.disconnect(_on_decision_made)
+
+func _on_mouse_entered() -> void:
+	if not state == State.PAST: return
+	var tween: Tween = get_tree().create_tween()
+	tween.tween_property(self, "modulate", Color.WHITE, _fade_in_duration)
+
+func _on_mouse_exited() -> void:
+	if not state == State.PAST: return
+	if get_global_rect().has_point(get_viewport().get_mouse_position()): return
+	var tween: Tween = get_tree().create_tween()
+	tween.tween_property(self, "modulate", _past_modulate, _fade_in_duration)

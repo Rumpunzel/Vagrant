@@ -10,7 +10,7 @@ signal save_requested(save_request: SaveRequest, source: StoryDecision)
 		_description.text = story_decision.to_dialog_button_text()
 		_update_font_colors()
 
-@export_range(0.0, 1.0, 0.05) var _fade_in_duration: float = 0.25
+@export_range(0.0, 1.0) var _fade_in_duration: float = 0.25
 
 @export_group("Configuration")
 @export var _container: Container
