@@ -1,5 +1,5 @@
 class_name Candle
-extends Sprite2D
+extends TextureRect
 
 @export var _candle_noise: Noise
 @export var _color_flicker_speed: float = 64.0
