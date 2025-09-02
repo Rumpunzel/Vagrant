@@ -16,6 +16,8 @@ enum State {
 				for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = false
 				_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 				if not _background.texture:
+					var tween: Tween = get_tree().create_tween()
+					tween.tween_property(self, "self_modulate", Color.TRANSPARENT, _fade_out_duration).set_delay(_dice_fade_out_delay if is_dice_page() else _fade_out_delay)
 					_background.texture = story_page.get_area_background()
 					_background.fade_in()
 				var tween: Tween = get_tree().create_tween()
@@ -25,7 +27,7 @@ enum State {
 				mouse_exited.connect(_on_mouse_exited)
 			State.PRESENT:
 				for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = true
-				modulate = Color.WHITE
+				self_modulate = Color.TRANSPARENT if _background.texture else Color.WHITE
 			_: assert(false, "StoryPageEntry.State %s is not supported!" % state)
 
 @export_range(0.0, 1.0) var _fade_in_duration: float = 0.1
@@ -63,6 +65,7 @@ func setup_page(story: Story, characters: Characters, new_story_page: StoryPage)
 	story_page = new_story_page
 	var background: Texture2D = story_page.get_background(_story)
 	_background.texture = background
+	self_modulate = Color.TRANSPARENT if _background.texture else Color.WHITE
 	if background:
 		_background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
 		_background.show_behind_parent = false

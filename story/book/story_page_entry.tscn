@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/breath_dice_selection/breath_dice_selection.tscn" id="5_15pgc"]
 [ext_resource type="Script" uid="uid://0inxk2dmireb" path="res://story/stage/background_rect.gd" id="5_hkhw8"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_l4g70"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hkhw8"]
 shader = ExtResource("3_yb0s4")
 shader_parameter/power = 1.0
 shader_parameter/up = 0.1
@@ -37,7 +37,7 @@ metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
 
 [node name="Background" type="TextureRect" parent="."]
 show_behind_parent = true
-material = SubResource("ShaderMaterial_l4g70")
+material = SubResource("ShaderMaterial_hkhw8")
 layout_mode = 2
 texture = ExtResource("3_n3f3l")
 expand_mode = 1
