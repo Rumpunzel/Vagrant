@@ -50,7 +50,7 @@ metadata/_custom_type_script = "uid://bysk8fr0ekhsg"
 [node name="Ambience" type="AudioStreamPlayer" parent="."]
 volume_db = -80.0
 autoplay = true
-bus = &"Ambience"
+bus = &"SFX"
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 autoplay = true
@@ -86,7 +86,7 @@ metadata/_custom_type_script = "uid://8x7jso8c44ri"
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="MarginContainer/Candle"]
 stream = ExtResource("5_h1mbo")
 autoplay = true
-bus = &"Ambience"
+bus = &"RoomAmbience"
 parameters/looping = true
 
 [node name="Backgrounds" type="MarginContainer" parent="MarginContainer"]

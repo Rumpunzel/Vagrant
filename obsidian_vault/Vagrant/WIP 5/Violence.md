@@ -8,6 +8,8 @@ Or your foe may brawl with you by presenting their own threat. In that case, the
 ## Injuries
 Reduce your attribute scores by the total sum of your injuries.
 
+If you receive an injury after which the sum of your injuries exceeds at least one of your attribute scores, you must succeed on a **Guts** save against the sum of all their injuries or become incapacitated.
+
 ## Weapons
 Weapons make violence much more dangerous. Each weapon is represented by a weapon die. The longer/bigger the weapon, the bigger the die.
 

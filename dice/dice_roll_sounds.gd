@@ -9,6 +9,7 @@ var _last_sound_played_at_msec: int = 0
 var _dice_polyphony: AudioStreamPlaybackPolyphonic
 
 func _ready() -> void:
+	bus = "&RoomSFX"
 	stream = AudioStreamPolyphonic.new()
 	play()
 	_dice_polyphony = get_stream_playback()
