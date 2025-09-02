@@ -20,7 +20,7 @@ _adventure = ExtResource("7_j5wjh")
 metadata/_custom_type_script = "uid://df2le2goabm8t"
 
 [node name="Stage" parent="." instance=ExtResource("1_80nbo")]
-background = ExtResource("2_e2o6t")
+area_background = ExtResource("2_e2o6t")
 
 [node name="Game" type="MarginContainer" parent="."]
 anchors_preset = 15

@@ -2,30 +2,46 @@
 class_name Stage
 extends CanvasLayer
 
-@export var background: Texture : set = _set_background
+@export var area_background: Texture : set = _set_area_background
+@export var event_background: Texture : set = _set_event_background
 @export var ambience: AudioStream : set = _set_ambience
 @export var music: AudioStream : set = _set_music
 
 @export_group("Configuration")
 @export var _ambience: AudioStreamPlayer
 @export var _music: AudioStreamPlayer
-@export var _backgrounds_container: Container
+@export var _area_backgrounds: Container
+@export var _event_backgrounds: Container
 @export var _background: PackedScene
 
-var _current_background: BackgroundRect
+var _current_area_background: BackgroundRect
+var _current_event_background: BackgroundRect
 
 func set_story_page(story_page: StoryPage, story: Story) -> void:
-	_set_background(story_page.get_area_background())
+	_set_area_background(story_page.get_area_background())
+	_set_event_background(story_page.get_background(story))
 	_set_ambience(story_page.get_ambience(story))
 
-func _set_background(background_texture: Texture2D) -> void:
-	background = background_texture
-	if background_texture == null or (_current_background and _current_background.texture == background_texture): return
-	var old_background: BackgroundRect = _current_background
+func _set_area_background(background_texture: Texture2D) -> void:
+	area_background = background_texture
+	if background_texture == null or (_current_area_background and _current_area_background.texture == background_texture): return
+	var old_background: BackgroundRect = _current_area_background
 	var new_background: BackgroundRect = _background.instantiate()
 	new_background.texture = background_texture
-	_current_background = new_background
-	_backgrounds_container.add_child(new_background)
+	_current_area_background = new_background
+	_area_backgrounds.add_child(new_background)
+	if old_background:
+		await new_background.faded_in
+		old_background.fade_out()
+
+func _set_event_background(background_texture: Texture2D) -> void:
+	event_background = background_texture
+	if background_texture == null or (_current_event_background and _current_event_background.texture == background_texture): return
+	var old_background: BackgroundRect = _current_event_background
+	var new_background: BackgroundRect = _background.instantiate()
+	new_background.texture = background_texture
+	_current_event_background = new_background
+	_event_backgrounds.add_child(new_background)
 	if old_background:
 		await new_background.faded_in
 		old_background.fade_out()

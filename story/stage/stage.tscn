@@ -39,12 +39,13 @@ fill_from = Vector2(0.5, 1)
 fill_to = Vector2(0.6, 0.4)
 metadata/_snap_enabled = true
 
-[node name="Stage" type="CanvasLayer" node_paths=PackedStringArray("_ambience", "_music", "_backgrounds_container")]
+[node name="Stage" type="CanvasLayer" node_paths=PackedStringArray("_ambience", "_music", "_area_backgrounds", "_event_backgrounds")]
 layer = -100
 script = ExtResource("1_gw8ty")
 _ambience = NodePath("Ambience")
 _music = NodePath("Music")
-_backgrounds_container = NodePath("MarginContainer/Backgrounds")
+_area_backgrounds = NodePath("MarginContainer/AreaBackgrounds")
+_event_backgrounds = NodePath("MarginContainer/EventBackgrounds")
 _background = ExtResource("3_8h6qk")
 metadata/_custom_type_script = "uid://bysk8fr0ekhsg"
 
@@ -89,7 +90,7 @@ autoplay = true
 bus = &"RoomAmbience"
 parameters/looping = true
 
-[node name="Backgrounds" type="MarginContainer" parent="MarginContainer"]
+[node name="AreaBackgrounds" type="MarginContainer" parent="MarginContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
@@ -103,3 +104,6 @@ layout_mode = 2
 [node name="Gradient" type="TextureRect" parent="MarginContainer"]
 layout_mode = 2
 texture = SubResource("GradientTexture2D_2xsor")
+
+[node name="EventBackgrounds" type="MarginContainer" parent="MarginContainer"]
+layout_mode = 2
