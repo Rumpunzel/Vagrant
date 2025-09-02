@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="StoryPage" load_steps=8 format=3 uid="uid://cs40ge42lw0ry"]
+[gd_resource type="Resource" script_class="StoryPage" load_steps=9 format=3 uid="uid://cs40ge42lw0ry"]
 
 [ext_resource type="Resource" uid="uid://kfbf7v18dp6a" path="res://story/adventures/locations/swamp/swamp.tres" id="1_8bxsp"]
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://story/pages/story_condition.gd" id="2_6pnwp"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://story/pages/story_decision.gd" id="2_r3twy"]
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://story/pages/story_page.gd" id="3_6p547"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://story/pages/story_transition.gd" id="3_34ol8"]
+[ext_resource type="Resource" uid="uid://bxwqtk0p80o4g" path="res://story/adventures/locations/swamp/events/lurker_ambush.tres" id="6_quuub"]
 
 [sub_resource type="Resource" id="Resource_vvpox"]
 script = ExtResource("3_34ol8")
@@ -25,4 +26,4 @@ _one_time_only = false
 _conditions = Array[ExtResource("2_6pnwp")]([])
 _decisions = Array[ExtResource("2_r3twy")]([SubResource("Resource_e22nq")])
 _exclusivity = 0
-_events = Array[ExtResource("3_6p547")]([])
+_events = Array[ExtResource("3_6p547")]([ExtResource("6_quuub")])
