@@ -88,7 +88,7 @@ Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
 custom_minimum_size = Vector2(384, 233)
 layout_mode = 2
-size_flags_vertical = 0
+size_flags_vertical = 8
 script = ExtResource("4_nyvyp")
 starts_opened = false
 folding_direction_preset = 15
@@ -99,11 +99,13 @@ metadata/_custom_type_script = "uid://btlh4wrv04rc3"
 
 [node name="BreathDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("5_15pgc")]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 15
 anchor_right = 1.0
+anchor_bottom = 1.0
 offset_right = 0.0
-offset_bottom = 43.0
+offset_bottom = 0.0
 grow_horizontal = 2
+grow_vertical = 2
 
 [connection signal="finished_typing" from="MarginContainer/HBoxContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
 [connection signal="save_evaluated" from="MarginContainer/HBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_save_evaluated"]

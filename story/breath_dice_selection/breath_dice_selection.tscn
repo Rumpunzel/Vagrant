@@ -67,6 +67,7 @@ layout_mode = 2
 bbcode_enabled = true
 text = "Description"
 fit_content = true
+visible_characters_behavior = 1
 script = ExtResource("3_06obj")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
