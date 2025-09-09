@@ -13,8 +13,8 @@
 script = ExtResource("4_d3gqg")
 attribute = ExtResource("4_g8uhq")
 difficulty = 0
-details = "CHAAAARGE!"
-description = ""
+details = ""
+description = "CHAAAARGE!"
 metadata/_custom_type_script = "uid://df6f7mcpin5we"
 
 [sub_resource type="Resource" id="Resource_g8uhq"]
