@@ -14,9 +14,10 @@ extends VBoxContainer
 
 var _button: Dictionary[DieType, BreathDieSelectionButton] = {}
 
-func add_button(breath_die: BreathDie) -> void:
+func add_button(breath_die: BreathDie, button_size: float) -> void:
 	var button: BreathDieSelectionButton = _breath_die_selection_button.instantiate()
 	button.breath_die = breath_die
+	button.custom_minimum_size = Vector2(button_size, button_size)
 	_button[breath_die.die_type] = button
 	button.toggled.connect(_on_button_toggled)
 	_all_button.visible = not _get_buttons().is_empty()

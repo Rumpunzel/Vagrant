@@ -5,7 +5,6 @@
 [ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="3_o2vdy"]
 
 [node name="BreathDieSelectionButton" type="Button" node_paths=PackedStringArray("_update_timer")]
-custom_minimum_size = Vector2(64, 64)
 offset_right = 64.0
 offset_bottom = 64.0
 size_flags_horizontal = 3

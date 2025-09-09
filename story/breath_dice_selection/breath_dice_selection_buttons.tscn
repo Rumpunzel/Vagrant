@@ -3,16 +3,13 @@
 [ext_resource type="Script" uid="uid://7mksap2q7pd0" path="res://story/breath_dice_selection/breath_dice_selection_buttons.gd" id="1_0p7wt"]
 [ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://story/breath_dice_selection/breath_dice_selection_button_group.tscn" id="2_3dl60"]
 
-[node name="BreathDiceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_breath_dice_buttons")]
+[node name="BreathDiceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_breath_dice_buttons_parent")]
 offset_right = 238.0
 offset_bottom = 125.0
 script = ExtResource("1_0p7wt")
-_breath_dice_buttons = NodePath("MarginContainer/BreathDiceButtons")
+_breath_dice_buttons_parent = NodePath("MarginContainer")
 _breath_dice_selection_group = ExtResource("2_3dl60")
 metadata/_custom_type_script = "uid://7mksap2q7pd0"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 2
-
-[node name="BreathDiceButtons" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2

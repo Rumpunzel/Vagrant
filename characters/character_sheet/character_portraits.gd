@@ -1,5 +1,5 @@
-class_name CharacterSheets
-extends TabContainer
+class_name CharacterPortraits
+extends HBoxContainer
 
 @export var characters: Characters :
 	set(new_characters):
@@ -15,9 +15,6 @@ func _update_character_list(updated_characters: Dictionary[CharacterProfile, Cha
 		remove_child(child)
 		child.queue_free()
 	for character: Character in updated_characters.values():
-		var character_sheet: CharacterSheet = _character_sheet.instantiate()
-		add_child(character_sheet)
-		character_sheet.character = character
-	var company_sheet: PanelContainer = PanelContainer.new()
-	company_sheet.name = "Company"
-	add_child(company_sheet)
+		var character_portrait: CharacterPortrait = _character_sheet.instantiate()
+		add_child(character_portrait)
+		character_portrait.character = character

@@ -16,8 +16,8 @@ enum State {
 				for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = false
 				_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 				if not _background.texture:
-					var tween: Tween = get_tree().create_tween()
-					tween.tween_property(self, "self_modulate", Color.TRANSPARENT, _fade_out_duration).set_delay(_dice_fade_out_delay if is_dice_page() else _fade_out_delay)
+					var self_tween: Tween = get_tree().create_tween()
+					self_tween.tween_property(self, "self_modulate", Color.TRANSPARENT, _fade_out_duration).set_delay(_dice_fade_out_delay if is_dice_page() else _fade_out_delay)
 					_background.texture = story_page.get_area_background()
 					_background.fade_in()
 				var tween: Tween = get_tree().create_tween()

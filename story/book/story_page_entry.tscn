@@ -36,6 +36,7 @@ _dialog_button = ExtResource("2_8njw8")
 metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
 
 [node name="Background" type="TextureRect" parent="."]
+visible = false
 show_behind_parent = true
 material = SubResource("ShaderMaterial_hkhw8")
 layout_mode = 2
@@ -86,7 +87,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(384, 233)
+custom_minimum_size = Vector2(384, 555)
 layout_mode = 2
 size_flags_vertical = 8
 script = ExtResource("4_nyvyp")

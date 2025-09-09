@@ -9,7 +9,6 @@ signal story_book_page_entered(story_page: StoryPage)
 @export_group("Configuration")
 @export var _story: Story
 @export var _characters: Characters
-@export var _character_sheets: CharacterSheets
 @export var _story_book: StoryBook
 
 var current_page: StoryPage
@@ -25,7 +24,6 @@ var _page_stack: Array[StoryPage] = [ ]
 func setup(new_adventure_tome: AdventureTome, protagonist_profile: CharacterProfile) -> void:
 	adventure_tome = new_adventure_tome
 	_characters.create_protagonist(protagonist_profile)
-	_character_sheets.setup(_characters)
 	_story_book.setup(adventure_tome, _story, _characters)
 	_story.start_adventure(self)
 

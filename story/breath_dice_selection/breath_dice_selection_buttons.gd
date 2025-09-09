@@ -2,10 +2,29 @@
 class_name BreathDiceSelectionButtons
 extends PanelContainer
 
+enum Direction {
+	Horizontal,
+	Vertical,
+}
+
+@export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var _button_size: float = 64.0
+@export var _direction: Direction = Direction.Horizontal :
+	set(new_direction):
+		_direction = new_direction
+		if _breath_dice_buttons:
+			_breath_dice_buttons_parent.remove_child(_breath_dice_buttons)
+			_breath_dice_buttons.queue_free()
+		match _direction:
+			Direction.Horizontal: _breath_dice_buttons = HBoxContainer.new()
+			Direction.Vertical: _breath_dice_buttons = VBoxContainer.new()
+			_: assert(false, "Does not exist")
+		_breath_dice_buttons_parent.add_child(_breath_dice_buttons)
+
 @export_group("Configuration")
-@export var _breath_dice_buttons: Container
+@export var _breath_dice_buttons_parent: Container
 @export var _breath_dice_selection_group: PackedScene
 
+var _breath_dice_buttons: BoxContainer
 var _button_groups: Dictionary[DieType, BreathDiceSelectionButtonGroup] = {}
 
 func _ready() -> void:
@@ -30,7 +49,11 @@ func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
 			button_group.breath_die_type = breath_die.die_type
 			_button_groups[breath_die.die_type] = button_group
 			_breath_dice_buttons.add_child(button_group)
-		button_group.add_button(breath_die)
+			match _direction:
+				Direction.Horizontal: pass
+				Direction.Vertical: _breath_dice_buttons.move_child(button_group, 0)
+				_: assert(false, "Does not exist")
+		button_group.add_button(breath_die, _button_size)
 
 func update_save_request(save_request: SaveRequest) -> void:
 	for button_group: BreathDiceSelectionButtonGroup in _get_button_groups():
@@ -50,6 +73,9 @@ func disable_buttons() -> void:
 		button_group.disable()
 
 func _clear() -> void:
+	if not _breath_dice_buttons:
+		_direction = _direction
+		return
 	for child: Node in _breath_dice_buttons.get_children():
 		_breath_dice_buttons.remove_child(child)
 		child.queue_free()

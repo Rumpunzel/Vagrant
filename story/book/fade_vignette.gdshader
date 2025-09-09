@@ -14,7 +14,7 @@ uniform float right_clip : hint_range(0.0, 1.0, 0.001) = 0.0;
 void fragment() {
 	vec2 _rotated_uv = UV;
 	//TODO: Add an "angel" parameter to change the clipping direction
-	
+
 	float _hor = 1.0;
 	if (_rotated_uv.x < left) {
 		if (left_clip < left && left_clip > 0.0) {
@@ -34,7 +34,7 @@ void fragment() {
 			_hor *= pow( (1.0 - _rotated_uv.x) / right, power);
 		}
 	}
-	
+
 	float _ver = 1.0;
 	if (_rotated_uv.y < up) {
 		if (up_clip < up && up_clip > 0.0) {
@@ -54,7 +54,7 @@ void fragment() {
 			_ver *= pow((1.0 - _rotated_uv.y) / down, power);
 		}
 	}
-	
+
 	COLOR = texture(TEXTURE, UV);
 	COLOR.a = min(_hor * _ver, texture(TEXTURE, UV).a);
 }

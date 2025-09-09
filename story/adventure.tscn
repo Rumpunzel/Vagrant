@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=10 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="2_kq5yh"]
@@ -7,8 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://characters/character_sheet/character_sheet.tscn" id="4_2poxt"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="4_5djeo"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/book/story_book.tscn" id="5_p35e8"]
+[ext_resource type="Script" uid="uid://biit618mirgcj" path="res://characters/character_sheet/character_portraits.gd" id="6_ded50"]
+[ext_resource type="PackedScene" uid="uid://buthtgmdftvn7" path="res://characters/character_sheet/character_portrait.tscn" id="6_rhm0o"]
 
-[node name="Adventure" type="HBoxContainer" node_paths=PackedStringArray("_story", "_characters", "_character_sheets", "_story_book")]
+[node name="Adventure" type="HBoxContainer" node_paths=PackedStringArray("_story", "_characters", "_story_book")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -18,7 +20,6 @@ theme_override_constants/separation = 32
 script = ExtResource("1_bnng7")
 _story = NodePath("Story")
 _characters = NodePath("Characters")
-_character_sheets = NodePath("CharacterSheets")
 _story_book = NodePath("StoryBook")
 metadata/_custom_type_script = "uid://cjud36jst3ajk"
 
@@ -30,18 +31,32 @@ metadata/_custom_type_script = "uid://dccrmadulf3fx"
 script = ExtResource("3_rhm0o")
 metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
 
-[node name="CharacterSheets" type="TabContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="CharacterSheets" type="TabContainer" parent="VBoxContainer" node_paths=PackedStringArray("characters")]
 layout_mode = 2
 tab_alignment = 1
 current_tab = 0
 drag_to_rearrange_enabled = true
 script = ExtResource("3_4lj7w")
+characters = NodePath("../../Characters")
 _character_sheet = ExtResource("4_2poxt")
 metadata/_custom_type_script = "uid://dlr4addkwoige"
 
-[node name="CharacterSheet" parent="CharacterSheets" instance=ExtResource("4_2poxt")]
+[node name="CharacterSheet" parent="VBoxContainer/CharacterSheets" instance=ExtResource("4_2poxt")]
 layout_mode = 2
 metadata/_tab_index = 0
+
+[node name="CharacterPortraits" type="HBoxContainer" parent="VBoxContainer" node_paths=PackedStringArray("characters")]
+layout_mode = 2
+script = ExtResource("6_ded50")
+characters = NodePath("../../Characters")
+_character_sheet = ExtResource("6_rhm0o")
+metadata/_custom_type_script = "uid://biit618mirgcj"
+
+[node name="CharacterPortrait" parent="VBoxContainer/CharacterPortraits" instance=ExtResource("6_rhm0o")]
+layout_mode = 2
 
 [node name="StoryBook" parent="." instance=ExtResource("5_p35e8")]
 layout_mode = 2
