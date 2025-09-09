@@ -98,6 +98,7 @@ theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 
 [node name="Blur" type="ColorRect" parent="MarginContainer"]
+visible = false
 material = SubResource("ShaderMaterial_515v2")
 layout_mode = 2
 
