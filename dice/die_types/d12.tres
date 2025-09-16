@@ -11,5 +11,4 @@ stream_0/stream = ExtResource("2_6sobu")
 [resource]
 script = ExtResource("1_x153c")
 icon = ExtResource("1_cg2p3")
-faces = 12
 roll_sound = SubResource("AudioStreamRandomizer_362el")

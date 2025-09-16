@@ -78,12 +78,3 @@ ExtResource("12_vsf3q"): SubResource("Resource_q8koy")
 })
 origins = Array[ExtResource("13_gam16")]([ExtResource("14_1atq2"), ExtResource("15_60rk6")])
 _title = "Test Adventurer"
-_breath_dice = Dictionary[ExtResource("1_phsde"), int]({
-ExtResource("2_ru31n"): 1,
-ExtResource("3_wa8fo"): 1,
-ExtResource("4_dmj07"): 1,
-ExtResource("5_73k2y"): 1,
-ExtResource("6_ws2or"): 1
-})
-_portrait_file_name = "Fulllength.png"
-_additional_portrait_file_names = Array[String](["Medium.png", "Small.png"])

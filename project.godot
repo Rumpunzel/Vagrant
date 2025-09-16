@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Vagrant"
 run/main_scene="uid://baflfbgcr5cbu"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icons/fantasy/map.png"
 
 [autoload]
