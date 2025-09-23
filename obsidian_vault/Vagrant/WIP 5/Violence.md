@@ -24,7 +24,7 @@ Otherwise, inflict an injury equal to your weapon die's result to your foe, not 
 
 Alternatively, if you wield a weapon, you may threaten with **Blood.** When you do, and your threat exceeds your foe's, reduce the injury they inflict on you by the difference. When your foe is also armed, threatening with **Blood** is most often the sensible choice.
 
-
+Alternatively, if you wield a weapon, you may threaten with **Nerves.** When you do, and your threat exceeds your foe's, reduce reduce one of their attributes by the difference for this exchange. This can result in them dropping their weapon or tripping and spending more breath than they intended.
 
 
 
