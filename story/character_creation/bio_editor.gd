@@ -79,8 +79,8 @@ func _load_portraits() -> void:
 	for sex: Sex in Sex.values():
 		var portrait_directories: Array[String] = Files.list_all_directories(_portraits_directory, _search_recursively, func(directory_name: String) -> bool: return _compiled_patterns[sex].search(directory_name) != null)
 		_portrait_directories[sex] = portrait_directories
-	_sex_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()
-	_random_button.tooltip_text = "%d Portraits" % _portrait_directories[_sex].size()
+	_sex_button.tooltip_text = "Filter Sex\n%d Portraits" % _portrait_directories[_sex].size()
+	_random_button.tooltip_text = "Random\n%d Portraits" % _portrait_directories[_sex].size()
 
 func _on_name_changed(new_text: String) -> void:
 	details_changed.emit(new_text, _title.text, _portrait.texture)
