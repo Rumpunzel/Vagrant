@@ -1,5 +1,5 @@
 class_name CharacterPortraits
-extends HBoxContainer
+extends VBoxContainer
 
 @export var characters: Characters :
 	set(new_characters):

@@ -1,17 +1,14 @@
-[gd_scene load_steps=9 format=3 uid="uid://baflfbgcr5cbu"]
+[gd_scene load_steps=7 format=3 uid="uid://baflfbgcr5cbu"]
 
 [ext_resource type="Script" uid="uid://df2le2goabm8t" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="PackedScene" uid="uid://l8n866i755ja" path="res://story/stage/stage.tscn" id="1_80nbo"]
 [ext_resource type="Texture2D" uid="uid://c56fr4gg3616i" path="res://assets/landscapes/tavern.png" id="2_e2o6t"]
-[ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://story/dorian.tres" id="2_mfdv2"]
 [ext_resource type="Resource" uid="uid://dw1vkutmmhnao" path="res://story/adventures/test_adventure.tres" id="2_vef74"]
 [ext_resource type="PackedScene" uid="uid://cc3qx1qt3ie00" path="res://story/character_creation/character_creation.tscn" id="6_eow3j"]
 [ext_resource type="PackedScene" uid="uid://db6oui711vqep" path="res://story/adventure.tscn" id="7_j5wjh"]
-[ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="10_hve3p"]
 
 [node name="Game" type="Node" node_paths=PackedStringArray("_stage", "_game")]
 script = ExtResource("1_7jktm")
-_default_character = ExtResource("2_mfdv2")
 _default_adventure = ExtResource("2_vef74")
 _stage = NodePath("Stage")
 _game = NodePath("Game")
@@ -32,24 +29,3 @@ theme_override_constants/margin_left = 128
 theme_override_constants/margin_top = 96
 theme_override_constants/margin_right = 128
 theme_override_constants/margin_bottom = 96
-
-[node name="GameInfo" type="TabContainer" parent="."]
-visible = false
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -342.0
-offset_top = -113.0
-grow_horizontal = 0
-grow_vertical = 0
-current_tab = 0
-
-[node name="DiceLog" type="MarginContainer" parent="GameInfo"]
-layout_mode = 2
-metadata/_tab_index = 0
-
-[node name="DiceLog" parent="GameInfo/DiceLog" instance=ExtResource("10_hve3p")]
-custom_minimum_size = Vector2(0, 52)
-layout_mode = 2

@@ -116,12 +116,16 @@ expand_icon = true
 
 [node name="SaveDialog" type="FileDialog" parent="."]
 title = "Save Character"
+initial_position = 4
+force_native = true
 mode_overrides_title = false
 access = 2
 filters = PackedStringArray("*.tres")
 
 [node name="LoadDialog" type="FileDialog" parent="."]
 title = "Load Profile"
+initial_position = 4
+force_native = true
 ok_button_text = "Open"
 mode_overrides_title = false
 file_mode = 0

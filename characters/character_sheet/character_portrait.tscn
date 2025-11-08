@@ -15,7 +15,7 @@ offset_right = 427.0
 offset_bottom = 502.314
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lpl5g")
 script = ExtResource("1_mykuh")
-_portrait = NodePath("HBoxContainer/VBoxContainer/MarginContainer/Portrait")
+_portrait = NodePath("HBoxContainer/MarginContainer/Portrait")
 _breath_dice = NodePath("HBoxContainer/BreathDice")
 metadata/_custom_type_script = "uid://c3fmgxqai1l4p"
 
@@ -31,17 +31,12 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = -8
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 8
-
-[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Portrait" type="TextureRect" parent="HBoxContainer/VBoxContainer/MarginContainer"]
+[node name="Portrait" type="TextureRect" parent="HBoxContainer/MarginContainer"]
 material = ExtResource("2_3lp8p")
 layout_mode = 2
 mouse_filter = 2
@@ -49,7 +44,7 @@ texture = ExtResource("3_mykuh")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="Wounds" type="LineEdit" parent="HBoxContainer/VBoxContainer/MarginContainer"]
+[node name="Wounds" type="LineEdit" parent="HBoxContainer/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 8
 placeholder_text = "Wounds"

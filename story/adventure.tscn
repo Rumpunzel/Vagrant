@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=11 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="2_kq5yh"]
@@ -6,11 +6,12 @@
 [ext_resource type="Script" uid="uid://ff8rnwb5cmjw" path="res://characters/characters.gd" id="3_rhm0o"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://characters/character_sheet/character_sheet.tscn" id="4_2poxt"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="4_5djeo"]
+[ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="4_ipvic"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/book/story_book.tscn" id="5_p35e8"]
 [ext_resource type="Script" uid="uid://biit618mirgcj" path="res://characters/character_sheet/character_portraits.gd" id="6_ded50"]
 [ext_resource type="PackedScene" uid="uid://buthtgmdftvn7" path="res://characters/character_sheet/character_portrait.tscn" id="6_rhm0o"]
 
-[node name="Adventure" type="HBoxContainer" node_paths=PackedStringArray("_story", "_characters", "_story_book")]
+[node name="Adventure" type="VBoxContainer" node_paths=PackedStringArray("_title", "_sub_title", "_story", "_characters", "_story_book")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -18,9 +19,11 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 32
 script = ExtResource("1_bnng7")
+_title = NodePath("MarginContainer/VBoxContainer/Title")
+_sub_title = NodePath("MarginContainer/VBoxContainer/Subtitle")
 _story = NodePath("Story")
 _characters = NodePath("Characters")
-_story_book = NodePath("StoryBook")
+_story_book = NodePath("HBoxContainer/VBoxContainer/StoryBook")
 metadata/_custom_type_script = "uid://cjud36jst3ajk"
 
 [node name="Story" type="Node" parent="."]
@@ -31,42 +34,111 @@ metadata/_custom_type_script = "uid://dccrmadulf3fx"
 script = ExtResource("3_rhm0o")
 metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 
-[node name="CharacterSheets" type="TabContainer" parent="VBoxContainer" node_paths=PackedStringArray("characters")]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-tab_alignment = 1
+
+[node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 2
+theme_type_variation = &"HeaderLarge"
+theme_override_constants/shadow_outline_size = 4
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "Title"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+selection_enabled = true
+visible_characters_behavior = 1
+script = ExtResource("4_ipvic")
+_characters_per_minute = 1000.0
+metadata/_custom_type_script = "uid://rbc1te7wgcy0"
+
+[node name="Subtitle" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 2
+theme_type_variation = &"Subtitles"
+theme_override_colors/default_color = Color(0.827, 0.827, 0.827, 1)
+bbcode_enabled = true
+text = "Subtitle — Details"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+selection_enabled = true
+visible_characters_behavior = 1
+script = ExtResource("4_ipvic")
+_characters_per_minute = 1000.0
+metadata/_custom_type_script = "uid://rbc1te7wgcy0"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StoryBook" parent="HBoxContainer/VBoxContainer" instance=ExtResource("5_p35e8")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DiceLog" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("_characters") instance=ExtResource("4_5djeo")]
+layout_mode = 2
+size_flags_horizontal = 3
+_characters = NodePath("../../../Characters")
+
+[node name="HSplitContainer" type="HSplitContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="CharacterPortraits" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/HSplitContainer" node_paths=PackedStringArray("characters")]
+layout_mode = 2
+size_flags_horizontal = 0
+script = ExtResource("6_ded50")
+characters = NodePath("../../../../Characters")
+_character_sheet = ExtResource("6_rhm0o")
+metadata/_custom_type_script = "uid://biit618mirgcj"
+
+[node name="CharacterPortrait" parent="HBoxContainer/VBoxContainer/HSplitContainer/CharacterPortraits" instance=ExtResource("6_rhm0o")]
+layout_mode = 2
+
+[node name="GameInfo" type="TabContainer" parent="HBoxContainer/VBoxContainer/HSplitContainer"]
+visible = false
+layout_mode = 2
 current_tab = 0
+tabs_position = 1
+
+[node name="DiceLog" type="MarginContainer" parent="HBoxContainer/VBoxContainer/HSplitContainer/GameInfo"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="DiceLog" parent="HBoxContainer/VBoxContainer/HSplitContainer/GameInfo/DiceLog" instance=ExtResource("4_5djeo")]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+
+[node name="CharacterSheets" type="TabContainer" parent="HBoxContainer" node_paths=PackedStringArray("characters")]
+layout_mode = 2
+current_tab = 0
+tabs_position = 1
 drag_to_rearrange_enabled = true
+use_hidden_tabs_for_min_size = true
 script = ExtResource("3_4lj7w")
 characters = NodePath("../../Characters")
 _character_sheet = ExtResource("4_2poxt")
 metadata/_custom_type_script = "uid://dlr4addkwoige"
 
-[node name="CharacterSheet" parent="VBoxContainer/CharacterSheets" instance=ExtResource("4_2poxt")]
+[node name="CharacterSheet" parent="HBoxContainer/CharacterSheets" instance=ExtResource("4_2poxt")]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="CharacterPortraits" type="HBoxContainer" parent="VBoxContainer" node_paths=PackedStringArray("characters")]
-layout_mode = 2
-script = ExtResource("6_ded50")
-characters = NodePath("../../Characters")
-_character_sheet = ExtResource("6_rhm0o")
-metadata/_custom_type_script = "uid://biit618mirgcj"
-
-[node name="CharacterPortrait" parent="VBoxContainer/CharacterPortraits" instance=ExtResource("6_rhm0o")]
-layout_mode = 2
-
-[node name="StoryBook" parent="." instance=ExtResource("5_p35e8")]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="DiceLog" parent="." node_paths=PackedStringArray("_characters") instance=ExtResource("4_5djeo")]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-_characters = NodePath("../Characters")
-
-[connection signal="protagonist_changed" from="Characters" to="DiceLog" method="_on_protagonist_changed"]
-[connection signal="page_entered" from="StoryBook" to="." method="_on_story_book_page_entered"]
+[connection signal="protagonist_changed" from="Characters" to="HBoxContainer/VBoxContainer/DiceLog" method="_on_protagonist_changed"]
+[connection signal="page_entered" from="HBoxContainer/VBoxContainer/StoryBook" to="." method="_on_story_book_page_entered"]

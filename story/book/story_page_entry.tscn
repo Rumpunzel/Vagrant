@@ -28,10 +28,10 @@ size_flags_horizontal = 3
 script = ExtResource("1_xif0c")
 _background = NodePath("Background")
 _body_container = NodePath("MarginContainer")
-_description = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Description")
-_choices = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Choices")
-_breath_dice_selection = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer/BreathDiceSelection")
-_breath_dice_selection_collapsible_container = NodePath("MarginContainer/HBoxContainer/CollapsibleContainer")
+_description = NodePath("MarginContainer/VBoxContainer/Description")
+_choices = NodePath("MarginContainer/VBoxContainer/VBoxContainer/Choices")
+_breath_dice_selection = NodePath("MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection")
+_breath_dice_selection_collapsible_container = NodePath("MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer")
 _dialog_button = ExtResource("2_8njw8")
 metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
 
@@ -49,20 +49,16 @@ metadata/_custom_type_script = "uid://0inxk2dmireb"
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 24
+theme_override_constants/margin_top = 48
 theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 32
+theme_override_constants/margin_bottom = 48
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 8
+theme_override_constants/separation = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 24
-
-[node name="Description" type="RichTextLabel" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 focus_mode = 2
 bbcode_enabled = true
@@ -75,12 +71,16 @@ visible_characters_behavior = 1
 script = ExtResource("3_pf20m")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="Choices" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="VBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="Choices" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 2
 
-[node name="CollapsibleContainer" type="Control" parent="MarginContainer/HBoxContainer"]
+[node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 process_mode = 3
 editor_description = "
 			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
@@ -89,16 +89,16 @@ Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
 custom_minimum_size = Vector2(384, 555)
 layout_mode = 2
-size_flags_vertical = 8
+size_flags_vertical = 0
 script = ExtResource("4_nyvyp")
 starts_opened = false
 folding_direction_preset = 15
 sizing_constraint = 1
-auto_update_size = 1
+auto_update_size = 0
 sizing_node = NodePath("BreathDiceSelection")
 metadata/_custom_type_script = "uid://btlh4wrv04rc3"
 
-[node name="BreathDiceSelection" parent="MarginContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("5_15pgc")]
+[node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer" instance=ExtResource("5_15pgc")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,5 +108,5 @@ offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[connection signal="finished_typing" from="MarginContainer/HBoxContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
-[connection signal="save_evaluated" from="MarginContainer/HBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_save_evaluated"]
+[connection signal="finished_typing" from="MarginContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
+[connection signal="save_evaluated" from="MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_save_evaluated"]
