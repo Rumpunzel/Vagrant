@@ -6,6 +6,7 @@ signal faded_in
 signal faded_out
 
 func _ready() -> void:
+	if Engine.is_editor_hint(): return
 	material = material.duplicate()
 	fade_in()
 
