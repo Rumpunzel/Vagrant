@@ -19,6 +19,9 @@ func select() -> void:
 func deselect() -> void:
 	if not disabled: button_pressed = false
 
+func enable() -> void:
+	active = true
+
 func disable() -> void:
 	active = false
 
