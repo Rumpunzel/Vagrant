@@ -93,14 +93,13 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="HSplitContainer" type="HSplitContainer" parent="HBoxContainer/VSplitContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="GameInfo" type="TabContainer" parent="HBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
-tabs_position = 1
 
 [node name="DiceLog" type="MarginContainer" parent="HBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer/GameInfo"]
 layout_mode = 2
