@@ -22,8 +22,8 @@ shader_parameter/left_clip = 0.0
 shader_parameter/right_clip = 0.0
 
 [node name="StoryPageEntry" type="PanelContainer" node_paths=PackedStringArray("_background", "_body_container", "_title", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_collapsible_container")]
-offset_right = 1524.0
-offset_bottom = 225.0
+offset_right = 464.0
+offset_bottom = 419.0
 size_flags_horizontal = 3
 script = ExtResource("1_xif0c")
 _background = NodePath("Background")
@@ -106,7 +106,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(384, 555)
+custom_minimum_size = Vector2(384, 233)
 layout_mode = 2
 size_flags_vertical = 0
 script = ExtResource("4_nyvyp")
