@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="4_ipvic"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/book/story_book.tscn" id="5_p35e8"]
 
-[node name="Adventure" type="VBoxContainer" node_paths=PackedStringArray("_title", "_sub_title", "_story", "_characters", "_story_book")]
+[node name="Adventure" type="VBoxContainer" node_paths=PackedStringArray("_title", "_story", "_characters", "_story_book")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,8 +17,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 32
 script = ExtResource("1_bnng7")
-_title = NodePath("MarginContainer/VBoxContainer/Title")
-_sub_title = NodePath("MarginContainer/VBoxContainer/Subtitle")
+_title = NodePath("HBoxContainer/VBoxContainer2/Title")
 _story = NodePath("Story")
 _characters = NodePath("Characters")
 _story_book = NodePath("HBoxContainer/VBoxContainer/StoryBook")
@@ -32,13 +31,16 @@ metadata/_custom_type_script = "uid://dccrmadulf3fx"
 script = ExtResource("3_rhm0o")
 metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 32
 
-[node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="Title" type="RichTextLabel" parent="HBoxContainer/VBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 2
@@ -58,47 +60,28 @@ script = ExtResource("4_ipvic")
 _characters_per_minute = 1000.0
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="Subtitle" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-focus_mode = 2
-theme_type_variation = &"Subtitles"
-theme_override_colors/default_color = Color(0.827, 0.827, 0.827, 1)
-bbcode_enabled = true
-text = "Subtitle — Details"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-horizontal_alignment = 1
-vertical_alignment = 1
-selection_enabled = true
-visible_characters_behavior = 1
-script = ExtResource("4_ipvic")
-_characters_per_minute = 1000.0
-metadata/_custom_type_script = "uid://rbc1te7wgcy0"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="CharacterSheets" type="TabContainer" parent="HBoxContainer/VBoxContainer2" node_paths=PackedStringArray("characters")]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 32
-
-[node name="CharacterSheets" type="TabContainer" parent="HBoxContainer" node_paths=PackedStringArray("characters")]
-layout_mode = 2
 current_tab = 0
-tabs_position = 1
 drag_to_rearrange_enabled = true
 script = ExtResource("3_4lj7w")
-characters = NodePath("../../Characters")
+characters = NodePath("../../../Characters")
 _character_sheet = ExtResource("4_2poxt")
 metadata/_custom_type_script = "uid://dlr4addkwoige"
 
-[node name="CharacterSheet" parent="HBoxContainer/CharacterSheets" instance=ExtResource("4_2poxt")]
+[node name="CharacterSheet" parent="HBoxContainer/VBoxContainer2/CharacterSheets" instance=ExtResource("4_2poxt")]
 layout_mode = 2
 metadata/_tab_index = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 32
+
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="StoryBook" parent="HBoxContainer/VBoxContainer" instance=ExtResource("5_p35e8")]
 layout_mode = 2

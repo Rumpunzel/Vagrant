@@ -41,6 +41,7 @@ enum State {
 @export_group("Configuration")
 @export var _background: BackgroundRect
 @export var _body_container: Container
+@export var _title: TypingLabel
 @export var _description: TypingLabel
 @export var _choices: Container
 @export var _breath_dice_selection: BreathDiceSelection
@@ -65,7 +66,6 @@ func setup_page(story: Story, characters: Characters, new_story_page: StoryPage)
 	story_page = new_story_page
 	var background: Texture2D = story_page.get_background(_story)
 	_background.texture = background
-	self_modulate = Color.TRANSPARENT if _background.texture else Color.WHITE
 	if background:
 		_background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
 		_background.show_behind_parent = false
@@ -75,6 +75,9 @@ func setup_page(story: Story, characters: Characters, new_story_page: StoryPage)
 	_update_decisions(story_page.get_decisions(_story))
 
 func enter_page() -> void:
+	var title: String = story_page.get_page_title(_story)
+	if not title.is_empty(): _title.type_text(title)
+	else: _title.visible = false
 	_description.type_text(story_page.get_description(_story))
 	_story.decision_made.connect(_on_decision_made)
 

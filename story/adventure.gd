@@ -11,7 +11,6 @@ signal story_book_page_entered(story_page: StoryPage)
 
 @export_group("Configuration")
 @export var _title: TypingLabel
-@export var _sub_title: TypingLabel
 @export var _story: Story
 @export var _characters: Characters
 @export var _story_book: StoryBook
@@ -67,6 +66,4 @@ func update_page_log(story_page: StoryPage) -> StoryPage:
 	return current_page
 
 func _on_story_book_page_entered(story_page: StoryPage) -> void:
-	var sub_title: String = story_page.get_page_title(_story)
-	if not sub_title.is_empty(): _sub_title.type_text(sub_title)
 	story_book_page_entered.emit(story_page, _story)
