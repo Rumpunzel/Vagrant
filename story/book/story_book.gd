@@ -27,16 +27,14 @@ func _exit_tree() -> void:
 	_story.page_entered.disconnect(_on_page_entered)
 
 func _flip_page() -> void:
-	if _current_story_page_entry: _current_story_page_entry.item_rect_changed.disconnect(_on_current_story_page_entry_item_rect_changed)
+	_current_story_page_entry.item_rect_changed.connect(_on_current_story_page_entry_item_rect_changed)
 	_story_pages.add_child(_current_story_page_entry)
 	_story_pages.move_child(_current_story_page_entry, 0)
 	_current_story_page_entry.enter_page()
 	page_entered.emit(_current_story_page_entry.story_page)
-	await get_tree().process_frame
-	_on_current_story_page_entry_item_rect_changed()
-	_current_story_page_entry.item_rect_changed.connect(_on_current_story_page_entry_item_rect_changed)
 
 func _on_page_entered(story_page: StoryPage) -> void:
+	if _current_story_page_entry: _current_story_page_entry.item_rect_changed.disconnect(_on_current_story_page_entry_item_rect_changed)
 	var previous_page: StoryPageEntry = _current_story_page_entry
 	_current_story_page_entry = _story_page_entry.instantiate()
 	_current_story_page_entry.setup_page(_story, _characters, story_page)
