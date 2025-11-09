@@ -24,7 +24,7 @@ func set_story_page(story_page: StoryPage, story: Story) -> void:
 
 func _set_area_background(background_texture: Texture2D) -> void:
 	area_background = background_texture
-	if _current_area_background and _current_area_background.texture == background_texture: return
+	if not background_texture or (_current_area_background and _current_area_background.texture == background_texture): return
 	var old_background: BackgroundRect = _current_area_background
 	var new_background: BackgroundRect = _background.instantiate()
 	new_background.texture = background_texture

@@ -41,17 +41,8 @@ func update_save_result(save_result: SaveResult) -> void:
 		_update_timer.start(_update_delay)
 		await _update_timer.timeout
 	text = "%d" % breath_die.result
-	_set_font_colors(save_result.get_die_color(breath_die))
+	set_font_colors(save_result.get_die_color(breath_die))
 	_update()
-
-func select() -> void:
-	if not disabled: button_pressed = true
-
-func deselect() -> void:
-	if not disabled: button_pressed = false
-
-func disable() -> void:
-	active = false
 
 func _update() -> void:
 	disabled = not breath_die.is_alive()
@@ -61,18 +52,6 @@ func _update() -> void:
 	else:
 		tooltip_text = "[%s]" % breath_die.die_type
 		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-
-func _set_font_colors(color: Color) -> void:
-	add_theme_color_override("font_color", color)
-	add_theme_color_override("font_disabled_color", color)
-	add_theme_color_override("font_pressed_color", color)
-	add_theme_color_override("font_hover_color", color)
-
-func _remove_font_colors() -> void:
-	remove_theme_color_override("font_color")
-	remove_theme_color_override("font_disabled_color")
-	remove_theme_color_override("font_pressed_color")
-	remove_theme_color_override("font_hover_color")
 
 func _on_selected_breath_dice_changed(selected_breath_dice: Array[BreathDie]) -> void:
 	button_pressed = selected_breath_dice.has(breath_die)

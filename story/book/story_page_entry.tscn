@@ -1,8 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://cy2ymcfk2tejn"]
+[gd_scene load_steps=9 format=3 uid="uid://cy2ymcfk2tejn"]
 
 [ext_resource type="Script" uid="uid://7rp8e3m8fvuh" path="res://story/book/story_page_entry.gd" id="1_xif0c"]
 [ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/book/dialog_button.tscn" id="2_8njw8"]
-[ext_resource type="Texture2D" uid="uid://c56fr4gg3616i" path="res://assets/landscapes/tavern.png" id="3_n3f3l"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="3_pf20m"]
 [ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://story/book/fade_vignette.gdshader" id="3_yb0s4"]
 [ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_nyvyp"]
@@ -41,7 +40,6 @@ visible = false
 show_behind_parent = true
 material = SubResource("ShaderMaterial_hkhw8")
 layout_mode = 2
-texture = ExtResource("3_n3f3l")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("5_hkhw8")
@@ -106,7 +104,7 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(384, 233)
+custom_minimum_size = Vector2(384, 555)
 layout_mode = 2
 size_flags_vertical = 0
 script = ExtResource("4_nyvyp")
