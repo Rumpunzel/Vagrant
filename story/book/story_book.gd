@@ -15,7 +15,7 @@ var _adventure_tome: AdventureTome
 var _story: Story
 var _characters: Characters
 
-var _current_story_page_entry: StoryPageEntry
+var _current_story_page_entry: StoryEntry
 
 func setup(adventure_tome: AdventureTome, story: Story, characters: Characters) -> void:
 	_adventure_tome = adventure_tome
@@ -35,7 +35,7 @@ func _flip_page() -> void:
 
 func _on_page_entered(story_page: StoryPage) -> void:
 	if _current_story_page_entry: _current_story_page_entry.item_rect_changed.disconnect(_on_current_story_page_entry_item_rect_changed)
-	var previous_page: StoryPageEntry = _current_story_page_entry
+	var previous_page: StoryEntry = _current_story_page_entry
 	_current_story_page_entry = _story_page_entry.instantiate()
 	_current_story_page_entry.setup_page(_story, _characters, story_page)
 	if not previous_page: _flip_page()

@@ -1,12 +1,12 @@
 @tool
-class_name StoryPageEntry
+class_name StoryEntry
 extends PageEntry
 
 @export_range(0.0, 1.0) var _dialog_options_fade_in_delay: float = 0.1
 
-@export_range(0.0, 5.0) var _dice_fade_out_delay: float = 3.0
-
 @export_group("Configuration")
+@export var _title: TypingLabel
+@export var _description: TypingLabel
 @export var _choices: Container
 @export var _breath_dice_selection: BreathDiceSelection
 @export var _breath_dice_selection_collapsible_container: CollapsibleContainer
@@ -26,7 +26,10 @@ func setup_page(story: Story, characters: Characters, new_story_page: StoryPage)
 	_update_decisions(story_page.get_decisions(_story))
 
 func enter_page() -> void:
-	super.enter_page()
+	var title: String = story_page.get_page_title(_story)
+	if not title.is_empty(): _title.type_text(title)
+	else: _title.visible = false
+	_description.type_text(story_page.get_description(_story))
 	_story.decision_made.connect(_on_decision_made)
 
 func _exit_tree() -> void:
@@ -52,9 +55,6 @@ func _create_dialog_button(story_decision: StoryDecision) -> DialogButton:
 	_choices.add_child(dialog_button)
 	return dialog_button
 
-func _get_fade_out_delay() -> float:
-	return _dice_fade_out_delay if is_dice_page() else _fade_out_delay
-
 func _set_state(new_state: State) -> void:
 	super._set_state(new_state)
 	match state:
@@ -62,7 +62,7 @@ func _set_state(new_state: State) -> void:
 			for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = false
 		State.PRESENT:
 			for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = true
-		_: assert(false, "StoryPageEntry.State %s is not supported!" % state)
+		_: assert(false, "StoryEntry.State %s is not supported!" % state)
 
 func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
 	assert(save_request)
