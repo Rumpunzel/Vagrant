@@ -1,0 +1,72 @@
+[gd_scene load_steps=4 format=3 uid="uid://mt5mbq7b5lu0"]
+
+[ext_resource type="Script" uid="uid://cibuut5maxj22" path="res://story/book/combat/stance_selection.gd" id="1_su63f"]
+[ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="2_wxlxl"]
+[ext_resource type="Texture2D" uid="uid://ct2so8s4uk0f" path="res://icons/old_dice/hand-bandage.png" id="3_6tab1"]
+
+[node name="StanceSelection" type="PanelContainer" node_paths=PackedStringArray("_button", "_icon", "_descriptor", "_details", "_color", "_score")]
+offset_right = 81.0
+offset_bottom = 154.0
+focus_mode = 2
+mouse_default_cursor_shape = 2
+script = ExtResource("1_su63f")
+_button = NodePath("Button")
+_icon = NodePath("Icon")
+_descriptor = NodePath("VBoxContainer/MarginContainer/Descriptor")
+_details = NodePath("VBoxContainer/MarginContainer2/Details")
+_color = NodePath("VBoxContainer/ColorRect")
+_score = NodePath("")
+metadata/_custom_type_script = "uid://cibuut5maxj22"
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+toggle_mode = true
+script = ExtResource("2_wxlxl")
+metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
+
+[node name="Icon" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.101960786)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_6tab1")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 8
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = 0
+
+[node name="Descriptor" type="Label" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "Muscle"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Details" type="RichTextLabel" parent="VBoxContainer/MarginContainer2"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+mouse_filter = 2
+bbcode_enabled = true
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="toggled" from="Button" to="." method="_on_button_toggled"]

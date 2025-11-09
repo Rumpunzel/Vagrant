@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://bsivsd7uc6f0f"]
+
+[ext_resource type="Script" uid="uid://cmldeudraapqy" path="res://story/book/combat/combat_entry.gd" id="1_2jy5c"]
+[ext_resource type="Script" uid="uid://0inxk2dmireb" path="res://story/stage/background_rect.gd" id="2_qfvvb"]
+[ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/breath_dice_selection/breath_dice_selection.tscn" id="3_6etle"]
+[ext_resource type="PackedScene" uid="uid://c07vtb4ob281a" path="res://story/book/combat/stance_selection_buttons.tscn" id="4_rg7od"]
+
+[node name="CombatEntry" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2jy5c")
+metadata/_custom_type_script = "uid://cmldeudraapqy"
+
+[node name="Background" type="TextureRect" parent="."]
+visible = false
+layout_mode = 2
+script = ExtResource("2_qfvvb")
+metadata/_custom_type_script = "uid://0inxk2dmireb"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_6etle")]
+layout_mode = 2
+
+[node name="StanceSelectionButtons" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_rg7od")]
+layout_mode = 2
