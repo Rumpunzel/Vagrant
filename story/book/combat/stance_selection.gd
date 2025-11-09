@@ -41,6 +41,9 @@ func update() -> void:
 	var attribute_score: AttributeScore = _get_attribute_score()
 	_score.text = "%s = %d" % [attribute_score.get_details(), attribute_score.get_score()]
 
+func enable() -> void:
+	_button.disable()
+
 func disable() -> void:
 	_button.disable()
 

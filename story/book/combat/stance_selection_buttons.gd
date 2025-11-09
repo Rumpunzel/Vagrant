@@ -37,6 +37,9 @@ func setup_character_attributes(character_attributes: Array[CharacterAttribute])
 	for character_attribute: CharacterAttribute in character_attributes:
 		add_button(character_attribute, radio_button_group, _button_size)
 
+func enable_buttons() -> void:
+	for button: StanceSelection in _get_buttons(): button.enable()
+
 func disable_buttons() -> void:
 	for button: StanceSelection in _get_buttons(): button.disable()
 

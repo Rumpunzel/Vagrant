@@ -21,6 +21,11 @@ enum Exclusivity {
 var _exclusivity: int = 0
 @export var _events: Array[StoryPage]
 
+func create() -> PageEntry:
+	var story_entry_scene: PackedScene = load("uid://cy2ymcfk2tejn")
+	var story_entry: PageEntry = story_entry_scene.instantiate()
+	return story_entry
+
 func are_all_prerequisites_fullfilled(story: Story) -> bool:
 	if _one_time_only and story.get_how_often_page_has_been_entered(self) > 1: return false
 	for condition: StoryCondition in _conditions:

@@ -1,11 +1,15 @@
 class_name SaveRequest
 extends Resource
 
+signal attribute_changed(attribute: CharacterAttribute)
 signal selected_breath_dice_changed(selected_breath_dice: Array[BreathDie])
 
 @export var description: String
 @export var character_profile: CharacterProfile
-@export var attribute: CharacterAttribute
+@export var attribute: CharacterAttribute :
+	set(new_attribute):
+		attribute = new_attribute
+		attribute_changed.emit(attribute)
 @export var difficulty: int
 @export var selected_breath_dice: Array[BreathDie] :
 	set(new_selected_breath_dice):

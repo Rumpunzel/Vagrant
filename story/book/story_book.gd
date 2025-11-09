@@ -8,14 +8,13 @@ signal page_entered(story_page: StoryPage)
 
 @export_group("Configuration")
 @export var _page_turn_timer: Timer
-@export var _story_pages: Container
-@export var _story_page_entry: PackedScene
+@export var _pages: Container
 
 var _adventure_tome: AdventureTome
 var _story: Story
 var _characters: Characters
 
-var _current_story_page_entry: StoryEntry
+var _current_page_entry: PageEntry
 
 func setup(adventure_tome: AdventureTome, story: Story, characters: Characters) -> void:
 	_adventure_tome = adventure_tome
@@ -27,17 +26,17 @@ func _exit_tree() -> void:
 	_story.page_entered.disconnect(_on_page_entered)
 
 func _flip_page() -> void:
-	_current_story_page_entry.item_rect_changed.connect(_on_current_story_page_entry_item_rect_changed)
-	_story_pages.add_child(_current_story_page_entry)
-	_story_pages.move_child(_current_story_page_entry, 0)
-	_current_story_page_entry.enter_page()
-	page_entered.emit(_current_story_page_entry.story_page)
+	_current_page_entry.item_rect_changed.connect(_on_current_page_entry_item_rect_changed)
+	_pages.add_child(_current_page_entry)
+	_pages.move_child(_current_page_entry, 0)
+	_current_page_entry.enter_page()
+	page_entered.emit(_current_page_entry.get_story_page())
 
 func _on_page_entered(story_page: StoryPage) -> void:
-	if _current_story_page_entry: _current_story_page_entry.item_rect_changed.disconnect(_on_current_story_page_entry_item_rect_changed)
-	var previous_page: StoryEntry = _current_story_page_entry
-	_current_story_page_entry = _story_page_entry.instantiate()
-	_current_story_page_entry.setup_page(_story, _characters, story_page)
+	if _current_page_entry: _current_page_entry.item_rect_changed.disconnect(_on_current_page_entry_item_rect_changed)
+	var previous_page: StoryEntry = _current_page_entry
+	_current_page_entry = story_page.create()
+	_current_page_entry.setup_page(_story, _characters, story_page)
 	if not previous_page: _flip_page()
 	else:
 		var delay: float = _dice_page_turn_delay if previous_page.is_dice_page() else _page_turn_delay
@@ -47,5 +46,5 @@ func _on_page_entered(story_page: StoryPage) -> void:
 func _on_page_turn_delay_timeout() -> void:
 	_flip_page()
 
-func _on_current_story_page_entry_item_rect_changed() -> void:
-	custom_minimum_size.y = _current_story_page_entry.get_rect().size.y
+func _on_current_page_entry_item_rect_changed() -> void:
+	custom_minimum_size.y = _current_page_entry.get_rect().size.y

@@ -2,6 +2,7 @@
 class_name StoryEntry
 extends PageEntry
 
+@export var story_page: StoryPage
 @export_range(0.0, 1.0) var _dialog_options_fade_in_delay: float = 0.1
 
 @export_group("Configuration")
@@ -38,6 +39,12 @@ func _exit_tree() -> void:
 func is_dice_page() -> bool:
 	assert(not _save_result or _save_request)
 	return _save_result != null
+
+func get_story_page() -> StoryPage:
+	return story_page
+
+func set_story_page(new_story_page: StoryPage) -> void:
+	story_page = new_story_page
 
 func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for dialog_button: DialogButton in _choices.get_children():
