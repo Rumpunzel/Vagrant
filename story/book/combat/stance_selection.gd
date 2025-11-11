@@ -7,22 +7,20 @@ signal character_attribute_deselected(character_attribute: CharacterAttribute)
 
 @export_group("Configuration")
 @export var _button: DisplayButton
-@export var _icon: TextureRect
 @export var _score: Label
-@export var _descriptor: Label
+@export var _icon: TextureRect
 @export var _details: RichTextLabel
-@export var _color: ColorRect
 
 var attribute: CharacterAttribute :
 	set(new_attribute):
 		assert(new_attribute)
 		assert(new_attribute != attribute)
 		attribute = new_attribute
-		_icon.texture = attribute.icon
+		_button.set_button_highlight_colors(attribute.color)
 		if character: _score.text = "%d" % character.get_attribute_score(attribute).get_score()
-		_descriptor.text = attribute.descriptor
+		_score.modulate = attribute.color.darkened(0.5)
+		_icon.texture = attribute.icon
 		_details.text = attribute.details
-		_color.color = attribute.color
 		tooltip_text = attribute.details
 
 var character: Character :

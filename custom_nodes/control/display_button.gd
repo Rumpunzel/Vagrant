@@ -13,6 +13,8 @@ signal activation_changed(new_status: bool)
 		mouse_filter = Control.MOUSE_FILTER_STOP if active else Control.MOUSE_FILTER_PASS
 		activation_changed.emit(active)
 
+@onready var _font_outline_color: Color = get_theme_color("font_outline_color")
+
 func select() -> void:
 	if not disabled: button_pressed = true
 
@@ -30,12 +32,14 @@ func set_font_colors(color: Color) -> void:
 	add_theme_color_override("font_disabled_color", color)
 	add_theme_color_override("font_pressed_color", color)
 	add_theme_color_override("font_hover_color", color)
+	add_theme_color_override("font_outline_color", color.darkened(0.75))
 
 func remove_font_colors() -> void:
 	remove_theme_color_override("font_color")
 	remove_theme_color_override("font_disabled_color")
 	remove_theme_color_override("font_pressed_color")
 	remove_theme_color_override("font_hover_color")
+	remove_theme_color_override("font_outline_color")
 
 func set_button_highlight_colors(color: Color, additional_highlight: Color = Color(0.25, 0.25, 0.25, 0.0)) -> void:
 	remove_button_highlight_colors()

@@ -14,6 +14,7 @@ var _save_request: SaveRequest :
 		_buttons.for_each_element(func(button: StanceSelection) -> void: button.character = _character_resolver.call(_save_request.character_profile))
 		var relevant_stance_selection: StanceSelection = _stance_selections[_save_request.attribute]
 		relevant_stance_selection.select()
+		if not get_viewport().gui_get_focus_owner(): relevant_stance_selection.grab_focus()
 
 var _stance_selections: Dictionary[CharacterAttribute, StanceSelection] = {}
 

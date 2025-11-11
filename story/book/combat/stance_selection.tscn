@@ -4,18 +4,14 @@
 [ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="2_wxlxl"]
 [ext_resource type="Texture2D" uid="uid://ct2so8s4uk0f" path="res://icons/old_dice/hand-bandage.png" id="3_6tab1"]
 
-[node name="StanceSelection" type="PanelContainer" node_paths=PackedStringArray("_button", "_icon", "_score", "_descriptor", "_details", "_color")]
+[node name="StanceSelection" type="PanelContainer" node_paths=PackedStringArray("_button", "_score", "_icon", "_details")]
 offset_right = 290.0
 offset_bottom = 235.0
-focus_mode = 2
-mouse_default_cursor_shape = 2
 script = ExtResource("1_su63f")
 _button = NodePath("Button")
+_score = NodePath("Control/Score")
 _icon = NodePath("Icon")
-_score = NodePath("VBoxContainer/MarginContainer/VBoxContainer/PanelContainer/Score")
-_descriptor = NodePath("VBoxContainer/MarginContainer/VBoxContainer/Descriptor")
-_details = NodePath("VBoxContainer/MarginContainer2/Details")
-_color = NodePath("VBoxContainer/ColorRect")
+_details = NodePath("MarginContainer/Details")
 metadata/_custom_type_script = "uid://cibuut5maxj22"
 
 [node name="Button" type="Button" parent="."]
@@ -32,49 +28,33 @@ texture = ExtResource("3_6tab1")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 0
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
+[node name="Control" type="Control" parent="."]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="Score" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/PanelContainer"]
-layout_mode = 2
-theme_type_variation = &"HeaderLarge"
+[node name="Score" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -14.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme_override_colors/font_outline_color = Color(0.8808251, 0.8808251, 0.8808251, 0.6)
+theme_override_constants/outline_size = 24
+theme_override_font_sizes/font_size = 192
 text = "7"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Descriptor" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_type_variation = &"HeaderMedium"
-text = "Muscle"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ColorRect" type="ColorRect" parent="VBoxContainer"]
-custom_minimum_size = Vector2(4, 4)
-layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="Details" type="RichTextLabel" parent="VBoxContainer/MarginContainer2"]
+[node name="Details" type="RichTextLabel" parent="MarginContainer"]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 mouse_filter = 2
