@@ -10,7 +10,6 @@ offset_right = 485.0
 offset_bottom = 458.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-mouse_filter = 1
 script = ExtResource("1_ugieg")
 _icon = NodePath("Icon")
 _button = NodePath("Button")
