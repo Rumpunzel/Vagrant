@@ -20,7 +20,7 @@ script = ExtResource("1_bnng7")
 _title = NodePath("HBoxContainer/VBoxContainer/Title")
 _story = NodePath("Story")
 _characters = NodePath("Characters")
-_story_book = NodePath("HBoxContainer/VSplitContainer/VBoxContainer/StoryBook")
+_story_book = NodePath("HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/StoryBook")
 metadata/_custom_type_script = "uid://cjud36jst3ajk"
 
 [node name="Story" type="Node" parent="."]
@@ -36,9 +36,24 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 
+[node name="CharacterSheets" type="TabContainer" parent="HBoxContainer" node_paths=PackedStringArray("characters")]
+layout_mode = 2
+size_flags_vertical = 3
+tab_alignment = 1
+current_tab = 0
+drag_to_rearrange_enabled = true
+script = ExtResource("3_4lj7w")
+characters = NodePath("../../Characters")
+_character_sheet = ExtResource("4_2poxt")
+metadata/_custom_type_script = "uid://dlr4addkwoige"
+
+[node name="CharacterSheet" parent="HBoxContainer/CharacterSheets" instance=ExtResource("4_2poxt")]
+layout_mode = 2
+metadata/_tab_index = 0
+
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 32
+size_flags_horizontal = 3
 
 [node name="Title" type="RichTextLabel" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -60,55 +75,39 @@ script = ExtResource("4_ipvic")
 _characters_per_minute = 1000.0
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="CharacterSheets" type="TabContainer" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("characters")]
+[node name="VSplitContainer" type="VSplitContainer" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-tab_alignment = 1
-current_tab = 0
-drag_to_rearrange_enabled = true
-script = ExtResource("3_4lj7w")
-characters = NodePath("../../../Characters")
-_character_sheet = ExtResource("4_2poxt")
-metadata/_custom_type_script = "uid://dlr4addkwoige"
-
-[node name="CharacterSheet" parent="HBoxContainer/VBoxContainer/CharacterSheets" instance=ExtResource("4_2poxt")]
-layout_mode = 2
-metadata/_tab_index = 0
-
-[node name="VSplitContainer" type="VSplitContainer" parent="HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_constants/separation = 32
 drag_area_highlight_in_editor = true
 
-[node name="Control" type="Control" parent="HBoxContainer/VSplitContainer"]
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer/VSplitContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VSplitContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer"]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="StoryBook" parent="HBoxContainer/VSplitContainer/VBoxContainer" instance=ExtResource("5_p35e8")]
+[node name="StoryBook" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer" instance=ExtResource("5_p35e8")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSplitContainer" type="HSplitContainer" parent="HBoxContainer/VSplitContainer/VBoxContainer"]
+[node name="HSplitContainer" type="HSplitContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer"]
 visible = false
 layout_mode = 2
 
-[node name="GameInfo" type="TabContainer" parent="HBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer"]
+[node name="GameInfo" type="TabContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="DiceLog" type="MarginContainer" parent="HBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer/GameInfo"]
+[node name="DiceLog" type="MarginContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer/GameInfo"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="DiceLog" parent="HBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer/GameInfo/DiceLog" node_paths=PackedStringArray("_characters") instance=ExtResource("4_5djeo")]
+[node name="DiceLog" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer/GameInfo/DiceLog" instance=ExtResource("4_5djeo")]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-_characters = NodePath("../../../../../../../Characters")
 
-[connection signal="page_entered" from="HBoxContainer/VSplitContainer/VBoxContainer/StoryBook" to="." method="_on_story_book_page_entered"]
+[connection signal="page_entered" from="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/StoryBook" to="." method="_on_story_book_page_entered"]

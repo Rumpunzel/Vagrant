@@ -28,6 +28,9 @@ func update_dice_request(dice_request: DiceRequest) -> void:
 func update_save_result(save_result: SaveResult) -> void:
 	for button: BreathDieSelectionButton in _get_buttons(): button.update_save_result(save_result)
 
+func update_fight_result(fight_result: FightResult) -> void:
+	for button: BreathDieSelectionButton in _get_buttons(): button.update_fight_result(fight_result)
+
 func select_all() -> void:
 	_all_button.set_pressed_no_signal(true)
 	for button: BreathDieSelectionButton in _get_buttons(): button.select()

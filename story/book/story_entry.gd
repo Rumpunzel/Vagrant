@@ -30,8 +30,8 @@ var _save_result: SaveResult
 var _fight_request: FightRequest :
 	set(new_fight_request):
 		_fight_request = new_fight_request
-		if not _save_request and not _fight_request:
-			_breath_dice_collapsible_container.close_tween()
+		if not _fight_request:
+			if not _save_request: _breath_dice_collapsible_container.close_tween()
 			return
 		_breath_dice_selection.request_fight(_fight_request)
 		await get_tree().process_frame

@@ -10,8 +10,8 @@ enum State {
 
 @export var state: State = State.PRESENT : set = _set_state
 
+@export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var _entry_size: float = 256.0
 @export_range(0.0, 1.0) var _fade_in_duration: float = 0.1
-
 @export_range(0.0, 3.0) var _fade_out_duration: float = 1.0
 @export_range(0.0, 1.0) var _fade_out_delay: float = 0.5
 @export_range(0.0, 5.0) var _dice_fade_out_delay: float = 3.0
@@ -28,14 +28,14 @@ func setup_page(story: Story, characters: Characters, new_story_page: StoryPage)
 	_story = story
 	_characters = characters
 	set_story_page(new_story_page)
-	var background: Texture2D = get_story_page().get_background(_story)
-	_background.texture = background
-	if background:
-		_background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
-		_background.show_behind_parent = false
-	else:
-		_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		_background.show_behind_parent = true
+	#var background: Texture2D = get_story_page().get_background(_story)
+	#_background.texture = background
+	#if background:
+		#_background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
+		#_background.show_behind_parent = false
+	#else:
+		#_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		#_background.show_behind_parent = true
 
 @abstract func enter_page() -> void
 
@@ -51,6 +51,7 @@ func _set_state(new_state: State) -> void:
 	state = new_state
 	match state:
 		State.PAST:
+			custom_minimum_size.y = 0.0
 			_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			if not _background.texture:
 				var self_tween: Tween = get_tree().create_tween()
@@ -63,6 +64,7 @@ func _set_state(new_state: State) -> void:
 			mouse_entered.connect(_on_mouse_entered)
 			mouse_exited.connect(_on_mouse_exited)
 		State.PRESENT:
+			custom_minimum_size.y = _entry_size
 			self_modulate = Color.TRANSPARENT if _background.texture else Color.WHITE
 		_: assert(false, "StoryEntry.State %s is not supported!" % state)
 

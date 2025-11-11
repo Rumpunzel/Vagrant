@@ -9,7 +9,6 @@ signal confirmed
 @export_group("Configuration")
 @export var _portrait: TextureRect
 @export var _description: TypingLabel
-@export var _stance_selection_collapsible_container: CollapsibleContainer
 @export var _stance_selection_buttons: StanceSelectionButtons
 @export var _breath_dice_selection_buttons: BreathDiceSelectionButtons
 @export var _all_in_button: DisplayButton
@@ -40,13 +39,13 @@ func request_save(save_request: SaveRequest) -> void:
 
 func request_fight(fight_request: FightRequest) -> void:
 	if not fight_request:
-		_stance_selection_collapsible_container.close_tween()
+		_stance_selection_buttons.hide()
 		return
 	assert(fight_request)
 	_dice_request = fight_request
 	_stance_selection_buttons.request_fight(fight_request)
-	await get_tree().process_frame
-	_stance_selection_collapsible_container.open_tween()
+	_stance_selection_buttons.show()
+	fight_request.fight_rolled.connect(_on_fight_rolled)
 
 func _enable_hud() -> void:
 	_ok_button.disabled = false
@@ -70,5 +69,15 @@ func _on_save_rolled(save_result: SaveResult) -> void:
 	_dice_log_dice_request_entry.visible = false
 	_dice_log_save_result_entry.visible = true
 	_breath_dice_selection_buttons.update_save_result(save_result)
+	_breath_dice_selection_buttons.disable_buttons()
+	_disable_hud()
+
+func _on_fight_rolled(fight_result: FightResult) -> void:
+	assert(fight_result)
+	assert(fight_result.fight_request == _dice_request)
+	_dice_log_save_result_entry.initialize_fight_result(fight_result)
+	_dice_log_dice_request_entry.visible = false
+	_dice_log_save_result_entry.visible = true
+	_breath_dice_selection_buttons.update_fight_result(fight_result)
 	_breath_dice_selection_buttons.disable_buttons()
 	_disable_hud()

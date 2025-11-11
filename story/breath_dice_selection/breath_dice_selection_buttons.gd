@@ -38,6 +38,9 @@ func update_dice_request(dice_request: DiceRequest) -> void:
 func update_save_result(save_result: SaveResult) -> void:
 	_buttons.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: button_group.update_save_result(save_result))
 
+func update_fight_result(fight_result: FightResult) -> void:
+	_buttons.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: button_group.update_fight_result(fight_result))
+
 func select_all(selected: bool = true) -> void:
 	_buttons.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: if selected: button_group.select_all() else: button_group.deselect_all())
 

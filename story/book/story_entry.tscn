@@ -21,17 +21,24 @@ shader_parameter/left_clip = 0.0
 shader_parameter/right_clip = 0.0
 
 [node name="StoryEntry" type="PanelContainer" node_paths=PackedStringArray("_title", "_description", "_choices", "_breath_dice_selection", "_breath_dice_collapsible_container", "_background", "_body_container")]
+custom_minimum_size = Vector2(0, 256)
 offset_right = 203.0
-offset_bottom = 186.0
+offset_bottom = 256.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 script = ExtResource("1_ywxnt")
 _title = NodePath("MarginContainer/VBoxContainer/Title")
-_description = NodePath("MarginContainer/VBoxContainer/Description")
-_choices = NodePath("MarginContainer/VBoxContainer/VBoxContainer/Choices")
-_breath_dice_selection = NodePath("MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection")
-_breath_dice_collapsible_container = NodePath("MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer")
+_description = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Description")
+_choices = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Choices")
+_breath_dice_selection = NodePath("MarginContainer/VBoxContainer/HBoxContainer/CollapsibleContainer/BreathDiceSelection")
+_breath_dice_collapsible_container = NodePath("MarginContainer/VBoxContainer/HBoxContainer/CollapsibleContainer")
 _dialog_button = ExtResource("2_ilo4x")
+_entry_size = null
+_fade_in_duration = 256.0
+_fade_out_duration = 0.1
+_fade_out_delay = 1.0
+_dice_fade_out_delay = 0.5
+_past_modulate = 3.0
 _background = NodePath("Background")
 _body_container = NodePath("MarginContainer")
 metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
@@ -41,6 +48,7 @@ visible = false
 show_behind_parent = true
 material = SubResource("ShaderMaterial_hkhw8")
 layout_mode = 2
+size_flags_vertical = 0
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("4_h86xk")
@@ -56,7 +64,6 @@ theme_override_constants/margin_bottom = 48
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-size_flags_vertical = 8
 theme_override_constants/separation = 16
 
 [node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
@@ -77,7 +84,18 @@ visible_characters_behavior = 1
 script = ExtResource("5_g4vxc")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 16
+
+[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 focus_mode = 2
 bbcode_enabled = true
@@ -90,24 +108,17 @@ visible_characters_behavior = 1
 script = ExtResource("5_g4vxc")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="VBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="Choices" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 8
-
-[node name="Choices" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_constants/separation = 2
 
-[node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 process_mode = 3
 editor_description = "
 			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(425, 375)
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
@@ -119,12 +130,12 @@ auto_update_size = 0
 sizing_node = NodePath("BreathDiceSelection")
 metadata/_custom_type_script = "uid://btlh4wrv04rc3"
 
-[node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer" instance=ExtResource("7_sl3wq")]
+[node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer/HBoxContainer/CollapsibleContainer" instance=ExtResource("7_sl3wq")]
 layout_mode = 0
 offset_top = 0.0
 offset_bottom = 375.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[connection signal="finished_typing" from="MarginContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
-[connection signal="confirmed" from="MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_breath_dice_selection_confirmed"]
+[connection signal="finished_typing" from="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
+[connection signal="confirmed" from="MarginContainer/VBoxContainer/HBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_breath_dice_selection_confirmed"]

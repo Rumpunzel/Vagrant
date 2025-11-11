@@ -44,6 +44,18 @@ func update_save_result(save_result: SaveResult) -> void:
 	set_font_colors(save_result.get_die_color(breath_die))
 	_update()
 
+func update_fight_result(fight_result: FightResult) -> void:
+	assert(fight_result)
+	breath_die_selected.disconnect(fight_result.fight_request.select_breath_die)
+	breath_die_deselected.disconnect(fight_result.fight_request.deselect_breath_die)
+	if not fight_result.fight_request.selected_breath_dice.has(breath_die): return
+	if is_inside_tree() and _randomly_delay_update:
+		_update_timer.start(_update_delay)
+		await _update_timer.timeout
+	text = "%d" % breath_die.result
+	#set_font_colors(fight_result.get_die_color(breath_die))
+	_update()
+
 func _update() -> void:
 	disabled = not breath_die.is_alive()
 	if disabled:

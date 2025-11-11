@@ -38,6 +38,7 @@ func request_save(save_request: SaveRequest) -> void:
 	save_requested.emit(save_request)
 
 func request_fight(fight_request: FightRequest) -> void:
+	fight_request.fight_rolled.connect(_on_fight_rolled)
 	fight_requested.emit(fight_request)
 
 # The dice used for saves remain forever "laid on the table"
