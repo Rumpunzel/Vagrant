@@ -12,8 +12,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_2jy5c")
-_breath_dice_selection = NodePath("MarginContainer/VBoxContainer/BreathDiceSelection")
-_stance_selection_buttons = NodePath("MarginContainer/VBoxContainer/StanceSelectionButtons")
+_breath_dice_selection = NodePath("MarginContainer/HBoxContainer/BreathDiceSelection")
+_stance_selection_buttons = NodePath("MarginContainer/HBoxContainer/StanceSelectionButtons")
 _background = NodePath("Background")
 _body_container = NodePath("MarginContainer")
 metadata/_custom_type_script = "uid://cmldeudraapqy"
@@ -27,11 +27,12 @@ metadata/_custom_type_script = "uid://0inxk2dmireb"
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="StanceSelectionButtons" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_rg7od")]
+[node name="BreathDiceSelection" parent="MarginContainer/HBoxContainer" instance=ExtResource("3_6etle")]
 layout_mode = 2
 
-[node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_6etle")]
+[node name="StanceSelectionButtons" parent="MarginContainer/HBoxContainer" instance=ExtResource("4_rg7od")]
 layout_mode = 2
+size_flags_horizontal = 3

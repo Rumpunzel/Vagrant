@@ -25,6 +25,16 @@ enum Direction {
 @export var _stance_selection_buttons_parent: Container
 @export var _stance_selection_button: PackedScene
 
+var _character_resolver: Callable
+var _save_request: SaveRequest :
+	set(new_save_request):
+		assert(new_save_request)
+		_save_request = new_save_request
+		for button: StanceSelection in _get_buttons():
+			button.character = _character_resolver.call(_save_request.character_profile)
+		var relevant_stance_selection: StanceSelection = _button[_save_request.attribute]
+		relevant_stance_selection.select()
+
 var _buttons: BoxContainer
 var _button: Dictionary[CharacterAttribute, StanceSelection] = {}
 
@@ -37,6 +47,12 @@ func setup_character_attributes(character_attributes: Array[CharacterAttribute])
 	for character_attribute: CharacterAttribute in character_attributes:
 		add_button(character_attribute, radio_button_group, _button_size)
 
+func request_save(save_request: SaveRequest, character_resolver: Callable) -> void:
+	assert(save_request)
+	assert(character_resolver)
+	_character_resolver = character_resolver
+	_save_request = save_request
+
 func enable_buttons() -> void:
 	for button: StanceSelection in _get_buttons(): button.enable()
 
@@ -44,6 +60,8 @@ func disable_buttons() -> void:
 	for button: StanceSelection in _get_buttons(): button.disable()
 
 func add_button(character_attribute: CharacterAttribute, radio_button_group: ButtonGroup, button_size: float) -> void:
+	assert(character_attribute)
+	assert(radio_button_group)
 	var button: StanceSelection = _stance_selection_button.instantiate()
 	button.attribute = character_attribute
 	button.setup(radio_button_group)
@@ -70,4 +88,6 @@ func _get_buttons() -> Array[StanceSelection]:
 	return buttons
 
 func _on_character_attribute_selected(character_attribute: CharacterAttribute) -> void:
-	pass
+	assert(character_attribute)
+	_save_request.attribute = character_attribute
+	_save_request.update_auto_selected_breath_dice(_character_resolver)

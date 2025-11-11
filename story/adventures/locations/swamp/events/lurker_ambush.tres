@@ -14,6 +14,7 @@
 [sub_resource type="Resource" id="Resource_2rcic"]
 script = ExtResource("6_rh2nm")
 enemies = Array[ExtResource("5_rh2nm")]([ExtResource("6_hg3kg")])
+_description = "Fight!"
 metadata/_custom_type_script = "uid://c7vr0ey7kg3ot"
 
 [sub_resource type="Resource" id="Resource_prahj"]

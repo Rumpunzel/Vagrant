@@ -30,7 +30,8 @@ var _save_request: SaveRequest :
 		_enable_hud()
 		_all_in_button.set_pressed_no_signal(false)
 		#_ok_button.grab_focus()
-	
+
+var _character_resolver: Callable
 var _save_result: SaveResult :
 	set(new_save_result):
 		assert(new_save_result)
@@ -42,8 +43,6 @@ var _save_result: SaveResult :
 		_breath_dice_selection_buttons.update_save_result(_save_result)
 		_breath_dice_selection_buttons.disable_buttons()
 		_disable_hud()
-
-var _character_resolver: Callable
 
 func request_save(save_request: SaveRequest, character_resolver: Callable) -> void:
 	assert(save_request)

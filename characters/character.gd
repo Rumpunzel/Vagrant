@@ -45,6 +45,23 @@ func continue_with_new_breath_dice() -> void:
 func get_attribute_score(attribute: CharacterAttribute) -> AttributeScore:
 	return attribute_scores.get(attribute)
 
+func get_highest_attribute_score() -> AttributeScore:
+	var highest_attribute_score: AttributeScore = null
+	for attribute_score: AttributeScore in attribute_scores.values():
+		if not highest_attribute_score or attribute_score.get_score() > highest_attribute_score.get_score():
+			highest_attribute_score = attribute_score
+	return highest_attribute_score
+
+func get_highest_attribute() -> CharacterAttribute:
+	var highest_attribute: CharacterAttribute = null
+	var highest_attribute_score: AttributeScore = null
+	for attribute: CharacterAttribute in attribute_scores.keys():
+		var attribute_score: AttributeScore = attribute_scores[attribute]
+		if not highest_attribute or attribute_score.get_score() > highest_attribute_score.get_score():
+			highest_attribute = attribute
+			highest_attribute_score = attribute_score
+	return highest_attribute
+
 func get_available_breath_dice() -> Array[BreathDie]:
 	return breath_dice.filter(func(die: BreathDie) -> bool: return die.is_alive())
 

@@ -48,6 +48,11 @@ static func create(
 static func _is_breath_die_auto_selected(die: BreathDie, attribute_score: AttributeScore) -> bool:
 	return attribute_score.get_score() >= die.die_type.faces
 
+func update_auto_selected_breath_dice(character_resolver: Callable) -> void:
+	var character: Character = character_resolver.call(character_profile)
+	assert(character is Character)
+	selected_breath_dice = character.get_available_breath_dice().filter(_is_breath_die_auto_selected.bind(character.get_attribute_score(attribute)))
+
 func select_breath_die(breath_die: BreathDie) -> void:
 	if selected_breath_dice.has(breath_die): return
 	selected_breath_dice.append(breath_die)
