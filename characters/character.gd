@@ -5,21 +5,17 @@ signal character_profile_changed(character_profile: CharacterProfile)
 signal attribute_scores_changed(character: Character)
 signal breath_dice_changed(breath_dice: Array[BreathDie])
 
-@warning_ignore("unused_signal")
 signal save_requested(save_request: SaveRequest)
-@warning_ignore("unused_signal")
 signal save_rolled(save_result: SaveResult)
+signal fight_requested(fight_request: FightRequest)
 
 @export var character_profile: CharacterProfile :
 	set(new_character_profile):
 		if new_character_profile == character_profile: return
 		character_profile = new_character_profile
-		portrait = character_profile.portrait
 		attribute_scores = character_profile.get_attribute_scores()
 		breath_dice = character_profile.get_breath_dice()
 		character_profile_changed.emit(character_profile)
-
-var portrait: Texture
 
 var attribute_scores: Dictionary[CharacterAttribute, AttributeScore] :
 	set(new_attribute_scores):
@@ -36,11 +32,21 @@ var breath_dice: Array[BreathDie] :
 func _init(new_character_profile: CharacterProfile = null) -> void:
 	character_profile = new_character_profile
 
+func request_save(save_request: SaveRequest) -> void:
+	save_request.save_rolled.connect(_on_save_rolled)
+	save_requested.emit(save_request)
+
+func request_fight(fight_request: FightRequest) -> void:
+	fight_requested.emit(fight_request)
+
 # The dice used for saves remain forever "laid on the table"
 # Hence the charater may receive a new copy of thier breath dice to continue their adventure
 func continue_with_new_breath_dice() -> void:
 	breath_dice.assign(breath_dice.map(func(die: BreathDie) -> BreathDie: return die.duplicate()))
 	breath_dice_changed.emit(breath_dice)
+
+func get_portrait() -> Texture2D:
+	return character_profile.portrait
 
 func get_attribute_score(attribute: CharacterAttribute) -> AttributeScore:
 	return attribute_scores.get(attribute)
@@ -69,3 +75,11 @@ func get_breath_dice_count(breath_die_type: DieType, include_exhausted: bool = f
 	var count: int = 0
 	for die: BreathDie in breath_dice: if die.die_type == breath_die_type and (include_exhausted or die.is_alive()): count +=1
 	return count
+
+func get_auto_selected_breath_dice(with_attribute: CharacterAttribute) -> Array[BreathDie]:
+	return get_available_breath_dice().filter(func(die: BreathDie) -> bool: return die.is_auto_selected(get_attribute_score(with_attribute)))
+
+func _on_save_rolled(save_result: SaveResult) -> void:
+	save_result.save_request.save_rolled.disconnect(_on_save_rolled)
+	save_rolled.emit(save_result)
+	continue_with_new_breath_dice()

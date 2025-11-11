@@ -24,13 +24,13 @@ var breath_die: BreathDie :
 
 @onready var _update_delay: float = randf_range(_min_update_delay, _max_update_delay)
 
-func update_save_request(save_request: SaveRequest) -> void:
-	assert(save_request)
+func update_dice_request(dice_request: DiceRequest) -> void:
+	assert(dice_request)
 	active = true
-	_on_selected_breath_dice_changed(save_request.selected_breath_dice)
-	save_request.selected_breath_dice_changed.connect(_on_selected_breath_dice_changed)
-	breath_die_selected.connect(save_request.select_breath_die)
-	breath_die_deselected.connect(save_request.deselect_breath_die)
+	_on_selected_breath_dice_changed(dice_request.selected_breath_dice)
+	dice_request.selected_breath_dice_changed.connect(_on_selected_breath_dice_changed)
+	breath_die_selected.connect(dice_request.select_breath_die)
+	breath_die_deselected.connect(dice_request.deselect_breath_die)
 
 func update_save_result(save_result: SaveResult) -> void:
 	assert(save_result)

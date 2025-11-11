@@ -1,31 +1,23 @@
 class_name FightRequest
-extends SaveRequest
+extends DiceRequest
 
-@export var enemies: Array[MonsterProfile]
+var source: StoryCombatPage
 
-func _init(
-	new_description: String,
-	for_character_profile: CharacterProfile,
-	for_enemies: Array[MonsterProfile],
-	with_attribute: CharacterAttribute,
-	new_difficulty: int,
-	new_selected_breath_dice: Array[BreathDie],
-) -> void:
-	super(new_description, for_character_profile, with_attribute, new_difficulty, new_selected_breath_dice)
-	enemies = for_enemies
+func _init(for_character: Character, story_page: StoryCombatPage) -> void:
+	super(for_character, for_character.get_highest_attribute())
+	source = story_page
+	for_character.fight_requested.emit(self)
 
-static func create_fight_request(
-	new_description: String,
-	for_character: Character,
-	for_enemies: Array[MonsterProfile],
-) -> FightRequest:
-	var highest_attribute: CharacterAttribute = for_character.get_highest_attribute()
-	var enemey_threat: int = 5
-	var fight_request: FightRequest = FightRequest.new(
-		new_description,
-		for_character.character_profile,
-		for_enemies, highest_attribute,
-		enemey_threat,
-		for_character.get_available_breath_dice().filter(_is_breath_die_auto_selected.bind(for_character.get_attribute_score(highest_attribute))),
-	)
-	return fight_request
+#func roll_save() -> SaveResult:
+	#var attribute_score: AttributeScore = character.get_attribute_score(attribute)
+	#for die: BreathDie in selected_breath_dice: die.roll_save(attribute_score.get_score())
+	#var save_result: SaveResult = SaveResult.new(self)
+	#character.save_rolled.emit(save_result)
+	#character.continue_with_new_breath_dice()
+	#return save_result
+
+func get_decription() -> String:
+	return source._description
+
+func get_stance_description(for_attribute: CharacterAttribute) -> String:
+	return source.stance_descriptions.get(for_attribute, for_attribute.stance_description)

@@ -3,8 +3,6 @@ extends PanelContainer
 
 signal entry_added(entry: Control)
 
-@export var _characters: Characters
-
 @export_group("Configuration")
 @export var _scroll_container: ScrollContainer
 @export var _log_entries: Container
@@ -33,13 +31,13 @@ func _on_die_rolled(die: Die) -> void:
 	dice_log_entry.initialize_die_result(die)
 
 func _on_save_rolled(save_result: SaveResult) -> void:
-	if _current_entry_group == null or _current_entry_group.character_profile != save_result.save_request.character_profile:
+	if _current_entry_group == null or _current_entry_group.character != save_result.save_request.character:
 		if _current_entry_group != null: _current_entry_group.entry_added.disconnect(_on_entry_entered_tree)
 		_current_entry_group = _dice_log_entry_group.instantiate()
-		_current_entry_group.character_profile = save_result.save_request.character_profile
+		_current_entry_group.character = save_result.save_request.character
 		_current_entry_group.entry_added.connect(_on_entry_entered_tree)
 		_log_entries.add_child(_current_entry_group)
-	_current_entry_group.add_entry(save_result, _characters.get_character)
+	_current_entry_group.add_entry(save_result)
 
 func _on_entry_entered_tree(node: Node) -> void:
 	if not node is Control: return

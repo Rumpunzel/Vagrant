@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="3_06obj"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/breath_dice_selection/breath_dice_selection_buttons.tscn" id="3_gpl86"]
 [ext_resource type="Shader" uid="uid://chm2iklhnb1pg" path="res://story/stage/blur.gdshader" id="4_t0j5l"]
-[ext_resource type="PackedScene" uid="uid://dcy2roj1wv5vr" path="res://dice/dice_log/dice_log_save_request_entry.tscn" id="4_tj3a7"]
+[ext_resource type="PackedScene" uid="uid://dcy2roj1wv5vr" path="res://dice/dice_log/dice_log_dice_request_entry.tscn" id="4_tj3a7"]
 [ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="5_bhkt5"]
 [ext_resource type="PackedScene" uid="uid://cqeuqu32m0rr8" path="res://dice/dice_log/dice_log_save_result_entry.tscn" id="7_oei8s"]
 
@@ -19,7 +19,7 @@ shader_parameter/blur_amount = 4
 shader_parameter/blur_radius = 1.0
 shader_parameter/blur_direction = Vector2(1, 1)
 
-[node name="BreathDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_save_request_entry", "_dice_log_save_result_entry")]
+[node name="BreathDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
 offset_right = 177.0
 offset_bottom = 169.0
 mouse_filter = 1
@@ -30,7 +30,7 @@ _description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginCont
 _breath_dice_selection_buttons = NodePath("MarginContainer/VBoxContainer/BreathDiceSelectionButtons")
 _all_in_button = NodePath("MarginContainer/VBoxContainer/HBoxContainer/AllInButton")
 _ok_button = NodePath("MarginContainer/VBoxContainer/HBoxContainer/OKButton")
-_dice_log_save_request_entry = NodePath("MarginContainer/VBoxContainer/SaveRequestEntry")
+_dice_log_dice_request_entry = NodePath("MarginContainer/VBoxContainer/DiceRequestEntry")
 _dice_log_save_result_entry = NodePath("MarginContainer/VBoxContainer/SaveResultEntry")
 metadata/_custom_type_script = "uid://dfxwf0abq0203"
 
@@ -71,7 +71,7 @@ visible_characters_behavior = 1
 script = ExtResource("3_06obj")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="SaveRequestEntry" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_tj3a7")]
+[node name="DiceRequestEntry" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_tj3a7")]
 layout_mode = 2
 
 [node name="SaveResultEntry" parent="MarginContainer/VBoxContainer" instance=ExtResource("7_oei8s")]

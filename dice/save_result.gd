@@ -7,7 +7,7 @@ enum Outcome {
 	FAILURE,
 }
 
-@export var save_request: SaveRequest
+var save_request: SaveRequest
 
 func _init(for_save_request: SaveRequest) -> void:
 	save_request = for_save_request
@@ -19,7 +19,7 @@ func get_breath_dice() -> Array[BreathDie]:
 	return breath_dice
 
 func get_save_outcome() -> Outcome:
-	return Outcome.SUCCESS if get_highest_result() >= save_request.difficulty else Outcome.FAILURE
+	return Outcome.SUCCESS if get_highest_result() >= save_request.get_difficulty() else Outcome.FAILURE
 
 func get_highest_breath_dice() -> Array[BreathDie]:
 	var highest_breath_dice: Array[BreathDie] = []

@@ -2,7 +2,7 @@
 class_name BreathDiceSelection
 extends PanelContainer
 
-signal save_evaluated(save_result: SaveResult)
+signal confirmed
 
 @export var _portrait_identifier: String = "Small.png"
 
@@ -12,49 +12,42 @@ signal save_evaluated(save_result: SaveResult)
 @export var _breath_dice_selection_buttons: BreathDiceSelectionButtons
 @export var _all_in_button: DisplayButton
 @export var _ok_button: DisplayButton
-@export var _dice_log_save_request_entry: DiceLogSaveRequestEntry
+@export var _dice_log_dice_request_entry: DiceLogDiceRequestEntry
 @export var _dice_log_save_result_entry: DiceLogSaveResultEntry
 
-var _save_request: SaveRequest :
-	set(new_save_request):
-		assert(new_save_request)
-		_save_request = new_save_request
-		_description.type_text(_save_request.description)
-		_portrait.texture = _save_request.character_profile.get_portrait(_portrait_identifier)
-		_dice_log_save_request_entry.initialize_save_request(_save_request, _character_resolver)
-		_dice_log_save_request_entry.visible = true
+var _dice_request: DiceRequest :
+	set(new_dice_request):
+		assert(new_dice_request)
+		_dice_request = new_dice_request
+		_description.type_text(_dice_request.get_decription())
+		var character: Character = _dice_request.character
+		_portrait.texture = character.character_profile.get_portrait(_portrait_identifier)
+		_dice_log_dice_request_entry.initialize_dice_request(_dice_request)
+		_dice_log_dice_request_entry.visible = true
 		_dice_log_save_result_entry.visible = false
-		var character: Character = _character_resolver.call(_save_request.character_profile)
 		_breath_dice_selection_buttons.setup_breath_dice(character.breath_dice)
-		_breath_dice_selection_buttons.update_save_request(_save_request)
+		_breath_dice_selection_buttons.update_dice_request(_dice_request)
 		_enable_hud()
 		_all_in_button.set_pressed_no_signal(false)
 		#_ok_button.grab_focus()
 
-var _character_resolver: Callable
-var _save_result: SaveResult :
-	set(new_save_result):
-		assert(new_save_result)
-		assert(new_save_result.save_request == _save_request)
-		_save_result = new_save_result
-		_dice_log_save_result_entry.initialize_save_result(_save_result, _character_resolver)
-		_dice_log_save_request_entry.visible = false
-		_dice_log_save_result_entry.visible = true
-		_breath_dice_selection_buttons.update_save_result(_save_result)
-		_breath_dice_selection_buttons.disable_buttons()
-		_disable_hud()
-
-func request_save(save_request: SaveRequest, character_resolver: Callable) -> void:
+func request_save(save_request: SaveRequest) -> void:
 	assert(save_request)
-	assert(character_resolver)
-	_character_resolver = character_resolver
-	_save_request = save_request
+	_dice_request = save_request
 
-func _roll_save() -> void:
-	assert(_save_request)
-	assert(_character_resolver)
-	_save_result = _save_request.roll_save(_character_resolver)
-	save_evaluated.emit(_save_result)
+func display_save_result(save_result: SaveResult) -> void:
+	assert(save_result)
+	assert(save_result.save_request == _dice_request)
+	_dice_log_save_result_entry.initialize_save_result(save_result)
+	_dice_log_dice_request_entry.visible = false
+	_dice_log_save_result_entry.visible = true
+	_breath_dice_selection_buttons.update_save_result(save_result)
+	_breath_dice_selection_buttons.disable_buttons()
+	_disable_hud()
+
+func request_fight(fight_request: FightRequest) -> void:
+	assert(fight_request)
+	_dice_request = fight_request
 
 func _enable_hud() -> void:
 	_ok_button.disabled = false
@@ -69,4 +62,4 @@ func _disable_hud() -> void:
 	_all_in_button.active = false
 
 func _on_confirmed() -> void:
-	_roll_save()
+	confirmed.emit()

@@ -13,8 +13,6 @@ signal activation_changed(new_status: bool)
 		mouse_filter = Control.MOUSE_FILTER_STOP if active else Control.MOUSE_FILTER_PASS
 		activation_changed.emit(active)
 
-@onready var _font_outline_color: Color = get_theme_color("font_outline_color")
-
 func select() -> void:
 	if not disabled: button_pressed = true
 

@@ -17,7 +17,7 @@ var _selected_story_decision: StoryDecision
 var _save_request: SaveRequest :
 	set(new_save_request):
 		_save_request = new_save_request
-		_breath_dice_selection.request_save(_save_request, _characters.get_character)
+		_breath_dice_selection.request_save(_save_request)
 		await get_tree().process_frame
 		_breath_dice_selection_collapsible_container.open_tween()
 var _save_result: SaveResult
@@ -76,8 +76,9 @@ func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> voi
 	assert(source)
 	_selected_story_decision = source
 	_save_request = save_request
+	_save_request.save_rolled.connect(_on_save_rolled)
 
-func _on_save_evaluated(save_result: SaveResult) -> void:
+func _on_save_rolled(save_result: SaveResult) -> void:
 	assert(_selected_story_decision is StorySaveDecision)
 	_save_result = save_result
 	_story.make_save_decision(_selected_story_decision as StorySaveDecision, _save_result)
@@ -93,3 +94,7 @@ func _on_decision_made(_story_decision: StoryDecision, _selected_how_many_times:
 	_description.set_text_normally()
 	state = State.PAST
 	_story.decision_made.disconnect(_on_decision_made)
+
+func _on_breath_dice_selection_confirmed() -> void:
+	assert(_save_request)
+	_save_request.roll_save()

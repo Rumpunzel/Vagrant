@@ -28,3 +28,6 @@ func deselect() -> void:
 
 func is_alive() -> bool:
 	return state >= State.ALIVE
+
+func is_auto_selected(attribute_score: AttributeScore) -> bool:
+	return attribute_score.get_score() >= die_type.faces

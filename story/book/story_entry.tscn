@@ -126,4 +126,4 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [connection signal="finished_typing" from="MarginContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
-[connection signal="save_evaluated" from="MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_save_evaluated"]
+[connection signal="confirmed" from="MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_breath_dice_selection_confirmed"]

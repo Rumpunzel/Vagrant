@@ -21,9 +21,9 @@ func add_button(breath_die: BreathDie) -> void:
 	_all_button.visible = not _get_buttons().is_empty()
 	add(button)
 
-func update_save_request(save_request: SaveRequest) -> void:
+func update_dice_request(dice_request: DiceRequest) -> void:
 	_all_button.active = true
-	for button: BreathDieSelectionButton in _get_buttons(): button.update_save_request(save_request)
+	for button: BreathDieSelectionButton in _get_buttons(): button.update_dice_request(dice_request)
 
 func update_save_result(save_result: SaveResult) -> void:
 	for button: BreathDieSelectionButton in _get_buttons(): button.update_save_result(save_result)

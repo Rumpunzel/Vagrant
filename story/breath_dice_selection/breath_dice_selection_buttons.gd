@@ -32,8 +32,8 @@ func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
 			_buttons.add(button_group)
 		button_group.add_button(breath_die)
 
-func update_save_request(save_request: SaveRequest) -> void:
-	_buttons.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: button_group.update_save_request(save_request))
+func update_dice_request(dice_request: DiceRequest) -> void:
+	_buttons.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: button_group.update_dice_request(dice_request))
 
 func update_save_result(save_result: SaveResult) -> void:
 	_buttons.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: button_group.update_save_result(save_result))

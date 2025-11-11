@@ -1,10 +1,9 @@
 class_name DiceLogSaveResultEntry
 extends DiceLogSaveEntry
 
-func initialize_save_result(save_result: SaveResult, character_resolver: Callable) -> void:
+func initialize_save_result(save_result: SaveResult) -> void:
 	var save_request: SaveRequest = save_result.save_request
-	var character: Character = character_resolver.call(save_request.character_profile)
-	var attribute_prefix: String = _get_attribute_prefix(character, save_request.attribute)
+	var attribute_prefix: String = _get_attribute_prefix(save_request.character, save_request.attribute)
 	var message: String = "No Breath Dice!"
 	if not save_result.get_highest_dice().is_empty():
 		var dice_results: String = _get_dice_results(save_result)
@@ -37,6 +36,6 @@ func _get_difficulty(save_result: SaveResult) -> String:
 		SaveResult.Outcome.FAILURE: color= Color.FIREBRICK
 		_: assert(false, "SaveResult.Outcome %s is not supported!" % save_outcome)
 	difficulty = "[color=#%s]%s[/color]" % [color.to_html(), difficulty]
-	var hint: String = "Difficulty: %d → %s" % [save_result.save_request.difficulty, SaveResult.Outcome.find_key(save_outcome)]
+	var hint: String = "Difficulty: %d → %s" % [save_result.save_request.get_difficulty(), SaveResult.Outcome.find_key(save_outcome)]
 	difficulty = "[hint=%s]%s[/hint]" % [hint, difficulty]
 	return difficulty

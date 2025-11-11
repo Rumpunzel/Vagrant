@@ -8,15 +8,15 @@ extends PageEntry
 @export var _breath_dice_selection: BreathDiceSelection
 @export var _stance_selection_buttons: StanceSelectionButtons
 
-var _save_request: SaveRequest :
-	set(new_save_request):
-		_save_request = new_save_request
-		_breath_dice_selection.request_save(_save_request, _characters.get_character)
-		_stance_selection_buttons.request_save(_save_request, _characters.get_character)
+var _fight_request: FightRequest :
+	set(new_fight_request):
+		_fight_request = new_fight_request
+		_breath_dice_selection.request_fight(_fight_request)
+		_stance_selection_buttons.request_fight(_fight_request)
 var _save_result: SaveResult
 
 func enter_page() -> void:
-	_save_request = story_page.create_fight_request(_story, _characters)
+	_fight_request = story_page.to_fight_request(_characters.get_protagonist())
 
 func is_dice_page() -> bool:
 	return true

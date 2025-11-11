@@ -9,3 +9,4 @@ descriptor = "Nerves"
 icon = ExtResource("1_rkmxj")
 color = Color(0.39215687, 0.53333336, 0.6117647, 1)
 details = "Precision, composure, and stealth."
+stance_description = "Feint and trick with guile and precision!"
