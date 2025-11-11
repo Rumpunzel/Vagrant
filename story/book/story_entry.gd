@@ -3,6 +3,7 @@ class_name StoryEntry
 extends PageEntry
 
 @export var story_page: StoryPage
+
 @export_range(0.0, 1.0) var _dialog_options_fade_in_delay: float = 0.1
 
 @export_group("Configuration")
@@ -10,17 +11,32 @@ extends PageEntry
 @export var _description: TypingLabel
 @export var _choices: Container
 @export var _breath_dice_selection: BreathDiceSelection
-@export var _breath_dice_selection_collapsible_container: CollapsibleContainer
+@export var _breath_dice_collapsible_container: CollapsibleContainer
 @export var _dialog_button: PackedScene
 
 var _selected_story_decision: StoryDecision
+
 var _save_request: SaveRequest :
 	set(new_save_request):
 		_save_request = new_save_request
+		if not _save_request:
+			if not _fight_request: _breath_dice_collapsible_container.close_tween()
+			return
 		_breath_dice_selection.request_save(_save_request)
 		await get_tree().process_frame
-		_breath_dice_selection_collapsible_container.open_tween()
+		_breath_dice_collapsible_container.open_tween()
 var _save_result: SaveResult
+
+var _fight_request: FightRequest :
+	set(new_fight_request):
+		_fight_request = new_fight_request
+		if not _save_request and not _fight_request:
+			_breath_dice_collapsible_container.close_tween()
+			return
+		_breath_dice_selection.request_fight(_fight_request)
+		await get_tree().process_frame
+		_breath_dice_collapsible_container.open_tween()
+var _fight_result: FightResult
 
 func setup_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:
 	super.setup_page(story, characters, new_story_page)
@@ -53,6 +69,7 @@ func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for story_decision: StoryDecision in story_decisions:
 		var dialog_button: DialogButton = _create_dialog_button(story_decision)
 		dialog_button.save_requested.connect(_on_save_requested)
+		dialog_button.fight_requsted.connect(_on_fight_requested)
 	if story_decisions.is_empty():
 		_create_dialog_button(StoryDecision.get_continue())
 
@@ -71,18 +88,6 @@ func _set_state(new_state: State) -> void:
 			for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = true
 		_: assert(false, "StoryEntry.State %s is not supported!" % state)
 
-func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
-	assert(save_request)
-	assert(source)
-	_selected_story_decision = source
-	_save_request = save_request
-	_save_request.save_rolled.connect(_on_save_rolled)
-
-func _on_save_rolled(save_result: SaveResult) -> void:
-	assert(_selected_story_decision is StorySaveDecision)
-	_save_result = save_result
-	_story.make_save_decision(_selected_story_decision as StorySaveDecision, _save_result)
-
 func _on_description_finished_typing() -> void:
 	var buttons: Array[DialogButton] = []
 	buttons.assign(_choices.get_children())
@@ -95,6 +100,37 @@ func _on_decision_made(_story_decision: StoryDecision, _selected_how_many_times:
 	state = State.PAST
 	_story.decision_made.disconnect(_on_decision_made)
 
+func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
+	assert(save_request)
+	assert(source)
+	_selected_story_decision = source
+	_save_request = save_request
+	_save_request.save_rolled.connect(_on_save_rolled)
+	_fight_request = null
+
+func _on_save_rolled(save_result: SaveResult) -> void:
+	assert(_selected_story_decision is StorySaveDecision)
+	_save_result = save_result
+	_story.make_save_decision(_selected_story_decision as StorySaveDecision, _save_result)
+
+func _on_fight_requested(fight_request: FightRequest, source: StoryDecision) -> void:
+	assert(fight_request)
+	assert(source)
+	_selected_story_decision = source
+	_fight_request = fight_request
+	_fight_request.fight_rolled.connect(_on_fight_rolled)
+	_save_request = null
+
+func _on_fight_rolled(fight_result: FightResult) -> void:
+	assert(_selected_story_decision is StoryFightDecision)
+	_fight_result = fight_result
+	_story.make_fight_decision(_selected_story_decision as StoryFightDecision, _fight_result)
+
 func _on_breath_dice_selection_confirmed() -> void:
-	assert(_save_request)
-	_save_request.roll_save()
+	if _save_request:
+		assert(not _fight_request)
+		_save_request.roll_save()
+	elif _fight_request:
+		assert(not _save_request)
+		_fight_request.roll_fight()
+	else: assert(false)

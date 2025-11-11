@@ -3,15 +3,15 @@ class_name SaveResult
 extends DiceResult
 
 enum Outcome {
-	SUCCESS,
-	FAILURE,
+	FAILURE = -1,
+	SUCCESS = 1,
 }
 
 var save_request: SaveRequest
 
 func _init(for_save_request: SaveRequest) -> void:
 	save_request = for_save_request
-	super(save_request.selected_breath_die_as_dice())
+	super(save_request.get_selected_dice())
 
 func get_breath_dice() -> Array[BreathDie]:
 	var breath_dice: Array[BreathDie]

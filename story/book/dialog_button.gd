@@ -3,6 +3,7 @@ class_name DialogButton
 extends DisplayButton
 
 signal save_requested(save_request: SaveRequest, source: StoryDecision)
+signal fight_requsted(fight_request: FightRequest, source: StoryDecision)
 
 @export var story_decision: StoryDecision :
 	set(new_story_decision):
@@ -94,6 +95,9 @@ func _on_pressed() -> void:
 	if story_decision is StorySaveDecision:
 		var save_request: SaveRequest = (story_decision as StorySaveDecision).to_save_request(_characters.get_protagonist())
 		save_requested.emit(save_request, story_decision)
+	elif story_decision is StoryFightDecision:
+		var fight_request: FightRequest = (story_decision as StoryFightDecision).to_fight_request(_characters.get_protagonist())
+		fight_requsted.emit(fight_request, story_decision)
 	else: _story.make_decision(story_decision)
 
 func _on_decision_made(selected_story_decision: StoryDecision, _selected_how_many_times: int) -> void:

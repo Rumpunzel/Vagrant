@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c07vtb4ob281a"]
 
-[ext_resource type="Script" uid="uid://bns33lugkmi4j" path="res://story/book/combat/stance_selection_buttons.gd" id="1_11rov"]
-[ext_resource type="PackedScene" uid="uid://mt5mbq7b5lu0" path="res://story/book/combat/stance_selection.tscn" id="2_oo80h"]
+[ext_resource type="Script" uid="uid://bns33lugkmi4j" path="res://story/stance_selection/stance_selection_buttons.gd" id="1_11rov"]
+[ext_resource type="PackedScene" uid="uid://mt5mbq7b5lu0" path="res://story/stance_selection/stance_selection.tscn" id="2_oo80h"]
 [ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="3_kixjq"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kixjq"]

@@ -1,30 +1,20 @@
-[gd_resource type="Resource" script_class="StoryPage" load_steps=19 format=3 uid="uid://bxwqtk0p80o4g"]
+[gd_resource type="Resource" script_class="StoryPage" load_steps=15 format=3 uid="uid://bxwqtk0p80o4g"]
 
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://story/pages/story_condition.gd" id="1_6v84y"]
 [ext_resource type="Texture2D" uid="uid://bc6smekfx7nam" path="res://assets/monster_portraits/lurker.jpg" id="1_74683"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://story/pages/story_decision.gd" id="2_74683"]
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://story/pages/story_page.gd" id="3_1x56p"]
 [ext_resource type="Script" uid="uid://df6f7mcpin5we" path="res://story/pages/story_save_decision.gd" id="4_d3gqg"]
+[ext_resource type="Script" uid="uid://b8exmtc8feoad" path="res://story/pages/story_fight_decision.gd" id="5_hg3kg"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="5_prahj"]
 [ext_resource type="Script" uid="uid://1342yb3eb2bh" path="res://characters/monsters/monster_profile.gd" id="5_rh2nm"]
-[ext_resource type="Resource" uid="uid://d3ytncs0be7oo" path="res://characters/monsters/lurker.tres" id="6_hg3kg"]
-[ext_resource type="Script" uid="uid://c7vr0ey7kg3ot" path="res://story/pages/story_combat_page.gd" id="6_rh2nm"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://story/pages/story_transition.gd" id="7_3hvfw"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="8_2rcic"]
-[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="9_hg3su"]
-[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="11_apmfe"]
 
 [sub_resource type="Resource" id="Resource_2rcic"]
-script = ExtResource("6_rh2nm")
-enemies = Array[ExtResource("5_rh2nm")]([ExtResource("6_hg3kg")])
-_description = "Fight!"
-metadata/_custom_type_script = "uid://c7vr0ey7kg3ot"
-
-[sub_resource type="Resource" id="Resource_prahj"]
-script = ExtResource("2_74683")
+script = ExtResource("5_hg3kg")
 description = "Fight!"
-transition = SubResource("Resource_2rcic")
-metadata/_custom_type_script = "uid://by3e6dkiypd3j"
+metadata/_custom_type_script = "uid://b8exmtc8feoad"
 
 [sub_resource type="Resource" id="Resource_hg3kg"]
 script = ExtResource("7_3hvfw")
@@ -38,9 +28,9 @@ metadata/_custom_type_script = "uid://buhl8mbur0qma"
 
 [sub_resource type="Resource" id="Resource_rh2nm"]
 script = ExtResource("4_d3gqg")
+details = "You feel the icy cold of its knive in the hairs standing on your back."
 attribute = ExtResource("5_prahj")
 difficulty = 5
-details = "You feel the icy cold of its knive in the hairs standing on your back."
 failure_transition = SubResource("Resource_hg3kg")
 description = "Wun away!"
 transition = SubResource("Resource_qyl4k")
@@ -51,6 +41,6 @@ script = ExtResource("3_1x56p")
 _title = "Lurker Ambush"
 _description = "Something foul and wicked your way comes!"
 _background = ExtResource("1_74683")
-_decisions = Array[ExtResource("2_74683")]([SubResource("Resource_prahj"), SubResource("Resource_rh2nm")])
+_decisions = Array[ExtResource("2_74683")]([SubResource("Resource_2rcic"), SubResource("Resource_rh2nm")])
 _exclusivity = 7
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

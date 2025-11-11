@@ -8,6 +8,7 @@ signal breath_dice_changed(breath_dice: Array[BreathDie])
 signal save_requested(save_request: SaveRequest)
 signal save_rolled(save_result: SaveResult)
 signal fight_requested(fight_request: FightRequest)
+signal fight_rolled(fight_result: FightResult)
 
 @export var character_profile: CharacterProfile :
 	set(new_character_profile):
@@ -82,4 +83,9 @@ func get_auto_selected_breath_dice(with_attribute: CharacterAttribute) -> Array[
 func _on_save_rolled(save_result: SaveResult) -> void:
 	save_result.save_request.save_rolled.disconnect(_on_save_rolled)
 	save_rolled.emit(save_result)
+	continue_with_new_breath_dice()
+
+func _on_fight_rolled(fight_result: FightResult) -> void:
+	fight_result.fight_request.fight_rolled.disconnect(_on_fight_rolled)
+	fight_rolled.emit(fight_result)
 	continue_with_new_breath_dice()

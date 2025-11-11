@@ -20,16 +20,17 @@ shader_parameter/down_clip = 0.0
 shader_parameter/left_clip = 0.0
 shader_parameter/right_clip = 0.0
 
-[node name="StoryEntry" type="PanelContainer" node_paths=PackedStringArray("_title", "_description", "_choices", "_breath_dice_selection", "_breath_dice_selection_collapsible_container", "_background", "_body_container")]
-offset_right = 464.0
-offset_bottom = 419.0
+[node name="StoryEntry" type="PanelContainer" node_paths=PackedStringArray("_title", "_description", "_choices", "_breath_dice_selection", "_breath_dice_collapsible_container", "_background", "_body_container")]
+offset_right = 203.0
+offset_bottom = 186.0
 size_flags_horizontal = 3
+size_flags_vertical = 0
 script = ExtResource("1_ywxnt")
 _title = NodePath("MarginContainer/VBoxContainer/Title")
 _description = NodePath("MarginContainer/VBoxContainer/Description")
 _choices = NodePath("MarginContainer/VBoxContainer/VBoxContainer/Choices")
 _breath_dice_selection = NodePath("MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection")
-_breath_dice_selection_collapsible_container = NodePath("MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer")
+_breath_dice_collapsible_container = NodePath("MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer")
 _dialog_button = ExtResource("2_ilo4x")
 _background = NodePath("Background")
 _body_container = NodePath("MarginContainer")
@@ -47,6 +48,7 @@ metadata/_custom_type_script = "uid://0inxk2dmireb"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
+size_flags_vertical = 0
 theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 32
@@ -90,7 +92,8 @@ metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
 [node name="VBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 16
+size_flags_vertical = 0
+theme_override_constants/separation = 8
 
 [node name="Choices" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -104,8 +107,9 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
-custom_minimum_size = Vector2(384, 555)
+custom_minimum_size = Vector2(425, 375)
 layout_mode = 2
+size_flags_horizontal = 8
 size_flags_vertical = 0
 script = ExtResource("6_myl6h")
 starts_opened = false
@@ -116,14 +120,11 @@ sizing_node = NodePath("BreathDiceSelection")
 metadata/_custom_type_script = "uid://btlh4wrv04rc3"
 
 [node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer" instance=ExtResource("7_sl3wq")]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 0.0
-offset_bottom = 0.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 0
+offset_top = 0.0
+offset_bottom = 375.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [connection signal="finished_typing" from="MarginContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
 [connection signal="confirmed" from="MarginContainer/VBoxContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_breath_dice_selection_confirmed"]

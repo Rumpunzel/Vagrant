@@ -1,32 +1,38 @@
-[gd_scene load_steps=12 format=3 uid="uid://bpqkh512g0nmb"]
+[gd_scene load_steps=14 format=3 uid="uid://bpqkh512g0nmb"]
 
 [ext_resource type="Script" uid="uid://dfxwf0abq0203" path="res://story/breath_dice_selection/breath_dice_selection.gd" id="1_6stf5"]
 [ext_resource type="Texture2D" uid="uid://457ox5k8siu6" path="res://assets/portraits/HE-BA-BR-F115/Small.png" id="2_87cfe"]
 [ext_resource type="Material" uid="uid://cf1n1fetmgy8" path="res://characters/character_sheet/small_portrait_vignette.tres" id="2_m1dxb"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="3_06obj"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/breath_dice_selection/breath_dice_selection_buttons.tscn" id="3_gpl86"]
+[ext_resource type="PackedScene" uid="uid://c07vtb4ob281a" path="res://story/stance_selection/stance_selection_buttons.tscn" id="3_m1dxb"]
 [ext_resource type="Shader" uid="uid://chm2iklhnb1pg" path="res://story/stage/blur.gdshader" id="4_t0j5l"]
 [ext_resource type="PackedScene" uid="uid://dcy2roj1wv5vr" path="res://dice/dice_log/dice_log_dice_request_entry.tscn" id="4_tj3a7"]
 [ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="5_bhkt5"]
 [ext_resource type="PackedScene" uid="uid://cqeuqu32m0rr8" path="res://dice/dice_log/dice_log_save_result_entry.tscn" id="7_oei8s"]
+[ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="8_t0j5l"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m1dxb"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lcgf6"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4r3qb"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sej0q"]
 shader = ExtResource("4_t0j5l")
 shader_parameter/blur_type = 1
 shader_parameter/blur_amount = 4
 shader_parameter/blur_radius = 1.0
 shader_parameter/blur_direction = Vector2(1, 1)
 
-[node name="BreathDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
-offset_right = 177.0
-offset_bottom = 169.0
-mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxEmpty_m1dxb")
+[node name="BreathDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection_buttons", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
+offset_top = 193.0
+offset_right = 425.0
+offset_bottom = 382.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_lcgf6")
 script = ExtResource("1_6stf5")
 _portrait = NodePath("Portrait")
 _description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Description")
+_stance_selection_collapsible_container = NodePath("MarginContainer/VBoxContainer/CollapsibleContainer")
+_stance_selection_buttons = NodePath("MarginContainer/VBoxContainer/CollapsibleContainer/StanceSelectionButtons")
 _breath_dice_selection_buttons = NodePath("MarginContainer/VBoxContainer/BreathDiceSelectionButtons")
 _all_in_button = NodePath("MarginContainer/VBoxContainer/HBoxContainer/AllInButton")
 _ok_button = NodePath("MarginContainer/VBoxContainer/HBoxContainer/OKButton")
@@ -42,7 +48,7 @@ expand_mode = 1
 stretch_mode = 6
 
 [node name="ColorRect" type="ColorRect" parent="."]
-material = SubResource("ShaderMaterial_4r3qb")
+material = SubResource("ShaderMaterial_sej0q")
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -70,6 +76,34 @@ fit_content = true
 visible_characters_behavior = 1
 script = ExtResource("3_06obj")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
+
+[node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer"]
+process_mode = 3
+editor_description = "
+			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
+			
+Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
+clip_contents = true
+custom_minimum_size = Vector2(393, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+script = ExtResource("8_t0j5l")
+folding_direction_preset = 10
+sizing_constraint = 1
+auto_update_size = 0
+sizing_node = NodePath("StanceSelectionButtons")
+metadata/_custom_type_script = "uid://btlh4wrv04rc3"
+
+[node name="StanceSelectionButtons" parent="MarginContainer/VBoxContainer/CollapsibleContainer" instance=ExtResource("3_m1dxb")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="DiceRequestEntry" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_tj3a7")]
 layout_mode = 2

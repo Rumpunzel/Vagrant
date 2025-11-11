@@ -14,14 +14,13 @@ func _init(
 	source = story_decision
 	for_character.request_save(self)
 
-func roll_save() -> SaveResult:
+func roll_save() -> void:
 	var attribute_score: AttributeScore = character.get_attribute_score(attribute)
 	for die: BreathDie in selected_breath_dice: die.roll_save(attribute_score.get_score())
 	var save_result: SaveResult = SaveResult.new(self)
 	save_rolled.emit(save_result)
-	return save_result
 
-func get_decription() -> String:
+func get_description() -> String:
 	return source.description
 
 func get_difficulty() -> int:

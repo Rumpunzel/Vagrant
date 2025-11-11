@@ -35,9 +35,9 @@ func deselect_breath_die(breath_die: BreathDie) -> void:
 	selected_breath_dice.erase(breath_die)
 	selected_breath_dice_changed.emit(selected_breath_dice)
 
-func selected_breath_die_as_dice() -> Array[Die]:
+@abstract func get_description() -> String
+
+func get_selected_dice() -> Array[Die]:
 	var dice_snapshot: Array[Die] = []
 	dice_snapshot.assign(selected_breath_dice)
 	return dice_snapshot
-
-@abstract func get_decription() -> String

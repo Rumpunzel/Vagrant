@@ -37,6 +37,17 @@ func make_save_decision(story_save_decision: StorySaveDecision, save_result: Sav
 		enter_page(story_save_decision.failure_transition.get_story_page())
 	return selected_how_many_times
 
+func make_fight_decision(story_fight_decision: StoryFightDecision, fight_result: FightResult) -> int:
+	assert(story_fight_decision)
+	assert(fight_result)
+	var selected_how_many_times: int = -1#_current_adventure.update_save_decision_log(story_fight_decision, fight_result)
+	decision_made.emit(story_fight_decision, selected_how_many_times)
+	if true:#fight_result.get_save_outcome() != SaveResult.Outcome.FAILURE:
+		enter_page(story_fight_decision.transition.get_story_page())
+	else:
+		enter_page(story_fight_decision.failure_transition.get_story_page())
+	return selected_how_many_times
+
 func enter_page(story_page: StoryPage) -> StoryPage:
 	var current_page: StoryPage = _current_adventure.update_page_log(story_page)
 	page_entered.emit(current_page)

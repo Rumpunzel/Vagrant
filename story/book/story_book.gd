@@ -26,6 +26,7 @@ func _exit_tree() -> void:
 	_story.page_entered.disconnect(_on_page_entered)
 
 func _flip_page() -> void:
+	assert(_current_page_entry)
 	_current_page_entry.item_rect_changed.connect(_on_current_page_entry_item_rect_changed)
 	_pages.add_child(_current_page_entry)
 	_pages.move_child(_current_page_entry, 0)
@@ -33,6 +34,7 @@ func _flip_page() -> void:
 	page_entered.emit(_current_page_entry.get_story_page())
 
 func _on_page_entered(story_page: StoryPage) -> void:
+	assert(story_page)
 	if _current_page_entry: _current_page_entry.item_rect_changed.disconnect(_on_current_page_entry_item_rect_changed)
 	var previous_page: StoryEntry = _current_page_entry
 	_current_page_entry = story_page.create()
