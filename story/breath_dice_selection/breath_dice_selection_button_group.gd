@@ -1,6 +1,6 @@
 @tool
 class_name BreathDiceSelectionButtonGroup
-extends VBoxContainer
+extends FlexContainer
 
 @export var breath_die_type: DieType :
 	set(new_breath_die_type):
@@ -8,20 +8,18 @@ extends VBoxContainer
 		_all_button.text = "%s" % breath_die_type
 
 @export_group("Configuration")
-@export var _buttons: Container
 @export var _all_button: DisplayButton
 @export var _breath_die_selection_button: PackedScene
 
 var _button: Dictionary[DieType, BreathDieSelectionButton] = {}
 
-func add_button(breath_die: BreathDie, button_size: float) -> void:
+func add_button(breath_die: BreathDie) -> void:
 	var button: BreathDieSelectionButton = _breath_die_selection_button.instantiate()
 	button.breath_die = breath_die
-	button.custom_minimum_size = Vector2(button_size, button_size)
 	_button[breath_die.die_type] = button
 	button.toggled.connect(_on_button_toggled)
 	_all_button.visible = not _get_buttons().is_empty()
-	_buttons.add_child(button)
+	add(button)
 
 func update_save_request(save_request: SaveRequest) -> void:
 	_all_button.active = true
@@ -45,7 +43,7 @@ func disable() -> void:
 
 func _get_buttons() -> Array[BreathDieSelectionButton]:
 	var buttons: Array[BreathDieSelectionButton] = []
-	buttons.assign(_buttons.get_children())
+	buttons.assign(_box_container.get_children())
 	return buttons
 
 func _on_button_toggled(_toggled_on: bool = false) -> void:
