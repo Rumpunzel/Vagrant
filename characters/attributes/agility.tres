@@ -7,5 +7,5 @@
 script = ExtResource("1_3pd1w")
 descriptor = "Blood"
 icon = ExtResource("1_oehal")
-color = Color(0.705882, 0.0470588, 0.0470588, 1)
+color = Color(0.62352943, 0.14117648, 0.16078432, 1)
 details = "Speed, reflexes, and prowess."
