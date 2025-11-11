@@ -36,3 +36,44 @@ func remove_font_colors() -> void:
 	remove_theme_color_override("font_disabled_color")
 	remove_theme_color_override("font_pressed_color")
 	remove_theme_color_override("font_hover_color")
+
+func set_button_highlight_colors(color: Color, additional_highlight: Color = Color(0.25, 0.25, 0.25, 0.0)) -> void:
+	remove_button_highlight_colors()
+	var pressed_style_box: StyleBoxFlat = get_theme_stylebox("pressed").duplicate()
+	pressed_style_box.bg_color = (pressed_style_box.bg_color + additional_highlight) * color
+	add_theme_stylebox_override("pressed", pressed_style_box)
+	var hover_style_box: StyleBoxFlat = get_theme_stylebox("hover").duplicate()
+	hover_style_box.bg_color = (hover_style_box.bg_color + additional_highlight) * color
+	add_theme_stylebox_override("hover", hover_style_box)
+	var focus_style_box: StyleBoxFlat = get_theme_stylebox("focus").duplicate()
+	focus_style_box.bg_color = (focus_style_box.bg_color + additional_highlight) * color
+	add_theme_stylebox_override("focus", focus_style_box)
+
+func remove_button_highlight_colors() -> void:
+	remove_theme_stylebox_override("pressed")
+	remove_theme_stylebox_override("hover")
+	remove_theme_stylebox_override("focus")
+
+func set_button_colors(color: Color, additional_highlight: Color = Color(0.1, 0.1, 0.1, 0.0)) -> void:
+	var normal_style_box: StyleBoxFlat = get_theme_stylebox("normal").duplicate()
+	normal_style_box.bg_color = (normal_style_box.bg_color + additional_highlight) * color
+	add_theme_stylebox_override("normal", normal_style_box)
+	var pressed_style_box: StyleBoxFlat = get_theme_stylebox("pressed").duplicate()
+	pressed_style_box.bg_color = (pressed_style_box.bg_color + additional_highlight) * color
+	add_theme_stylebox_override("pressed", pressed_style_box)
+	var hover_style_box: StyleBoxFlat = get_theme_stylebox("hover").duplicate()
+	hover_style_box.bg_color = (hover_style_box.bg_color + additional_highlight) * color
+	add_theme_stylebox_override("hover", hover_style_box)
+	var disabled_style_box: StyleBoxFlat = get_theme_stylebox("disabled").duplicate()
+	disabled_style_box.bg_color = (disabled_style_box.bg_color + additional_highlight) * color
+	add_theme_stylebox_override("disabled", disabled_style_box)
+	var focus_style_box: StyleBoxFlat = get_theme_stylebox("focus").duplicate()
+	focus_style_box.bg_color = (focus_style_box.bg_color + additional_highlight) * color
+	add_theme_stylebox_override("focus", focus_style_box)
+
+func remove_button_colors() -> void:
+	remove_theme_stylebox_override("normal")
+	remove_theme_stylebox_override("pressed")
+	remove_theme_stylebox_override("hover")
+	remove_theme_stylebox_override("disabled")
+	remove_theme_stylebox_override("focus")
