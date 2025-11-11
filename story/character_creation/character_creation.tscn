@@ -40,7 +40,6 @@ size_flags_vertical = 3
 
 [node name="OriginsPicker" parent="HBoxContainer/Stats" instance=ExtResource("5_s0bgh")]
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="Inventory" parent="HBoxContainer/Stats" instance=ExtResource("15_b7plt")]
 visible = false

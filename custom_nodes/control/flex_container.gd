@@ -19,7 +19,7 @@ enum Direction {
 
 var _box_container: BoxContainer
 
-func _ready() -> void:
+func _init() -> void:
 	_setup()
 
 func add(element: Control) -> void:
@@ -47,13 +47,21 @@ func get_elements() -> Array[Control]:
 	return elements
 
 func for_each_element(callable: Callable) -> void:
-	for element: Control in get_elements(): callable.call(element)
+	for element: Control in _box_container.get_children(): callable.call(element)
 
 func _setup() -> void:
-	if _box_container: clear()
+	var elements: Array[Control] = []
+	if _box_container:
+		elements = get_elements()
+		for_each_element(func(element: Control) -> void: _box_container.remove_child(element))
+		remove_child(_box_container)
+		_box_container.queue_free()
 	match _direction:
 		Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT: _box_container = HBoxContainer.new()
 		Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP: _box_container = VBoxContainer.new()
 		_: assert(false, "Does not exist")
+	_box_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_box_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_box_container.add_theme_constant_override("separation", _separation)
+	for element: Control in elements: add(element)
 	add_child(_box_container)

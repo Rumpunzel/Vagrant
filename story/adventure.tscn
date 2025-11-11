@@ -63,6 +63,7 @@ metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 [node name="CharacterSheets" type="TabContainer" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("characters")]
 layout_mode = 2
 size_flags_vertical = 3
+tab_alignment = 1
 current_tab = 0
 drag_to_rearrange_enabled = true
 script = ExtResource("3_4lj7w")

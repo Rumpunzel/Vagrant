@@ -3,12 +3,11 @@
 [ext_resource type="PackedScene" uid="uid://c5uet8sda2yqw" path="res://story/character_creation/attribute_score_roller.tscn" id="1_d1ydc"]
 [ext_resource type="Script" uid="uid://by22kdnwqjkef" path="res://story/character_creation/attributes_roller.gd" id="1_ql5hc"]
 
-[node name="AttributesRoller" type="VBoxContainer" node_paths=PackedStringArray("_roller_container")]
-offset_right = 1030.0
-offset_bottom = 405.0
+[node name="AttributesRoller" type="VBoxContainer"]
+offset_right = 1047.0
+offset_bottom = 578.0
 theme_override_constants/separation = 32
 script = ExtResource("1_ql5hc")
-_roller_container = NodePath("PanelContainer/MarginContainer/RollerContainer")
 _attribute_score_roller = ExtResource("1_d1ydc")
 metadata/_custom_type_script = "uid://by22kdnwqjkef"
 
@@ -18,13 +17,3 @@ layout_mode = 2
 theme_type_variation = &"HeaderLarge"
 text = "Attributes"
 horizontal_alignment = 1
-
-[node name="PanelContainer" type="PanelContainer" parent="."]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
-layout_mode = 2
-
-[node name="RollerContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer"]
-layout_mode = 2

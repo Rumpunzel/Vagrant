@@ -1,8 +1,11 @@
 @tool
 class_name CharacterAttributesPanel
-extends HBoxContainer
+extends PanelContainer
 
 @export var _attribute_score: PackedScene
+
+@export_group("Configuration")
+@export var _attributes: FlexContainer
 
 var _attribute_scores: Dictionary[CharacterAttribute, CharacterSheetAttributeScore] = { }
 
@@ -20,4 +23,4 @@ func _setup() -> void:
 		var attribute_score: CharacterSheetAttributeScore = _attribute_score.instantiate()
 		attribute_score.attribute = attribute as CharacterAttribute
 		_attribute_scores[attribute] = attribute_score
-		add_child(attribute_score)
+		_attributes.add(attribute_score)

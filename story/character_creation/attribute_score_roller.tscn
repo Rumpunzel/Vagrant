@@ -76,6 +76,8 @@ layout_mode = 2
 mouse_filter = 2
 bbcode_enabled = true
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+fit_content = true
+scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -94,6 +96,7 @@ mouse_filter = 2
 bbcode_enabled = true
 text = "Roll!"
 fit_content = true
+scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 

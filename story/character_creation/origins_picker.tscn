@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bsirn3lij5psg" path="res://story/character_creation/ability_label.tscn" id="2_110h8"]
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="2_biqa6"]
 [ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="3_x4kkx"]
-[ext_resource type="Resource" uid="uid://dqjtp62n331s7" path="res://characters/origins/tamer.tres" id="3_xw2kr"]
+[ext_resource type="Resource" uid="uid://1n7f7ltq8e42" path="res://characters/origins/merchant.tres" id="3_xw2kr"]
 [ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="4_aeon6"]
 [ext_resource type="Texture2D" uid="uid://b1nrbvek1tou5" path="res://characters/origins/icons/executioner-hood.svg" id="4_gg73k"]
 [ext_resource type="Texture2D" uid="uid://cpio2dgd5kcva" path="res://characters/origins/icons/drama-masks.svg" id="5_3rtwe"]
@@ -21,7 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://c826roaqk8774" path="res://characters/origins/icons/stone-throne.svg" id="12_5f0br"]
 [ext_resource type="Texture2D" uid="uid://bq7tflh2rtogc" path="res://characters/origins/icons/ship-wheel.svg" id="16_64w77"]
 [ext_resource type="Texture2D" uid="uid://o266jm48qawt" path="res://characters/origins/icons/spartan-helmet.svg" id="21_jodaj"]
-[ext_resource type="Resource" uid="uid://cskgqp6fm3x52" path="res://characters/origins/hunter.tres" id="22_ujcxx"]
+[ext_resource type="Resource" uid="uid://7uemslxbeu5b" path="res://characters/origins/artisan.tres" id="22_ujcxx"]
 
 [node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_origins_list", "_ability_labels")]
 offset_right = 1241.0
@@ -29,8 +29,8 @@ offset_bottom = 383.0
 theme_override_constants/separation = 8
 script = ExtResource("1_gr0sf")
 _origins_directory = "res://characters/origins"
-_origins_list = NodePath("Kin/MarginContainer/HBoxContainer/Origins")
-_ability_labels = [NodePath("Kin/MarginContainer/HBoxContainer/Kin"), NodePath("Kin/MarginContainer/HBoxContainer/Ilk")]
+_origins_list = NodePath("HBoxContainer/Origins")
+_ability_labels = [NodePath("HBoxContainer/Kin"), NodePath("HBoxContainer/Ilk")]
 metadata/_custom_type_script = "uid://dytsvtmv8gt68"
 
 [node name="Title" type="Label" parent="."]
@@ -40,22 +40,16 @@ theme_type_variation = &"HeaderLarge"
 text = "Origin"
 horizontal_alignment = 1
 
-[node name="Kin" type="PanelContainer" parent="."]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Kin"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Kin/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Kin" parent="Kin/MarginContainer/HBoxContainer" instance=ExtResource("2_110h8")]
+[node name="Kin" parent="HBoxContainer" instance=ExtResource("2_110h8")]
 layout_mode = 2
 size_flags_horizontal = 3
 origin = ExtResource("3_xw2kr")
 
-[node name="Origins" type="ItemList" parent="Kin/MarginContainer/HBoxContainer"]
+[node name="Origins" type="ItemList" parent="HBoxContainer"]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 select_mode = 2
@@ -69,25 +63,25 @@ icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
 item_0/text = "Adventurer"
 item_0/icon = ExtResource("2_biqa6")
-item_1/text = "Artisan"
-item_1/icon = ExtResource("5_ujcxx")
-item_2/text = "Captain"
-item_2/icon = ExtResource("8_110h8")
-item_2/disabled = true
-item_3/text = "Doctor?"
-item_3/icon = ExtResource("4_aeon6")
+item_1/text = "Aristocrat"
+item_1/icon = ExtResource("12_5f0br")
+item_1/disabled = true
+item_2/text = "Artisan"
+item_2/icon = ExtResource("5_ujcxx")
+item_3/text = "Captain"
+item_3/icon = ExtResource("8_110h8")
 item_3/disabled = true
 item_4/text = "Grunt"
 item_4/icon = ExtResource("10_gg73k")
-item_5/text = "Hunter"
-item_5/icon = ExtResource("7_110h8")
-item_6/text = "Merchant"
-item_6/icon = ExtResource("7_pqbml")
-item_7/text = "Minstrel"
-item_7/icon = ExtResource("5_3rtwe")
-item_8/text = "Noble"
-item_8/icon = ExtResource("12_5f0br")
-item_8/disabled = true
+item_5/text = "Healer?"
+item_5/icon = ExtResource("4_aeon6")
+item_5/disabled = true
+item_6/text = "Hunter"
+item_6/icon = ExtResource("7_110h8")
+item_7/text = "Merchant"
+item_7/icon = ExtResource("7_pqbml")
+item_8/text = "Minstrel"
+item_8/icon = ExtResource("5_3rtwe")
 item_9/text = "Outlaw"
 item_9/icon = ExtResource("4_gg73k")
 item_9/disabled = true
@@ -100,20 +94,20 @@ item_12/text = "Sailor"
 item_12/icon = ExtResource("16_64w77")
 item_13/text = "Scholar"
 item_13/icon = ExtResource("7_x4kkx")
-item_14/text = "Sorcerer"
-item_14/icon = ExtResource("11_u031w")
-item_14/disabled = true
-item_15/text = "Tamer"
-item_15/icon = ExtResource("6_4t8ms")
-item_16/text = "Thief"
-item_16/icon = ExtResource("7_hqqb3")
+item_14/text = "Scoundrel"
+item_14/icon = ExtResource("7_hqqb3")
+item_15/text = "Sorcerer"
+item_15/icon = ExtResource("11_u031w")
+item_15/disabled = true
+item_16/text = "Tamer"
+item_16/icon = ExtResource("6_4t8ms")
 item_17/text = "Veteran"
 item_17/icon = ExtResource("21_jodaj")
 
-[node name="Ilk" parent="Kin/MarginContainer/HBoxContainer" instance=ExtResource("2_110h8")]
+[node name="Ilk" parent="HBoxContainer" instance=ExtResource("2_110h8")]
 layout_mode = 2
 size_flags_horizontal = 3
 origin = ExtResource("22_ujcxx")
 
-[connection signal="item_selected" from="Kin/MarginContainer/HBoxContainer/Origins" to="." method="_on_kin_list_item_selected"]
-[connection signal="multi_selected" from="Kin/MarginContainer/HBoxContainer/Origins" to="." method="_on_origins_multi_selected"]
+[connection signal="item_selected" from="HBoxContainer/Origins" to="." method="_on_kin_list_item_selected"]
+[connection signal="multi_selected" from="HBoxContainer/Origins" to="." method="_on_origins_multi_selected"]

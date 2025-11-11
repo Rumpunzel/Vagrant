@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://dgk1ipqq2uypw"]
+
+[ext_resource type="Script" uid="uid://dre6xu01ov0dm" path="res://characters/character_sheet/character_attributes_panel.gd" id="1_3heis"]
+[ext_resource type="PackedScene" uid="uid://1ps6colw5iqa" path="res://characters/character_sheet/attribute_score.tscn" id="2_5c0rt"]
+[ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="3_5c0rt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gi8qp"]
+
+[node name="CharacterAttributesPanel" type="PanelContainer" node_paths=PackedStringArray("_attributes")]
+theme_override_styles/panel = SubResource("StyleBoxEmpty_gi8qp")
+script = ExtResource("1_3heis")
+_attribute_score = ExtResource("2_5c0rt")
+_attributes = NodePath("Attributes")
+metadata/_custom_type_script = "uid://dre6xu01ov0dm"
+
+[node name="Attributes" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+script = ExtResource("3_5c0rt")
+metadata/_custom_type_script = "uid://dqkpaquatj11m"

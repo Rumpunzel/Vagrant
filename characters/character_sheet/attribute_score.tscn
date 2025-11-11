@@ -12,8 +12,8 @@ script = ExtResource("1_2xwy7")
 _color = NodePath("VBoxContainer/ColorRect")
 _icon = NodePath("Icon")
 _descriptor = NodePath("VBoxContainer/MarginContainer/Descriptor")
-_score = NodePath("VBoxContainer/MarginContainer2/PanelContainer/MarginContainer/Score")
-_tooltip_trigger = NodePath("VBoxContainer/MarginContainer2/PanelContainer")
+_score = NodePath("VBoxContainer/AttributeInfo/Score")
+_tooltip_trigger = NodePath("VBoxContainer/AttributeInfo")
 metadata/_custom_type_script = "uid://c071oa3mjavbs"
 
 [node name="Icon" type="TextureRect" parent="."]
@@ -29,20 +29,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
-layout_mode = 2
-
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer2"]
+[node name="AttributeInfo" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
 mouse_default_cursor_shape = 16
 script = ExtResource("3_ktfhn")
 origin = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer2/PanelContainer"]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="Score" type="RichTextLabel" parent="VBoxContainer/MarginContainer2/PanelContainer/MarginContainer"]
+[node name="Score" type="RichTextLabel" parent="VBoxContainer/AttributeInfo"]
 layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"HeaderLarge"
