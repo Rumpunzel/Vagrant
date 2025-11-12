@@ -1368,8 +1368,6 @@ func _set_tween_variables(tween_target : Vector2, restart : bool = true) -> void
 		_tween_elapsed_time = 0.0
 	
 	_tween_initial_value = get_size()
-	
-	tween_target = tween_target
 	_tween_final_value = tween_target
 	_tween_delta_value = _tween_final_value - _tween_initial_value
 

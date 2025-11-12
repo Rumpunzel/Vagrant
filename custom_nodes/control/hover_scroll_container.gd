@@ -9,7 +9,8 @@ func _ready() -> void:
 	mouse_exited.connect(_on_mouse_exited)
 
 func scroll_vertical_to_end() -> void:
-	set_deferred("scroll_vertical", get_v_scroll_bar().max_value)
+	await get_tree().process_frame
+	scroll_vertical = get_v_scroll_bar().max_value
 
 func _on_mouse_entered() -> void:
 	if _default_horizontal_scroll_mode != ScrollContainer.SCROLL_MODE_DISABLED:

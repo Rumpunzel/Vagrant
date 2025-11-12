@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=6 format=3 uid="uid://coh7y85ggx45i"]
 
 [ext_resource type="Script" uid="uid://bob1fhstr1o06" path="res://story/book/story_book.gd" id="1_cts4e"]
 [ext_resource type="Script" uid="uid://d1ksax687j5bd" path="res://custom_nodes/control/hover_scroll_container.gd" id="3_evqjp"]
 [ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="3_kgpco"]
 [ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="3_rpy1c"]
+[ext_resource type="Script" uid="uid://iucnlp3l8avv" path="res://custom_nodes/control/hover_control.gd" id="3_s3kyl"]
 
 [node name="StoryBook" type="PanelContainer" node_paths=PackedStringArray("_page_turn_timer", "_page_content_slider", "_pages")]
 clip_contents = true
@@ -33,6 +34,7 @@ layout_mode = 2
 [node name="PageContentSlider" type="VSlider" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 mouse_default_cursor_shape = 9
+script = ExtResource("3_s3kyl")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -49,7 +51,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("3_rpy1c")
 _element_size = 0.0
-_separation = 0
 _fill = false
 _direction = 2
 

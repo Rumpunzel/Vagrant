@@ -7,7 +7,7 @@ enum State {
 	SHOWING,
 }
 
-@export var _neighbor_hover_color: Color = Color(1.0, 1.0, 1.0, 0.25)
+@export var _neighbor_hover_modulate: Color = Color(1.0, 1.0, 1.0, 0.25)
 @export var _hover_neighbors: Array[HoverButton]
 
 @onready var _modulate: Color = modulate
@@ -42,7 +42,7 @@ func get_state() -> State:
 func _show_icon(color_modulate: Color = _modulate) -> void:
 	show_icon(color_modulate)
 	for hover_button: HoverButton in _hover_neighbors:
-		hover_button.show_icon(_neighbor_hover_color)
+		hover_button.show_icon(_neighbor_hover_modulate)
 
 func _hide_icon() -> void:
 	hide_icon()
@@ -50,7 +50,9 @@ func _hide_icon() -> void:
 		hover_button.hide_icon()
 
 func _on_mouse_entered() -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): return
 	_show_icon()
 
 func _on_mouse_exited() -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): return
 	_hide_icon()

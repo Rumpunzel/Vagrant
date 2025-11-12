@@ -10,7 +10,6 @@ enum State {
 
 @export var state: State = State.PRESENT : set = _set_state
 
-@export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var _entry_size: float = 256.0
 @export_range(0.0, 1.0) var _fade_in_duration: float = 0.1
 @export_range(0.0, 3.0) var _fade_out_duration: float = 1.0
 @export_range(0.0, 1.0) var _fade_out_delay: float = 0.5
@@ -64,7 +63,6 @@ func _set_state(new_state: State) -> void:
 			mouse_entered.connect(_on_mouse_entered)
 			mouse_exited.connect(_on_mouse_exited)
 		State.PRESENT:
-			custom_minimum_size.y = _entry_size
 			self_modulate = Color.TRANSPARENT if _background.texture else Color.WHITE
 		_: assert(false, "StoryEntry.State %s is not supported!" % state)
 

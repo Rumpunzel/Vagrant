@@ -4,8 +4,8 @@
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="2_gdvnu"]
 [ext_resource type="Material" uid="uid://b852rmgnfrqr8" path="res://characters/character_sheet/portrait_vignette.tres" id="2_puilj"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
-[ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/user_interface/hover_button.gd" id="3_c7qpy"]
-[ext_resource type="Texture2D" uid="uid://cbigfd21edcsp" path="res://assets/portraits/HE-PC-CE-M206/Fulllength.png" id="4_3p0bc"]
+[ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://custom_nodes/control/hover_button.gd" id="3_c7qpy"]
+[ext_resource type="Texture2D" uid="uid://dx7f74hjtc3bw" path="res://assets/portraits/HE-DR-DD-F118/Fulllength.png" id="4_gdvnu"]
 [ext_resource type="Texture2D" uid="uid://dkot0xb7ohews" path="res://icons/editor/chevron-left-large.svg" id="4_puilj"]
 [ext_resource type="Texture2D" uid="uid://k8k7mhb6md3e" path="res://icons/editor/card-random.svg" id="6_c7qpy"]
 [ext_resource type="Texture2D" uid="uid://di721a0116neh" path="res://icons/editor/chevron-right-large.svg" id="8_gdvnu"]
@@ -101,9 +101,9 @@ theme_override_constants/margin_bottom = 0
 [node name="Portrait" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer"]
 material = ExtResource("2_puilj")
 layout_mode = 2
-tooltip_text = "res://assets/portraits/HE-PC-CE-M206/Fulllength.png"
+tooltip_text = "res://assets/portraits/HE-DR-DD-F118/Fulllength.png"
 mouse_default_cursor_shape = 16
-texture = ExtResource("4_3p0bc")
+texture = ExtResource("4_gdvnu")
 expand_mode = 3
 stretch_mode = 5
 
@@ -121,6 +121,7 @@ icon = ExtResource("4_puilj")
 flat = true
 expand_icon = true
 script = ExtResource("3_c7qpy")
+_neighbor_hover_color = Color(1, 1, 1, 0.25)
 _hover_neighbors = [NodePath("../VBoxContainer/Sex"), NodePath("../Next"), NodePath("../VBoxContainer/Random")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
@@ -141,6 +142,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("3_c7qpy")
+_neighbor_hover_color = Color(1, 1, 1, 0.25)
 _hover_neighbors = [NodePath("../Sex"), NodePath("../../Previous"), NodePath("../../Next")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
@@ -160,6 +162,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("3_c7qpy")
+_neighbor_hover_color = Color(1, 1, 1, 0.25)
 _hover_neighbors = [NodePath("../../Previous"), NodePath("../../Next"), NodePath("../Random")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
@@ -173,6 +176,7 @@ icon = ExtResource("8_gdvnu")
 flat = true
 expand_icon = true
 script = ExtResource("3_c7qpy")
+_neighbor_hover_color = Color(1, 1, 1, 0.25)
 _hover_neighbors = [NodePath("../VBoxContainer/Sex"), NodePath("../Previous"), NodePath("../VBoxContainer/Random")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
