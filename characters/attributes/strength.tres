@@ -1,12 +1,13 @@
 [gd_resource type="Resource" script_class="CharacterAttribute" load_steps=3 format=3 uid="uid://b1c6aib060ja5"]
 
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_27sg8"]
-[ext_resource type="Texture2D" uid="uid://cdri43vl0xt70" path="res://characters/attributes/icons/hand-bandage.svg" id="1_ga1e2"]
+[ext_resource type="Texture2D" uid="uid://bkw7nl4evlydc" path="res://characters/attributes/icons/cracked-helm.svg" id="1_ga1e2"]
 
 [resource]
 script = ExtResource("1_27sg8")
 descriptor = "Guts"
 icon = ExtResource("1_ga1e2")
-color = Color(0.6392157, 0.54901963, 0.2509804, 1)
+color = Color(0.56078434, 0.5176471, 0.45490196, 1)
 details = "Strength, endurance, and grit."
 stance_description = "Charge with might and ferocity!"
+abilities = Array[String](["Increase the damage you deal by your margin of success."])

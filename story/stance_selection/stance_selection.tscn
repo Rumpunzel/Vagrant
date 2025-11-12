@@ -1,16 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://mt5mbq7b5lu0"]
+[gd_scene load_steps=6 format=3 uid="uid://mt5mbq7b5lu0"]
 
 [ext_resource type="Script" uid="uid://cibuut5maxj22" path="res://story/stance_selection/stance_selection.gd" id="1_su63f"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="2_nl66t"]
 [ext_resource type="Script" uid="uid://coqwnstoj346c" path="res://addons/tooltips_pro/scripts/tooltip_trigger.gd" id="2_vnpj5"]
-[ext_resource type="Texture2D" uid="uid://ct2so8s4uk0f" path="res://icons/old_dice/hand-bandage.png" id="3_6tab1"]
+[ext_resource type="PackedScene" uid="uid://dv8we3eyi0bus" path="res://characters/character_sheet/attribute_icon.tscn" id="3_vnpj5"]
+[ext_resource type="Texture2D" uid="uid://cdri43vl0xt70" path="res://characters/attributes/icons/hand-bandage.svg" id="4_aj55f"]
 
 [node name="StanceSelection" type="PanelContainer" node_paths=PackedStringArray("_tooltip_trigger", "_icon", "_descriptor")]
 offset_right = 124.0
 offset_bottom = 39.0
 mouse_default_cursor_shape = 16
 script = ExtResource("1_su63f")
+attribute = ExtResource("2_nl66t")
 _tooltip_trigger = NodePath("TooltipTrigger")
-_icon = NodePath("Icon")
+_icon = NodePath("AttributeIcon")
 _descriptor = NodePath("Descriptor")
 metadata/_custom_type_script = "uid://cibuut5maxj22"
 
@@ -18,22 +21,16 @@ metadata/_custom_type_script = "uid://cibuut5maxj22"
 script = ExtResource("2_vnpj5")
 trigger_node = NodePath("..")
 origin = 3
+tooltip_strings = Array[String](["Decrease the damage you take by your margin of success."])
 metadata/_custom_type_script = "uid://coqwnstoj346c"
 
-[node name="Icon" type="TextureRect" parent="."]
-modulate = Color(1, 1, 1, 0.101960786)
+[node name="AttributeIcon" parent="." instance=ExtResource("3_vnpj5")]
+modulate = Color(0.62352943, 0.14117648, 0.16078432, 0.35)
 layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("3_6tab1")
-expand_mode = 1
-stretch_mode = 6
+texture = ExtResource("4_aj55f")
 
-[node name="Descriptor" type="RichTextLabel" parent="."]
+[node name="Descriptor" type="Label" parent="."]
 layout_mode = 2
-mouse_filter = 2
-bbcode_enabled = true
-text = "Muscle"
-fit_content = true
-scroll_active = false
+text = "Blood"
 horizontal_alignment = 1
 vertical_alignment = 1

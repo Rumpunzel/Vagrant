@@ -1,13 +1,14 @@
-[gd_scene load_steps=17 format=3 uid="uid://p4lx6exsethc"]
+[gd_scene load_steps=18 format=3 uid="uid://p4lx6exsethc"]
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
-[ext_resource type="Texture2D" uid="uid://xgkfico7hl2s" path="res://icons/editor/leftswipe.svg" id="2_furgd"]
+[ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="2_gdvnu"]
 [ext_resource type="Material" uid="uid://b852rmgnfrqr8" path="res://characters/character_sheet/portrait_vignette.tres" id="2_puilj"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
 [ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://story/user_interface/hover_button.gd" id="3_c7qpy"]
-[ext_resource type="Texture2D" uid="uid://cs1r7afsk33pb" path="res://assets/portraits/MX-MO-MS-M104/Fulllength.png" id="3_puilj"]
-[ext_resource type="Texture2D" uid="uid://dmhvrx416awa" path="res://icons/editor/rightswipe.svg" id="4_1khh3"]
+[ext_resource type="Texture2D" uid="uid://cbigfd21edcsp" path="res://assets/portraits/HE-PC-CE-M206/Fulllength.png" id="4_3p0bc"]
+[ext_resource type="Texture2D" uid="uid://dkot0xb7ohews" path="res://icons/editor/chevron-left-large.svg" id="4_puilj"]
 [ext_resource type="Texture2D" uid="uid://k8k7mhb6md3e" path="res://icons/editor/card-random.svg" id="6_c7qpy"]
+[ext_resource type="Texture2D" uid="uid://di721a0116neh" path="res://icons/editor/chevron-right-large.svg" id="8_gdvnu"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_puilj"]
 device = -1
@@ -74,6 +75,7 @@ layout_mode = 2
 
 [node name="Name" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_gdvnu")
 theme_override_font_sizes/font_size = 24
 text = "The Vagrant"
 placeholder_text = "Name"
@@ -99,9 +101,9 @@ theme_override_constants/margin_bottom = 0
 [node name="Portrait" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer"]
 material = ExtResource("2_puilj")
 layout_mode = 2
-tooltip_text = "res://assets/portraits/MX-MO-MS-M104/Fulllength.png"
+tooltip_text = "res://assets/portraits/HE-PC-CE-M206/Fulllength.png"
 mouse_default_cursor_shape = 16
-texture = ExtResource("3_puilj")
+texture = ExtResource("4_3p0bc")
 expand_mode = 3
 stretch_mode = 5
 
@@ -115,7 +117,7 @@ size_flags_horizontal = 3
 tooltip_text = "Previous"
 mouse_default_cursor_shape = 2
 shortcut = SubResource("Shortcut_3p0bc")
-icon = ExtResource("2_furgd")
+icon = ExtResource("4_puilj")
 flat = true
 expand_icon = true
 script = ExtResource("3_c7qpy")
@@ -130,7 +132,8 @@ mouse_filter = 2
 [node name="Random" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
 layout_mode = 2
 size_flags_vertical = 3
-tooltip_text = "107 Portraits"
+tooltip_text = "Random
+107 Portraits"
 mouse_default_cursor_shape = 2
 shortcut = SubResource("Shortcut_puilj")
 icon = ExtResource("6_c7qpy")
@@ -149,7 +152,8 @@ mouse_filter = 2
 [node name="Sex" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("_hover_neighbors")]
 layout_mode = 2
 size_flags_vertical = 3
-tooltip_text = "107 Portraits"
+tooltip_text = "Filter Sex
+107 Portraits"
 mouse_default_cursor_shape = 2
 icon = ExtResource("3_1khh3")
 flat = true
@@ -165,7 +169,7 @@ size_flags_horizontal = 3
 tooltip_text = "Next"
 mouse_default_cursor_shape = 2
 shortcut = SubResource("Shortcut_nu3qc")
-icon = ExtResource("4_1khh3")
+icon = ExtResource("8_gdvnu")
 flat = true
 expand_icon = true
 script = ExtResource("3_c7qpy")

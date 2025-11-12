@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CharacterAttribute" load_steps=3 format=3 uid="uid://bu20awm3swywv"]
 
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_3pd1w"]
-[ext_resource type="Texture2D" uid="uid://dhu6ujqm1luo0" path="res://characters/attributes/icons/defibrilate.svg" id="1_oehal"]
+[ext_resource type="Texture2D" uid="uid://cdri43vl0xt70" path="res://characters/attributes/icons/hand-bandage.svg" id="1_oehal"]
 
 [resource]
 script = ExtResource("1_3pd1w")
@@ -10,3 +10,4 @@ icon = ExtResource("1_oehal")
 color = Color(0.62352943, 0.14117648, 0.16078432, 1)
 details = "Speed, reflexes, and prowess."
 stance_description = "Parry and dodge with reflex and agility!"
+abilities = Array[String](["Decrease the damage you take by your margin of success."])

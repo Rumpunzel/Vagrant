@@ -1,24 +1,35 @@
-[gd_resource type="Theme" format=3 uid="uid://n4spn3vwys5s"]
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://n4spn3vwys5s"]
+
+[ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="1_8hd5q"]
 
 [resource]
-HeaderLarge/base_type = &"RichTextLabel"
-HeaderLarge/font_sizes/bold_font_size = 28
-HeaderLarge/font_sizes/bold_italics_font_size = 28
-HeaderLarge/font_sizes/italics_font_size = 28
-HeaderLarge/font_sizes/mono_font_size = 28
-HeaderLarge/font_sizes/normal_font_size = 28
-HeaderMedium/base_type = &"RichTextLabel"
+HeaderLarge/base_type = &"Label"
+HeaderLarge/font_sizes/bold_font_size = 32
+HeaderLarge/font_sizes/bold_italics_font_size = 32
+HeaderLarge/font_sizes/font_size = 32
+HeaderLarge/font_sizes/italics_font_size = 32
+HeaderLarge/font_sizes/mono_font_size = 32
+HeaderLarge/font_sizes/normal_font_size = 32
+HeaderLarge/fonts/font = ExtResource("1_8hd5q")
+HeaderLarge/fonts/normal_font = ExtResource("1_8hd5q")
+HeaderMedium/base_type = &"Label"
 HeaderMedium/font_sizes/bold_font_size = 24
 HeaderMedium/font_sizes/bold_italics_font_size = 24
+HeaderMedium/font_sizes/font_size = 24
 HeaderMedium/font_sizes/italics_font_size = 24
 HeaderMedium/font_sizes/mono_font_size = 24
 HeaderMedium/font_sizes/normal_font_size = 24
-HeaderSmall/base_type = &"RichTextLabel"
+HeaderMedium/fonts/font = ExtResource("1_8hd5q")
+HeaderMedium/fonts/normal_font = ExtResource("1_8hd5q")
+HeaderSmall/base_type = &"Label"
 HeaderSmall/font_sizes/bold_font_size = 20
 HeaderSmall/font_sizes/bold_italics_font_size = 20
+HeaderSmall/font_sizes/font_size = 20
 HeaderSmall/font_sizes/italics_font_size = 20
 HeaderSmall/font_sizes/mono_font_size = 20
 HeaderSmall/font_sizes/normal_font_size = 20
+HeaderSmall/fonts/font = ExtResource("1_8hd5q")
+HeaderSmall/fonts/normal_font = ExtResource("1_8hd5q")
 Label/colors/font_shadow_color = Color(0, 0, 0, 1)
 Label/constants/shadow_offset_x = 1
 Label/constants/shadow_offset_y = 1

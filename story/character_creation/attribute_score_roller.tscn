@@ -1,94 +1,88 @@
-[gd_scene load_steps=5 format=3 uid="uid://c5uet8sda2yqw"]
+[gd_scene load_steps=8 format=3 uid="uid://c5uet8sda2yqw"]
 
 [ext_resource type="Script" uid="uid://cg0o8nr4etsys" path="res://story/character_creation/attribute_score_roller.gd" id="1_ugieg"]
-[ext_resource type="Texture2D" uid="uid://dpmwlpo7a7q1r" path="res://icons/editor/rolling-dices.svg" id="2_q74jc"]
-[ext_resource type="Texture2D" uid="uid://cdri43vl0xt70" path="res://characters/attributes/icons/hand-bandage.svg" id="2_ugieg"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="2_v4414"]
 [ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="3_ep8mo"]
+[ext_resource type="PackedScene" uid="uid://dv8we3eyi0bus" path="res://characters/character_sheet/attribute_icon.tscn" id="4_ep8mo"]
+[ext_resource type="Texture2D" uid="uid://bkw7nl4evlydc" path="res://characters/attributes/icons/cracked-helm.svg" id="6_lgbe1"]
+[ext_resource type="PackedScene" uid="uid://1ps6colw5iqa" path="res://characters/character_sheet/attribute_score.tscn" id="6_v4414"]
 
-[node name="AttributeScoreRoller" type="PanelContainer" node_paths=PackedStringArray("_icon", "_button", "_descriptor", "_details", "_color", "_score")]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lgbe1"]
+
+[node name="AttributeScoreRoller" type="PanelContainer" node_paths=PackedStringArray("_attribute_icon", "_attribute_score", "_button", "_descriptor", "_details", "_score", "_hide_on_collapse", "_show_on_collapse")]
 offset_right = 485.0
 offset_bottom = 458.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+tooltip_text = "Strength, endurance, and grit."
 script = ExtResource("1_ugieg")
-_icon = NodePath("Icon")
+attribute = ExtResource("2_v4414")
+_attribute_icon = NodePath("AttributeIcon")
+_attribute_score = NodePath("MarginContainer/VBoxContainer/AttributeScore")
 _button = NodePath("Button")
-_descriptor = NodePath("VBoxContainer/MarginContainer/Descriptor")
-_details = NodePath("VBoxContainer/MarginContainer2/VBoxContainer/Details")
-_color = NodePath("VBoxContainer/ColorRect")
-_score = NodePath("VBoxContainer/MarginContainer2/VBoxContainer/PanelContainer/MarginContainer/Score")
+_descriptor = NodePath("MarginContainer/VBoxContainer/Descriptor")
+_details = NodePath("MarginContainer/VBoxContainer/Details")
+_score = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Score")
+_hide_on_collapse = [NodePath("MarginContainer/VBoxContainer/AttributeScore")]
+_show_on_collapse = [NodePath("AttributeIcon")]
 metadata/_custom_type_script = "uid://cg0o8nr4etsys"
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_constants/icon_max_width = 128
-icon = ExtResource("2_q74jc")
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("3_ep8mo")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
-[node name="Icon" type="TextureRect" parent="."]
-modulate = Color(1, 1, 1, 0.1)
+[node name="AttributeIcon" parent="." instance=ExtResource("4_ep8mo")]
+visible = false
+modulate = Color(0.56078434, 0.5176471, 0.45490196, 0.35)
+layout_mode = 2
+texture = ExtResource("6_lgbe1")
+attribute = ExtResource("2_v4414")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("2_ugieg")
-expand_mode = 1
-stretch_mode = 6
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 2
-size_flags_vertical = 8
-mouse_filter = 2
-theme_override_constants/separation = 0
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 0
-theme_override_constants/margin_right = 0
 
-[node name="Descriptor" type="Label" parent="VBoxContainer/MarginContainer"]
+[node name="Descriptor" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_type_variation = &"HeaderMedium"
-text = "Muscle"
+theme_type_variation = &"HeaderLarge"
+text = "Guts"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ColorRect" type="ColorRect" parent="VBoxContainer"]
-custom_minimum_size = Vector2(4, 4)
+[node name="AttributeScore" parent="MarginContainer/VBoxContainer" instance=ExtResource("6_v4414")]
 layout_mode = 2
-mouse_filter = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_lgbe1")
 
-[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer2"]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="Details" type="RichTextLabel" parent="VBoxContainer/MarginContainer2/VBoxContainer"]
+[node name="Details" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 mouse_filter = 2
 bbcode_enabled = true
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+text = "Strength, endurance, and grit."
 fit_content = true
 scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer2/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer2/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Score" type="RichTextLabel" parent="VBoxContainer/MarginContainer2/VBoxContainer/PanelContainer/MarginContainer"]
+[node name="Score" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 mouse_filter = 2

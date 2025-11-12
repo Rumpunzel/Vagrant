@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=10 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="2_kq5yh"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="4_5djeo"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="4_ipvic"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/book/story_book.tscn" id="5_p35e8"]
+[ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="6_ded50"]
 
 [node name="Adventure" type="VBoxContainer" node_paths=PackedStringArray("_title", "_story", "_characters", "_story_book")]
 anchors_preset = 15
@@ -61,6 +62,7 @@ size_flags_horizontal = 4
 focus_mode = 2
 theme_type_variation = &"HeaderLarge"
 theme_override_constants/shadow_outline_size = 4
+theme_override_fonts/normal_font = ExtResource("6_ded50")
 theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true
 text = "Title"
@@ -84,6 +86,7 @@ drag_area_highlight_in_editor = true
 [node name="Control" type="Control" parent="HBoxContainer/VBoxContainer/VSplitContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer"]
 layout_mode = 2

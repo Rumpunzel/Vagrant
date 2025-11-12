@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CharacterAttribute" load_steps=3 format=3 uid="uid://2vf8mdpla1u2"]
 
-[ext_resource type="Texture2D" uid="uid://1mcf236wt112" path="res://characters/attributes/icons/dead-eye.svg" id="1_rkmxj"]
+[ext_resource type="Texture2D" uid="uid://wqwykjabmg6s" path="res://characters/attributes/icons/skull-crack.svg" id="1_rkmxj"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_wgpsi"]
 
 [resource]
@@ -10,3 +10,4 @@ icon = ExtResource("1_rkmxj")
 color = Color(0.39215687, 0.53333336, 0.6117647, 1)
 details = "Precision, composure, and stealth."
 stance_description = "Feint and trick with guile and precision!"
+abilities = Array[String](["Decrease a foe's attribute of your choice by your margin of success for this exchange."])
