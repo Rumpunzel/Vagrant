@@ -1,14 +1,26 @@
-[gd_scene load_steps=18 format=3 uid="uid://p4lx6exsethc"]
+[gd_scene load_steps=19 format=3 uid="uid://p4lx6exsethc"]
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="2_gdvnu"]
 [ext_resource type="Material" uid="uid://b852rmgnfrqr8" path="res://characters/character_sheet/portrait_vignette.tres" id="2_puilj"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
 [ext_resource type="Script" uid="uid://cmb2b78oofeeh" path="res://custom_nodes/control/hover_button.gd" id="3_c7qpy"]
-[ext_resource type="Texture2D" uid="uid://dx7f74hjtc3bw" path="res://assets/portraits/HE-DR-DD-F118/Fulllength.png" id="4_gdvnu"]
+[ext_resource type="Texture2D" uid="uid://3g47vv66f6k1" path="res://assets/portraits/HE-PC-CE-M202/Fulllength.png" id="4_gdvnu"]
 [ext_resource type="Texture2D" uid="uid://dkot0xb7ohews" path="res://icons/editor/chevron-left-large.svg" id="4_puilj"]
 [ext_resource type="Texture2D" uid="uid://k8k7mhb6md3e" path="res://icons/editor/card-random.svg" id="6_c7qpy"]
 [ext_resource type="Texture2D" uid="uid://di721a0116neh" path="res://icons/editor/chevron-right-large.svg" id="8_gdvnu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3p0bc"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+corner_detail = 5
 
 [sub_resource type="InputEventKey" id="InputEventKey_puilj"]
 device = -1
@@ -66,6 +78,7 @@ vertical_alignment = 1
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_3p0bc")
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -101,7 +114,7 @@ theme_override_constants/margin_bottom = 0
 [node name="Portrait" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer"]
 material = ExtResource("2_puilj")
 layout_mode = 2
-tooltip_text = "res://assets/portraits/HE-DR-DD-F118/Fulllength.png"
+tooltip_text = "res://assets/portraits/HE-PC-CE-M202/Fulllength.png"
 mouse_default_cursor_shape = 16
 texture = ExtResource("4_gdvnu")
 expand_mode = 3
@@ -121,7 +134,6 @@ icon = ExtResource("4_puilj")
 flat = true
 expand_icon = true
 script = ExtResource("3_c7qpy")
-_neighbor_hover_color = Color(1, 1, 1, 0.25)
 _hover_neighbors = [NodePath("../VBoxContainer/Sex"), NodePath("../Next"), NodePath("../VBoxContainer/Random")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
@@ -142,7 +154,6 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("3_c7qpy")
-_neighbor_hover_color = Color(1, 1, 1, 0.25)
 _hover_neighbors = [NodePath("../Sex"), NodePath("../../Previous"), NodePath("../../Next")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
@@ -162,7 +173,6 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("3_c7qpy")
-_neighbor_hover_color = Color(1, 1, 1, 0.25)
 _hover_neighbors = [NodePath("../../Previous"), NodePath("../../Next"), NodePath("../Random")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 
@@ -176,7 +186,6 @@ icon = ExtResource("8_gdvnu")
 flat = true
 expand_icon = true
 script = ExtResource("3_c7qpy")
-_neighbor_hover_color = Color(1, 1, 1, 0.25)
 _hover_neighbors = [NodePath("../VBoxContainer/Sex"), NodePath("../Previous"), NodePath("../VBoxContainer/Random")]
 metadata/_custom_type_script = "uid://cmb2b78oofeeh"
 

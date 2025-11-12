@@ -1,6 +1,6 @@
 @tool
 class_name Adventure
-extends VBoxContainer
+extends PanelContainer
 
 signal story_book_page_entered(story_page: StoryPage)
 
@@ -10,9 +10,9 @@ signal story_book_page_entered(story_page: StoryPage)
 		_title.type_text(adventure_tome.title)
 
 @export_group("Configuration")
-@export var _title: TypingLabel
 @export var _story: Story
 @export var _characters: Characters
+@export var _title: TypingLabel
 @export var _story_book: StoryBook
 
 var current_page: StoryPage

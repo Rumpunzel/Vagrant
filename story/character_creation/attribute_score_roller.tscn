@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://c5uet8sda2yqw"]
+[gd_scene load_steps=9 format=3 uid="uid://c5uet8sda2yqw"]
 
 [ext_resource type="Script" uid="uid://cg0o8nr4etsys" path="res://story/character_creation/attribute_score_roller.gd" id="1_ugieg"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="2_v4414"]
@@ -6,6 +6,18 @@
 [ext_resource type="PackedScene" uid="uid://dv8we3eyi0bus" path="res://characters/character_sheet/attribute_icon.tscn" id="4_ep8mo"]
 [ext_resource type="Texture2D" uid="uid://bkw7nl4evlydc" path="res://characters/attributes/icons/cracked-helm.svg" id="6_lgbe1"]
 [ext_resource type="PackedScene" uid="uid://1ps6colw5iqa" path="res://characters/character_sheet/attribute_score.tscn" id="6_v4414"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v4414"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+corner_detail = 5
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lgbe1"]
 
@@ -15,6 +27,7 @@ offset_bottom = 458.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 tooltip_text = "Strength, endurance, and grit."
+theme_override_styles/panel = SubResource("StyleBoxFlat_v4414")
 script = ExtResource("1_ugieg")
 attribute = ExtResource("2_v4414")
 _attribute_icon = NodePath("AttributeIcon")
