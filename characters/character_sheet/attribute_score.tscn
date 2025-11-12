@@ -13,7 +13,7 @@ _color = NodePath("VBoxContainer/ColorRect")
 _icon = NodePath("Icon")
 _descriptor = NodePath("VBoxContainer/MarginContainer/Descriptor")
 _score = NodePath("VBoxContainer/AttributeInfo/Score")
-_tooltip_trigger = NodePath("VBoxContainer/AttributeInfo")
+_tooltip_trigger = NodePath("VBoxContainer/AttributeInfo/TooltipTrigger")
 metadata/_custom_type_script = "uid://c071oa3mjavbs"
 
 [node name="Icon" type="TextureRect" parent="."]
@@ -32,8 +32,12 @@ theme_override_constants/separation = 0
 [node name="AttributeInfo" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
 mouse_default_cursor_shape = 16
+
+[node name="TooltipTrigger" type="Node" parent="VBoxContainer/AttributeInfo" node_paths=PackedStringArray("remote_element_node")]
 script = ExtResource("3_ktfhn")
 origin = 3
+remote_element_node = NodePath("..")
+metadata/_custom_type_script = "uid://coqwnstoj346c"
 
 [node name="Score" type="RichTextLabel" parent="VBoxContainer/AttributeInfo"]
 layout_mode = 2

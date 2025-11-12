@@ -6,6 +6,7 @@ extends Resource
 @export var color: Color
 @export_multiline var details: String
 @export_multiline var stance_description: String
+@export_multiline var abilities: Array[String]
 
 func _to_string() -> String:
 	return descriptor

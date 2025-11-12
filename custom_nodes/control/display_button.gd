@@ -27,17 +27,35 @@ func disable() -> void:
 
 func set_font_colors(color: Color) -> void:
 	add_theme_color_override("font_color", color)
-	add_theme_color_override("font_disabled_color", color)
 	add_theme_color_override("font_pressed_color", color)
 	add_theme_color_override("font_hover_color", color)
+	add_theme_color_override("font_hover_pressed_color", color)
+	add_theme_color_override("font_disabled_color", color.darkened(0.75) * Color(1.0, 1.0, 1.0, 0.5))
 	add_theme_color_override("font_outline_color", color.darkened(0.75))
 
 func remove_font_colors() -> void:
 	remove_theme_color_override("font_color")
-	remove_theme_color_override("font_disabled_color")
 	remove_theme_color_override("font_pressed_color")
 	remove_theme_color_override("font_hover_color")
+	remove_theme_color_override("font_hover_pressed_color")
+	remove_theme_color_override("font_disabled_color")
 	remove_theme_color_override("font_outline_color")
+
+func set_icon_colors(color: Color) -> void:
+	add_theme_color_override("icon_normal_color", color)
+	add_theme_color_override("icon_focus_color", color)
+	add_theme_color_override("icon_pressed_color", color)
+	add_theme_color_override("icon_hover_color", color)
+	add_theme_color_override("icon_hover_pressed_color", color)
+	add_theme_color_override("icon_disabled_color", color * Color(1.0, 1.0, 1.0, 0.4))
+
+func remove_icon_colors() -> void:
+	remove_theme_color_override("icon_normal_color")
+	remove_theme_color_override("icon_focus_color")
+	remove_theme_color_override("icon_pressed_color")
+	remove_theme_color_override("icon_hover_color")
+	remove_theme_color_override("icon_hover_pressed_color")
+	remove_theme_color_override("icon_disabled_color")
 
 func set_button_highlight_colors(color: Color, additional_highlight: Color = Color(0.25, 0.25, 0.25, 0.0)) -> void:
 	remove_button_highlight_colors()
