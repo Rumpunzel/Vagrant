@@ -11,7 +11,6 @@ extends PageEntry
 @export var _description: TypingLabel
 @export var _choices: Container
 @export var _breath_dice_selection: BreathDiceSelection
-@export var _breath_dice_collapsible_container: CollapsibleContainer
 @export var _dialog_button: PackedScene
 
 var _selected_story_decision: StoryDecision
@@ -20,27 +19,28 @@ var _save_request: SaveRequest :
 	set(new_save_request):
 		_save_request = new_save_request
 		if not _save_request:
-			if not _fight_request: _breath_dice_collapsible_container.close_tween()
+			if not _fight_request: _breath_dice_selection.hide()
 			return
 		_breath_dice_selection.request_save(_save_request)
 		await get_tree().process_frame
-		_breath_dice_collapsible_container.open_tween()
+		_breath_dice_selection.show()
 var _save_result: SaveResult
 
 var _fight_request: FightRequest :
 	set(new_fight_request):
 		_fight_request = new_fight_request
 		if not _fight_request:
-			if not _save_request: _breath_dice_collapsible_container.close_tween()
+			if not _save_request: _breath_dice_selection.hide()
 			return
 		_breath_dice_selection.request_fight(_fight_request)
 		await get_tree().process_frame
-		_breath_dice_collapsible_container.open_tween()
+		_breath_dice_selection.show()
 var _fight_result: FightResult
 
 func setup_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:
 	super.setup_page(story, characters, new_story_page)
 	_update_decisions(story_page.get_decisions(_story))
+	_breath_dice_selection.hide()
 
 func enter_page() -> void:
 	var title: String = story_page.get_page_title(_story)

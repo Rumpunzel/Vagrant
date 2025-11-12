@@ -1,11 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://cy2ymcfk2tejn"]
+[gd_scene load_steps=9 format=3 uid="uid://cy2ymcfk2tejn"]
 
 [ext_resource type="Script" uid="uid://7rp8e3m8fvuh" path="res://story/book/story_entry.gd" id="1_ywxnt"]
 [ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/book/dialog_button.tscn" id="2_ilo4x"]
 [ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://story/book/fade_vignette.gdshader" id="3_hn353"]
 [ext_resource type="Script" uid="uid://0inxk2dmireb" path="res://story/stage/background_rect.gd" id="4_h86xk"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="5_g4vxc"]
-[ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="6_myl6h"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/breath_dice_selection/breath_dice_selection.tscn" id="7_sl3wq"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ywxnt"]
@@ -32,8 +31,8 @@ script = ExtResource("1_ywxnt")
 _title = NodePath("MarginContainer/VBoxContainer/Title")
 _description = NodePath("MarginContainer/VBoxContainer/Description")
 _choices = NodePath("MarginContainer/VBoxContainer/Choices")
-_breath_dice_selection = NodePath("MarginContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection")
-_breath_dice_collapsible_container = NodePath("MarginContainer/VBoxContainer/CollapsibleContainer")
+_breath_dice_selection = NodePath("MarginContainer/VBoxContainer/BreathDiceSelection")
+_breath_dice_collapsible_container = NodePath("")
 _dialog_button = ExtResource("2_ilo4x")
 _fade_in_duration = 1.0
 _fade_out_duration = 0.5
@@ -99,26 +98,8 @@ metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer"]
-process_mode = 3
-editor_description = "
-			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
-			
-Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
-clip_contents = true
-custom_minimum_size = Vector2(425, 0)
+[node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer" instance=ExtResource("7_sl3wq")]
 layout_mode = 2
-size_flags_vertical = 0
-script = ExtResource("6_myl6h")
-starts_opened = false
-folding_direction_preset = 15
-sizing_constraint = 1
-sizing_node = NodePath("BreathDiceSelection")
-_preview_starts_opened = false
-metadata/_custom_type_script = "uid://btlh4wrv04rc3"
-
-[node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer/CollapsibleContainer" instance=ExtResource("7_sl3wq")]
-layout_mode = 0
 
 [connection signal="finished_typing" from="MarginContainer/VBoxContainer/Description" to="." method="_on_description_finished_typing"]
-[connection signal="confirmed" from="MarginContainer/VBoxContainer/CollapsibleContainer/BreathDiceSelection" to="." method="_on_breath_dice_selection_confirmed"]
+[connection signal="confirmed" from="MarginContainer/VBoxContainer/BreathDiceSelection" to="." method="_on_breath_dice_selection_confirmed"]
