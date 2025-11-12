@@ -9,6 +9,7 @@ signal confirmed
 @export_group("Configuration")
 @export var _portrait: TextureRect
 @export var _description: TypingLabel
+@export var _stance_selection_collapsible_container: CollapsibleContainer
 @export var _stance_selection_buttons: StanceSelectionButtons
 @export var _breath_dice_selection_buttons: BreathDiceSelectionButtons
 @export var _all_in_button: DisplayButton
@@ -35,16 +36,17 @@ var _dice_request: DiceRequest :
 func request_save(save_request: SaveRequest) -> void:
 	assert(save_request)
 	_dice_request = save_request
+	request_fight(null)
 	save_request.save_rolled.connect(_on_save_rolled)
 
 func request_fight(fight_request: FightRequest) -> void:
 	if not fight_request:
-		_stance_selection_buttons.hide()
+		_stance_selection_collapsible_container.close_tween()
 		return
 	assert(fight_request)
 	_dice_request = fight_request
-	_stance_selection_buttons.request_fight(fight_request)
-	_stance_selection_buttons.show()
+	_stance_selection_buttons.fight_request = fight_request
+	_stance_selection_collapsible_container.open_tween()
 	fight_request.fight_rolled.connect(_on_fight_rolled)
 
 func _enable_hud() -> void:

@@ -1,26 +1,61 @@
-[gd_scene load_steps=5 format=3 uid="uid://c07vtb4ob281a"]
+[gd_scene load_steps=9 format=3 uid="uid://c07vtb4ob281a"]
 
 [ext_resource type="Script" uid="uid://bns33lugkmi4j" path="res://story/stance_selection/stance_selection_buttons.gd" id="1_11rov"]
 [ext_resource type="PackedScene" uid="uid://mt5mbq7b5lu0" path="res://story/stance_selection/stance_selection.tscn" id="2_oo80h"]
-[ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="3_kixjq"]
+[ext_resource type="Texture2D" uid="uid://buvbksy3o46rm" path="res://icons/editor/hero_icons/chevron-left.svg" id="3_oph61"]
+[ext_resource type="PackedScene" uid="uid://btxanxg8xvqp" path="res://story/stance_selection/stance_selection_button.tscn" id="4_5kggu"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="6_p8nbh"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="7_8fhvr"]
+[ext_resource type="Texture2D" uid="uid://ctxdc156sk6t4" path="res://icons/editor/hero_icons/chevron-right.svg" id="7_p8nbh"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kixjq"]
 
-[node name="StanceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_buttons")]
-offset_right = 364.0
-offset_bottom = 197.0
+[node name="StanceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_stance_selection", "_previous", "_next")]
+offset_right = 258.0
+offset_bottom = 32.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kixjq")
 script = ExtResource("1_11rov")
-_buttons = NodePath("Buttons")
-_stance_selection_button = ExtResource("2_oo80h")
+_stance_selection = NodePath("MarginContainer/HBoxContainer/StanceSelection")
+_previous = NodePath("MarginContainer/HBoxContainer/Previous")
+_next = NodePath("MarginContainer/HBoxContainer/Next")
 metadata/_custom_type_script = "uid://bns33lugkmi4j"
 
-[node name="Buttons" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
-script = ExtResource("3_kixjq")
-_separation = 16
-metadata/_custom_type_script = "uid://dqkpaquatj11m"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Previous" parent="MarginContainer/HBoxContainer" instance=ExtResource("4_5kggu")]
+layout_mode = 2
+theme_override_colors/icon_normal_color = Color(0.6392157, 0.54901963, 0.2509804, 1)
+theme_override_colors/icon_focus_color = Color(0.6392157, 0.54901963, 0.2509804, 1)
+theme_override_colors/icon_pressed_color = Color(0.6392157, 0.54901963, 0.2509804, 1)
+theme_override_colors/icon_hover_color = Color(0.6392157, 0.54901963, 0.2509804, 1)
+theme_override_colors/icon_hover_pressed_color = Color(0.6392157, 0.54901963, 0.2509804, 1)
+theme_override_colors/icon_disabled_color = Color(0.6392157, 0.54901963, 0.2509804, 0.4)
+icon = ExtResource("3_oph61")
+attribute = ExtResource("6_p8nbh")
+
+[node name="StanceSelection" parent="MarginContainer/HBoxContainer" instance=ExtResource("2_oo80h")]
+layout_mode = 2
+size_flags_horizontal = 3
+attribute = ExtResource("6_p8nbh")
+
+[node name="Next" parent="MarginContainer/HBoxContainer" instance=ExtResource("4_5kggu")]
+layout_mode = 2
+theme_override_colors/icon_normal_color = Color(0.62352943, 0.14117648, 0.16078432, 1)
+theme_override_colors/icon_focus_color = Color(0.62352943, 0.14117648, 0.16078432, 1)
+theme_override_colors/icon_pressed_color = Color(0.62352943, 0.14117648, 0.16078432, 1)
+theme_override_colors/icon_hover_color = Color(0.62352943, 0.14117648, 0.16078432, 1)
+theme_override_colors/icon_hover_pressed_color = Color(0.62352943, 0.14117648, 0.16078432, 1)
+theme_override_colors/icon_disabled_color = Color(0.62352943, 0.14117648, 0.16078432, 0.4)
+icon = ExtResource("7_p8nbh")
+attribute = ExtResource("7_8fhvr")
+
+[connection signal="pressed" from="MarginContainer/HBoxContainer/Previous" to="." method="_on_previous_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/Next" to="." method="_on_next_pressed"]

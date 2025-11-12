@@ -33,10 +33,10 @@ theme_override_constants/separation = 0
 layout_mode = 2
 mouse_default_cursor_shape = 16
 
-[node name="TooltipTrigger" type="Node" parent="VBoxContainer/AttributeInfo" node_paths=PackedStringArray("remote_element_node")]
+[node name="TooltipTrigger" type="Node" parent="VBoxContainer/AttributeInfo" node_paths=PackedStringArray("trigger_node")]
 script = ExtResource("3_ktfhn")
+trigger_node = NodePath("..")
 origin = 3
-remote_element_node = NodePath("..")
 metadata/_custom_type_script = "uid://coqwnstoj346c"
 
 [node name="Score" type="RichTextLabel" parent="VBoxContainer/AttributeInfo"]

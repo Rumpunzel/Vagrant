@@ -22,8 +22,8 @@ shader_parameter/right_clip = 0.0
 
 [node name="StoryEntry" type="PanelContainer" node_paths=PackedStringArray("_title", "_description", "_choices", "_breath_dice_selection", "_breath_dice_collapsible_container", "_background", "_body_container")]
 custom_minimum_size = Vector2(0, 256)
-offset_right = 203.0
-offset_bottom = 256.0
+offset_right = 676.0
+offset_bottom = 546.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 script = ExtResource("1_ywxnt")
@@ -33,12 +33,10 @@ _choices = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/C
 _breath_dice_selection = NodePath("MarginContainer/VBoxContainer/HBoxContainer/CollapsibleContainer/BreathDiceSelection")
 _breath_dice_collapsible_container = NodePath("MarginContainer/VBoxContainer/HBoxContainer/CollapsibleContainer")
 _dialog_button = ExtResource("2_ilo4x")
-_entry_size = null
 _fade_in_duration = 256.0
 _fade_out_duration = 0.1
 _fade_out_delay = 1.0
 _dice_fade_out_delay = 0.5
-_past_modulate = 3.0
 _background = NodePath("Background")
 _body_container = NodePath("MarginContainer")
 metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
@@ -119,8 +117,9 @@ editor_description = "
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 clip_contents = true
+custom_minimum_size = Vector2(425, 375)
 layout_mode = 2
-size_flags_horizontal = 8
+size_flags_horizontal = 4
 size_flags_vertical = 0
 script = ExtResource("6_myl6h")
 starts_opened = false
