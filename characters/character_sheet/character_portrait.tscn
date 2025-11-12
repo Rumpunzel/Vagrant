@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://buthtgmdftvn7"]
+[gd_scene load_steps=12 format=3 uid="uid://buthtgmdftvn7"]
 
 [ext_resource type="Script" uid="uid://c3fmgxqai1l4p" path="res://characters/character_sheet/character_portrait.gd" id="1_mykuh"]
 [ext_resource type="Material" uid="uid://b852rmgnfrqr8" path="res://characters/character_sheet/portrait_vignette.tres" id="2_3lp8p"]
@@ -7,6 +7,86 @@
 [ext_resource type="PackedScene" uid="uid://cgl4tskvsu25d" path="res://story/breath_dice_selection/breath_dice.tscn" id="5_lpl5g"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lpl5g"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lpl5g"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.09985284, 0.09985284, 0.09985284, 0)
+border_width_left = 32
+border_width_top = 32
+border_width_right = 32
+border_width_bottom = 32
+border_color = Color(0.101960786, 0.101960786, 0.101960786, 0.6)
+border_blend = true
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mm3k5"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.6)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmv0y"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.225, 0.225, 0.225, 0.6)
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_22lan"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1, 0.1, 0.1, 0.3)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3lp8p"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 0.75)
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+corner_detail = 5
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
 
 [node name="CharacterPortrait" type="PanelContainer" node_paths=PackedStringArray("_button", "_portrait", "_breath_dice")]
 offset_right = 352.0
@@ -21,6 +101,11 @@ metadata/_custom_type_script = "uid://c3fmgxqai1l4p"
 [node name="Button" type="Button" parent="."]
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_lpl5g")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_mm3k5")
+theme_override_styles/hover = SubResource("StyleBoxFlat_mmv0y")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_22lan")
+theme_override_styles/focus = SubResource("StyleBoxFlat_3lp8p")
 toggle_mode = true
 script = ExtResource("2_lpl5g")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
