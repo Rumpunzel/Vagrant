@@ -15,11 +15,19 @@ _buttons = NodePath("Buttons")
 _breath_dice_selection_group = ExtResource("2_3dl60")
 metadata/_custom_type_script = "uid://7mksap2q7pd0"
 
-[node name="Buttons" type="MarginContainer" parent="."]
+[node name="Buttons" type="MarginContainer" parent="." node_paths=PackedStringArray("_container_root")]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("3_35nxq")
+_element_size = 0.0
+_container_root = NodePath(".")
 metadata/_custom_type_script = "uid://dqkpaquatj11m"
+
+[connection signal="toggled" from="Buttons/@HBoxContainer@53305/BreathDiceSelectionButtonGroup/@VBoxContainer@53307/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/BreathDiceSelectionButtonGroup/@VBoxContainer@53307/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Buttons/@HBoxContainer@53305/@MarginContainer@53310/@VBoxContainer@53309/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/@MarginContainer@53310/@VBoxContainer@53309/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Buttons/@HBoxContainer@53305/@MarginContainer@53313/@VBoxContainer@53312/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/@MarginContainer@53313/@VBoxContainer@53312/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Buttons/@HBoxContainer@53305/@MarginContainer@53316/@VBoxContainer@53315/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/@MarginContainer@53316/@VBoxContainer@53315/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Buttons/@HBoxContainer@53305/@MarginContainer@53319/@VBoxContainer@53318/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/@MarginContainer@53319/@VBoxContainer@53318/BreathDieSelectionButton" method="_on_toggled"]

@@ -1,6 +1,6 @@
 @tool
 class_name FlexContainer
-extends Container
+extends MarginContainer
 
 enum Direction {
 	LEFT_TO_RIGHT,
@@ -10,8 +10,10 @@ enum Direction {
 }
 
 @export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var _element_size: float = 64.0
-@export_range(0, 64, 1, "suffix:px") var _separation: int = 4
+@export_range(-64, 64, 1, "suffix:px") var _separation: int = 4
 @export var _fill: bool = true
+@export var _container_root: Control = self
+@export var _container_index_in_root: int = -1
 @export var _direction: Direction = Direction.LEFT_TO_RIGHT :
 	set(new_direction):
 		if new_direction == _direction: return
@@ -66,4 +68,6 @@ func _setup() -> void:
 	_box_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_box_container.add_theme_constant_override("separation", _separation)
 	for element: Control in elements: add(element)
-	add_child(_box_container)
+	var container_root: Control = _container_root if _container_root else self
+	container_root.add_child(_box_container)
+	if _container_index_in_root >= 0: container_root.move_child(_box_container, _container_index_in_root)

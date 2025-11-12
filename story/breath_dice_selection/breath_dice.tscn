@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3 uid="uid://cgl4tskvsu25d"]
+
+[ext_resource type="Script" uid="uid://bn37eojjhi2s6" path="res://story/breath_dice_selection/breath_dice.gd" id="1_66ain"]
+[ext_resource type="PackedScene" uid="uid://bgdje6c0bdu1a" path="res://story/breath_dice_selection/breath_dice_group.tscn" id="2_66ain"]
+[ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="3_3irxn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_35nxq"]
+
+[node name="BreathDice" type="PanelContainer" node_paths=PackedStringArray("_dice")]
+offset_right = 416.0
+offset_bottom = 125.0
+mouse_filter = 2
+mouse_behavior_recursive = 1
+theme_override_styles/panel = SubResource("StyleBoxEmpty_35nxq")
+script = ExtResource("1_66ain")
+_dice = NodePath("Dice")
+_breath_dice_group = ExtResource("2_66ain")
+metadata/_custom_type_script = "uid://bn37eojjhi2s6"
+
+[node name="Dice" type="MarginContainer" parent="." node_paths=PackedStringArray("_container_root")]
+layout_mode = 2
+mouse_filter = 2
+mouse_behavior_recursive = 1
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+script = ExtResource("3_3irxn")
+_element_size = 0.0
+_container_root = NodePath(".")
+metadata/_custom_type_script = "uid://dqkpaquatj11m"
+
+[connection signal="toggled" from="Dice/@HBoxContainer@130673/@MarginContainer@57848/@VBoxContainer@57847/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/@MarginContainer@57848/@VBoxContainer@57847/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Dice/@HBoxContainer@130673/@MarginContainer@57845/@VBoxContainer@57844/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/@MarginContainer@57845/@VBoxContainer@57844/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Dice/@HBoxContainer@130673/@MarginContainer@57842/@VBoxContainer@57841/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/@MarginContainer@57842/@VBoxContainer@57841/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Dice/@HBoxContainer@130673/@MarginContainer@57839/@VBoxContainer@57838/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/@MarginContainer@57839/@VBoxContainer@57838/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Dice/@HBoxContainer@130673/BreathDiceSelectionButtonGroup/@VBoxContainer@57836/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/BreathDiceSelectionButtonGroup/@VBoxContainer@57836/BreathDieSelectionButton" method="_on_toggled"]

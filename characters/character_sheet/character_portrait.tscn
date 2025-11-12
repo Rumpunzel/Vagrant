@@ -1,54 +1,54 @@
-[gd_scene load_steps=8 format=3 uid="uid://buthtgmdftvn7"]
+[gd_scene load_steps=7 format=3 uid="uid://buthtgmdftvn7"]
 
 [ext_resource type="Script" uid="uid://c3fmgxqai1l4p" path="res://characters/character_sheet/character_portrait.gd" id="1_mykuh"]
 [ext_resource type="Material" uid="uid://b852rmgnfrqr8" path="res://characters/character_sheet/portrait_vignette.tres" id="2_3lp8p"]
 [ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="2_lpl5g"]
 [ext_resource type="Texture2D" uid="uid://bvcyfc8odceli" path="res://assets/portraits/HE-MF-DW-F104/Small.png" id="3_mykuh"]
-[ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/breath_dice_selection/breath_dice_selection_buttons.tscn" id="5_h3ihw"]
+[ext_resource type="PackedScene" uid="uid://cgl4tskvsu25d" path="res://story/breath_dice_selection/breath_dice.tscn" id="5_lpl5g"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lpl5g"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mykuh"]
-
-[node name="CharacterPortrait" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_breath_dice")]
-offset_right = 427.0
-offset_bottom = 502.314
+[node name="CharacterPortrait" type="PanelContainer" node_paths=PackedStringArray("_button", "_portrait", "_breath_dice")]
+offset_right = 352.0
+offset_bottom = 412.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lpl5g")
 script = ExtResource("1_mykuh")
-_portrait = NodePath("Portrait")
+_button = NodePath("DisplayButton")
+_portrait = NodePath("MarginContainer/Portrait")
 _breath_dice = NodePath("MarginContainer/VBoxContainer/BreathDice")
 metadata/_custom_type_script = "uid://c3fmgxqai1l4p"
 
 [node name="DisplayButton" type="Button" parent="."]
 layout_mode = 2
-mouse_default_cursor_shape = 16
+mouse_default_cursor_shape = 2
 toggle_mode = true
 script = ExtResource("2_lpl5g")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
-
-[node name="Portrait" type="TextureRect" parent="."]
-material = ExtResource("2_3lp8p")
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("3_mykuh")
-expand_mode = 3
-stretch_mode = 5
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2
 
+[node name="Portrait" type="TextureRect" parent="MarginContainer"]
+material = ExtResource("2_3lp8p")
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_mykuh")
+expand_mode = 5
+stretch_mode = 5
+
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 8
 
+[node name="BreathDice" parent="MarginContainer/VBoxContainer" instance=ExtResource("5_lpl5g")]
+layout_mode = 2
+
 [node name="Wounds" type="LineEdit" parent="MarginContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 8
 placeholder_text = "Wounds"
 alignment = 1
 
-[node name="BreathDice" parent="MarginContainer/VBoxContainer" instance=ExtResource("5_h3ihw")]
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxEmpty_mykuh")
+[connection signal="pressed" from="DisplayButton" to="." method="_on_button_pressed"]

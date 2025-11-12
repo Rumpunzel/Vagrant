@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://c4kqwadk1w71t"]
+
+[ext_resource type="Texture2D" uid="uid://sue7comyk6aq" path="res://icons/dice/d8.png" id="1_rtq5t"]
+[ext_resource type="Script" uid="uid://dlx44ojm2k31q" path="res://story/breath_dice_selection/breath_die_display.gd" id="2_ccr72"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="3_6wbwr"]
+
+[node name="BreathDieDisplay" type="TextureRect"]
+offset_right = 64.0
+offset_bottom = 64.0
+mouse_filter = 2
+texture = ExtResource("1_rtq5t")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("2_ccr72")
+_die_type = ExtResource("3_6wbwr")
+_alive_modulate = Color(1, 1, 1, 0.75)
+_exhausted_modulate = Color(1, 1, 1, 0.25)
+metadata/_custom_type_script = "uid://dlx44ojm2k31q"

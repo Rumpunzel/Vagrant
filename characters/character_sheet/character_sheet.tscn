@@ -20,7 +20,7 @@ _portrait = NodePath("Portrait")
 _name = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Name")
 _title = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Title")
 _attributes = NodePath("MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/CharacterAttributesPanel")
-_breath_dice = NodePath("MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/BreathDice")
+_breath_dice = NodePath("MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/BreathDiceSelectionButtons")
 _ability_labels = NodePath("MarginContainer/VBoxContainer/VBoxContainer/AbilityLabels")
 metadata/_custom_type_script = "uid://dkwi26f6nf1xj"
 
@@ -83,7 +83,7 @@ layout_mode = 2
 placeholder_text = "Wounds"
 alignment = 1
 
-[node name="BreathDice" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
+[node name="BreathDiceSelectionButtons" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
 layout_mode = 2
 
 [node name="AbilityLabels" parent="MarginContainer/VBoxContainer/VBoxContainer" instance=ExtResource("5_davb4")]
