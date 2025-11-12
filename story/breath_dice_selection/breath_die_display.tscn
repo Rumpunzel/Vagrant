@@ -13,6 +13,4 @@ expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2_ccr72")
 _die_type = ExtResource("3_6wbwr")
-_alive_modulate = Color(1, 1, 1, 0.75)
-_exhausted_modulate = Color(1, 1, 1, 0.25)
 metadata/_custom_type_script = "uid://dlx44ojm2k31q"

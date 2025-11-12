@@ -113,7 +113,6 @@ script = ExtResource("6_myl6h")
 starts_opened = false
 folding_direction_preset = 15
 sizing_constraint = 1
-auto_update_size = 0
 sizing_node = NodePath("BreathDiceSelection")
 _preview_starts_opened = false
 metadata/_custom_type_script = "uid://btlh4wrv04rc3"

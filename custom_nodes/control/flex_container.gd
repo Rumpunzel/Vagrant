@@ -22,10 +22,8 @@ enum Direction {
 
 var _box_container: BoxContainer
 
-func _init() -> void:
-	_setup()
-
 func add(element: Control) -> void:
+	if not _box_container: _setup()
 	assert(_box_container)
 	if _element_size > 0.0: element.custom_minimum_size = Vector2(_element_size, _element_size)
 	if _fill:
@@ -40,6 +38,7 @@ func add(element: Control) -> void:
 		_: assert(false, "Does not exist")
 
 func clear() -> void:
+	if not _box_container: return
 	assert(_box_container)
 	for element: Control in _box_container.get_children():
 		_box_container.remove_child(element)
@@ -54,11 +53,12 @@ func for_each_element(callable: Callable) -> void:
 	for element: Control in _box_container.get_children(): callable.call(element)
 
 func _setup() -> void:
+	var container_root: Control = _container_root if _container_root else self
 	var elements: Array[Control] = []
 	if _box_container:
 		elements = get_elements()
 		for_each_element(func(element: Control) -> void: _box_container.remove_child(element))
-		remove_child(_box_container)
+		container_root.remove_child(_box_container)
 		_box_container.queue_free()
 	match _direction:
 		Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT: _box_container = HBoxContainer.new()
@@ -67,7 +67,6 @@ func _setup() -> void:
 	_box_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_box_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_box_container.add_theme_constant_override("separation", _separation)
-	for element: Control in elements: add(element)
-	var container_root: Control = _container_root if _container_root else self
 	container_root.add_child(_box_container)
+	for element: Control in elements: add(element)
 	if _container_index_in_root >= 0: container_root.move_child(_box_container, _container_index_in_root)

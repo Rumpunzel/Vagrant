@@ -45,13 +45,14 @@ vertical_scroll_mode = 4
 script = ExtResource("3_evqjp")
 metadata/_custom_type_script = "uid://d1ksax687j5bd"
 
-[node name="Pages" type="MarginContainer" parent="MarginContainer/HBoxContainer/ScrollContainer"]
+[node name="Pages" type="MarginContainer" parent="MarginContainer/HBoxContainer/ScrollContainer" node_paths=PackedStringArray("_container_root")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("3_rpy1c")
 _element_size = 0.0
 _fill = false
+_container_root = NodePath(".")
 _direction = 2
 
 [connection signal="page_size_changed" from="." to="MarginContainer/HBoxContainer/ScrollContainer" method="scroll_vertical_to_end"]

@@ -18,6 +18,10 @@ extends PanelContainer
 @export var _breath_dice: BreathDiceSelectionButtons
 @export var _ability_labels: AbilityLabels
 
+func _ready() -> void:
+	if Engine.is_editor_hint(): return
+	visible = character != null
+
 func _update() -> void:
 	name = _character_profile.name
 	_portrait.texture = _character_profile.portrait
@@ -49,6 +53,19 @@ func _set_character(new_character: Character) -> void:
 
 func _on_character_profile_changed(character_profile: CharacterProfile) -> void:
 	_character_profile = character_profile
+
+func _on_close_pressed() -> void:
+	hide()
+
+func _on_pop_out_pressed() -> void:
+	pass # Replace with function body.
+
+func _on_character_selected(selected_character: Character, source: Control) -> void:
+	if selected_character:
+		character = selected_character
+		global_position.x = source.global_position.x
+		show()
+	else: hide()
 
 func _on_save_dialog_file_selected(path: String) -> void:
 	ResourceSaver.save(character.character_profile, path, ResourceSaver.FLAG_CHANGE_PATH)

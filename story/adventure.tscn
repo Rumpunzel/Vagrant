@@ -19,7 +19,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 32
 script = ExtResource("1_bnng7")
-_title = NodePath("HBoxContainer/Title")
+_title = NodePath("HBoxContainer/VBoxContainer/Title")
 _story = NodePath("Story")
 _characters = NodePath("Characters")
 _story_book = NodePath("HBoxContainer/StoryBook")
@@ -40,18 +40,10 @@ theme_override_constants/separation = 32
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="CharacterSheet" parent="HBoxContainer/VBoxContainer" instance=ExtResource("4_2poxt")]
-layout_mode = 2
-size_flags_vertical = 3
-_character_profile = ExtResource("7_pqpya")
-
-[node name="CharacterPortraits" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("characters") instance=ExtResource("7_nlwo0")]
-layout_mode = 2
-characters = NodePath("../../../Characters")
-
-[node name="Title" type="RichTextLabel" parent="HBoxContainer"]
+[node name="Title" type="RichTextLabel" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
@@ -72,6 +64,21 @@ visible_characters_behavior = 1
 script = ExtResource("4_ipvic")
 _characters_per_minute = 1000.0
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
+
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="CharacterSheet" parent="HBoxContainer/VBoxContainer" instance=ExtResource("4_2poxt")]
+layout_mode = 2
+size_flags_horizontal = 0
+_character_profile = ExtResource("7_pqpya")
+
+[node name="CharacterPortraits" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("characters") instance=ExtResource("7_nlwo0")]
+layout_mode = 2
+size_flags_horizontal = 0
+characters = NodePath("../../../Characters")
 
 [node name="StoryBook" parent="HBoxContainer" instance=ExtResource("5_p35e8")]
 custom_minimum_size = Vector2(512, 0)
@@ -105,5 +112,5 @@ metadata/_tab_index = 0
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 
-[connection signal="character_selected" from="HBoxContainer/VBoxContainer/CharacterPortraits" to="HBoxContainer/VBoxContainer/CharacterSheet" method="_set_character"]
+[connection signal="character_selected" from="HBoxContainer/VBoxContainer/CharacterPortraits" to="HBoxContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
 [connection signal="page_entered" from="HBoxContainer/StoryBook" to="." method="_on_story_book_page_entered"]

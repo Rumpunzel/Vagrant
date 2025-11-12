@@ -18,12 +18,12 @@ tooltip_text = "Strength, endurance, and grit."
 script = ExtResource("1_ugieg")
 attribute = ExtResource("2_v4414")
 _attribute_icon = NodePath("AttributeIcon")
-_attribute_score = NodePath("MarginContainer/VBoxContainer/AttributeScore")
+_attribute_score = NodePath("VBoxContainer/AttributeScore")
 _button = NodePath("Button")
-_descriptor = NodePath("MarginContainer/VBoxContainer/Descriptor")
-_details = NodePath("MarginContainer/VBoxContainer/Details")
-_score = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Score")
-_hide_on_collapse = [NodePath("MarginContainer/VBoxContainer/AttributeScore")]
+_descriptor = NodePath("VBoxContainer/MarginContainer2/Descriptor")
+_details = NodePath("VBoxContainer/MarginContainer/VBoxContainer/Details")
+_score = NodePath("VBoxContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Score")
+_hide_on_collapse = [NodePath("VBoxContainer/AttributeScore")]
 _show_on_collapse = [NodePath("AttributeIcon")]
 metadata/_custom_type_script = "uid://cg0o8nr4etsys"
 
@@ -43,29 +43,37 @@ layout_mode = 2
 texture = ExtResource("6_lgbe1")
 attribute = ExtResource("2_v4414")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
-mouse_filter = 2
+theme_override_constants/margin_bottom = 0
 
-[node name="Descriptor" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Descriptor" type="Label" parent="VBoxContainer/MarginContainer2"]
 layout_mode = 2
 theme_type_variation = &"HeaderLarge"
 text = "Guts"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AttributeScore" parent="MarginContainer/VBoxContainer" instance=ExtResource("6_v4414")]
+[node name="AttributeScore" parent="VBoxContainer" instance=ExtResource("6_v4414")]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 mouse_behavior_recursive = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lgbe1")
 
-[node name="Details" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Details" type="RichTextLabel" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 mouse_filter = 2
@@ -76,15 +84,15 @@ scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Score" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
+[node name="Score" type="RichTextLabel" parent="VBoxContainer/MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 mouse_filter = 2
