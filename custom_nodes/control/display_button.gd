@@ -30,7 +30,7 @@ func set_font_colors(color: Color) -> void:
 	add_theme_color_override("font_pressed_color", color)
 	add_theme_color_override("font_hover_color", color)
 	add_theme_color_override("font_hover_pressed_color", color)
-	add_theme_color_override("font_disabled_color", color.darkened(0.75) * Color(1.0, 1.0, 1.0, 0.5))
+	add_theme_color_override("font_disabled_color", color * Color(1.0, 1.0, 1.0, 0.5))
 	add_theme_color_override("font_outline_color", color.darkened(0.75))
 
 func remove_font_colors() -> void:
