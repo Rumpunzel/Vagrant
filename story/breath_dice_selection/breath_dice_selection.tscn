@@ -92,6 +92,7 @@ script = ExtResource("6_lcgf6")
 starts_opened = false
 folding_direction_preset = 14
 sizing_constraint = 1
+auto_update_size = 1
 sizing_node = NodePath("StanceSelectionButtons")
 metadata/_custom_type_script = "uid://btlh4wrv04rc3"
 

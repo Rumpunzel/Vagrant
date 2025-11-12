@@ -61,6 +61,8 @@ vertical_alignment = 1
 [node name="AttributeScore" parent="MarginContainer/VBoxContainer" instance=ExtResource("6_v4414")]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
+mouse_behavior_recursive = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lgbe1")
 
 [node name="Details" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]

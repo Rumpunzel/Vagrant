@@ -65,5 +65,5 @@ func update_page_log(story_page: StoryPage) -> StoryPage:
 	current_page = story_page
 	return current_page
 
-func _on_story_book_page_entered(story_page: StoryPage) -> void:
-	story_book_page_entered.emit(story_page, _story)
+func _on_story_book_page_entered(page_entry: PageEntry) -> void:
+	story_book_page_entered.emit(page_entry.get_story_page(), _story)

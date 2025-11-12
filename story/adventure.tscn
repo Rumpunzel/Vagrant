@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=12 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="2_kq5yh"]
@@ -7,8 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://characters/character_sheet/character_sheet.tscn" id="4_2poxt"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="4_5djeo"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="4_ipvic"]
+[ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="4_q7j6d"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://story/book/story_book.tscn" id="5_p35e8"]
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="6_ded50"]
+[ext_resource type="PackedScene" uid="uid://buthtgmdftvn7" path="res://characters/character_sheet/character_portrait.tscn" id="7_q7j6d"]
 
 [node name="Adventure" type="VBoxContainer" node_paths=PackedStringArray("_title", "_story", "_characters", "_story_book")]
 anchors_preset = 15
@@ -21,7 +23,7 @@ script = ExtResource("1_bnng7")
 _title = NodePath("HBoxContainer/VBoxContainer/Title")
 _story = NodePath("Story")
 _characters = NodePath("Characters")
-_story_book = NodePath("HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/StoryBook")
+_story_book = NodePath("HBoxContainer/VBoxContainer/StoryBook")
 metadata/_custom_type_script = "uid://cjud36jst3ajk"
 
 [node name="Story" type="Node" parent="."]
@@ -37,24 +39,69 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 
-[node name="CharacterSheets" type="TabContainer" parent="HBoxContainer" node_paths=PackedStringArray("characters")]
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
+visible = false
 layout_mode = 2
-size_flags_vertical = 3
-tab_alignment = 1
+size_flags_horizontal = 3
+
+[node name="CollapsibleContainer" type="Control" parent="HBoxContainer/VBoxContainer2"]
+process_mode = 3
+editor_description = "
+			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
+			
+Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
+clip_contents = true
+custom_minimum_size = Vector2(352, 536)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+script = ExtResource("4_q7j6d")
+folding_direction_preset = 15
+sizing_constraint = 2
+sizing_node = NodePath("CharacterSheets")
+metadata/_custom_type_script = "uid://btlh4wrv04rc3"
+
+[node name="CharacterSheets" type="TabContainer" parent="HBoxContainer/VBoxContainer2/CollapsibleContainer" node_paths=PackedStringArray("characters")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 current_tab = 0
-drag_to_rearrange_enabled = true
+tabs_visible = false
+use_hidden_tabs_for_min_size = true
+deselect_enabled = true
 script = ExtResource("3_4lj7w")
-characters = NodePath("../../Characters")
+characters = NodePath("../../../../Characters")
 _character_sheet = ExtResource("4_2poxt")
 metadata/_custom_type_script = "uid://dlr4addkwoige"
 
-[node name="CharacterSheet" parent="HBoxContainer/CharacterSheets" instance=ExtResource("4_2poxt")]
+[node name="CharacterSheet" parent="HBoxContainer/VBoxContainer2/CollapsibleContainer/CharacterSheets" instance=ExtResource("4_2poxt")]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2"]
+visible = false
+layout_mode = 2
+
+[node name="CharacterPortrait" parent="HBoxContainer/VBoxContainer2/HBoxContainer" instance=ExtResource("7_q7j6d")]
+layout_mode = 2
+
+[node name="CharacterPortrait2" parent="HBoxContainer/VBoxContainer2/HBoxContainer" instance=ExtResource("7_q7j6d")]
+layout_mode = 2
+
+[node name="CharacterPortrait3" parent="HBoxContainer/VBoxContainer2/HBoxContainer" instance=ExtResource("7_q7j6d")]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
 
 [node name="Title" type="RichTextLabel" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -77,40 +124,36 @@ script = ExtResource("4_ipvic")
 _characters_per_minute = 1000.0
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="VSplitContainer" type="VSplitContainer" parent="HBoxContainer/VBoxContainer"]
+[node name="StoryBook" parent="HBoxContainer/VBoxContainer" instance=ExtResource("5_p35e8")]
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VSplitContainer" type="VSplitContainer" parent="HBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 drag_area_highlight_in_editor = true
 
-[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer/VSplitContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VSplitContainer"]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="StoryBook" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer" instance=ExtResource("5_p35e8")]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="HSplitContainer" type="HSplitContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer"]
-visible = false
+[node name="HSplitContainer" type="HSplitContainer" parent="HBoxContainer/VSplitContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="GameInfo" type="TabContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer"]
+[node name="GameInfo" type="TabContainer" parent="HBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="DiceLog" type="MarginContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer/GameInfo"]
+[node name="DiceLog" type="MarginContainer" parent="HBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer/GameInfo"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="DiceLog" parent="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer/GameInfo/DiceLog" instance=ExtResource("4_5djeo")]
+[node name="DiceLog" parent="HBoxContainer/VSplitContainer/VBoxContainer/HSplitContainer/GameInfo/DiceLog" instance=ExtResource("4_5djeo")]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 
-[connection signal="page_entered" from="HBoxContainer/VBoxContainer/VSplitContainer/VBoxContainer/StoryBook" to="." method="_on_story_book_page_entered"]
+[connection signal="page_entered" from="HBoxContainer/VBoxContainer/StoryBook" to="." method="_on_story_book_page_entered"]

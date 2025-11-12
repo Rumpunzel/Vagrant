@@ -7,6 +7,7 @@ extends PanelContainer
 		attribute = new_attribute
 		if not is_node_ready(): await ready
 		_icon.attribute = attribute
+		_score.text = ""
 
 @export_group("Configuration")
 @export var _icon: AttributeIcon
@@ -18,7 +19,3 @@ var score: AttributeScore :
 		score = new_score
 		_score.text = "%d" % score.get_score()
 		_tooltip_trigger.tooltip_strings = [score.get_details()]
-
-func _ready() -> void:
-	if not Engine.is_editor_hint(): return
-	_score.text = "7"
