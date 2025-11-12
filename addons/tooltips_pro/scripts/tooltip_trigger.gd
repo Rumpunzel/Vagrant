@@ -14,6 +14,8 @@ extends Node
 ## The [Tooltip] Template path to use for the instantiated [Tooltip]. If empty, 
 ## the default [Tooltip] Template (first one in the directory) will be used.
 @export var tooltip_template_path: String
+## The [Node] that will trigger the mouse and focus events
+@export var trigger_node: Node = self
 ## Whether the tooltip is triggered on the signal [code]mouse_entered[/code], 
 ## [code]focus_entered[/code], or both.
 @export var trigger_mode: TooltipEnums.TriggerMode = TooltipEnums.TriggerMode.MOUSE_AND_FOCUS
@@ -108,7 +110,7 @@ func _on_mouse_entered_2d() -> void:
 	if state != TooltipEnums.TriggerState.READY:
 		return
 		
-	var selection_node := self as Node
+	var selection_node := trigger_node as Node
 	var screen_pos = selection_node.get_global_transform_with_canvas().origin
 	
 	state = TooltipEnums.TriggerState.INIT_MOUSE_ENTERED
@@ -119,7 +121,7 @@ func _on_mouse_entered_3d() -> void:
 	if state != TooltipEnums.TriggerState.READY:
 		return
 		
-	var selection_node := self as Node
+	var selection_node := trigger_node as Node
 	var camera = get_viewport().get_camera_3d()
 	if camera:
 		var screen_pos: Vector2i = camera.unproject_position(selection_node.global_position)
@@ -134,7 +136,7 @@ func _on_mouse_entered_3d() -> void:
 
 
 func init_signals() -> void:
-	control_node = get_node(".") as Control
+	control_node = get_node(trigger_node.get_path()) as Control
 	if control_node:
 		if(
 			trigger_mode == TooltipEnums.TriggerMode.MOUSE_AND_FOCUS or 
@@ -151,7 +153,7 @@ func init_signals() -> void:
 			
 		return
 
-	collision_object_2d_node = get_node(".") as CollisionObject2D
+	collision_object_2d_node = get_node(trigger_node.get_path()) as CollisionObject2D
 	if collision_object_2d_node:
 		if(
 			trigger_mode == TooltipEnums.TriggerMode.MOUSE_AND_FOCUS or 
@@ -169,7 +171,7 @@ func init_signals() -> void:
 			
 		return
 
-	var collision_object_3d_node = get_node(".") as CollisionObject3D
+	var collision_object_3d_node = get_node(trigger_node.get_path()) as CollisionObject3D
 	if collision_object_3d_node:
 		if(
 			trigger_mode == TooltipEnums.TriggerMode.MOUSE_AND_FOCUS or 
