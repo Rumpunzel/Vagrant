@@ -54,8 +54,15 @@ func type_text(new_text: String, erase_text_first: bool = false) -> void:
 		visible_characters = get_parsed_text().length()
 		_erase_previous_character()
 	else:
+		var same_start: int = 0
+		var index: int = 0
+		var parsed_text: String = get_parsed_text()
+		var parsed_text_to_type: String = _strip_bbcode(_text_to_type)
+		while index < text.length() and index < _text_to_type.length() and text.left(index) == _text_to_type.left(index):
+			if parsed_text.left(same_start) == parsed_text_to_type.left(same_start): same_start += 1
+			index += 1
 		text = _text_to_type
-		visible_characters = 0
+		visible_characters = same_start
 		_type_next_character()
 
 func set_text_normally(new_text: String = _text_to_type) -> void:
@@ -65,6 +72,11 @@ func set_text_normally(new_text: String = _text_to_type) -> void:
 	_typing_timer.stop()
 	_erasing_timer.stop()
 	finished_typing.emit()
+
+static func _strip_bbcode(source: String) -> String:
+	var regex: RegEx = RegEx.new()
+	regex.compile("\\[.*?\\]")
+	return regex.sub(source, "", true)
 
 func _type_next_character() -> void:
 	var parsed_text: String = get_parsed_text()
@@ -80,7 +92,7 @@ func _type_next_character() -> void:
 func _erase_previous_character() -> void:
 	var parsed_text: String = get_parsed_text()
 	var parsed_text_to_type: String = _strip_bbcode(_text_to_type)
-	var visible_previous_text: String = parsed_text.substr(0, visible_characters)
+	var visible_previous_text: String = parsed_text.left(visible_characters)
 	if parsed_text_to_type.begins_with(visible_previous_text):
 		finished_erasing.emit()
 		text = _text_to_type
@@ -90,8 +102,3 @@ func _erase_previous_character() -> void:
 	visible_characters -= 1
 	var erase_delay: float = 60.0 / _characters_per_minute / _erase_multiplier
 	_erasing_timer.start(erase_delay)
-
-func _strip_bbcode(source:String) -> String:
-	var regex: RegEx = RegEx.new()
-	regex.compile("\\[.+?\\]")
-	return regex.sub(source, "", true)
