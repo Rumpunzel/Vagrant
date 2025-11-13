@@ -1,10 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://cgl4tskvsu25d"]
+[gd_scene load_steps=6 format=3 uid="uid://cgl4tskvsu25d"]
 
 [ext_resource type="Script" uid="uid://bn37eojjhi2s6" path="res://story/breath_dice_selection/breath_dice.gd" id="1_66ain"]
 [ext_resource type="PackedScene" uid="uid://bgdje6c0bdu1a" path="res://story/breath_dice_selection/breath_dice_group.tscn" id="2_66ain"]
-[ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="3_3irxn"]
+[ext_resource type="Script" uid="uid://dfm6y6ow1f5e1" path="res://custom_nodes/control/flex_curve_container.gd" id="3_66ain"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_35nxq"]
+
+[sub_resource type="Curve" id="Curve_66ain"]
+_limits = [0.0, 24.0, 0.0, 4.0]
+_data = [Vector2(0, 8), 0.0, -12.0, 0, 0, Vector2(2, 0), 0.0, 0.0, 0, 0, Vector2(4, 8), 12.0, 0.0, 0, 0]
+point_count = 3
 
 [node name="BreathDice" type="PanelContainer" node_paths=PackedStringArray("_dice")]
 offset_right = 416.0
@@ -25,13 +30,8 @@ theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
-script = ExtResource("3_3irxn")
+script = ExtResource("3_66ain")
+_offset_curve = SubResource("Curve_66ain")
 _element_size = 0.0
-_container_root = NodePath(".")
-metadata/_custom_type_script = "uid://dqkpaquatj11m"
-
-[connection signal="toggled" from="Dice/@HBoxContainer@130673/@MarginContainer@57848/@VBoxContainer@57847/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/@MarginContainer@57848/@VBoxContainer@57847/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Dice/@HBoxContainer@130673/@MarginContainer@57845/@VBoxContainer@57844/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/@MarginContainer@57845/@VBoxContainer@57844/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Dice/@HBoxContainer@130673/@MarginContainer@57842/@VBoxContainer@57841/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/@MarginContainer@57842/@VBoxContainer@57841/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Dice/@HBoxContainer@130673/@MarginContainer@57839/@VBoxContainer@57838/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/@MarginContainer@57839/@VBoxContainer@57838/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Dice/@HBoxContainer@130673/BreathDiceSelectionButtonGroup/@VBoxContainer@57836/BreathDieSelectionButton" to="Dice/@HBoxContainer@130673/BreathDiceSelectionButtonGroup/@VBoxContainer@57836/BreathDieSelectionButton" method="_on_toggled"]
+_container_root = NodePath("")
+metadata/_custom_type_script = "uid://dfm6y6ow1f5e1"

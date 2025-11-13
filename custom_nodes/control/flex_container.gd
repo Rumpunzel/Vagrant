@@ -50,7 +50,7 @@ func get_elements() -> Array[Control]:
 	return elements
 
 func for_each_element(callable: Callable) -> void:
-	for element: Control in _box_container.get_children(): callable.call(element)
+	for element: Control in get_elements(): callable.call(element)
 
 func _setup() -> void:
 	var container_root: Control = _container_root if _container_root else self
@@ -67,6 +67,7 @@ func _setup() -> void:
 	_box_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_box_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_box_container.add_theme_constant_override("separation", _separation)
+	_box_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	container_root.add_child(_box_container)
 	for element: Control in elements: add(element)
 	if _container_index_in_root >= 0: container_root.move_child(_box_container, _container_index_in_root)

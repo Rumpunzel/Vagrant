@@ -13,7 +13,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ipvic"]
 
-[node name="Adventure" type="PanelContainer" node_paths=PackedStringArray("_title", "_story", "_characters", "_story_book")]
+[node name="Adventure" type="PanelContainer" node_paths=PackedStringArray("_story", "_characters", "_title", "_story_book")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -22,9 +22,9 @@ grow_vertical = 2
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_ipvic")
 script = ExtResource("1_bnng7")
-_title = NodePath("Title")
 _story = NodePath("Story")
 _characters = NodePath("Characters")
+_title = NodePath("Title")
 _story_book = NodePath("HBoxContainer/StoryBook")
 metadata/_custom_type_script = "uid://cjud36jst3ajk"
 
@@ -67,11 +67,7 @@ theme_override_constants/separation = 32
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
-
-[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-mouse_filter = 2
+alignment = 2
 
 [node name="CharacterSheet" parent="HBoxContainer/VBoxContainer" instance=ExtResource("4_2poxt")]
 layout_mode = 2
