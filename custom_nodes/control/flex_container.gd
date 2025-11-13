@@ -14,6 +14,7 @@ enum Direction {
 @export var _fill: bool = true
 @export var _container_root: Control = self
 @export var _container_index_in_root: int = -1
+@export var _alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_BEGIN
 @export var _direction: Direction = Direction.LEFT_TO_RIGHT :
 	set(new_direction):
 		if new_direction == _direction: return
@@ -64,6 +65,7 @@ func _setup() -> void:
 		Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT: _box_container = HBoxContainer.new()
 		Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP: _box_container = VBoxContainer.new()
 		_: assert(false, "Does not exist")
+	_box_container.alignment = _alignment
 	_box_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_box_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_box_container.add_theme_constant_override("separation", _separation)
