@@ -10,4 +10,4 @@ func to_save_request(protagonist: Character) -> SaveRequest:
 	return SaveRequest.new(protagonist, attribute, self)
 
 func to_dialog_button_text() -> String:
-	return "[color=#%s][%s][/color] %s" % [attribute.color.to_html(), attribute, super.to_dialog_button_text()]
+	return "%s %s" % [attribute.to_bbcode(), super.to_dialog_button_text()]
