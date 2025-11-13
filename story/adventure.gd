@@ -21,6 +21,8 @@ var current_page: StoryPage
 var _decision_log: Dictionary[StoryDecision, int] = { }
 # StorySaveDecision -> Array[SaveResult]
 var _save_decision_log: Dictionary[StorySaveDecision, Array]= { }
+# StoryFightDecision -> Array[FightResult]
+var _fight_decision_log: Dictionary[StoryFightDecision, Array]= { }
 # StoryPage -> int (how many times the page has been entered)
 var _page_log: Dictionary[StoryPage, int] = { }
 var _page_stack: Array[StoryPage] = [ ]
@@ -53,11 +55,18 @@ func update_save_decision_log(story_save_decision: StorySaveDecision, save_resul
 	_save_decision_log[story_save_decision] = save_results
 	return selected_how_many_times
 
+func update_fight_decision_log(story_fight_decision: StoryFightDecision, fight_result: FightResult) -> int:
+	var fight_results: Array[FightResult] = _fight_decision_log.get(story_fight_decision, [ ] as Array[FightResult])
+	fight_results.append(fight_result)
+	var selected_how_many_times: int = fight_results.size()
+	_fight_decision_log[story_fight_decision] = fight_results
+	return selected_how_many_times
+
 func update_page_log(story_page: StoryPage) -> StoryPage:
 	if story_page == null: story_page = _page_stack.pop_back()
-	elif current_page == story_page:
-		print_debug("Already on page: <%s>!" % current_page)
-		return
+	#elif current_page == story_page:
+		#print_debug("Already on page: <%s>!" % current_page)
+		#return
 	_page_log[story_page] = get_how_often_page_has_been_entered(story_page) + 1
 	for event: StoryPage in story_page.get_events(_story):
 		_page_log[event] = get_how_often_page_has_been_entered(event) + 1

@@ -17,7 +17,7 @@ extends PageEntry
 
 var _selected_story_decision: StoryDecision
 
-var _save_request: SaveRequest :
+var _save_request: SaveRequest:
 	set(new_save_request):
 		_save_request = new_save_request
 		if not _save_request:
@@ -28,7 +28,7 @@ var _save_request: SaveRequest :
 		_breath_dice_collapsible_container.open_tween()
 var _save_result: SaveResult
 
-var _fight_request: FightRequest :
+var _fight_request: FightRequest:
 	set(new_fight_request):
 		_fight_request = new_fight_request
 		if not _fight_request:
@@ -70,7 +70,7 @@ func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 	for story_decision: StoryDecision in story_decisions:
 		var dialog_button: DialogButton = _create_dialog_button(story_decision)
 		dialog_button.save_requested.connect(_on_save_requested)
-		dialog_button.fight_requsted.connect(_on_fight_requested)
+		dialog_button.fight_requested.connect(_on_fight_requested)
 	if story_decisions.is_empty():
 		_create_dialog_button(StoryDecision.get_continue())
 
