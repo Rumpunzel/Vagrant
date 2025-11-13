@@ -46,7 +46,8 @@ func request_fight(fight_request: FightRequest) -> void:
 		_stance_selection_collapsible_container.close_tween()
 		return
 	assert(fight_request)
-	_dice_request = fight_request
+	if not _dice_request: _stance_selection_collapsible_container.open()
+	_dice_request = fight_request  
 	_stance_selection_buttons.fight_request = fight_request
 	_stance_selection_collapsible_container.open_tween()
 	fight_request.fight_rolled.connect(_on_fight_rolled)

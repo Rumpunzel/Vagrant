@@ -20,6 +20,7 @@ var _current_page_entry: PageEntry
 
 func _ready() -> void:
 	await get_tree().process_frame
+	_on_resized()
 	_page_content_slider.value = _page_content_slider.max_value * _initial_page_size
 
 func setup(adventure_tome: AdventureTome, story: Story, characters: Characters) -> void:
@@ -62,9 +63,10 @@ func _on_page_turn_delay_timeout() -> void:
 
 func _on_current_page_entry_resized() -> void:
 	assert(_current_page_entry)
-	if _current_page_entry.size.y < _page_content_slider.value: return
 	await get_tree().process_frame
-	_page_content_slider.set_value_no_signal(_current_page_entry.size.y)
+	var current_size: float = _current_page_entry.size.y
+	if current_size < _page_content_slider.value: return
+	_page_content_slider.value = current_size
 
 func _on_page_content_slider_value_changed(value: float) -> void:
 	if not _current_page_entry: return

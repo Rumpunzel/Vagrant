@@ -55,7 +55,8 @@ func _exit_tree() -> void:
 
 func is_dice_page() -> bool:
 	assert(not _save_result or _save_request)
-	return _save_result != null
+	assert(not _fight_result or _fight_request)
+	return _save_result or _fight_result
 
 func get_story_page() -> StoryPage:
 	return story_page

@@ -83,10 +83,6 @@ corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 corner_detail = 5
-expand_margin_left = 2.0
-expand_margin_top = 2.0
-expand_margin_right = 2.0
-expand_margin_bottom = 2.0
 
 [node name="CharacterPortrait" type="PanelContainer" node_paths=PackedStringArray("_button", "_portrait", "_breath_dice")]
 offset_right = 352.0
