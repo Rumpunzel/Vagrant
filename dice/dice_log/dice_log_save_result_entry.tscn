@@ -1,16 +1,23 @@
-[gd_scene load_steps=3 format=3 uid="uid://cqeuqu32m0rr8"]
+[gd_scene load_steps=4 format=3 uid="uid://cqeuqu32m0rr8"]
 
 [ext_resource type="Script" uid="uid://dg7hbaho2ltrk" path="res://dice/dice_log/dice_log_save_result_entry.gd" id="1_1mndj"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="2_8k4tk"]
+[ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="2_e0peo"]
 
-[node name="DiceLogSaveResultEntry" type="PanelContainer" node_paths=PackedStringArray("_entry")]
+[node name="DiceLogSaveResultEntry" type="PanelContainer" node_paths=PackedStringArray("_update_delay_timer", "_entry")]
 offset_left = 16.0
 offset_top = 4.0
 offset_right = 130.0
 offset_bottom = 43.0
 script = ExtResource("1_1mndj")
+_update_delay_timer = NodePath("UpdateDelayTimer")
 _entry = NodePath("MarginContainer/Entry")
 metadata/_custom_type_script = "uid://dg7hbaho2ltrk"
+
+[node name="UpdateDelayTimer" type="Timer" parent="."]
+one_shot = true
+script = ExtResource("2_e0peo")
+metadata/_custom_type_script = "uid://losc8gq8exf0"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2

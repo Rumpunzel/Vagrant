@@ -11,7 +11,7 @@ signal breath_die_deselected(breath_die: BreathDie)
 @export_range(0.0, 5.0) var _reveal_delay: float = 1.5
 
 @export_group("Configuration")
-@export var _update_timer: Timer
+@export var _update_delay_timer: Timer
 
 var breath_die: BreathDie :
 	set(new_breath_die):
@@ -38,14 +38,14 @@ func update_save_result(save_result: SaveResult) -> void:
 	if not save_result.save_request.selected_breath_dice.has(breath_die): return
 	var update_delay: float = randf_range(_min_update_delay, _max_update_delay)
 	if is_inside_tree() and _randomly_delay_update:
-		_update_timer.start(update_delay)
-		await _update_timer.timeout
+		_update_delay_timer.start(update_delay)
+		await _update_delay_timer.timeout
 	text = "%d" % breath_die.result
 	_update()
 	if is_inside_tree():
 		if not _randomly_delay_update: update_delay = _max_update_delay
-		_update_timer.start(_reveal_delay - update_delay)
-		await _update_timer.timeout
+		_update_delay_timer.start(_reveal_delay - update_delay)
+		await _update_delay_timer.timeout
 	set_font_colors(save_result.get_die_color(breath_die))
 
 func update_fight_result(fight_result: FightResult) -> void:
@@ -55,8 +55,8 @@ func update_fight_result(fight_result: FightResult) -> void:
 	if not fight_result.fight_request.selected_breath_dice.has(breath_die): return
 	var update_delay: float = randf_range(_min_update_delay, _max_update_delay)
 	if is_inside_tree() and _randomly_delay_update:
-		_update_timer.start(update_delay)
-		await _update_timer.timeout
+		_update_delay_timer.start(update_delay)
+		await _update_delay_timer.timeout
 	text = "%d" % breath_die.result
 	_update()
 	#set_font_colors(fight_result.get_die_color(breath_die))

@@ -1,6 +1,12 @@
 class_name DiceLogSaveResultEntry
 extends DiceLogSaveEntry
 
+@export_range(0.0, 5.0) var _reveal_delay: float = 1.5
+@export var _delay_message: String = "Rolling..."
+
+@export_group("Configuration")
+@export var _update_delay_timer: Timer
+
 func initialize_save_result(save_result: SaveResult) -> void:
 	var save_request: SaveRequest = save_result.save_request
 	var attribute_prefix: String = _get_attribute_prefix(save_request.character, save_request.attribute)
@@ -9,12 +15,20 @@ func initialize_save_result(save_result: SaveResult) -> void:
 		var dice_results: String = _get_dice_results(save_result)
 		var difficulty: String = _get_difficulty(save_result)
 		message = "%s → %s" % [dice_results, difficulty]
+	if is_inside_tree():
+		_entry.type_text("%s: %s" % [attribute_prefix, _delay_message])
+		_update_delay_timer.start(_reveal_delay)
+		await _update_delay_timer.timeout
 	_entry.type_text("%s: %s" % [attribute_prefix, message])
 
 func initialize_fight_result(fight_result: FightResult) -> void:
 	var fight_request: FightRequest = fight_result.fight_request
 	var attribute_prefix: String = _get_attribute_prefix(fight_request.character, fight_request.attribute)
 	var message: String = "No Breath Dice!"
+	if is_inside_tree():
+		_entry.type_text("%s: %s" % [attribute_prefix, _delay_message])
+		_update_delay_timer.start(_reveal_delay)
+		await _update_delay_timer.timeout
 	_entry.type_text("%s: %s" % [attribute_prefix, message])
 
 func _get_dice_results(save_result: SaveResult) -> String:
