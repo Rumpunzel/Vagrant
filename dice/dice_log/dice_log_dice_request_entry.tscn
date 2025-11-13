@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dcy2roj1wv5vr"]
 
-[ext_resource type="Script" uid="uid://bfv4wihoyy8vi" path="res://dice/dice_log/dice_log_dice_request_entry.gd" id="1_dss76"]
+[ext_resource type="Script" uid="uid://b7yaoeeut7u75" path="res://dice/dice_log/dice_log_save_entry.gd" id="1_dp6b7"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="2_0sdm0"]
 
 [node name="DiceLogDiceRequestEntry" type="PanelContainer" node_paths=PackedStringArray("_entry")]
@@ -8,9 +8,9 @@ offset_left = 16.0
 offset_top = 4.0
 offset_right = 130.0
 offset_bottom = 43.0
-script = ExtResource("1_dss76")
+script = ExtResource("1_dp6b7")
 _entry = NodePath("MarginContainer/Entry")
-metadata/_custom_type_script = "uid://bfv4wihoyy8vi"
+metadata/_custom_type_script = "uid://b7yaoeeut7u75"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2

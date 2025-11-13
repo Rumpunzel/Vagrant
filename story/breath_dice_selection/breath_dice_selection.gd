@@ -14,7 +14,7 @@ signal confirmed
 @export var _breath_dice_selection_buttons: BreathDiceSelectionButtons
 @export var _all_in_button: DisplayButton
 @export var _ok_button: DisplayButton
-@export var _dice_log_dice_request_entry: DiceLogDiceRequestEntry
+@export var _dice_log_dice_request_entry: DiceLogSaveEntry
 @export var _dice_log_save_result_entry: DiceLogSaveResultEntry
 
 var _dice_request: DiceRequest :
@@ -26,6 +26,7 @@ var _dice_request: DiceRequest :
 		var character: Character = _dice_request.character
 		_dice_log_dice_request_entry.initialize_dice_request(_dice_request)
 		_dice_log_dice_request_entry.visible = true
+		_dice_log_save_result_entry.initialize_dice_request(_dice_request)
 		_dice_log_save_result_entry.visible = false
 		_breath_dice_selection_buttons.setup_breath_dice(character.breath_dice)
 		_breath_dice_selection_buttons.update_dice_request(_dice_request)
