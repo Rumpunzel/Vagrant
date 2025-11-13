@@ -21,7 +21,7 @@ enum Direction {
 		_direction = new_direction
 		_setup()
 
-var _box_container: BoxContainer
+var _box_container: BoxContainer : set = _set_box_container
 
 func add(element: Control) -> void:
 	if not _box_container: _setup()
@@ -46,14 +46,23 @@ func clear() -> void:
 		element.queue_free()
 
 func get_elements() -> Array[Control]:
+	assert(_box_container)
 	var elements: Array[Control] = []
 	elements.assign(_box_container.get_children())
 	return elements
 
 func for_each_element(callable: Callable) -> void:
+	assert(_box_container)
 	for element: Control in get_elements(): callable.call(element)
 
 func _setup() -> void:
+	match _direction:
+		Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT: _box_container = HBoxContainer.new()
+		Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP: _box_container = VBoxContainer.new()
+		_: assert(false, "Does not exist")
+
+func _set_box_container(new_box_container: BoxContainer) -> void:
+	assert(new_box_container)
 	var container_root: Control = _container_root if _container_root else self
 	var elements: Array[Control] = []
 	if _box_container:
@@ -61,10 +70,7 @@ func _setup() -> void:
 		for_each_element(func(element: Control) -> void: _box_container.remove_child(element))
 		container_root.remove_child(_box_container)
 		_box_container.queue_free()
-	match _direction:
-		Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT: _box_container = HBoxContainer.new()
-		Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP: _box_container = VBoxContainer.new()
-		_: assert(false, "Does not exist")
+	_box_container = new_box_container
 	_box_container.alignment = _alignment
 	_box_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_box_container.size_flags_vertical = Control.SIZE_EXPAND_FILL

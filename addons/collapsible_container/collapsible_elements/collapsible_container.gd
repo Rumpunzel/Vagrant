@@ -392,7 +392,10 @@ var _opened_state := OpenedStates.OPENED
 
 ## Can be gotten to know the current tween state (see, [enum TweenStates]).
 ## [br][br][b]Warning:[/b] Should NOT be set externally (may break something).
-var _tween_state := TweenStates.NOT_TWEENING
+var _tween_state := TweenStates.NOT_TWEENING :
+	set(new_tween_state):
+		_tween_state = new_tween_state
+		set_clip_contents(_tween_state != TweenStates.NOT_TWEENING or _opened_state == OpenedStates.CLOSED)
 
 # Used with [method Tween.interpolate_value] inside [member _increment_tween].
 # Can be gotten to know how much time has elapsed in the current tween.

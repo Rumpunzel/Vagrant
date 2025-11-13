@@ -88,7 +88,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 script = ExtResource("6_lcgf6")
 starts_opened = false
-folding_direction_preset = 14
 sizing_constraint = 1
 sizing_node = NodePath("StanceSelectionButtons")
 _preview_starts_opened = false

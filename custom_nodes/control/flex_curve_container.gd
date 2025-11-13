@@ -45,14 +45,6 @@ func get_elements() -> Array[Control]:
 		_: assert(false, "Does not exist")
 	return elements
 
-func _setup() -> void:
-	if _box_container:
-		_box_container.child_entered_tree.disconnect(_align_elements_on_curve)
-		_box_container.child_order_changed.disconnect(_align_elements_on_curve)
-	super._setup()
-	_box_container.child_entered_tree.connect(_align_elements_on_curve.unbind(1))
-	_box_container.child_order_changed.connect(_align_elements_on_curve)
-
 func _align_elements_on_curve() -> void:
 	var placeholders: Array[Control] = _get_curve_placeholders()
 	for placeholder_index: int in placeholders.size():
@@ -74,3 +66,11 @@ func _get_curve_placeholders() -> Array[Control]:
 			placeholders.assign(curve_containers.map(func(container: BoxContainer) -> Control: return container.get_child(0)))
 		_: assert(false, "Does not exist")
 	return placeholders
+
+func _set_box_container(new_box_container: BoxContainer) -> void:
+	if _box_container:
+		_box_container.child_entered_tree.disconnect(_align_elements_on_curve)
+		_box_container.child_order_changed.disconnect(_align_elements_on_curve)
+	super._set_box_container(new_box_container)
+	_box_container.child_entered_tree.connect(_align_elements_on_curve.unbind(1))
+	_box_container.child_order_changed.connect(_align_elements_on_curve)
