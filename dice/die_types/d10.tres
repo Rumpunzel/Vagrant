@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="DieType" load_steps=6 format=3 uid="uid://dtfdogfd6ebga"]
+[gd_resource type="Resource" script_class="DieType" load_steps=8 format=3 uid="uid://dtfdogfd6ebga"]
 
-[ext_resource type="Texture2D" uid="uid://cw6ja5k5fq6m6" path="res://icons/dice/d10.png" id="1_s5lwv"]
+[ext_resource type="Texture2D" uid="uid://cbdescqm41xvc" path="res://icons/dice/d10_blank.png" id="1_r44gp"]
+[ext_resource type="Texture2D" uid="uid://cw6ja5k5fq6m6" path="res://icons/dice/d10.png" id="1_uw5iy"]
 [ext_resource type="Script" uid="uid://ci73mrt3tkiel" path="res://dice/die_types/die_type.gd" id="2_7ifjg"]
 [ext_resource type="AudioStream" uid="uid://b7upfqv3bfjea" path="res://assets/sfx/dice/zapsplat_leisure_board_game_dice_set_down_on_playing_board_001_37253.mp3" id="2_lxdf3"]
 [ext_resource type="AudioStream" uid="uid://d2f21vwbe6tfw" path="res://assets/sfx/dice/zapsplat_leisure_board_game_dice_throw_roll_on_playing_board_001_37257.mp3" id="3_8tej6"]
+[ext_resource type="Texture2D" uid="uid://bm3bhq1v8f8x6" path="res://icons/dice/d10_filled.png" id="3_63m8g"]
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_w87oa"]
 streams_count = 2
@@ -12,6 +14,8 @@ stream_1/stream = ExtResource("3_8tej6")
 
 [resource]
 script = ExtResource("2_7ifjg")
-icon = ExtResource("1_s5lwv")
+icon = ExtResource("1_uw5iy")
+icon_blank = ExtResource("1_r44gp")
+icon_filled = ExtResource("3_63m8g")
 faces = 10
 roll_sound = SubResource("AudioStreamRandomizer_w87oa")
