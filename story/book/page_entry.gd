@@ -50,7 +50,6 @@ func _set_state(new_state: State) -> void:
 	state = new_state
 	match state:
 		State.PAST:
-			custom_minimum_size.y = 0.0
 			_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			if not _background.texture:
 				var self_tween: Tween = get_tree().create_tween()

@@ -62,6 +62,8 @@ func _on_page_turn_delay_timeout() -> void:
 
 func _on_current_page_entry_resized() -> void:
 	assert(_current_page_entry)
+	if _current_page_entry.size.y < _page_content_slider.value: return
+	await get_tree().process_frame
 	_page_content_slider.set_value_no_signal(_current_page_entry.size.y)
 
 func _on_page_content_slider_value_changed(value: float) -> void:
