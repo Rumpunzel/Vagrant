@@ -22,8 +22,8 @@ shader_parameter/blur_radius = 1.0
 shader_parameter/blur_direction = Vector2(1, 1)
 
 [node name="BreathDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection_buttons", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
-offset_right = 425.0
-offset_bottom = 189.0
+offset_right = 336.0
+offset_bottom = 185.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lcgf6")
 script = ExtResource("1_6stf5")
 _portrait = NodePath("Portrait")
@@ -80,6 +80,7 @@ editor_description = "
 			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
+visible = false
 clip_contents = true
 custom_minimum_size = Vector2(425, 0)
 layout_mode = 2

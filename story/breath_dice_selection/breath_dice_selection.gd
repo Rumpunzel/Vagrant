@@ -21,9 +21,9 @@ var _dice_request: DiceRequest :
 	set(new_dice_request):
 		assert(new_dice_request)
 		_dice_request = new_dice_request
-		_portrait.texture = _dice_request.character.character_profile.get_portrait(_portrait_identifier)
-		_description.type_text(_dice_request.get_description())
 		var character: Character = _dice_request.character
+		_portrait.texture = character.character_profile.get_portrait(_portrait_identifier)
+		_description.type_text(_dice_request.get_description())
 		_dice_log_dice_request_entry.initialize_dice_request(_dice_request)
 		_dice_log_dice_request_entry.visible = true
 		_dice_log_save_result_entry.initialize_dice_request(_dice_request)
@@ -31,7 +31,8 @@ var _dice_request: DiceRequest :
 		_breath_dice_selection_buttons.setup_breath_dice(character.breath_dice)
 		_breath_dice_selection_buttons.update_dice_request(_dice_request)
 		_enable_hud()
-		_all_in_button.set_pressed_no_signal(false)
+		var all_dice_selected: bool = _dice_request.selected_breath_dice == character.get_available_breath_dice()
+		_all_in_button.set_pressed_no_signal(all_dice_selected)
 		#_ok_button.grab_focus()
 
 func request_save(save_request: SaveRequest) -> void:
