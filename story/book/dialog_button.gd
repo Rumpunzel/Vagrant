@@ -11,8 +11,6 @@ signal fight_requsted(fight_request: FightRequest, source: StoryDecision)
 		_description.text = story_decision.to_dialog_button_text()
 		_update_font_colors()
 
-@export_range(0.0, 1.0) var _fade_in_duration: float = 0.25
-
 @export_group("Configuration")
 @export var _container: Container
 @export var _index: Label
@@ -33,6 +31,7 @@ func setup(story: Story, characters: Characters, new_story_decision: StoryDecisi
 	_story = story
 	_characters = characters
 	story_decision = new_story_decision
+	_description.text = story_decision.to_dialog_button_text()
 	_story.decision_made.connect(_on_decision_made)
 
 func _exit_tree() -> void:
@@ -45,13 +44,6 @@ func _ready() -> void:
 	var index: int = get_index()
 	if index >= _shortcuts.size(): return
 	shortcut = _shortcuts[index]
-	if Engine.is_editor_hint(): return
-	modulate.a = 0.0
-
-func popup(delay: float) -> void:
-	_description.text = story_decision.to_dialog_button_text()
-	var tween: Tween = get_tree().create_tween()
-	tween.tween_property(self, "modulate:a", 1.0, _fade_in_duration).set_delay(delay)
 
 func _set_index() -> int:
 	var index: int = get_index() + 1

@@ -4,12 +4,14 @@ extends PageEntry
 
 @export var story_page: StoryPage
 
-@export_range(0.0, 1.0) var _dialog_options_fade_in_delay: float = 0.1
+@export_range(0.0, 1.0) var _options_fade_in_duration: float = 0.25
+@export_range(0.0, 1.0) var _options_fade_in_delay: float = 0.1
 
 @export_group("Configuration")
 @export var _title: TypingLabel
 @export var _description: TypingLabel
 @export var _choices: Container
+@export var _breath_dice_collapsible_container: CollapsibleContainer
 @export var _breath_dice_selection: BreathDiceSelection
 @export var _dialog_button: PackedScene
 
@@ -19,28 +21,27 @@ var _save_request: SaveRequest :
 	set(new_save_request):
 		_save_request = new_save_request
 		if not _save_request:
-			if not _fight_request: _breath_dice_selection.hide()
+			if not _fight_request: _breath_dice_collapsible_container.close_tween()
 			return
 		_breath_dice_selection.request_save(_save_request)
 		await get_tree().process_frame
-		_breath_dice_selection.show()
+		_breath_dice_collapsible_container.open_tween()
 var _save_result: SaveResult
 
 var _fight_request: FightRequest :
 	set(new_fight_request):
 		_fight_request = new_fight_request
 		if not _fight_request:
-			if not _save_request: _breath_dice_selection.hide()
+			if not _save_request: _breath_dice_collapsible_container.close_tween()
 			return
 		_breath_dice_selection.request_fight(_fight_request)
 		await get_tree().process_frame
-		_breath_dice_selection.show()
+		_breath_dice_collapsible_container.open_tween()
 var _fight_result: FightResult
 
 func setup_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:
 	super.setup_page(story, characters, new_story_page)
 	_update_decisions(story_page.get_decisions(_story))
-	_breath_dice_selection.hide()
 
 func enter_page() -> void:
 	var title: String = story_page.get_page_title(_story)
@@ -76,8 +77,23 @@ func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
 func _create_dialog_button(story_decision: StoryDecision) -> DialogButton:
 	var dialog_button: DialogButton = _dialog_button.instantiate()
 	dialog_button.setup(_story, _characters, story_decision)
+	dialog_button.modulate.a = 0.0
+	dialog_button.hide()
 	_choices.add_child(dialog_button)
 	return dialog_button
+
+func _fade_in(element: Control, duration: float, delay: float = 0.0) -> void:
+	if element.visible: return
+	var tween: Tween = get_tree().create_tween()
+	tween.tween_property(element, "modulate:a", 1.0, duration).set_delay(delay)
+	element.show()
+
+func _fade_out(element: Control, duration: float, delay: float = 0.0) -> void:
+	if not element.visible: return
+	var tween: Tween = get_tree().create_tween()
+	tween.tween_property(element, "modulate:a", 0.0, duration).set_delay(delay)
+	await tween.finished
+	element.hide()
 
 func _set_state(new_state: State) -> void:
 	super._set_state(new_state)
@@ -93,7 +109,7 @@ func _on_description_finished_typing() -> void:
 	buttons.assign(_choices.get_children())
 	for index: int in buttons.size():
 		var button: DialogButton = buttons[index]
-		button.popup(_dialog_options_fade_in_delay * index)
+		_fade_in(button, _options_fade_in_duration, _options_fade_in_delay * index)
 
 func _on_decision_made(_story_decision: StoryDecision, _selected_how_many_times: int) -> void:
 	_description.set_text_normally()
@@ -110,6 +126,7 @@ func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> voi
 
 func _on_save_rolled(save_result: SaveResult) -> void:
 	assert(_selected_story_decision is StorySaveDecision)
+	_breath_dice_collapsible_container.auto_update_size = CollapsibleContainer.AutoUpdateSizeOptions.DISABLED
 	_save_result = save_result
 	_story.make_save_decision(_selected_story_decision as StorySaveDecision, _save_result)
 
@@ -123,6 +140,7 @@ func _on_fight_requested(fight_request: FightRequest, source: StoryDecision) -> 
 
 func _on_fight_rolled(fight_result: FightResult) -> void:
 	assert(_selected_story_decision is StoryFightDecision)
+	_breath_dice_collapsible_container.auto_update_size = CollapsibleContainer.AutoUpdateSizeOptions.DISABLED
 	_fight_result = fight_result
 	_story.make_fight_decision(_selected_story_decision as StoryFightDecision, _fight_result)
 
