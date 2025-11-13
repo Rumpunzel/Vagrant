@@ -4,8 +4,9 @@ extends PanelContainer
 signal page_entered(page_entry: PageEntry)
 signal page_size_changed
 
-@export_range(0.0, 1.0) var _page_turn_delay: float = 0.0
-@export_range(0.0, 5.0) var _dice_page_turn_delay: float = 3.0
+@export_range(0.0, 1.0, 0.1, "suffix:seconds") var _page_turn_delay: float = 0.0
+@export_range(0.0, 5.0, 0.1, "suffix:seconds") var _dice_page_turn_delay: float = 3.0
+@export_range(0.0, 1.0, 0.05, "suffix:percentage") var _initial_page_size: float = 0.5
 
 @export_group("Configuration")
 @export var _page_turn_timer: Timer
@@ -23,6 +24,8 @@ func _ready() -> void:
 	dummy_control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dummy_control.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_pages.add(dummy_control)
+	await get_tree().process_frame
+	_page_content_slider.value = _page_content_slider.max_value * _initial_page_size
 
 func setup(adventure_tome: AdventureTome, story: Story, characters: Characters) -> void:
 	_adventure_tome = adventure_tome

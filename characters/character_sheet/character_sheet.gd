@@ -23,7 +23,6 @@ func _ready() -> void:
 	visible = character != null
 
 func _update() -> void:
-	name = _character_profile.name
 	_portrait.texture = _character_profile.portrait
 	_name.text = _character_profile.name
 	_title.text = _character_profile.get_title()

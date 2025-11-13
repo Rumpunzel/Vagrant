@@ -15,9 +15,7 @@ signal character_selected(character: Character, character_portrait: CharacterPor
 @export var _character_portrait: PackedScene
 
 func _update_character_list(updated_characters: Dictionary[CharacterProfile, Character]) -> void:
-	#for child: Node in _portraits._box_container.get_children():
-		#_portraits._box_container.remove_child(child)
-		#child.queue_free()
+	_portraits.clear()
 	var button_group: ButtonGroup = ButtonGroup.new()
 	for character: Character in updated_characters.values():
 		var character_portrait: CharacterPortrait = _character_portrait.instantiate()
