@@ -1635,3 +1635,13 @@ func _print_warning_in_game_or_err_in_editor(warning : String) -> void:
 		printerr(str(self, ": ", warning))
 	else:
 		_print_warning(str(self, ": " , warning)) # Only prints warning if in editor.
+
+func _on_state_set(current_state: OpenedStates, previous_state: OpenedStates) -> void:
+	if current_state == OpenedStates.OPENED and previous_state == OpenedStates.CLOSED: show()
+	elif current_state == OpenedStates.CLOSED and previous_state == OpenedStates.OPENED: hide()
+
+func _on_tween_completed(previous_tween_state: TweenStates) -> void:
+	if previous_tween_state == TweenStates.CLOSING: hide()
+
+func _on_tween_started(current_tween_state: TweenStates) -> void:
+	if current_tween_state == TweenStates.OPENING: show()

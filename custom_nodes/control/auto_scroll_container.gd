@@ -2,7 +2,8 @@
 class_name AutoScrollContainer
 extends HoverScrollContainer
 
-@export_range(0.0, 1.0, 0.05, "suffix:pct / s") var _scroll_speed: float = 0.25
+@export_range(0.0, 1.0, 0.05, "or_greater", "suffix:pct / s") var _scroll_speed: float = 2.0
+@export_range(0.0, 1024.0, 1.0, "or_greater", "suffix:px / s") var _min_scroll_speed: float = 256.0
 @export var _auto_scroll_horizontally: bool
 @export var _auto_scroll_vertically: bool
 
@@ -12,10 +13,14 @@ var _has_scrolled_vertically_to: float = 0.0
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint(): return
 	var h_scroll_bar: HScrollBar = get_h_scroll_bar()
+	var h_max: float = h_scroll_bar.max_value - h_scroll_bar.page
 	if _auto_scroll_horizontally and _has_scrolled_horizontally_to < h_scroll_bar.max_value - h_scroll_bar.page:
-		h_scroll_bar.value = lerpf(h_scroll_bar.value, h_scroll_bar.max_value, _scroll_speed * delta)
+		var scroll_speed: float = maxf((h_max - h_scroll_bar.value) * _scroll_speed, _min_scroll_speed)
+		h_scroll_bar.value += scroll_speed * delta
 		_has_scrolled_horizontally_to = max(h_scroll_bar.value, _has_scrolled_horizontally_to)
 	var v_scroll_bar: VScrollBar = get_v_scroll_bar()
-	if _auto_scroll_vertically and _has_scrolled_vertically_to < v_scroll_bar.max_value - v_scroll_bar.page:
-		v_scroll_bar.value = lerpf(v_scroll_bar.value, v_scroll_bar.max_value, _scroll_speed * delta)
+	var v_max: float = v_scroll_bar.max_value - v_scroll_bar.page
+	if _auto_scroll_vertically and _has_scrolled_vertically_to < v_max:
+		var scroll_speed: float = maxf((v_max - v_scroll_bar.value) * _scroll_speed, _min_scroll_speed)
+		v_scroll_bar.value += scroll_speed * delta
 		_has_scrolled_vertically_to = max(v_scroll_bar.value, _has_scrolled_vertically_to)
