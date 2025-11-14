@@ -35,7 +35,7 @@ func _ready() -> void:
 	control_to_fade.mouse_entered.connect(_on_mouse_entered)
 	control_to_fade.mouse_exited.connect(_on_mouse_exited)
 	control_to_fade.focus_entered.connect(_on_focus_entered)
-	control_to_fade.focus_exited.connect(_on_mouse_entered)
+	control_to_fade.focus_exited.connect(_on_focus_exited)
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if get_state() == State.HOVERED and event.is_action_pressed("ui_cancel"):
