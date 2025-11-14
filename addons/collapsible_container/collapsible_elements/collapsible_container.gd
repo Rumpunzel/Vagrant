@@ -388,7 +388,10 @@ enum FoldingPreset {
 
 ## Can be gotten to know the current opened state (see, [enum OpenedStates]).
 ## [br][br][b]Warning:[/b] Should NOT be set externally (may break something).
-var _opened_state := OpenedStates.OPENED
+var _opened_state := OpenedStates.OPENED :
+	set(new_opened_state):
+		_opened_state = new_opened_state
+		set_clip_contents(_tween_state != TweenStates.NOT_TWEENING or _opened_state == OpenedStates.CLOSED)
 
 ## Can be gotten to know the current tween state (see, [enum TweenStates]).
 ## [br][br][b]Warning:[/b] Should NOT be set externally (may break something).

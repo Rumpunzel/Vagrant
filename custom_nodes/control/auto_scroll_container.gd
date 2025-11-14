@@ -10,6 +10,9 @@ extends HoverScrollContainer
 var _has_scrolled_horizontally_to: float = 0.0
 var _has_scrolled_vertically_to: float = 0.0
 
+func _ready() -> void:
+	resized.connect(reset_scroll_tracking)
+
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint(): return
 	var h_scroll_bar: HScrollBar = get_h_scroll_bar()
@@ -24,3 +27,11 @@ func _process(delta: float) -> void:
 		var scroll_speed: float = (v_max - v_scroll_bar.value + _scroll_overshoot) * _scroll_speed
 		v_scroll_bar.value += scroll_speed * delta
 		_has_scrolled_vertically_to = max(v_scroll_bar.value, _has_scrolled_vertically_to)
+
+func scroll_vertical_to_end() -> void:
+	await get_tree().process_frame
+	scroll_vertical = int(get_v_scroll_bar().max_value)
+
+func reset_scroll_tracking() -> void:
+	_has_scrolled_horizontally_to = 0.0
+	_has_scrolled_vertically_to = 0.0

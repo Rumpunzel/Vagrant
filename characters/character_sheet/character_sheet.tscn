@@ -11,12 +11,12 @@
 [ext_resource type="Texture2D" uid="uid://c0ckr8il0i4ct" path="res://icons/editor/save.svg" id="6_i22xi"]
 [ext_resource type="Texture2D" uid="uid://cg3jqm5s4qxhx" path="res://icons/editor/load.svg" id="7_mkqqw"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mkqqw"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c5c64"]
 
 [node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_title", "_attributes", "_breath_dice", "_ability_labels")]
 offset_right = 412.0
 offset_bottom = 412.0
-theme_override_styles/panel = SubResource("StyleBoxEmpty_mkqqw")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_c5c64")
 script = ExtResource("1_uqhlh")
 _portrait = NodePath("Portrait")
 _name = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Name")

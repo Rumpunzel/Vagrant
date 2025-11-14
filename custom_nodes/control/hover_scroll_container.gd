@@ -2,23 +2,14 @@
 class_name HoverScrollContainer
 extends ScrollContainer
 
-@onready var _default_horizontal_scroll_mode: ScrollMode = horizontal_scroll_mode
-@onready var _default_vertical_scroll_mode: ScrollMode = vertical_scroll_mode
+func _init() -> void:
+	var h_hover_fade: HoverFade = _setup_scroll_bar(get_h_scroll_bar())
+	var v_hover_fade: HoverFade = _setup_scroll_bar(get_v_scroll_bar())
+	h_hover_fade.hover_neighbors = [v_hover_fade]
+	v_hover_fade.hover_neighbors = [h_hover_fade]
 
-func _ready() -> void:
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
-
-func scroll_vertical_to_end() -> void:
-	await get_tree().process_frame
-	scroll_vertical = int(get_v_scroll_bar().max_value)
-
-func _on_mouse_entered() -> void:
-	if _default_horizontal_scroll_mode != ScrollContainer.SCROLL_MODE_DISABLED:
-		horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_RESERVE
-	if _default_vertical_scroll_mode != SCROLL_MODE_DISABLED:
-		vertical_scroll_mode = ScrollContainer.SCROLL_MODE_RESERVE
-
-func _on_mouse_exited() -> void:
-	horizontal_scroll_mode = _default_horizontal_scroll_mode
-	vertical_scroll_mode = _default_vertical_scroll_mode
+func _setup_scroll_bar(scroll_bar: ScrollBar) -> HoverFade:
+	var hover_fade: HoverFade = HoverFade.new()
+	hover_fade.control_to_fade = scroll_bar
+	scroll_bar.add_child(hover_fade)
+	return hover_fade

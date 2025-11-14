@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://bob1fhstr1o06" path="res://story/book/story_book.gd" id="1_cts4e"]
 [ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="3_kgpco"]
 [ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="3_rpy1c"]
-[ext_resource type="Script" uid="uid://iucnlp3l8avv" path="res://custom_nodes/control/hover_control.gd" id="3_s3kyl"]
 [ext_resource type="Script" uid="uid://cepjqieke7bvl" path="res://custom_nodes/control/auto_scroll_container.gd" id="4_evqjp"]
+[ext_resource type="Script" uid="uid://doguhqeqp85e2" path="res://custom_nodes/control/hover_fade.gd" id="4_s3kyl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_evqjp"]
 content_margin_left = 0.0
@@ -48,7 +48,11 @@ layout_mode = 2
 [node name="PageContentSlider" type="VSlider" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 mouse_default_cursor_shape = 9
-script = ExtResource("3_s3kyl")
+
+[node name="HoverFade" type="Node" parent="MarginContainer/HBoxContainer/PageContentSlider"]
+script = ExtResource("4_s3kyl")
+_neighbor_hover_modulate = null
+metadata/_custom_type_script = "uid://doguhqeqp85e2"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -75,3 +79,4 @@ metadata/_custom_type_script = "uid://dqkpaquatj11m"
 [connection signal="resized" from="." to="." method="_on_resized"]
 [connection signal="timeout" from="PageTurnDelay" to="." method="_on_page_turn_delay_timeout"]
 [connection signal="value_changed" from="MarginContainer/HBoxContainer/PageContentSlider" to="." method="_on_page_content_slider_value_changed"]
+[connection signal="value_changed" from="MarginContainer/HBoxContainer/PageContentSlider" to="MarginContainer/HBoxContainer/ScrollContainer" method="reset_scroll_tracking" unbinds=1]

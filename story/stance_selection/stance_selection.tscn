@@ -7,13 +7,13 @@
 [ext_resource type="Texture2D" uid="uid://cdri43vl0xt70" path="res://characters/attributes/icons/hand-bandage.svg" id="4_aj55f"]
 
 [node name="StanceSelection" type="PanelContainer" node_paths=PackedStringArray("_tooltip_trigger", "_icon", "_descriptor")]
-offset_right = 124.0
-offset_bottom = 39.0
+offset_right = 307.0
+offset_bottom = 29.0
 mouse_default_cursor_shape = 16
 script = ExtResource("1_su63f")
 attribute = ExtResource("2_nl66t")
 _tooltip_trigger = NodePath("TooltipTrigger")
-_icon = NodePath("AttributeIcon")
+_icon = NodePath("HBoxContainer/AttributeIcon")
 _descriptor = NodePath("Descriptor")
 metadata/_custom_type_script = "uid://cibuut5maxj22"
 
@@ -24,13 +24,26 @@ origin = 3
 tooltip_strings = Array[String](["Decrease the damage you take by your margin of success."])
 metadata/_custom_type_script = "uid://coqwnstoj346c"
 
-[node name="AttributeIcon" parent="." instance=ExtResource("3_vnpj5")]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginLeft" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AttributeIcon" parent="HBoxContainer" instance=ExtResource("3_vnpj5")]
 modulate = Color(0.62352943, 0.14117648, 0.16078432, 0.35)
 layout_mode = 2
+size_flags_horizontal = 3
 texture = ExtResource("4_aj55f")
+
+[node name="MarginRight" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Descriptor" type="Label" parent="."]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.62352943, 0.14117648, 0.16078432, 1)
 text = "Blood"
 horizontal_alignment = 1
 vertical_alignment = 1

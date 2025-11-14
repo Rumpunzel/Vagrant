@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=12 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="2_kq5yh"]
@@ -13,15 +13,6 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ipvic"]
 
-[sub_resource type="Gradient" id="Gradient_pqpya"]
-offsets = PackedFloat32Array(0.1, 0.75)
-colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_nlwo0"]
-gradient = SubResource("Gradient_pqpya")
-fill = 1
-fill_from = Vector2(0.5, 0)
-
 [node name="Adventure" type="PanelContainer" node_paths=PackedStringArray("_story", "_characters", "_title", "_story_book")]
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,7 +25,7 @@ script = ExtResource("1_bnng7")
 _story = NodePath("Story")
 _characters = NodePath("Characters")
 _title = NodePath("Title")
-_story_book = NodePath("TitleClipper/HSplitContainer/StoryBook")
+_story_book = NodePath("HSplitContainer/StoryBook")
 metadata/_custom_type_script = "uid://cjud36jst3ajk"
 
 [node name="Story" type="Node" parent="."]
@@ -68,65 +59,54 @@ script = ExtResource("4_ipvic")
 _characters_per_minute = 1000.0
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="TitleClipper" type="TextureRect" parent="."]
-clip_children = 1
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
 layout_mode = 2
-texture = SubResource("GradientTexture2D_nlwo0")
-expand_mode = 1
-
-[node name="HSplitContainer" type="HSplitContainer" parent="TitleClipper"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TitleClipper/HSplitContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 alignment = 2
 
-[node name="CharacterSheet" parent="TitleClipper/HSplitContainer/VBoxContainer" instance=ExtResource("4_2poxt")]
+[node name="CharacterSheet" parent="HSplitContainer/VBoxContainer" instance=ExtResource("4_2poxt")]
 layout_mode = 2
 size_flags_horizontal = 0
 _character_profile = ExtResource("7_pqpya")
 
-[node name="CharacterPortraits" parent="TitleClipper/HSplitContainer/VBoxContainer" node_paths=PackedStringArray("characters") instance=ExtResource("7_nlwo0")]
+[node name="CharacterPortraits" parent="HSplitContainer/VBoxContainer" node_paths=PackedStringArray("characters") instance=ExtResource("7_nlwo0")]
 layout_mode = 2
 size_flags_horizontal = 0
-characters = NodePath("../../../../Characters")
+characters = NodePath("../../../Characters")
 
-[node name="VSplitContainer" type="VSplitContainer" parent="TitleClipper/HSplitContainer"]
+[node name="VSplitContainer" type="VSplitContainer" parent="HSplitContainer"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 32
 drag_area_highlight_in_editor = true
 
-[node name="Control" type="Control" parent="TitleClipper/HSplitContainer/VSplitContainer"]
+[node name="Control" type="Control" parent="HSplitContainer/VSplitContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="GameInfo" type="TabContainer" parent="TitleClipper/HSplitContainer/VSplitContainer"]
+[node name="GameInfo" type="TabContainer" parent="HSplitContainer/VSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="DiceLog" type="MarginContainer" parent="TitleClipper/HSplitContainer/VSplitContainer/GameInfo"]
+[node name="DiceLog" type="MarginContainer" parent="HSplitContainer/VSplitContainer/GameInfo"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="DiceLog" parent="TitleClipper/HSplitContainer/VSplitContainer/GameInfo/DiceLog" instance=ExtResource("4_5djeo")]
+[node name="DiceLog" parent="HSplitContainer/VSplitContainer/GameInfo/DiceLog" instance=ExtResource("4_5djeo")]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 
-[node name="StoryBook" parent="TitleClipper/HSplitContainer" instance=ExtResource("5_p35e8")]
+[node name="StoryBook" parent="HSplitContainer" instance=ExtResource("5_p35e8")]
 layout_mode = 2
 
-[connection signal="character_selected" from="TitleClipper/HSplitContainer/VBoxContainer/CharacterPortraits" to="TitleClipper/HSplitContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
-[connection signal="page_entered" from="TitleClipper/HSplitContainer/StoryBook" to="." method="_on_story_book_page_entered"]
+[connection signal="character_selected" from="HSplitContainer/VBoxContainer/CharacterPortraits" to="HSplitContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
+[connection signal="page_entered" from="HSplitContainer/StoryBook" to="." method="_on_story_book_page_entered"]

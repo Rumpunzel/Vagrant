@@ -26,8 +26,8 @@ _element_size = 0.0
 _container_root = NodePath(".")
 metadata/_custom_type_script = "uid://dqkpaquatj11m"
 
-[connection signal="toggled" from="Buttons/@HBoxContainer@53305/BreathDiceSelectionButtonGroup/@VBoxContainer@53307/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/BreathDiceSelectionButtonGroup/@VBoxContainer@53307/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Buttons/@HBoxContainer@53305/@MarginContainer@53310/@VBoxContainer@53309/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/@MarginContainer@53310/@VBoxContainer@53309/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Buttons/@HBoxContainer@53305/@MarginContainer@53313/@VBoxContainer@53312/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/@MarginContainer@53313/@VBoxContainer@53312/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Buttons/@HBoxContainer@53305/@MarginContainer@53316/@VBoxContainer@53315/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/@MarginContainer@53316/@VBoxContainer@53315/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Buttons/@HBoxContainer@53305/@MarginContainer@53319/@VBoxContainer@53318/BreathDieSelectionButton" to="Buttons/@HBoxContainer@53305/@MarginContainer@53319/@VBoxContainer@53318/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Buttons/@HBoxContainer@81825/BreathDiceSelectionButtonGroup/@VBoxContainer@81824/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/BreathDiceSelectionButtonGroup/@VBoxContainer@81824/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Buttons/@HBoxContainer@81825/@MarginContainer@81827/@VBoxContainer@81826/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/@MarginContainer@81827/@VBoxContainer@81826/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Buttons/@HBoxContainer@81825/@MarginContainer@81829/@VBoxContainer@81828/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/@MarginContainer@81829/@VBoxContainer@81828/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Buttons/@HBoxContainer@81825/@MarginContainer@81831/@VBoxContainer@81830/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/@MarginContainer@81831/@VBoxContainer@81830/BreathDieSelectionButton" method="_on_toggled"]
+[connection signal="toggled" from="Buttons/@HBoxContainer@81825/@MarginContainer@81833/@VBoxContainer@81832/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/@MarginContainer@81833/@VBoxContainer@81832/BreathDieSelectionButton" method="_on_toggled"]
