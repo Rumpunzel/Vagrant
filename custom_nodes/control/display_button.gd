@@ -3,6 +3,7 @@ class_name DisplayButton
 extends Button
 
 signal activation_changed(new_status: bool)
+signal style_changed
 
 @export var active: bool = true :
 	set(new_status):
@@ -32,6 +33,7 @@ func set_font_colors(color: Color) -> void:
 	add_theme_color_override("font_hover_pressed_color", color)
 	add_theme_color_override("font_disabled_color", color * Color(1.0, 1.0, 1.0, 0.5))
 	add_theme_color_override("font_outline_color", color.darkened(0.75))
+	style_changed.emit()
 
 func remove_font_colors() -> void:
 	remove_theme_color_override("font_color")
@@ -40,6 +42,7 @@ func remove_font_colors() -> void:
 	remove_theme_color_override("font_hover_pressed_color")
 	remove_theme_color_override("font_disabled_color")
 	remove_theme_color_override("font_outline_color")
+	style_changed.emit()
 
 func set_icon_colors(color: Color) -> void:
 	add_theme_color_override("icon_normal_color", color)
@@ -48,6 +51,7 @@ func set_icon_colors(color: Color) -> void:
 	add_theme_color_override("icon_hover_color", color)
 	add_theme_color_override("icon_hover_pressed_color", color)
 	add_theme_color_override("icon_disabled_color", color * Color(1.0, 1.0, 1.0, 0.4))
+	style_changed.emit()
 
 func remove_icon_colors() -> void:
 	remove_theme_color_override("icon_normal_color")
@@ -56,6 +60,7 @@ func remove_icon_colors() -> void:
 	remove_theme_color_override("icon_hover_color")
 	remove_theme_color_override("icon_hover_pressed_color")
 	remove_theme_color_override("icon_disabled_color")
+	style_changed.emit()
 
 func set_button_highlight_colors(color: Color, additional_highlight: Color = Color(0.25, 0.25, 0.25, 0.0)) -> void:
 	remove_button_highlight_colors()
@@ -68,11 +73,13 @@ func set_button_highlight_colors(color: Color, additional_highlight: Color = Col
 	var focus_style_box: StyleBoxFlat = get_theme_stylebox("focus").duplicate()
 	focus_style_box.bg_color = (focus_style_box.bg_color + additional_highlight) * color
 	add_theme_stylebox_override("focus", focus_style_box)
+	style_changed.emit()
 
 func remove_button_highlight_colors() -> void:
 	remove_theme_stylebox_override("pressed")
 	remove_theme_stylebox_override("hover")
 	remove_theme_stylebox_override("focus")
+	style_changed.emit()
 
 func set_button_colors(color: Color, additional_highlight: Color = Color(0.1, 0.1, 0.1, 0.0)) -> void:
 	var normal_style_box: StyleBoxFlat = get_theme_stylebox("normal").duplicate()
@@ -90,6 +97,7 @@ func set_button_colors(color: Color, additional_highlight: Color = Color(0.1, 0.
 	var focus_style_box: StyleBoxFlat = get_theme_stylebox("focus").duplicate()
 	focus_style_box.bg_color = (focus_style_box.bg_color + additional_highlight) * color
 	add_theme_stylebox_override("focus", focus_style_box)
+	style_changed.emit()
 
 func remove_button_colors() -> void:
 	remove_theme_stylebox_override("normal")
@@ -97,3 +105,4 @@ func remove_button_colors() -> void:
 	remove_theme_stylebox_override("hover")
 	remove_theme_stylebox_override("disabled")
 	remove_theme_stylebox_override("focus")
+	style_changed.emit()
