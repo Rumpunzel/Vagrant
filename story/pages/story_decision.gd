@@ -6,6 +6,3 @@ extends Resource
 
 static func get_continue() -> StoryDecision:
 	return load("res://story/pages/continue.tres")
-
-func to_dialog_button_text() -> String:
-	return description

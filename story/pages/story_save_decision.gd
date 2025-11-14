@@ -8,6 +8,3 @@ extends StoryDecision
 
 func to_save_request(protagonist: Character) -> SaveRequest:
 	return SaveRequest.new(protagonist, attribute, self)
-
-func to_dialog_button_text() -> String:
-	return "%s %s" % [attribute.to_bbcode(), super.to_dialog_button_text()]

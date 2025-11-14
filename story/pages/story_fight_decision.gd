@@ -7,6 +7,3 @@ extends StoryDecision
 
 func to_fight_request(protagonist: Character) -> FightRequest:
 	return FightRequest.new(protagonist, self)
-
-func to_dialog_button_text() -> String:
-	return "⚔️ %s" % [super.to_dialog_button_text()]
