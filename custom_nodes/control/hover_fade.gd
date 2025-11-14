@@ -15,7 +15,10 @@ enum State {
 @export var control_to_fade: Control
 
 @export var _fade_behavior: Behavior = Behavior.SHOW_ON_HOVER
-@export var _fade_time: float = 0.1
+@export var _fade_in_time: float = 0.1
+@export var _fade_in_delay: float = 0.0
+@export var _fade_out_time: float = 0.1
+@export var _fade_out_delay: float = 0.0
 
 @export_group("Neighbors")
 @export var hover_neighbors: Array[HoverFade] = []
@@ -61,13 +64,13 @@ func get_state() -> State:
 
 func _fade_in(color_modulate: Color = _modulate) -> void:
 	var tween: Tween = get_tree().create_tween()
-	tween.tween_property(control_to_fade, "modulate", color_modulate, _fade_time)
+	tween.tween_property(control_to_fade, "modulate", color_modulate, _fade_in_time).set_delay(_fade_in_delay)
 
 func _fade_out() -> void:
 	var hidden_modulate: Color = _modulate
 	hidden_modulate.a = 0.0
 	var tween: Tween = get_tree().create_tween()
-	tween.tween_property(control_to_fade, "modulate", hidden_modulate, _fade_time)
+	tween.tween_property(control_to_fade, "modulate", hidden_modulate, _fade_out_time).set_delay(_fade_out_delay)
 	if is_inside_tree() and control_to_fade.has_focus(): control_to_fade.release_focus()
 
 func _on_hover() -> void:
