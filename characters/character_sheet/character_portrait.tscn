@@ -94,7 +94,7 @@ offset_bottom = 412.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lpl5g")
 script = ExtResource("1_mykuh")
 _button = NodePath("Button")
-_portrait = NodePath("MarginContainer/Portrait")
+_portrait = NodePath("Portrait")
 _breath_dice = NodePath("MarginContainer/VBoxContainer/BreathDice")
 metadata/_custom_type_script = "uid://c3fmgxqai1l4p"
 
@@ -110,17 +110,17 @@ toggle_mode = true
 script = ExtResource("2_lpl5g")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="Portrait" type="TextureRect" parent="MarginContainer"]
+[node name="Portrait" type="TextureRect" parent="."]
 material = ExtResource("2_3lp8p")
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("3_mykuh")
 expand_mode = 5
 stretch_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2

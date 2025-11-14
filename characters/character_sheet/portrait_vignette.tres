@@ -5,10 +5,10 @@
 [resource]
 shader = ExtResource("1_187dg")
 shader_parameter/power = 1.0
-shader_parameter/up = 0.2
-shader_parameter/down = 0.2
-shader_parameter/left = 0.2
-shader_parameter/right = 0.2
+shader_parameter/up = 0.1
+shader_parameter/down = 0.2000000095
+shader_parameter/left = 0.1
+shader_parameter/right = 0.1
 shader_parameter/up_clip = 0.0
 shader_parameter/down_clip = 0.0
 shader_parameter/left_clip = 0.0

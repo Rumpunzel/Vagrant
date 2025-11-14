@@ -59,6 +59,7 @@ func _set_state(new_state: State) -> void:
 			var tween: Tween = get_tree().create_tween()
 			tween.tween_property(_body_container, "modulate", _past_modulate, _fade_out_duration).set_delay(_get_fade_out_delay())
 			await tween.finished
+			for child: Control in get_children(): child.mouse_behavior_recursive = Control.MOUSE_BEHAVIOR_DISABLED
 			mouse_entered.connect(_on_mouse_entered)
 			mouse_exited.connect(_on_mouse_exited)
 		State.PRESENT:
