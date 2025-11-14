@@ -4,8 +4,8 @@ extends FlexContainer
 
 const _curve_container_name: StringName = "CurveContainer"
 
-@export var _offset_curve: Curve
-@export var _relative_offset: bool
+@export var offset_curve: Curve
+@export var relative_offset: bool
 
 func add(element: Control) -> void:
 	var curve_container: BoxContainer
@@ -50,8 +50,8 @@ func _align_elements_on_curve() -> void:
 	var placeholders: Array[Control] = _get_curve_placeholders()
 	for placeholder_index: int in placeholders.size():
 		var placeholder: Control = placeholders[placeholder_index]
-		var offset: float = _offset_curve.sample(placeholder_index)
-		if _relative_offset: offset *= _box_container.size.y
+		var offset: float = offset_curve.sample(placeholder_index)
+		if relative_offset: offset *= _box_container.size.y
 		match direction:
 			Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT: placeholder.custom_minimum_size.y = offset
 			Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP: placeholder.custom_minimum_size.x = offset
