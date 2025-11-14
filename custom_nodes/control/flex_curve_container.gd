@@ -5,6 +5,7 @@ extends FlexContainer
 const _curve_container_name: StringName = "CurveContainer"
 
 @export var _offset_curve: Curve
+@export var _relative_offset: bool
 
 func add(element: Control) -> void:
 	var curve_container: BoxContainer
@@ -20,7 +21,7 @@ func add(element: Control) -> void:
 			if _fill: curve_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_: assert(false, "Does not exist")
 	curve_container.name = _curve_container_name
-	curve_container.alignment = BoxContainer.ALIGNMENT_END	
+	curve_container.alignment = BoxContainer.ALIGNMENT_END
 	curve_container.add_theme_constant_override("separation", 0)
 	curve_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	match _direction:
@@ -50,6 +51,7 @@ func _align_elements_on_curve() -> void:
 	for placeholder_index: int in placeholders.size():
 		var placeholder: Control = placeholders[placeholder_index]
 		var offset: float = _offset_curve.sample(placeholder_index)
+		if _relative_offset: offset *= _box_container.size.y
 		match _direction:
 			Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT: placeholder.custom_minimum_size.y = offset
 			Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP: placeholder.custom_minimum_size.x = offset
@@ -71,6 +73,8 @@ func _set_box_container(new_box_container: BoxContainer) -> void:
 	if _box_container:
 		_box_container.child_entered_tree.disconnect(_align_elements_on_curve)
 		_box_container.child_order_changed.disconnect(_align_elements_on_curve)
+		_box_container.resized.disconnect(_align_elements_on_curve)
 	super._set_box_container(new_box_container)
 	_box_container.child_entered_tree.connect(_align_elements_on_curve.unbind(1))
 	_box_container.child_order_changed.connect(_align_elements_on_curve)
+	_box_container.resized.connect(_align_elements_on_curve)

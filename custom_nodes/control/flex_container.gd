@@ -9,7 +9,7 @@ enum Direction {
 	BOTTOM_TO_TOP,
 }
 
-@export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var _element_size: float = 64.0
+@export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var _element_size: float = 0.0
 @export_range(-64, 64, 1, "suffix:px") var _separation: int = 4
 @export var _fill: bool = true
 @export var _container_root: Control
