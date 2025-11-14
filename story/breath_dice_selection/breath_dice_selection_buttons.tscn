@@ -8,7 +8,7 @@
 
 [node name="BreathDiceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_buttons")]
 offset_right = 238.0
-offset_bottom = 125.0
+offset_bottom = 89.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_35nxq")
 script = ExtResource("1_0p7wt")
 _buttons = NodePath("ButtonGroups")

@@ -25,6 +25,7 @@ enum Direction {
 var _box_container: BoxContainer: set = _set_box_container
 
 func add(element: Control) -> void:
+	assert(element)
 	if not _box_container: _setup()
 	assert(_box_container)
 	if element_size > 0.0: element.custom_minimum_size = Vector2(element_size, element_size)

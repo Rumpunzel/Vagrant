@@ -28,9 +28,9 @@ _description = "You hide among the barnacles and flotsam."
 
 [sub_resource type="Resource" id="Resource_yrhxu"]
 script = ExtResource("5_yeb4i")
+details = "Shipwreck stuff."
 attribute = ExtResource("5_k8kem")
 difficulty = 5
-details = "Shipwreck stuff."
 failure_transition = SubResource("Resource_0x8r7")
 description = "Hide in the shipwreck."
 transition = SubResource("Resource_b3ed1")
