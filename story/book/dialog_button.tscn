@@ -104,7 +104,6 @@ expand_icon = true
 script = ExtResource("1_smxr3")
 shortcuts = Array[Shortcut]([SubResource("Shortcut_4452u"), SubResource("Shortcut_fg3ec"), SubResource("Shortcut_5aiqg"), SubResource("Shortcut_ypkvd"), SubResource("Shortcut_o3aia"), SubResource("Shortcut_jht22"), SubResource("Shortcut_2q0j8"), SubResource("Shortcut_giagg"), SubResource("Shortcut_uumch"), SubResource("Shortcut_akluy")])
 glyph = "1."
-_glyph_size = Vector2(32, 0)
 _stream = SubResource("AudioStreamRandomizer_rbcg6")
 _pitch_scale = 0.71
 metadata/_custom_type_script = "uid://1rnnvyy1byjt"
