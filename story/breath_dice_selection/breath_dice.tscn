@@ -7,8 +7,8 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_35nxq"]
 
 [sub_resource type="Curve" id="Curve_66ain"]
-_limits = [0.0, 24.0, 0.0, 4.0]
-_data = [Vector2(0, 8), 0.0, -12.0, 0, 0, Vector2(2, 0), 0.0, 0.0, 0, 0, Vector2(4, 8), 12.0, 0.0, 0, 0]
+_limits = [0.0, 0.2, 0.0, 4.0]
+_data = [Vector2(0, 0.2), 0.0, -0.2, 0, 0, Vector2(2, 0), 0.0, 0.0, 0, 0, Vector2(4, 0.2), 0.2, 0.0, 0, 0]
 point_count = 3
 
 [node name="BreathDice" type="PanelContainer" node_paths=PackedStringArray("_dice")]
@@ -32,5 +32,6 @@ theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("3_66ain")
 _offset_curve = SubResource("Curve_66ain")
+_relative_offset = true
 _element_size = 0.0
 metadata/_custom_type_script = "uid://dfm6y6ow1f5e1"

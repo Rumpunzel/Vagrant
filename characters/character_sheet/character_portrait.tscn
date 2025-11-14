@@ -115,8 +115,8 @@ material = ExtResource("2_3lp8p")
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("3_mykuh")
-expand_mode = 5
-stretch_mode = 5
+expand_mode = 3
+stretch_mode = 6
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
