@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=15 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="2_kq5yh"]
@@ -10,8 +10,12 @@
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="6_ded50"]
 [ext_resource type="PackedScene" uid="uid://d2hp0hcp2w5ro" path="res://characters/character_sheet/character_portraits.tscn" id="7_nlwo0"]
 [ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://story/dorian.tres" id="7_pqpya"]
+[ext_resource type="Texture2D" uid="uid://dqmm4lvyllur2" path="res://story/mechanics/icons/waterskin.svg" id="9_pqpya"]
+[ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://story/mechanics/icons/magic-potion.svg" id="10_nlwo0"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ipvic"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q7j6d"]
 
 [node name="Adventure" type="PanelContainer" node_paths=PackedStringArray("_story", "_characters", "_title", "_story_book")]
 anchors_preset = 15
@@ -64,49 +68,106 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 8
-alignment = 2
-
-[node name="CharacterSheet" parent="HSplitContainer/VBoxContainer" instance=ExtResource("4_2poxt")]
-layout_mode = 2
-size_flags_horizontal = 0
-_character_profile = ExtResource("7_pqpya")
-
-[node name="CharacterPortraits" parent="HSplitContainer/VBoxContainer" node_paths=PackedStringArray("characters") instance=ExtResource("7_nlwo0")]
-layout_mode = 2
-size_flags_horizontal = 0
-characters = NodePath("../../../Characters")
-
 [node name="VSplitContainer" type="VSplitContainer" parent="HSplitContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 32
 drag_area_highlight_in_editor = true
 
-[node name="Control" type="Control" parent="HSplitContainer/VSplitContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/VSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 2
+
+[node name="Control" type="Control" parent="HSplitContainer/VSplitContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="GameInfo" type="TabContainer" parent="HSplitContainer/VSplitContainer"]
+[node name="CharacterSheet" parent="HSplitContainer/VSplitContainer/VBoxContainer" instance=ExtResource("4_2poxt")]
+layout_mode = 2
+size_flags_horizontal = 0
+_character_profile = ExtResource("7_pqpya")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/VSplitContainer"]
+layout_mode = 2
+
+[node name="CharacterPortraits" parent="HSplitContainer/VSplitContainer/HBoxContainer" node_paths=PackedStringArray("characters") instance=ExtResource("7_nlwo0")]
+layout_mode = 2
+characters = NodePath("../../../../Characters")
+
+[node name="PanelContainer" type="PanelContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
+
+[node name="MarginContainer" type="MarginContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/icon_max_width = 24
+text = "Catch Breath"
+icon = ExtResource("9_pqpya")
+flat = true
+
+[node name="Button2" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/icon_max_width = 24
+text = "Catch Breath"
+icon = ExtResource("10_nlwo0")
+flat = true
+
+[node name="Button4" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/icon_max_width = 24
+text = "Catch Breath"
+icon = ExtResource("9_pqpya")
+flat = true
+
+[node name="Button3" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/icon_max_width = 24
+text = "Catch Breath"
+icon = ExtResource("10_nlwo0")
+flat = true
+
+[node name="Button5" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/icon_max_width = 24
+text = "Catch Breath"
+icon = ExtResource("9_pqpya")
+flat = true
+
+[node name="Button6" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/icon_max_width = 24
+text = "Catch Breath"
+icon = ExtResource("10_nlwo0")
+flat = true
+
+[node name="GameInfo" type="TabContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="DiceLog" type="MarginContainer" parent="HSplitContainer/VSplitContainer/GameInfo"]
+[node name="DiceLog" type="MarginContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer/GameInfo"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="DiceLog" parent="HSplitContainer/VSplitContainer/GameInfo/DiceLog" instance=ExtResource("4_5djeo")]
+[node name="DiceLog" parent="HSplitContainer/VSplitContainer/HBoxContainer/GameInfo/DiceLog" instance=ExtResource("4_5djeo")]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 
 [node name="StoryBook" parent="HSplitContainer" instance=ExtResource("5_p35e8")]
 layout_mode = 2
 
-[connection signal="character_selected" from="HSplitContainer/VBoxContainer/CharacterPortraits" to="HSplitContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
+[connection signal="character_selected" from="HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="HSplitContainer/VSplitContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
 [connection signal="page_entered" from="HSplitContainer/StoryBook" to="." method="_on_story_book_page_entered"]
