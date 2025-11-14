@@ -63,10 +63,12 @@ func get_state() -> State:
 	return State.UNHOVERED
 
 func _fade_in(color_modulate: Color = _modulate) -> void:
+	if not is_inside_tree(): return
 	var tween: Tween = get_tree().create_tween()
 	tween.tween_property(control_to_fade, "modulate", color_modulate, _fade_in_time).set_delay(_fade_in_delay)
 
 func _fade_out() -> void:
+	if not is_inside_tree(): return
 	var hidden_modulate: Color = _modulate
 	hidden_modulate.a = 0.0
 	var tween: Tween = get_tree().create_tween()
