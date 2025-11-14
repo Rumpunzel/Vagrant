@@ -11,11 +11,11 @@ offset_right = 238.0
 offset_bottom = 125.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_35nxq")
 script = ExtResource("1_0p7wt")
-_buttons = NodePath("Buttons")
+_buttons = NodePath("ButtonGroups")
 _breath_dice_selection_group = ExtResource("2_3dl60")
 metadata/_custom_type_script = "uid://7mksap2q7pd0"
 
-[node name="Buttons" type="MarginContainer" parent="." node_paths=PackedStringArray("_container_root")]
+[node name="ButtonGroups" type="MarginContainer" parent="."]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
@@ -23,11 +23,4 @@ theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("3_35nxq")
 _element_size = 0.0
-_container_root = NodePath(".")
 metadata/_custom_type_script = "uid://dqkpaquatj11m"
-
-[connection signal="toggled" from="Buttons/@HBoxContainer@81825/BreathDiceSelectionButtonGroup/@VBoxContainer@81824/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/BreathDiceSelectionButtonGroup/@VBoxContainer@81824/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Buttons/@HBoxContainer@81825/@MarginContainer@81827/@VBoxContainer@81826/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/@MarginContainer@81827/@VBoxContainer@81826/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Buttons/@HBoxContainer@81825/@MarginContainer@81829/@VBoxContainer@81828/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/@MarginContainer@81829/@VBoxContainer@81828/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Buttons/@HBoxContainer@81825/@MarginContainer@81831/@VBoxContainer@81830/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/@MarginContainer@81831/@VBoxContainer@81830/BreathDieSelectionButton" method="_on_toggled"]
-[connection signal="toggled" from="Buttons/@HBoxContainer@81825/@MarginContainer@81833/@VBoxContainer@81832/BreathDieSelectionButton" to="Buttons/@HBoxContainer@81825/@MarginContainer@81833/@VBoxContainer@81832/BreathDieSelectionButton" method="_on_toggled"]

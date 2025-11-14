@@ -22,7 +22,7 @@ _dice = NodePath("Dice")
 _breath_dice_group = ExtResource("2_66ain")
 metadata/_custom_type_script = "uid://bn37eojjhi2s6"
 
-[node name="Dice" type="MarginContainer" parent="." node_paths=PackedStringArray("_container_root")]
+[node name="Dice" type="MarginContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2
 mouse_behavior_recursive = 1
@@ -33,5 +33,4 @@ theme_override_constants/margin_bottom = 0
 script = ExtResource("3_66ain")
 _offset_curve = SubResource("Curve_66ain")
 _element_size = 0.0
-_container_root = NodePath("")
 metadata/_custom_type_script = "uid://dfm6y6ow1f5e1"

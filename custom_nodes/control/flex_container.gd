@@ -12,13 +12,14 @@ enum Direction {
 @export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var _element_size: float = 64.0
 @export_range(-64, 64, 1, "suffix:px") var _separation: int = 4
 @export var _fill: bool = true
-@export var _container_root: Control = self
+@export var _container_root: Control
 @export var _container_index_in_root: int = -1
 @export var _alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_BEGIN
 @export var _direction: Direction = Direction.LEFT_TO_RIGHT :
 	set(new_direction):
 		if new_direction == _direction: return
 		_direction = new_direction
+		if not is_node_ready(): return
 		_setup()
 
 var _box_container: BoxContainer : set = _set_box_container
@@ -46,8 +47,8 @@ func clear() -> void:
 		element.queue_free()
 
 func get_elements() -> Array[Control]:
-	assert(_box_container)
 	var elements: Array[Control] = []
+	if not _box_container: return elements
 	elements.assign(_box_container.get_children())
 	return elements
 

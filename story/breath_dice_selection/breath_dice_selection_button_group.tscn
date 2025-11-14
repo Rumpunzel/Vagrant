@@ -13,17 +13,18 @@ theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("2_nci2h")
-_all_button = NodePath("VBoxContainer/AllButton")
+_all_button = NodePath("Buttons/AllButton")
 _breath_die_selection_button = ExtResource("3_6gpjh")
-_container_root = NodePath("VBoxContainer")
+_separation = 2
+_container_root = NodePath("Buttons")
 _container_index_in_root = 0
 _direction = 2
 metadata/_custom_type_script = "uid://c0lefpkt50bgv"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="Buttons" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="AllButton" type="Button" parent="VBoxContainer"]
+[node name="AllButton" type="Button" parent="Buttons"]
 layout_mode = 2
 focus_mode = 0
 mouse_filter = 1
@@ -34,4 +35,4 @@ script = ExtResource("3_qcqnq")
 active = false
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
-[connection signal="toggled" from="VBoxContainer/AllButton" to="." method="_on_all_button_toggled"]
+[connection signal="toggled" from="Buttons/AllButton" to="." method="_on_all_button_toggled"]
