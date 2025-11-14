@@ -33,5 +33,4 @@ theme_override_constants/margin_bottom = 0
 script = ExtResource("3_66ain")
 _offset_curve = SubResource("Curve_66ain")
 _relative_offset = true
-_element_size = 0.0
 metadata/_custom_type_script = "uid://dfm6y6ow1f5e1"

@@ -64,16 +64,15 @@ script = ExtResource("4_evqjp")
 _auto_scroll_vertically = true
 metadata/_custom_type_script = "uid://cepjqieke7bvl"
 
-[node name="Pages" type="MarginContainer" parent="MarginContainer/HBoxContainer/ScrollContainer" node_paths=PackedStringArray("_container_root")]
+[node name="Pages" type="MarginContainer" parent="MarginContainer/HBoxContainer/ScrollContainer" node_paths=PackedStringArray("container_root")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("3_rpy1c")
-_element_size = 0.0
-_fill = false
-_container_root = NodePath(".")
-_alignment = 2
-_direction = 2
+fill = false
+container_root = NodePath(".")
+alignment = 2
+direction = 2
 metadata/_custom_type_script = "uid://dqkpaquatj11m"
 
 [connection signal="resized" from="." to="." method="_on_resized"]

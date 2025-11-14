@@ -13,12 +13,11 @@ _portraits = NodePath("Portraits")
 _character_portrait = ExtResource("2_bjk71")
 metadata/_custom_type_script = "uid://biit618mirgcj"
 
-[node name="Portraits" type="MarginContainer" parent="." node_paths=PackedStringArray("_container_root")]
+[node name="Portraits" type="MarginContainer" parent="."]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("2_tro4e")
-_fill = false
-_container_root = NodePath(".")
+fill = false

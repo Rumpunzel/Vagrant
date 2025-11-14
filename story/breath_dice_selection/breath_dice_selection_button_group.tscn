@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cfnlwcs3oai0c" path="res://story/breath_dice_selection/breath_die_selection_button.tscn" id="3_6gpjh"]
 [ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="3_qcqnq"]
 
-[node name="BreathDiceSelectionButtonGroup" type="MarginContainer" node_paths=PackedStringArray("_all_button", "_container_root")]
+[node name="BreathDiceSelectionButtonGroup" type="MarginContainer" node_paths=PackedStringArray("_all_button", "container_root")]
 offset_right = 44.0
 offset_bottom = 145.0
 size_flags_horizontal = 3
@@ -15,10 +15,10 @@ theme_override_constants/margin_bottom = 0
 script = ExtResource("2_nci2h")
 _all_button = NodePath("Buttons/AllButton")
 _breath_die_selection_button = ExtResource("3_6gpjh")
-_separation = 2
-_container_root = NodePath("Buttons")
-_container_index_in_root = 0
-_direction = 2
+separation = 2
+container_root = NodePath("Buttons")
+container_index_in_root = 0
+direction = 2
 metadata/_custom_type_script = "uid://c0lefpkt50bgv"
 
 [node name="Buttons" type="VBoxContainer" parent="."]
