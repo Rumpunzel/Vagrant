@@ -10,31 +10,68 @@ signal hover_status_changed(hovered: bool)
 		_glyph_text.text = glyph
 
 @export_group("Glyph")
-@export var _glyph_size: Vector2 = Vector2(24.0, 24.0)
-@export var _glyph_margin_left: int = 0
-@export var _glyph_margin_top: int = 0
-@export var _glyph_margin_right: int = 0
-@export var _glyph_margin_bottom: int = 0
+@export var _glyph_size: Vector2 = Vector2(24.0, 24.0) :
+	set(new_size):
+		_glyph_size = new_size
+		_fancy_glyph.custom_minimum_size = _glyph_size
+		_glyph_icon.custom_minimum_size.y = _glyph_size.y
+@export var _glyph_margin_left: int = 0 :
+	set(new_margin_left):
+		_glyph_margin_left = new_margin_left
+		_fancy_glyph.add_theme_constant_override("margin_left", _glyph_margin_left)
+@export var _glyph_margin_top: int = 0 :
+	set(new_margin_top):
+		_glyph_margin_top = new_margin_top
+		_fancy_glyph.add_theme_constant_override("margin_top", new_margin_top)
+@export var _glyph_margin_right: int = 0 :
+	set(new_margin_right):
+		_glyph_margin_right = new_margin_right
+		_fancy_glyph.add_theme_constant_override("margin_right", new_margin_right)
+@export var _glyph_margin_bottom: int = 0 :
+	set(new_margin_bottom):
+		_glyph_margin_bottom = new_margin_bottom
+		_fancy_glyph.add_theme_constant_override("margin_bottom", new_margin_bottom)
 
 @export_group("Audio")
-@export var _stream: AudioStream
-@export_range(-80.0, 24.0, 0.1, "or_less", "or_greater", "suffix:dB") var _volume_db: float = 0.0
-@export_range(0.01, 4.0, 0.1, "or_greater", "suffix:pct") var _pitch_scale: float = 1.0
+@export var _stream: AudioStream :
+	get: return _audio_stream_player.stream
+	set(new_stream): _audio_stream_player.stream = new_stream
+@export_range(-80.0, 24.0, 0.1, "or_less", "or_greater", "suffix:dB") var _volume_db: float :
+	get: return _audio_stream_player.volume_db
+	set(new_volume_db): _audio_stream_player.volume_db = new_volume_db
+@export_range(0.01, 4.0, 0.1, "or_greater", "suffix:pct") var _pitch_scale: float = 1.0 :
+	get: return _audio_stream_player.pitch_scale
+	set(new_pitch_scale): _audio_stream_player.pitch_scale = new_pitch_scale
 
 @export_group("Layout")
-@export var _autowrap_mode: TextServer.AutowrapMode = TextServer.AutowrapMode.AUTOWRAP_OFF
-@export var _margin_left: int = 4
-@export var _margin_top: int = 4
-@export var _margin_right: int = 4
-@export var _margin_bottom: int = 4
-@export var _alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_END
-@export var _direction: FlexContainer.Direction = FlexContainer.Direction.LEFT_TO_RIGHT
+@export var _autowrap_mode: TextServer.AutowrapMode = TextServer.AutowrapMode.AUTOWRAP_OFF :
+	set(new_autowrap_mode):
+		_autowrap_mode = new_autowrap_mode
+		_fancy_text.autowrap_mode = _autowrap_mode
 
-var _fancy_panel: PanelContainer
-var _fancy_glyph: MarginContainer
-var _glyph_icon: TextureRect
-var _glyph_text: RichTextLabel
-var _fancy_text: RichTextLabel
+@export var _margin_left: int = 4 :
+	set(new_margin_left):
+		_margin_left = new_margin_left
+		_flex_container.add_theme_constant_override("margin_left", new_margin_left)
+@export var _margin_top: int = 4 :
+	set(new_margin_top):
+		_margin_top = new_margin_top
+		_flex_container.add_theme_constant_override("margin_left", _margin_top)
+@export var _margin_right: int = 4 :
+	set(new_margin_right):
+		_margin_right = new_margin_right
+		_flex_container.add_theme_constant_override("margin_left", _margin_right)
+@export var _margin_bottom: int = 4 :
+	set(new_margin_bottom):
+		_margin_bottom = new_margin_bottom
+		_flex_container.add_theme_constant_override("margin_left", _margin_bottom)
+@export var _flex_alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_END :
+	set(new_flex_alignment):
+		_flex_alignment = new_flex_alignment
+		_flex_container.alignment = _flex_alignment
+@export var _direction: FlexContainer.Direction :
+	get: return _flex_container.direction
+	set(new_direction): _flex_container.direction = new_direction
 
 var _hovered: bool = false :
 	set(new_status):
@@ -42,80 +79,28 @@ var _hovered: bool = false :
 		_hovered = new_status
 		hover_status_changed.emit(_hovered)
 
+var _audio_stream_player: AudioStreamPlayer
+var _fancy_panel: PanelContainer
+var _flex_container: FlexContainer
+var _fancy_glyph: MarginContainer
+var _glyph_icon: TextureRect
+var _glyph_text: RichTextLabel
+var _fancy_text: RichTextLabel
+
 func _init() -> void:
-	## AudioStreamPlayer
-	var audio: AudioStreamPlayer = AudioStreamPlayer.new()
-	audio.stream = _stream
-	audio.volume_db = _volume_db
-	audio.pitch_scale = _pitch_scale
-	audio.bus = &"SFX"
-	add_child(audio, true, Node.INTERNAL_MODE_BACK)
-	pressed.connect(audio.play)
-	## Fancy Panel
-	_fancy_panel = PanelContainer.new()
-	_fancy_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_fancy_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_fancy_panel, true, Node.INTERNAL_MODE_BACK)
-	_fancy_panel.minimum_size_changed.connect(func() -> void: custom_minimum_size = _fancy_panel.get_minimum_size())
-	## FlexContainer
-	var flex_container: FlexContainer = FlexContainer.new()
-	flex_container.fill = false
-	flex_container.alignment = _alignment
-	flex_container.direction = _direction
-	flex_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	flex_container.add_theme_constant_override("margin_left", _margin_left)
-	flex_container.add_theme_constant_override("margin_top", _margin_top)
-	flex_container.add_theme_constant_override("margin_right", _margin_right)
-	flex_container.add_theme_constant_override("margin_bottom", _margin_bottom)
-	_fancy_panel.add_child(flex_container)
+	## Audio
+	_setup_audio_stream_player()
+	## Layout
+	_setup_fancy_panel()
+	_setup_flex_container()
 	## Fancy Glyph
-	_fancy_glyph = MarginContainer.new()
-	_fancy_glyph.name = "Glyph"
-	_fancy_glyph.custom_minimum_size = _glyph_size
-	_fancy_glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_fancy_glyph.add_theme_constant_override("margin_left", _glyph_margin_left)
-	_fancy_glyph.add_theme_constant_override("margin_top", _glyph_margin_top)
-	_fancy_glyph.add_theme_constant_override("margin_right", _glyph_margin_right)
-	_fancy_glyph.add_theme_constant_override("margin_bottom", _glyph_margin_bottom)
-	flex_container.add(_fancy_glyph)
-	## Glyph Icon
-	_glyph_icon = TextureRect.new()
-	_glyph_icon.name = "GlyphIcon"
-	_glyph_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	_glyph_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
-	_glyph_icon.size_flags_horizontal = Control.SIZE_SHRINK_END
-	_glyph_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_glyph_icon.custom_minimum_size.y = _glyph_size.y
-	_glyph_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_glyph_icon.size = Vector2.ZERO
-	_fancy_glyph.add_child(_glyph_icon)
-	## Glyph Text
-	_glyph_text = RichTextLabel.new()
-	_glyph_text.name = "GlyphText"
-	_glyph_text.bbcode_enabled = true
-	_glyph_text.text = glyph
-	_glyph_text.scroll_active = false
-	_glyph_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_glyph_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_glyph_text.custom_minimum_size = _glyph_size
-	_glyph_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_fancy_glyph.add_child(_glyph_text)
+	_setup_fancy_glyph()
+	_setup_glyph_icon()
+	_setup_glyp_text()
 	## Fancy Text
-	_fancy_text = RichTextLabel.new()
-	_fancy_text.name = "Text"
-	_fancy_text.bbcode_enabled = true
-	_fancy_text.fit_content = true
-	_fancy_text.scroll_active = false
-	_fancy_text.autowrap_mode = _autowrap_mode
-	match alignment:
-		HORIZONTAL_ALIGNMENT_LEFT, HORIZONTAL_ALIGNMENT_FILL: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		HORIZONTAL_ALIGNMENT_CENTER: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		HORIZONTAL_ALIGNMENT_RIGHT: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_fancy_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_fancy_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_fancy_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	flex_container.add(_fancy_text)
+	_setup_fancy_text()
 	## Fancy Button
+	set(&"alignment", alignment)
 	set(&"icon", icon)
 	set(&"text", text)
 	button_down.connect(_update_style)
@@ -128,6 +113,87 @@ func _init() -> void:
 	style_changed.connect(_update_style)
 	if not is_node_ready(): await ready
 	_update_style()
+
+func _setup_audio_stream_player() -> void:
+	assert(not _audio_stream_player)
+	_audio_stream_player = AudioStreamPlayer.new()
+	_audio_stream_player.stream = _stream
+	_audio_stream_player.volume_db = _volume_db
+	_audio_stream_player.pitch_scale = _pitch_scale
+	_audio_stream_player.bus = &"SFX"
+	add_child(_audio_stream_player, true, Node.INTERNAL_MODE_BACK)
+	pressed.connect(_audio_stream_player.play)
+
+func _setup_fancy_panel() -> void:
+	assert(not _fancy_panel)
+	_fancy_panel = PanelContainer.new()
+	_fancy_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_fancy_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_fancy_panel, true, Node.INTERNAL_MODE_BACK)
+	_fancy_panel.minimum_size_changed.connect(func() -> void: custom_minimum_size = _fancy_panel.get_minimum_size())
+
+func _setup_flex_container() -> void:
+	assert(not _flex_container)
+	_flex_container = FlexContainer.new()
+	_flex_container.fill = false
+	_flex_container.alignment = _flex_alignment
+	_flex_container.direction = _direction
+	_flex_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_flex_container.add_theme_constant_override("margin_left", _margin_left)
+	_flex_container.add_theme_constant_override("margin_top", _margin_top)
+	_flex_container.add_theme_constant_override("margin_right", _margin_right)
+	_flex_container.add_theme_constant_override("margin_bottom", _margin_bottom)
+	_fancy_panel.add_child(_flex_container)
+
+func _setup_fancy_glyph() -> void:
+	assert(not _fancy_glyph)
+	_fancy_glyph = MarginContainer.new()
+	_fancy_glyph.name = "Glyph"
+	_fancy_glyph.custom_minimum_size = _glyph_size
+	_fancy_glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fancy_glyph.add_theme_constant_override("margin_left", _glyph_margin_left)
+	_fancy_glyph.add_theme_constant_override("margin_top", _glyph_margin_top)
+	_fancy_glyph.add_theme_constant_override("margin_right", _glyph_margin_right)
+	_fancy_glyph.add_theme_constant_override("margin_bottom", _glyph_margin_bottom)
+	_flex_container.add(_fancy_glyph)
+
+func _setup_glyph_icon() -> void:
+	assert(not _glyph_icon)
+	_glyph_icon = TextureRect.new()
+	_glyph_icon.name = "GlyphIcon"
+	_glyph_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	_glyph_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+	_glyph_icon.size_flags_horizontal = Control.SIZE_SHRINK_END
+	_glyph_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_glyph_icon.custom_minimum_size.y = _glyph_size.y
+	_glyph_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fancy_glyph.add_child(_glyph_icon)
+
+func _setup_glyp_text() -> void:
+	_glyph_text = RichTextLabel.new()
+	_glyph_text.name = "GlyphText"
+	_glyph_text.bbcode_enabled = true
+	_glyph_text.text = glyph
+	_glyph_text.scroll_active = false
+	_glyph_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_glyph_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_glyph_text.custom_minimum_size = _glyph_size
+	_glyph_text.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_glyph_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fancy_glyph.add_child(_glyph_text)
+
+func _setup_fancy_text() -> void:
+	assert(not _fancy_text)
+	_fancy_text = RichTextLabel.new()
+	_fancy_text.name = "Text"
+	_fancy_text.bbcode_enabled = true
+	_fancy_text.fit_content = true
+	_fancy_text.scroll_active = false
+	_fancy_text.autowrap_mode = _autowrap_mode
+	_fancy_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_fancy_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_fancy_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_flex_container.add(_fancy_text)
 
 func _update_style() -> void:
 	_fancy_panel.add_theme_stylebox_override("panel", _get_panel_style())
@@ -184,6 +250,13 @@ func _get(property: StringName) -> Variant:
 
 func _set(property: StringName, value: Variant) -> bool:
 	match property:
+		&"alignment":
+			alignment = value
+			match alignment:
+				HORIZONTAL_ALIGNMENT_LEFT, HORIZONTAL_ALIGNMENT_FILL: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+				HORIZONTAL_ALIGNMENT_CENTER: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+				HORIZONTAL_ALIGNMENT_RIGHT: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			return true
 		&"icon":
 			_glyph_icon.texture = value
 			_glyph_icon.visible = value != null

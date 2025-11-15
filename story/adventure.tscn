@@ -111,91 +111,78 @@ layout_mode = 2
 custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
-text = "Catch Breath
-"
+mouse_default_cursor_shape = 2
+text = "Catch Breath"
 icon = ExtResource("9_pqpya")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-fade_in_time = 0.1
-fade_out_time = 0.1
 hover_neighbors = [NodePath("../Button2"), NodePath("../Button4"), NodePath("../Button3"), NodePath("../Button5"), NodePath("../Button6")]
-neighbor_hover_modulate = Color(1, 1, 1, 0.25)
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="Button2" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
+mouse_default_cursor_shape = 2
 text = "Catch Breath"
 icon = ExtResource("10_nlwo0")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-fade_in_time = 0.1
-fade_out_time = 0.1
 hover_neighbors = [NodePath("../Button"), NodePath("../Button4"), NodePath("../Button3"), NodePath("../Button5"), NodePath("../Button6")]
-neighbor_hover_modulate = Color(1, 1, 1, 0.25)
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="Button4" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
+mouse_default_cursor_shape = 2
 text = "Catch Breath"
 icon = ExtResource("9_pqpya")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-fade_in_time = 0.1
-fade_out_time = 0.1
 hover_neighbors = [NodePath("../Button"), NodePath("../Button2"), NodePath("../Button3"), NodePath("../Button5"), NodePath("../Button6")]
-neighbor_hover_modulate = Color(1, 1, 1, 0.25)
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="Button3" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
+mouse_default_cursor_shape = 2
 text = "Catch Breath"
 icon = ExtResource("10_nlwo0")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-fade_in_time = 0.1
-fade_out_time = 0.1
 hover_neighbors = [NodePath("../Button"), NodePath("../Button2"), NodePath("../Button4"), NodePath("../Button5"), NodePath("../Button6")]
-neighbor_hover_modulate = Color(1, 1, 1, 0.25)
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="Button5" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
+mouse_default_cursor_shape = 2
 text = "Catch Breath"
 icon = ExtResource("9_pqpya")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-fade_in_time = 0.1
-fade_out_time = 0.1
 hover_neighbors = [NodePath("../Button"), NodePath("../Button2"), NodePath("../Button4"), NodePath("../Button3"), NodePath("../Button6")]
-neighbor_hover_modulate = Color(1, 1, 1, 0.25)
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="Button6" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
+mouse_default_cursor_shape = 2
 text = "Catch Breath"
 icon = ExtResource("10_nlwo0")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-fade_in_time = 0.1
-fade_out_time = 0.1
 hover_neighbors = [NodePath("../Button"), NodePath("../Button2"), NodePath("../Button4"), NodePath("../Button3"), NodePath("../Button5")]
-neighbor_hover_modulate = Color(1, 1, 1, 0.25)
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="GameInfo" type="TabContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer"]
