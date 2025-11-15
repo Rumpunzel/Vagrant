@@ -43,10 +43,7 @@ func _align_elements_on_curve() -> void:
 		curve_container.add_theme_constant_override("margin_right", 0)
 		curve_container.add_theme_constant_override("margin_bottom", 0)
 		var offset: float = offset_curve.sample(container_index)
-		print(offset)
 		if relative_offset: offset *= size.y
-		print(offset)
-		print()
 		match direction:
 			Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT:
 				if invert_offset: curve_container.add_theme_constant_override("margin_top", int(offset))
