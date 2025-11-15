@@ -81,8 +81,6 @@ func _init() -> void:
 	## Glyph Icon
 	_glyph_icon = TextureRect.new()
 	_glyph_icon.name = "GlyphIcon"
-	_glyph_icon.texture = icon
-	_glyph_icon.visible = icon != null
 	_glyph_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	_glyph_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
 	_glyph_icon.size_flags_horizontal = Control.SIZE_SHRINK_END
@@ -94,7 +92,6 @@ func _init() -> void:
 	## Glyph Text
 	_glyph_text = RichTextLabel.new()
 	_glyph_text.name = "GlyphText"
-	_glyph_text.visible = icon == null
 	_glyph_text.bbcode_enabled = true
 	_glyph_text.text = glyph
 	_glyph_text.scroll_active = false
@@ -107,7 +104,6 @@ func _init() -> void:
 	_fancy_text = RichTextLabel.new()
 	_fancy_text.name = "Text"
 	_fancy_text.bbcode_enabled = true
-	_fancy_text.text = text
 	_fancy_text.fit_content = true
 	_fancy_text.scroll_active = false
 	_fancy_text.autowrap_mode = _autowrap_mode
@@ -120,9 +116,8 @@ func _init() -> void:
 	_fancy_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	flex_container.add(_fancy_text)
 	## Fancy Button
-	clip_text = true
-	expand_icon = true
-	self_modulate = Color.TRANSPARENT
+	set(&"icon", icon)
+	set(&"text", text)
 	button_down.connect(_update_style)
 	button_up.connect(_update_style)
 	pressed.connect(grab_focus)
@@ -180,16 +175,22 @@ func _get_text_color() -> Color:
 	elif has_focus(): text_color = get_theme_color("font_focus_color")
 	return text_color
 
+func _get(property: StringName) -> Variant:
+	match property:
+		&"icon": return _glyph_icon.texture
+		&"text": return _fancy_text.text
+	return null
+
 func _set(property: StringName, value: Variant) -> bool:
 	match property:
 		&"icon":
-			icon = value
-			_glyph_icon.texture = icon
-			_glyph_icon.visible = icon != null
-			_glyph_text.visible = icon == null
+			_glyph_icon.texture = value
+			_glyph_icon.visible = value != null
+			_glyph_text.visible = value == null
+			icon = null
 			return true
 		&"text":
-			text = value
-			_fancy_text.text = text
+			_fancy_text.text = value
+			text = ""
 			return true
 	return false

@@ -9,15 +9,13 @@ signal fight_requested(fight_request: FightRequest, source: StoryDecision)
 	set(new_story_decision):
 		assert(new_story_decision)
 		story_decision = new_story_decision
-		#text = story_decision.description
-		
 		if story_decision is StorySaveDecision:
 			var story_save_decision: StorySaveDecision = story_decision
 			set_icon_colors(story_save_decision.attribute.color)
 			set(&"icon", story_save_decision.attribute.icon)
 		elif story_decision is StoryFightDecision: glyph = "⚔️"
 		set(&"text", story_decision.description)
-		name = text
+		name = story_decision.description
 
 @export var shortcuts: Array[Shortcut] = []
 
