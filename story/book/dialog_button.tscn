@@ -90,7 +90,7 @@ streams_count = 1
 stream_0/stream = ExtResource("2_rbcg6")
 
 [node name="DialogButton" type="Button"]
-custom_minimum_size = Vector2(37, 39)
+custom_minimum_size = Vector2(208, 32)
 offset_right = 371.0
 offset_bottom = 75.0
 mouse_default_cursor_shape = 2
@@ -101,6 +101,6 @@ alignment = 0
 script = ExtResource("1_smxr3")
 shortcuts = Array[Shortcut]([SubResource("Shortcut_4452u"), SubResource("Shortcut_fg3ec"), SubResource("Shortcut_5aiqg"), SubResource("Shortcut_ypkvd"), SubResource("Shortcut_o3aia"), SubResource("Shortcut_jht22"), SubResource("Shortcut_2q0j8"), SubResource("Shortcut_giagg"), SubResource("Shortcut_uumch"), SubResource("Shortcut_akluy")])
 glyph = "1."
-_stream = SubResource("AudioStreamRandomizer_rbcg6")
-_pitch_scale = 0.71
+stream = SubResource("AudioStreamRandomizer_rbcg6")
+pitch_scale = 0.71
 metadata/_custom_type_script = "uid://1rnnvyy1byjt"
