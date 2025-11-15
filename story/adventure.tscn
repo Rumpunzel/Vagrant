@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=16 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="2_kq5yh"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://d2hp0hcp2w5ro" path="res://characters/character_sheet/character_portraits.tscn" id="7_nlwo0"]
 [ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://story/dorian.tres" id="7_pqpya"]
 [ext_resource type="Texture2D" uid="uid://dqmm4lvyllur2" path="res://story/mechanics/icons/waterskin.svg" id="9_pqpya"]
+[ext_resource type="Script" uid="uid://yppdbxj44rnm" path="res://custom_nodes/control/fancy_button.gd" id="10_hspyn"]
 [ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://story/mechanics/icons/magic-potion.svg" id="10_nlwo0"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ipvic"]
@@ -111,46 +112,82 @@ theme_override_constants/margin_bottom = 0
 layout_mode = 2
 
 [node name="Button" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(29, 276)
 layout_mode = 2
-theme_override_constants/icon_max_width = 24
 text = "Catch Breath"
 icon = ExtResource("9_pqpya")
 flat = true
+alignment = 0
+clip_text = true
+expand_icon = true
+script = ExtResource("10_hspyn")
+metadata/_custom_type_script = "uid://yppdbxj44rnm"
 
 [node name="Button2" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(29, 276)
 layout_mode = 2
-theme_override_constants/icon_max_width = 24
 text = "Catch Breath"
 icon = ExtResource("10_nlwo0")
 flat = true
+alignment = 0
+clip_text = true
+expand_icon = true
+script = ExtResource("10_hspyn")
+metadata/_custom_type_script = "uid://yppdbxj44rnm"
 
 [node name="Button4" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(29, 276)
 layout_mode = 2
-theme_override_constants/icon_max_width = 24
 text = "Catch Breath"
 icon = ExtResource("9_pqpya")
 flat = true
+alignment = 0
+clip_text = true
+expand_icon = true
+script = ExtResource("10_hspyn")
+metadata/_custom_type_script = "uid://yppdbxj44rnm"
 
 [node name="Button3" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(29, 276)
 layout_mode = 2
-theme_override_constants/icon_max_width = 24
 text = "Catch Breath"
 icon = ExtResource("10_nlwo0")
 flat = true
+alignment = 0
+clip_text = true
+expand_icon = true
+script = ExtResource("10_hspyn")
+metadata/_custom_type_script = "uid://yppdbxj44rnm"
 
 [node name="Button5" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(29, 276)
 layout_mode = 2
-theme_override_constants/icon_max_width = 24
 text = "Catch Breath"
 icon = ExtResource("9_pqpya")
 flat = true
+alignment = 0
+clip_text = true
+expand_icon = true
+script = ExtResource("10_hspyn")
+metadata/_custom_type_script = "uid://yppdbxj44rnm"
 
 [node name="Button6" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(29, 276)
 layout_mode = 2
-theme_override_constants/icon_max_width = 24
 text = "Catch Breath"
 icon = ExtResource("10_nlwo0")
 flat = true
+alignment = 0
+clip_text = true
+expand_icon = true
+script = ExtResource("10_hspyn")
+metadata/_custom_type_script = "uid://yppdbxj44rnm"
 
 [node name="GameInfo" type="TabContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer"]
 visible = false

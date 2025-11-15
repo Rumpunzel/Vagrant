@@ -4,7 +4,7 @@ extends DisplayButton
 
 signal hover_status_changed(hovered: bool)
 
-@export var glyph: String :
+@export_placeholder("Only shown if there is no icon") var glyph: String :
 	set(new_glyph):
 		glyph = new_glyph
 		_glyph_text.text = glyph
@@ -22,6 +22,7 @@ signal hover_status_changed(hovered: bool)
 @export_range(0.01, 4.0, 0.1, "or_greater", "suffix:pct") var _pitch_scale: float = 1.0
 
 @export_group("Layout")
+@export var _autowrap_mode: TextServer.AutowrapMode = TextServer.AutowrapMode.AUTOWRAP_OFF
 @export var _margin_left: int = 0
 @export var _margin_top: int = 0
 @export var _margin_right: int = 0
@@ -109,6 +110,7 @@ func _init() -> void:
 	_fancy_text.text = text
 	_fancy_text.fit_content = true
 	_fancy_text.scroll_active = false
+	_fancy_text.autowrap_mode = _autowrap_mode
 	match alignment:
 		HORIZONTAL_ALIGNMENT_LEFT, HORIZONTAL_ALIGNMENT_FILL: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		HORIZONTAL_ALIGNMENT_CENTER: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
