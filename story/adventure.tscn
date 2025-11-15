@@ -109,14 +109,12 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
 [node name="MarginContainer" type="MarginContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="CatchBreath" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(145, 40)
+[node name="CatchBreath" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(145, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -125,13 +123,14 @@ icon = ExtResource("10_nlwo0")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-hide_on_fade_out = true
 hover_neighbors = [NodePath("../MakeCamp"), NodePath("../RestBones")]
 glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="MakeCamp" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(136, 40)
+[node name="MakeCamp" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(136, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -141,13 +140,14 @@ icon = ExtResource("11_deuvi")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-hide_on_fade_out = true
 hover_neighbors = [NodePath("../CatchBreath"), NodePath("../RestBones")]
 glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="RestBones" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(130, 40)
+[node name="RestBones" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(126, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -157,16 +157,14 @@ icon = ExtResource("12_j416b")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-hide_on_fade_out = true
 hover_neighbors = [NodePath("../MakeCamp"), NodePath("../CatchBreath")]
 glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="AdmireLoot" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer2" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(140, 40)
+[node name="AdmireLoot" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(140, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -176,13 +174,14 @@ icon = ExtResource("13_uoow2")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-hide_on_fade_out = true
 hover_neighbors = [NodePath("../PonderMap"), NodePath("../AssessTroupe")]
 glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="PonderMap" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer2" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(139, 40)
+[node name="PonderMap" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(139, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -192,13 +191,14 @@ icon = ExtResource("14_j416b")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-hide_on_fade_out = true
 hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../AssessTroupe")]
 glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="AssessTroupe" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer2" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(155, 40)
+[node name="AssessTroupe" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(155, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -208,9 +208,10 @@ icon = ExtResource("15_uoow2")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-hide_on_fade_out = true
 hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../PonderMap")]
 glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="GameInfo" type="TabContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer"]

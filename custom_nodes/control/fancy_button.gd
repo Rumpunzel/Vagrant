@@ -51,15 +51,15 @@ signal hover_status_changed(hovered: bool)
 @export var margin_top: int = 4:
 	set(new_margin_top):
 		margin_top = new_margin_top
-		_flex_container.add_theme_constant_override("margin_left", margin_top)
+		_flex_container.add_theme_constant_override("margin_top", margin_top)
 @export var margin_right: int = 4:
 	set(new_margin_right):
 		margin_right = new_margin_right
-		_flex_container.add_theme_constant_override("margin_left", margin_right)
+		_flex_container.add_theme_constant_override("margin_right", margin_right)
 @export var margin_bottom: int = 4:
 	set(new_margin_bottom):
 		margin_bottom = new_margin_bottom
-		_flex_container.add_theme_constant_override("margin_left", margin_bottom)
+		_flex_container.add_theme_constant_override("margin_bottom", margin_bottom)
 @export var flex_alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_END:
 	set(new_flex_alignment):
 		flex_alignment = new_flex_alignment
