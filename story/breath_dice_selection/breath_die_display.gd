@@ -15,7 +15,7 @@ extends TextureRect
 		_die_type = new_die_type
 		if not _die_type: return
 		texture = _die_type.icon_blank
-@export var _alive_modulate: Color = Color(1.0, 1.0, 1.0, 0.5)
+@export var _alive_modulate: Color = Color(0.75, 0.75, 0.75, 1.0)
 @export var _exhausted_modulate: Color = Color(1.0, 1.0, 1.0, 0.1)
 
 func _update() -> void:

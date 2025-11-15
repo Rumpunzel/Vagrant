@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bgdje6c0bdu1a" path="res://story/breath_dice_selection/breath_dice_group.tscn" id="2_66ain"]
 
 [sub_resource type="Curve" id="Curve_jdcxm"]
-_limits = [-0.25, 0.0, 0.0, 4.0]
+_limits = [-0.25, 0.25, 0.0, 4.0]
 _data = [Vector2(0, -0.05), 0.0, -0.17, 0, 0, Vector2(2, -0.2), 0.0, 0.0, 0, 0, Vector2(4, -0.05), 0.17, 0.0, 0, 0]
 point_count = 3
 

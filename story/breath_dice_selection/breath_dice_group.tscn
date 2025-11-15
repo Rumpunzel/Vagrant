@@ -14,5 +14,6 @@ theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("1_wv7s0")
 _breath_die_display = ExtResource("2_1en74")
-direction = 2
+separation = -42
+direction = 3
 metadata/_custom_type_script = "uid://d1mob3njsrvd5"

@@ -23,7 +23,6 @@ func add(element: Control) -> void:
 		_: assert(false, "Does not exist")
 	curve_container.add_child(element)
 	super.add(curve_container)
-	_align_elements_on_curve()
 
 func get_elements() -> Array[Control]:
 	var curve_containers: Array[MarginContainer] = []
@@ -62,9 +61,8 @@ func _set_box_container(new_box_container: BoxContainer) -> void:
 	if false and _box_container:
 		_box_container.child_entered_tree.disconnect(_align_elements_on_curve)
 		_box_container.child_order_changed.disconnect(_align_elements_on_curve)
-		_box_container.resized.disconnect(_align_elements_on_curve)
+		#_box_container.resized.disconnect(_align_elements_on_curve)
 	super._set_box_container(new_box_container)
-	return
 	_box_container.child_entered_tree.connect(_align_elements_on_curve.unbind(1))
 	_box_container.child_order_changed.connect(_align_elements_on_curve)
-	_box_container.resized.connect(_align_elements_on_curve)
+	#_box_container.resized.connect(_align_elements_on_curve)
