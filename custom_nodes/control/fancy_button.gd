@@ -4,76 +4,71 @@ extends DisplayButton
 
 signal hover_status_changed(hovered: bool)
 
-@export_placeholder("Only shown if there is no icon") var glyph: String :
+@export_placeholder("Only shown if there is no icon") var glyph: String:
 	set(new_glyph):
 		glyph = new_glyph
 		_glyph_text.text = glyph
 
 @export_group("Glyph")
-@export var _glyph_size: Vector2 = Vector2(24.0, 24.0) :
+@export var glyph_size: Vector2 = Vector2(24.0, 24.0):
 	set(new_size):
-		_glyph_size = new_size
-		_fancy_glyph.custom_minimum_size = _glyph_size
-		_glyph_icon.custom_minimum_size.y = _glyph_size.y
-@export var _glyph_margin_left: int = 0 :
+		glyph_size = new_size
+		_fancy_glyph.custom_minimum_size = glyph_size
+		_glyph_icon.custom_minimum_size.y = glyph_size.y
+@export var glyph_margin_left: int = 0:
 	set(new_margin_left):
-		_glyph_margin_left = new_margin_left
-		_fancy_glyph.add_theme_constant_override("margin_left", _glyph_margin_left)
-@export var _glyph_margin_top: int = 0 :
+		glyph_margin_left = new_margin_left
+		_fancy_glyph.add_theme_constant_override("margin_left", glyph_margin_left)
+@export var glyph_margin_top: int = 0:
 	set(new_margin_top):
-		_glyph_margin_top = new_margin_top
+		glyph_margin_top = new_margin_top
 		_fancy_glyph.add_theme_constant_override("margin_top", new_margin_top)
-@export var _glyph_margin_right: int = 0 :
+@export var glyph_margin_right: int = 0:
 	set(new_margin_right):
-		_glyph_margin_right = new_margin_right
+		glyph_margin_right = new_margin_right
 		_fancy_glyph.add_theme_constant_override("margin_right", new_margin_right)
-@export var _glyph_margin_bottom: int = 0 :
+@export var glyph_margin_bottom: int = 0:
 	set(new_margin_bottom):
-		_glyph_margin_bottom = new_margin_bottom
+		glyph_margin_bottom = new_margin_bottom
 		_fancy_glyph.add_theme_constant_override("margin_bottom", new_margin_bottom)
 
 @export_group("Audio")
-@export var _stream: AudioStream :
+@export var stream: AudioStream:
 	get: return _audio_stream_player.stream
 	set(new_stream): _audio_stream_player.stream = new_stream
-@export_range(-80.0, 24.0, 0.1, "or_less", "or_greater", "suffix:dB") var _volume_db: float :
+@export_range(-80.0, 24.0, 0.1, "or_less", "or_greater", "suffix:dB") var volume_db: float:
 	get: return _audio_stream_player.volume_db
 	set(new_volume_db): _audio_stream_player.volume_db = new_volume_db
-@export_range(0.01, 4.0, 0.1, "or_greater", "suffix:pct") var _pitch_scale: float = 1.0 :
+@export_range(0.01, 4.0, 0.1, "or_greater", "suffix:pct") var pitch_scale: float = 1.0:
 	get: return _audio_stream_player.pitch_scale
 	set(new_pitch_scale): _audio_stream_player.pitch_scale = new_pitch_scale
 
 @export_group("Layout")
-@export var _autowrap_mode: TextServer.AutowrapMode = TextServer.AutowrapMode.AUTOWRAP_OFF :
-	set(new_autowrap_mode):
-		_autowrap_mode = new_autowrap_mode
-		_fancy_text.autowrap_mode = _autowrap_mode
-
-@export var _margin_left: int = 4 :
+@export var margin_left: int = 4:
 	set(new_margin_left):
-		_margin_left = new_margin_left
+		margin_left = new_margin_left
 		_flex_container.add_theme_constant_override("margin_left", new_margin_left)
-@export var _margin_top: int = 4 :
+@export var margin_top: int = 4:
 	set(new_margin_top):
-		_margin_top = new_margin_top
-		_flex_container.add_theme_constant_override("margin_left", _margin_top)
-@export var _margin_right: int = 4 :
+		margin_top = new_margin_top
+		_flex_container.add_theme_constant_override("margin_left", margin_top)
+@export var margin_right: int = 4:
 	set(new_margin_right):
-		_margin_right = new_margin_right
-		_flex_container.add_theme_constant_override("margin_left", _margin_right)
-@export var _margin_bottom: int = 4 :
+		margin_right = new_margin_right
+		_flex_container.add_theme_constant_override("margin_left", margin_right)
+@export var margin_bottom: int = 4:
 	set(new_margin_bottom):
-		_margin_bottom = new_margin_bottom
-		_flex_container.add_theme_constant_override("margin_left", _margin_bottom)
-@export var _flex_alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_END :
+		margin_bottom = new_margin_bottom
+		_flex_container.add_theme_constant_override("margin_left", margin_bottom)
+@export var flex_alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_END:
 	set(new_flex_alignment):
-		_flex_alignment = new_flex_alignment
-		_flex_container.alignment = _flex_alignment
-@export var _direction: FlexContainer.Direction :
+		flex_alignment = new_flex_alignment
+		_flex_container.alignment = flex_alignment
+@export var direction: FlexContainer.Direction:
 	get: return _flex_container.direction
 	set(new_direction): _flex_container.direction = new_direction
 
-var _hovered: bool = false :
+var _hovered: bool = false:
 	set(new_status):
 		if new_status == _hovered: return
 		_hovered = new_status
@@ -117,9 +112,9 @@ func _init() -> void:
 func _setup_audio_stream_player() -> void:
 	assert(not _audio_stream_player)
 	_audio_stream_player = AudioStreamPlayer.new()
-	_audio_stream_player.stream = _stream
-	_audio_stream_player.volume_db = _volume_db
-	_audio_stream_player.pitch_scale = _pitch_scale
+	_audio_stream_player.stream = stream
+	_audio_stream_player.volume_db = volume_db
+	_audio_stream_player.pitch_scale = pitch_scale
 	_audio_stream_player.bus = &"SFX"
 	add_child(_audio_stream_player, true, Node.INTERNAL_MODE_BACK)
 	pressed.connect(_audio_stream_player.play)
@@ -136,25 +131,25 @@ func _setup_flex_container() -> void:
 	assert(not _flex_container)
 	_flex_container = FlexContainer.new()
 	_flex_container.fill = false
-	_flex_container.alignment = _flex_alignment
-	_flex_container.direction = _direction
+	_flex_container.alignment = flex_alignment
+	_flex_container.direction = direction
 	_flex_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_flex_container.add_theme_constant_override("margin_left", _margin_left)
-	_flex_container.add_theme_constant_override("margin_top", _margin_top)
-	_flex_container.add_theme_constant_override("margin_right", _margin_right)
-	_flex_container.add_theme_constant_override("margin_bottom", _margin_bottom)
+	_flex_container.add_theme_constant_override("margin_left", margin_left)
+	_flex_container.add_theme_constant_override("margin_top", margin_top)
+	_flex_container.add_theme_constant_override("margin_right", margin_right)
+	_flex_container.add_theme_constant_override("margin_bottom", margin_bottom)
 	_fancy_panel.add_child(_flex_container)
 
 func _setup_fancy_glyph() -> void:
 	assert(not _fancy_glyph)
 	_fancy_glyph = MarginContainer.new()
 	_fancy_glyph.name = "Glyph"
-	_fancy_glyph.custom_minimum_size = _glyph_size
+	_fancy_glyph.custom_minimum_size = glyph_size
 	_fancy_glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_fancy_glyph.add_theme_constant_override("margin_left", _glyph_margin_left)
-	_fancy_glyph.add_theme_constant_override("margin_top", _glyph_margin_top)
-	_fancy_glyph.add_theme_constant_override("margin_right", _glyph_margin_right)
-	_fancy_glyph.add_theme_constant_override("margin_bottom", _glyph_margin_bottom)
+	_fancy_glyph.add_theme_constant_override("margin_left", glyph_margin_left)
+	_fancy_glyph.add_theme_constant_override("margin_top", glyph_margin_top)
+	_fancy_glyph.add_theme_constant_override("margin_right", glyph_margin_right)
+	_fancy_glyph.add_theme_constant_override("margin_bottom", glyph_margin_bottom)
 	_flex_container.add(_fancy_glyph)
 
 func _setup_glyph_icon() -> void:
@@ -165,7 +160,7 @@ func _setup_glyph_icon() -> void:
 	_glyph_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
 	_glyph_icon.size_flags_horizontal = Control.SIZE_SHRINK_END
 	_glyph_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_glyph_icon.custom_minimum_size.y = _glyph_size.y
+	_glyph_icon.custom_minimum_size.y = glyph_size.y
 	_glyph_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fancy_glyph.add_child(_glyph_icon)
 
@@ -177,7 +172,7 @@ func _setup_glyp_text() -> void:
 	_glyph_text.scroll_active = false
 	_glyph_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_glyph_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_glyph_text.custom_minimum_size = _glyph_size
+	_glyph_text.custom_minimum_size = glyph_size
 	_glyph_text.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_glyph_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fancy_glyph.add_child(_glyph_text)
@@ -189,7 +184,7 @@ func _setup_fancy_text() -> void:
 	_fancy_text.bbcode_enabled = true
 	_fancy_text.fit_content = true
 	_fancy_text.scroll_active = false
-	_fancy_text.autowrap_mode = _autowrap_mode
+	_fancy_text.autowrap_mode = autowrap_mode
 	_fancy_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_fancy_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_fancy_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -256,6 +251,10 @@ func _set(property: StringName, value: Variant) -> bool:
 				HORIZONTAL_ALIGNMENT_LEFT, HORIZONTAL_ALIGNMENT_FILL: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 				HORIZONTAL_ALIGNMENT_CENTER: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 				HORIZONTAL_ALIGNMENT_RIGHT: _fancy_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			return true
+		&"autowrap_mode":
+			autowrap_mode = value
+			_fancy_text.autowrap_mode = autowrap_mode
 			return true
 		&"icon":
 			_glyph_icon.texture = value
