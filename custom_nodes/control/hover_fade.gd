@@ -20,6 +20,7 @@ enum State {
 @export var fade_in_delay: float = 0.0
 @export var fade_out_time: float = 0.1
 @export var fade_out_delay: float = 0.1
+@export var hide_on_fade_out: bool
 
 @export_group("Neighbors")
 @export var hover_neighbors: Array[HoverFade] = []
@@ -37,8 +38,12 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	_modulate = control_to_fade.modulate
 	match fade_behavior:
-		Behavior.SHOW_ON_HOVER: control_to_fade.modulate.a = 0
-		Behavior.HIDE_ON_HOVER: control_to_fade.modulate.a = 1.0
+		Behavior.SHOW_ON_HOVER:
+			control_to_fade.modulate.a = 0
+			if hide_on_fade_out: hide()
+		Behavior.HIDE_ON_HOVER:
+			control_to_fade.modulate.a = 1.0
+			if hide_on_fade_out: show()
 		_: assert(false, "Does not exist")
 	trigger_control.mouse_entered.connect(_on_mouse_entered)
 	trigger_control.mouse_exited.connect(_on_mouse_exited)
@@ -68,6 +73,7 @@ func get_state() -> State:
 	return State.UNHOVERED
 
 func _fade_in(color_modulate: Color = _modulate) -> void:
+	if hide_on_fade_out: control_to_fade.show()
 	if _fade_tween: _fade_tween.kill()
 	_fade_tween = create_tween()
 	_fade_tween.tween_property(control_to_fade, "modulate", color_modulate, fade_in_time).set_delay(fade_in_delay)
@@ -78,7 +84,9 @@ func _fade_out() -> void:
 	hidden_modulate.a = 0.0
 	_fade_tween = create_tween()
 	_fade_tween.tween_property(control_to_fade, "modulate", hidden_modulate, fade_out_time).set_delay(fade_out_delay)
+	await _fade_tween.finished
 	if is_inside_tree() and control_to_fade.has_focus(): control_to_fade.release_focus()
+	if hide_on_fade_out: control_to_fade.hide()
 
 func _on_hover() -> void:
 	match fade_behavior:

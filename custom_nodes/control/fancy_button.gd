@@ -256,6 +256,10 @@ func _set(property: StringName, value: Variant) -> bool:
 			autowrap_mode = value
 			_fancy_text.autowrap_mode = autowrap_mode
 			return true
+		&"disabled":
+			disabled = value
+			_update_style()
+			return true
 		&"icon":
 			_glyph_icon.texture = value
 			_glyph_icon.visible = value != null

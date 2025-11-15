@@ -17,6 +17,9 @@ extends FancyButton
 @export var fade_out_delay: float = 0.1 :
 	get: return _hover_fade.fade_out_delay
 	set(new_fade_out_delay): _hover_fade.fade_out_delay = new_fade_out_delay
+@export var hide_on_fade_out: bool :
+	get: return _hover_fade.hide_on_fade_out
+	set(new_hide_on_fade_out): _hover_fade.hide_on_fade_out = new_hide_on_fade_out
 
 @export_group("Neighbors")
 @export var hover_neighbors: Array[FancyHoverButton] :
