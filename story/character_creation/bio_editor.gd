@@ -70,10 +70,6 @@ func randomize_portrait() -> void:
 	while new_portrait_index == _portrait_index: new_portrait_index = randi_range(0, _portrait_directories[_sex].size() - 1)
 	_portrait_index = new_portrait_index
 
-func appear() -> void:
-	# TODO: animate this
-	visible = true
-
 func _load_portraits() -> void:
 	_portrait_directories.clear()
 	for sex: Sex in Sex.values():

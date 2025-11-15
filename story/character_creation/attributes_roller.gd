@@ -23,10 +23,6 @@ func setup() -> void:
 func update_modifiers(modifers: Array[AttributeScore.Modifier]) -> void:
 	for_each_element(func(attribute_score_roller: AttributeScoreRoller) -> void: attribute_score_roller.modifiers = modifers)
 
-func collapse() -> void:
-	size_flags_vertical = Control.SIZE_FILL
-	for_each_element(func(attribute_score_roller: AttributeScoreRoller) -> void: attribute_score_roller.collapse())
-
 func _is_ready() -> bool:
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: if not _attribute_scores.has(attribute): return false
 	return true

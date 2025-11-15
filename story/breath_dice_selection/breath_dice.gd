@@ -1,9 +1,8 @@
 @tool
 class_name BreathDice
-extends PanelContainer
+extends FlexCurveContainer
 
 @export_group("Configuration")
-@export var _dice: FlexContainer
 @export var _breath_dice_group: PackedScene
 
 var _groups: Dictionary[DieType, BreathDiceGroup] = {}
@@ -22,11 +21,11 @@ func _ready() -> void:
 
 func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
 	_groups.clear()
-	_dice.clear()
+	clear()
 	for breath_die: BreathDie in breath_dice:
 		var group: BreathDiceGroup = _groups.get(breath_die.die_type)
 		if not group:
 			group = _breath_dice_group.instantiate()
 			_groups[breath_die.die_type] = group
-			_dice.add(group)
+			add(group)
 		group.add_breath_die(breath_die)

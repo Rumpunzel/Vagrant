@@ -8,6 +8,9 @@ extends PanelContainer
 		if not is_node_ready(): await ready
 		_icon.attribute = attribute
 		_score.text = ""
+@export var font_size: int = 96:
+	get: return _score.get_theme_font_size("font_size")
+	set(new_font_size): _score.add_theme_font_size_override("font_size", new_font_size)
 
 @export_group("Configuration")
 @export var _icon: AttributeIcon

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Origin" load_steps=4 format=3 uid="uid://bax71w1etiyel"]
+
+[ext_resource type="Texture2D" uid="uid://c826roaqk8774" path="res://characters/origins/icons/stone-throne.svg" id="1_r7mih"]
+[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_hhp2e"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="3_b684m"]
+
+[resource]
+script = ExtResource("3_b684m")
+abilities = Array[String](["[b]+3[/b] company renown"])
+type = 1
+name = "Noble"
+icon = ExtResource("1_r7mih")
+metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

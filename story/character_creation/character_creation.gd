@@ -74,10 +74,9 @@ func _on_continue_pressed() -> void:
 			for attribute_score: BaseAttributeScore in _attribute_scores.values():
 				if attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
 			_origins_picker.setup(doubles_rolled)
-			_attributes_roller.collapse()
-			_origins_picker.appear()
-			#_inventory.appear()
-			_bio_editor.appear()
+			_origins_picker.show()
+			#_inventory.show()
+			_bio_editor.show()
 		CreationStage.ORIGINS:
 			_creation_stage = _creation_stage + 1 as CreationStage
 			_character_confirmation.confirm()

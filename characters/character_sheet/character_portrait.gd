@@ -1,3 +1,4 @@
+@tool
 class_name CharacterPortrait
 extends PanelContainer
 
@@ -31,7 +32,6 @@ func setup(button_group: ButtonGroup) -> void:
 
 func _update() -> void:
 	var character_profile: CharacterProfile = character.character_profile
-	name = character_profile.name
 	_portrait.texture = character_profile.get_portrait(_portrait_identifier)
 
 func _on_character_profile_changed(_character_profile: CharacterProfile) -> void:

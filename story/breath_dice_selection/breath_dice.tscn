@@ -1,36 +1,23 @@
-[gd_scene load_steps=6 format=3 uid="uid://cgl4tskvsu25d"]
+[gd_scene load_steps=4 format=3 uid="uid://cgl4tskvsu25d"]
 
 [ext_resource type="Script" uid="uid://bn37eojjhi2s6" path="res://story/breath_dice_selection/breath_dice.gd" id="1_66ain"]
 [ext_resource type="PackedScene" uid="uid://bgdje6c0bdu1a" path="res://story/breath_dice_selection/breath_dice_group.tscn" id="2_66ain"]
-[ext_resource type="Script" uid="uid://dfm6y6ow1f5e1" path="res://custom_nodes/control/flex_curve_container.gd" id="3_66ain"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_35nxq"]
-
-[sub_resource type="Curve" id="Curve_66ain"]
-_limits = [0.0, 0.2, 0.0, 4.0]
-_data = [Vector2(0, 0.2), 0.0, -0.2, 0, 0, Vector2(2, 0), 0.0, 0.0, 0, 0, Vector2(4, 0.2), 0.2, 0.0, 0, 0]
+[sub_resource type="Curve" id="Curve_jdcxm"]
+_limits = [-0.25, 0.0, 0.0, 4.0]
+_data = [Vector2(0, -0.05), 0.0, -0.17, 0, 0, Vector2(2, -0.2), 0.0, 0.0, 0, 0, Vector2(4, -0.05), 0.17, 0.0, 0, 0]
 point_count = 3
 
-[node name="BreathDice" type="PanelContainer" node_paths=PackedStringArray("_dice")]
+[node name="BreathDice" type="MarginContainer"]
 offset_right = 416.0
 offset_bottom = 125.0
-mouse_filter = 2
-mouse_behavior_recursive = 1
-theme_override_styles/panel = SubResource("StyleBoxEmpty_35nxq")
-script = ExtResource("1_66ain")
-_dice = NodePath("Dice")
-_breath_dice_group = ExtResource("2_66ain")
-metadata/_custom_type_script = "uid://bn37eojjhi2s6"
-
-[node name="Dice" type="MarginContainer" parent="."]
-layout_mode = 2
 mouse_filter = 2
 mouse_behavior_recursive = 1
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
-script = ExtResource("3_66ain")
-offset_curve = SubResource("Curve_66ain")
-relative_offset = true
-metadata/_custom_type_script = "uid://dfm6y6ow1f5e1"
+script = ExtResource("1_66ain")
+_breath_dice_group = ExtResource("2_66ain")
+offset_curve = SubResource("Curve_jdcxm")
+metadata/_custom_type_script = "uid://bn37eojjhi2s6"

@@ -49,9 +49,10 @@ layout_mode = 2
 layout_mode = 2
 mouse_default_cursor_shape = 9
 
-[node name="HoverFade" type="Node" parent="MarginContainer/HBoxContainer/PageContentSlider" node_paths=PackedStringArray("control_to_fade")]
+[node name="HoverFade" type="Node" parent="MarginContainer/HBoxContainer/PageContentSlider" node_paths=PackedStringArray("control_to_fade", "trigger_control")]
 script = ExtResource("4_s3kyl")
 control_to_fade = NodePath("..")
+trigger_control = NodePath("..")
 metadata/_custom_type_script = "uid://doguhqeqp85e2"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer"]
