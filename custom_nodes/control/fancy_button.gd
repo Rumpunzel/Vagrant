@@ -23,10 +23,10 @@ signal hover_status_changed(hovered: bool)
 
 @export_group("Layout")
 @export var _autowrap_mode: TextServer.AutowrapMode = TextServer.AutowrapMode.AUTOWRAP_OFF
-@export var _margin_left: int = 0
-@export var _margin_top: int = 0
-@export var _margin_right: int = 0
-@export var _margin_bottom: int = 0
+@export var _margin_left: int = 4
+@export var _margin_top: int = 4
+@export var _margin_right: int = 4
+@export var _margin_bottom: int = 4
 @export var _alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_END
 @export var _direction: FlexContainer.Direction = FlexContainer.Direction.LEFT_TO_RIGHT
 
@@ -126,6 +126,7 @@ func _init() -> void:
 	mouse_entered.connect(func() -> void: _hovered = true; _update_style())
 	mouse_exited.connect(func() -> void: _hovered = false; _update_style())
 	style_changed.connect(_update_style)
+	if not is_node_ready(): await ready
 	_update_style()
 
 func _update_style() -> void:

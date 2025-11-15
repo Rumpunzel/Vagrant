@@ -10,8 +10,8 @@
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="6_ded50"]
 [ext_resource type="PackedScene" uid="uid://d2hp0hcp2w5ro" path="res://characters/character_sheet/character_portraits.tscn" id="7_nlwo0"]
 [ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://story/dorian.tres" id="7_pqpya"]
+[ext_resource type="Script" uid="uid://c7qjo0ilqtmp6" path="res://custom_nodes/control/fancy_hover_button.gd" id="9_hspyn"]
 [ext_resource type="Texture2D" uid="uid://dqmm4lvyllur2" path="res://story/mechanics/icons/waterskin.svg" id="9_pqpya"]
-[ext_resource type="Script" uid="uid://yppdbxj44rnm" path="res://custom_nodes/control/fancy_button.gd" id="10_hspyn"]
 [ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://story/mechanics/icons/magic-potion.svg" id="10_nlwo0"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ipvic"]
@@ -106,73 +106,97 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 8
 
-[node name="Button" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(129, 24)
+[node name="Button" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
-text = "Catch Breath"
+text = "Catch Breath
+"
 icon = ExtResource("9_pqpya")
 flat = true
 alignment = 0
-script = ExtResource("10_hspyn")
-metadata/_custom_type_script = "uid://yppdbxj44rnm"
+script = ExtResource("9_hspyn")
+fade_in_time = 0.1
+fade_out_time = 0.1
+hover_neighbors = [NodePath("../Button2"), NodePath("../Button4"), NodePath("../Button3"), NodePath("../Button5"), NodePath("../Button6")]
+neighbor_hover_modulate = Color(1, 1, 1, 0.25)
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="Button2" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(129, 24)
+[node name="Button2" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
 text = "Catch Breath"
 icon = ExtResource("10_nlwo0")
 flat = true
 alignment = 0
-script = ExtResource("10_hspyn")
-metadata/_custom_type_script = "uid://yppdbxj44rnm"
+script = ExtResource("9_hspyn")
+fade_in_time = 0.1
+fade_out_time = 0.1
+hover_neighbors = [NodePath("../Button"), NodePath("../Button4"), NodePath("../Button3"), NodePath("../Button5"), NodePath("../Button6")]
+neighbor_hover_modulate = Color(1, 1, 1, 0.25)
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="Button4" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(129, 24)
+[node name="Button4" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
 text = "Catch Breath"
 icon = ExtResource("9_pqpya")
 flat = true
 alignment = 0
-script = ExtResource("10_hspyn")
-metadata/_custom_type_script = "uid://yppdbxj44rnm"
+script = ExtResource("9_hspyn")
+fade_in_time = 0.1
+fade_out_time = 0.1
+hover_neighbors = [NodePath("../Button"), NodePath("../Button2"), NodePath("../Button3"), NodePath("../Button5"), NodePath("../Button6")]
+neighbor_hover_modulate = Color(1, 1, 1, 0.25)
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="Button3" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(129, 24)
+[node name="Button3" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
 text = "Catch Breath"
 icon = ExtResource("10_nlwo0")
 flat = true
 alignment = 0
-script = ExtResource("10_hspyn")
-metadata/_custom_type_script = "uid://yppdbxj44rnm"
+script = ExtResource("9_hspyn")
+fade_in_time = 0.1
+fade_out_time = 0.1
+hover_neighbors = [NodePath("../Button"), NodePath("../Button2"), NodePath("../Button4"), NodePath("../Button5"), NodePath("../Button6")]
+neighbor_hover_modulate = Color(1, 1, 1, 0.25)
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="Button5" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(129, 24)
+[node name="Button5" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
 text = "Catch Breath"
 icon = ExtResource("9_pqpya")
 flat = true
 alignment = 0
-script = ExtResource("10_hspyn")
-metadata/_custom_type_script = "uid://yppdbxj44rnm"
+script = ExtResource("9_hspyn")
+fade_in_time = 0.1
+fade_out_time = 0.1
+hover_neighbors = [NodePath("../Button"), NodePath("../Button2"), NodePath("../Button4"), NodePath("../Button3"), NodePath("../Button6")]
+neighbor_hover_modulate = Color(1, 1, 1, 0.25)
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="Button6" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(129, 24)
+[node name="Button6" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
 text = "Catch Breath"
 icon = ExtResource("10_nlwo0")
 flat = true
 alignment = 0
-script = ExtResource("10_hspyn")
-metadata/_custom_type_script = "uid://yppdbxj44rnm"
+script = ExtResource("9_hspyn")
+fade_in_time = 0.1
+fade_out_time = 0.1
+hover_neighbors = [NodePath("../Button"), NodePath("../Button2"), NodePath("../Button4"), NodePath("../Button3"), NodePath("../Button5")]
+neighbor_hover_modulate = Color(1, 1, 1, 0.25)
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="GameInfo" type="TabContainer" parent="HSplitContainer/VSplitContainer/HBoxContainer"]
 visible = false

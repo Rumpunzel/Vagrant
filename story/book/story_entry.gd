@@ -39,6 +39,8 @@ var _fight_request: FightRequest:
 		_breath_dice_collapsible_container.open_tween()
 var _fight_result: FightResult
 
+var _fade_tween: Tween
+
 func setup_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:
 	super.setup_page(story, characters, new_story_page)
 	_update_decisions(story_page.get_decisions(_story))
@@ -85,15 +87,17 @@ func _create_dialog_button(story_decision: StoryDecision) -> DialogButton:
 
 func _fade_in(element: Control, duration: float, delay: float = 0.0) -> void:
 	if element.visible: return
-	var tween: Tween = get_tree().create_tween()
-	tween.tween_property(element, "modulate:a", 1.0, duration).set_delay(delay)
+	if _fade_tween: _fade_tween.kill()
+	_fade_tween = create_tween()
+	_fade_tween.tween_property(element, "modulate:a", 1.0, duration).set_delay(delay)
 	element.show()
 
 func _fade_out(element: Control, duration: float, delay: float = 0.0) -> void:
 	if not element.visible: return
-	var tween: Tween = get_tree().create_tween()
-	tween.tween_property(element, "modulate:a", 0.0, duration).set_delay(delay)
-	await tween.finished
+	if _fade_tween: _fade_tween.kill()
+	_fade_tween = create_tween()
+	_fade_tween.tween_property(element, "modulate:a", 0.0, duration).set_delay(delay)
+	await _fade_tween.finished
 	element.hide()
 
 func _set_state(new_state: State) -> void:

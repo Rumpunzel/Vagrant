@@ -92,7 +92,7 @@ metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
 [node name="Choices" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 0
 
 [node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer"]
 process_mode = 3

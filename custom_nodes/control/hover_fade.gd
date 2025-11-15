@@ -13,32 +13,37 @@ enum State {
 }
 
 @export var control_to_fade: Control
+@export var trigger_control: Control
 
-@export var _fade_behavior: Behavior = Behavior.SHOW_ON_HOVER
-@export var _fade_in_time: float = 0.1
-@export var _fade_in_delay: float = 0.0
-@export var _fade_out_time: float = 0.1
-@export var _fade_out_delay: float = 0.0
+@export var fade_behavior: Behavior = Behavior.SHOW_ON_HOVER
+@export var fade_in_time: float = 0.1
+@export var fade_in_delay: float = 0.0
+@export var fade_out_time: float = 0.1
+@export var fade_out_delay: float = 0.1
 
 @export_group("Neighbors")
 @export var hover_neighbors: Array[HoverFade] = []
-@export var _neighbor_hover_modulate: Color = Color(1.0, 1.0, 1.0, 0.25)
+@export var neighbor_hover_modulate: Color = Color(1.0, 1.0, 1.0, 0.25)
 
 var _modulate: Color
+var _fade_tween: Tween
 
 func _ready() -> void:
 	if not control_to_fade: control_to_fade = get_parent()
+	if not trigger_control: trigger_control = control_to_fade
+	assert(control_to_fade)
+	assert(trigger_control)
 	assert(not hover_neighbors.has(self), "Neighbours cannot contain self!")
 	if Engine.is_editor_hint(): return
 	_modulate = control_to_fade.modulate
-	match _fade_behavior:
+	match fade_behavior:
 		Behavior.SHOW_ON_HOVER: control_to_fade.modulate.a = 0
 		Behavior.HIDE_ON_HOVER: control_to_fade.modulate.a = 1.0
 		_: assert(false, "Does not exist")
-	control_to_fade.mouse_entered.connect(_on_mouse_entered)
-	control_to_fade.mouse_exited.connect(_on_mouse_exited)
-	control_to_fade.focus_entered.connect(_on_focus_entered)
-	control_to_fade.focus_exited.connect(_on_focus_exited)
+	trigger_control.mouse_entered.connect(_on_mouse_entered)
+	trigger_control.mouse_exited.connect(_on_mouse_exited)
+	trigger_control.focus_entered.connect(_on_focus_entered)
+	trigger_control.focus_exited.connect(_on_focus_exited)
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if get_state() == State.HOVERED and event.is_action_pressed("ui_cancel"):
@@ -48,7 +53,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func show(color_modulate: Color = _modulate, show_neighbours: bool = true) -> void:
 	_fade_in(color_modulate)
 	if not show_neighbours: return
-	for hover_fade: HoverFade in hover_neighbors: hover_fade.show(_neighbor_hover_modulate, false)
+	for hover_fade: HoverFade in hover_neighbors: hover_fade.show(neighbor_hover_modulate, false)
 
 func hide(show_neighbours: bool = true) -> void:
 	_fade_out()
@@ -56,33 +61,33 @@ func hide(show_neighbours: bool = true) -> void:
 	for hover_fade: HoverFade in hover_neighbors: hover_fade.hide(false)
 
 func get_state() -> State:
-	match _fade_behavior:
+	match fade_behavior:
 		Behavior.SHOW_ON_HOVER: return State.HOVERED if control_to_fade.modulate.a > 0.0 else State.UNHOVERED
 		Behavior.HIDE_ON_HOVER: return State.HOVERED if control_to_fade.modulate.a < 1.0 else State.UNHOVERED
 		_: assert(false, "Does not exist")
 	return State.UNHOVERED
 
 func _fade_in(color_modulate: Color = _modulate) -> void:
-	if not is_inside_tree(): return
-	var tween: Tween = get_tree().create_tween()
-	tween.tween_property(control_to_fade, "modulate", color_modulate, _fade_in_time).set_delay(_fade_in_delay)
+	if _fade_tween: _fade_tween.kill()
+	_fade_tween = create_tween()
+	_fade_tween.tween_property(control_to_fade, "modulate", color_modulate, fade_in_time).set_delay(fade_in_delay)
 
 func _fade_out() -> void:
-	if not is_inside_tree(): return
+	if _fade_tween: _fade_tween.kill()
 	var hidden_modulate: Color = _modulate
 	hidden_modulate.a = 0.0
-	var tween: Tween = get_tree().create_tween()
-	tween.tween_property(control_to_fade, "modulate", hidden_modulate, _fade_out_time).set_delay(_fade_out_delay)
+	_fade_tween = create_tween()
+	_fade_tween.tween_property(control_to_fade, "modulate", hidden_modulate, fade_out_time).set_delay(fade_out_delay)
 	if is_inside_tree() and control_to_fade.has_focus(): control_to_fade.release_focus()
 
 func _on_hover() -> void:
-	match _fade_behavior:
+	match fade_behavior:
 		Behavior.SHOW_ON_HOVER: show()
 		Behavior.HIDE_ON_HOVER: hide()
 		_: assert(false, "Does not exist")
 
 func _on_unhover() -> void:
-	match _fade_behavior:
+	match fade_behavior:
 		Behavior.SHOW_ON_HOVER: hide()
 		Behavior.HIDE_ON_HOVER: show()
 		_: assert(false, "Does not exist")
@@ -99,5 +104,5 @@ func _on_focus_entered() -> void:
 	_on_hover()
 
 func _on_focus_exited() -> void:
-	if control_to_fade.get_global_rect().has_point(control_to_fade.get_global_mouse_position()): return
+	if trigger_control.get_global_rect().has_point(trigger_control.get_global_mouse_position()): return
 	_on_unhover()

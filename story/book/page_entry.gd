@@ -52,11 +52,11 @@ func _set_state(new_state: State) -> void:
 		State.PAST:
 			_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			if not _background.texture:
-				var self_tween: Tween = get_tree().create_tween()
+				var self_tween: Tween = create_tween()
 				self_tween.tween_property(self, "self_modulate", Color.TRANSPARENT, _fade_out_duration).set_delay(_get_fade_out_delay())
 				_background.texture = get_story_page().get_area_background()
 				_background.fade_in()
-			var tween: Tween = get_tree().create_tween()
+			var tween: Tween = create_tween()
 			tween.tween_property(_body_container, "modulate", _past_modulate, _fade_out_duration).set_delay(_get_fade_out_delay())
 			await tween.finished
 			for child: Control in get_children(): child.mouse_behavior_recursive = Control.MOUSE_BEHAVIOR_DISABLED
@@ -69,12 +69,12 @@ func _set_state(new_state: State) -> void:
 func _on_mouse_entered() -> void:
 	assert(state == State.PAST)
 	if get_story_page().get_background(_story): _background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
-	var tween: Tween = get_tree().create_tween()
+	var tween: Tween = create_tween()
 	tween.tween_property(_body_container, "modulate", Color.WHITE, _fade_in_duration)
 
 func _on_mouse_exited() -> void:
 	assert(state == State.PAST)
 	if get_global_rect().has_point(get_viewport().get_mouse_position()): return
 	_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	var tween: Tween = get_tree().create_tween()
+	var tween: Tween = create_tween()
 	tween.tween_property(_body_container, "modulate", _past_modulate, _fade_in_duration)

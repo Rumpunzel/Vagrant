@@ -12,7 +12,7 @@ func _ready() -> void:
 	fade_in()
 
 func fade_in(duration: float = 1.0) -> void:
-	var tween: Tween = get_tree().create_tween().set_parallel()
+	var tween: Tween = create_tween().set_parallel()
 	assert(material is ShaderMaterial)
 	var shader_material: ShaderMaterial = material
 	tween.tween_property(material, "shader_parameter/up", shader_material.get_shader_parameter("up"), duration).from(1.0)
@@ -23,7 +23,7 @@ func fade_in(duration: float = 1.0) -> void:
 	faded_in.emit()
 
 func fade_out(duration: float = 2.0, delete_after: bool = true) -> void:
-	var tween: Tween = get_tree().create_tween().set_parallel()
+	var tween: Tween = create_tween().set_parallel()
 	tween.tween_property(material, "shader_parameter/power", 4.0, duration)
 	tween.tween_property(material, "shader_parameter/up", 1.0, duration)
 	tween.tween_property(material, "shader_parameter/down", 1.0, duration)
