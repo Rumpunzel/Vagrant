@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://bpqkh512g0nmb"]
+[gd_scene load_steps=12 format=3 uid="uid://bpqkh512g0nmb"]
 
 [ext_resource type="Script" uid="uid://dfxwf0abq0203" path="res://story/breath_dice_selection/breath_dice_selection.gd" id="1_6stf5"]
+[ext_resource type="PackedScene" uid="uid://bnmsu0sopc3eu" path="res://story/breath_dice_selection/vignette.tscn" id="2_4r3qb"]
 [ext_resource type="Texture2D" uid="uid://457ox5k8siu6" path="res://assets/portraits/HE-BA-BR-F115/Small.png" id="2_87cfe"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="3_06obj"]
 [ext_resource type="PackedScene" uid="uid://deodwapi67ltg" path="res://story/breath_dice_selection/breath_dice_selection_buttons.tscn" id="3_gpl86"]
@@ -11,15 +12,6 @@
 [ext_resource type="PackedScene" uid="uid://cqeuqu32m0rr8" path="res://dice/dice_log/dice_log_save_result_entry.tscn" id="7_oei8s"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lcgf6"]
-
-[sub_resource type="Gradient" id="Gradient_t0j5l"]
-offsets = PackedFloat32Array(0.8, 1)
-colors = PackedColorArray(0, 0, 0, 0.5, 0, 0, 0, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_lcgf6"]
-gradient = SubResource("Gradient_t0j5l")
-fill = 2
-fill_from = Vector2(0.5, 0.5)
 
 [node name="BreathDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection_buttons", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
 offset_right = 336.0
@@ -37,16 +29,13 @@ _dice_log_dice_request_entry = NodePath("MarginContainer/VBoxContainer/DiceReque
 _dice_log_save_result_entry = NodePath("MarginContainer/VBoxContainer/SaveResultEntry")
 metadata/_custom_type_script = "uid://dfxwf0abq0203"
 
-[node name="Vignette" type="TextureRect" parent="."]
-clip_children = 1
+[node name="Vignette" parent="." instance=ExtResource("2_4r3qb")]
 layout_mode = 2
-texture = SubResource("GradientTexture2D_lcgf6")
 
 [node name="Portrait" type="TextureRect" parent="Vignette"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 0
+offset_right = 336.0
+offset_bottom = 185.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_87cfe")
