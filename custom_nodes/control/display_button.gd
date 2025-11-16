@@ -20,10 +20,10 @@ func select() -> void:
 func deselect() -> void:
 	if not disabled: button_pressed = false
 
-func enable() -> void:
+func activate() -> void:
 	active = true
 
-func disable() -> void:
+func deactivate() -> void:
 	active = false
 
 func set_font_colors(color: Color) -> void:

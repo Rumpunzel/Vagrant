@@ -44,5 +44,5 @@ func update_fight_result(fight_result: FightResult) -> void:
 func select_all(selected: bool = true) -> void:
 	_buttons.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: if selected: button_group.select_all() else: button_group.deselect_all())
 
-func disable_buttons() -> void:
-	_buttons.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: button_group.disable())
+func deactivate_buttons() -> void:
+	_buttons.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: button_group.deactivate())

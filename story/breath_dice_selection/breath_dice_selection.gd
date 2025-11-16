@@ -10,7 +10,7 @@ signal confirmed
 @export var _portrait: TextureRect
 @export var _description: TypingLabel
 @export var _stance_selection_collapsible_container: CollapsibleContainer
-@export var _stance_selection_buttons: StanceSelectionButtons
+@export var _stance_selection: StanceSelection
 @export var _breath_dice_selection_buttons: BreathDiceSelectionButtons
 @export var _all_in_button: DisplayButton
 @export var _ok_button: DisplayButton
@@ -37,18 +37,23 @@ var _dice_request: DiceRequest :
 
 func request_save(save_request: SaveRequest) -> void:
 	assert(save_request)
-	_dice_request = save_request
 	request_fight(null)
+	_dice_request = save_request
 	save_request.save_rolled.connect(_on_save_rolled)
 
 func request_fight(fight_request: FightRequest) -> void:
 	if not fight_request:
+		if _dice_request:
+			_stance_selection.attribute_selected.disconnect(_dice_request.set_attribute)
+			_dice_request.attribute_changed.disconnect(_stance_selection.set_attribute)
 		_stance_selection_collapsible_container.close_tween()
 		return
 	assert(fight_request)
 	if not _dice_request: _stance_selection_collapsible_container.open()
-	_dice_request = fight_request  
-	_stance_selection_buttons.fight_request = fight_request
+	_dice_request = fight_request
+	_stance_selection.setup_for_fight(fight_request)
+	_stance_selection.attribute_selected.connect(fight_request.set_attribute)
+	fight_request.attribute_changed.connect(_stance_selection.setup_for_fight.bind(fight_request).unbind(1))
 	_stance_selection_collapsible_container.open_tween()
 	fight_request.fight_rolled.connect(_on_fight_rolled)
 
@@ -78,7 +83,7 @@ func _on_save_rolled(save_result: SaveResult) -> void:
 	_dice_log_dice_request_entry.visible = false
 	_dice_log_save_result_entry.visible = true
 	_breath_dice_selection_buttons.update_save_result(save_result)
-	_breath_dice_selection_buttons.disable_buttons()
+	_breath_dice_selection_buttons.deactivate_buttons()
 	_disable_hud()
 
 func _on_fight_rolled(fight_result: FightResult) -> void:
@@ -88,5 +93,5 @@ func _on_fight_rolled(fight_result: FightResult) -> void:
 	_dice_log_dice_request_entry.visible = false
 	_dice_log_save_result_entry.visible = true
 	_breath_dice_selection_buttons.update_fight_result(fight_result)
-	_breath_dice_selection_buttons.disable_buttons()
+	_breath_dice_selection_buttons.deactivate_buttons()
 	_disable_hud()

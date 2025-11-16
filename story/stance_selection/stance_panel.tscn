@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3 uid="uid://mt5mbq7b5lu0"]
+
+[ext_resource type="Script" uid="uid://dx42seecjhl2g" path="res://story/stance_selection/stance_panel.gd" id="1_1o5mf"]
+[ext_resource type="Script" uid="uid://coqwnstoj346c" path="res://addons/tooltips_pro/scripts/tooltip_trigger.gd" id="2_clbja"]
+[ext_resource type="PackedScene" uid="uid://dv8we3eyi0bus" path="res://characters/character_sheet/attribute_icon.tscn" id="3_q17hm"]
+[ext_resource type="Texture2D" uid="uid://cdri43vl0xt70" path="res://characters/attributes/icons/hand-bandage.svg" id="4_c6fqg"]
+
+[node name="StancePanel" type="PanelContainer" node_paths=PackedStringArray("_icon", "tooltip_trigger", "label")]
+offset_right = 307.0
+offset_bottom = 23.0
+mouse_default_cursor_shape = 16
+script = ExtResource("1_1o5mf")
+_icon = NodePath("HBoxContainer/AttributeIcon")
+tooltip_trigger = NodePath("TooltipTrigger")
+label = NodePath("Descriptor")
+metadata/_custom_type_script = "uid://cibuut5maxj22"
+
+[node name="TooltipTrigger" type="Node" parent="." node_paths=PackedStringArray("trigger_node")]
+script = ExtResource("2_clbja")
+trigger_node = NodePath("..")
+origin = 2
+tooltip_strings = Array[String](["Decrease the damage you take by your margin of success."])
+metadata/_custom_type_script = "uid://coqwnstoj346c"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="MarginLeft" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="AttributeIcon" parent="HBoxContainer" instance=ExtResource("3_q17hm")]
+modulate = Color(0.62352943, 0.14117648, 0.16078432, 0.35)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+texture = ExtResource("4_c6fqg")
+
+[node name="MarginRight" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Descriptor" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62352943, 0.14117648, 0.16078432, 1)
+text = "Blood"
+horizontal_alignment = 1
+vertical_alignment = 1

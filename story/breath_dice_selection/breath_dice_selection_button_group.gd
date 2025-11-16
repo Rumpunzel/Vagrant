@@ -36,10 +36,10 @@ func deselect_all() -> void:
 	_all_button.set_pressed_no_signal(false)
 	for button: BreathDieSelectionButton in get_elements(): button.deselect()
 
-func disable() -> void:
+func deactivate() -> void:
 	_all_button.active = false
 	_all_button.disabled = true
-	for button: BreathDieSelectionButton in get_elements(): button.disable()
+	for button: BreathDieSelectionButton in get_elements(): button.deactivate()
 
 func _on_button_toggled(_toggled_on: bool = false) -> void:
 	var all_buttons_selected: bool = true

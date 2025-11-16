@@ -4,78 +4,77 @@ extends DisplayButton
 
 signal hover_status_changed(hovered: bool)
 
-@export_placeholder("Only shown if there is no icon") var glyph: String:
+@export_placeholder("Only shown if there is no icon") var glyph: String :
 	set(new_glyph):
 		glyph = new_glyph
 		_glyph_text.text = glyph
 
 @export_group("Glyph")
-@export var glyph_size: Vector2 = Vector2(24.0, 24.0):
+@export var glyph_size: Vector2 = Vector2(24.0, 24.0) :
 	set(new_size):
 		glyph_size = new_size
 		_fancy_glyph.custom_minimum_size = glyph_size
 		_glyph_icon.custom_minimum_size.y = glyph_size.y
-@export var glyph_margin_left: int = 0:
+@export var glyph_margin_left: int = 0 :
 	set(new_margin_left):
 		glyph_margin_left = new_margin_left
 		_fancy_glyph.add_theme_constant_override("margin_left", glyph_margin_left)
-@export var glyph_margin_top: int = 0:
+@export var glyph_margin_top: int = 0 :
 	set(new_margin_top):
 		glyph_margin_top = new_margin_top
 		_fancy_glyph.add_theme_constant_override("margin_top", new_margin_top)
-@export var glyph_margin_right: int = 0:
+@export var glyph_margin_right: int = 0 :
 	set(new_margin_right):
 		glyph_margin_right = new_margin_right
 		_fancy_glyph.add_theme_constant_override("margin_right", new_margin_right)
-@export var glyph_margin_bottom: int = 0:
+@export var glyph_margin_bottom: int = 0 :
 	set(new_margin_bottom):
 		glyph_margin_bottom = new_margin_bottom
 		_fancy_glyph.add_theme_constant_override("margin_bottom", new_margin_bottom)
 
 @export_group("Audio")
-@export var stream: AudioStream:
+@export var stream: AudioStream :
 	get: return _audio_stream_player.stream
 	set(new_stream): _audio_stream_player.stream = new_stream
-@export_range(-80.0, 24.0, 0.1, "or_less", "or_greater", "suffix:dB") var volume_db: float:
+@export_range(-80.0, 24.0, 0.1, "or_less", "or_greater", "suffix:dB") var volume_db: float :
 	get: return _audio_stream_player.volume_db
 	set(new_volume_db): _audio_stream_player.volume_db = new_volume_db
-@export_range(0.01, 4.0, 0.1, "or_greater", "suffix:pct") var pitch_scale: float = 1.0:
+@export_range(0.01, 4.0, 0.1, "or_greater", "suffix:pct") var pitch_scale: float = 1.0 :
 	get: return _audio_stream_player.pitch_scale
 	set(new_pitch_scale): _audio_stream_player.pitch_scale = new_pitch_scale
 
 @export_group("Layout")
-@export var margin_left: int = 4:
+@export var margin_left: int = 4 :
 	set(new_margin_left):
 		margin_left = new_margin_left
 		_flex_container.add_theme_constant_override("margin_left", new_margin_left)
-@export var margin_top: int = 4:
+@export var margin_top: int = 4 :
 	set(new_margin_top):
 		margin_top = new_margin_top
 		_flex_container.add_theme_constant_override("margin_top", margin_top)
-@export var margin_right: int = 4:
+@export var margin_right: int = 4 :
 	set(new_margin_right):
 		margin_right = new_margin_right
 		_flex_container.add_theme_constant_override("margin_right", margin_right)
-@export var margin_bottom: int = 4:
+@export var margin_bottom: int = 4 :
 	set(new_margin_bottom):
 		margin_bottom = new_margin_bottom
 		_flex_container.add_theme_constant_override("margin_bottom", margin_bottom)
-@export var flex_alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_END:
+@export var flex_alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_END :
 	set(new_flex_alignment):
 		flex_alignment = new_flex_alignment
 		_flex_container.alignment = flex_alignment
-@export var direction: FlexContainer.Direction:
+@export var direction: FlexContainer.Direction :
 	get: return _flex_container.direction
 	set(new_direction): _flex_container.direction = new_direction
 
-var _hovered: bool = false:
+var _hovered: bool = false :
 	set(new_status):
 		if new_status == _hovered: return
 		_hovered = new_status
 		hover_status_changed.emit(_hovered)
 
 var _audio_stream_player: AudioStreamPlayer
-var _fancy_panel: PanelContainer
 var _flex_container: FlexContainer
 var _fancy_glyph: MarginContainer
 var _glyph_icon: TextureRect
@@ -86,7 +85,6 @@ func _init() -> void:
 	## Audio
 	_setup_audio_stream_player()
 	## Layout
-	_setup_fancy_panel()
 	_setup_flex_container()
 	## Fancy Glyph
 	_setup_fancy_glyph()
@@ -119,17 +117,10 @@ func _setup_audio_stream_player() -> void:
 	add_child(_audio_stream_player, true, Node.INTERNAL_MODE_BACK)
 	pressed.connect(_audio_stream_player.play)
 
-func _setup_fancy_panel() -> void:
-	assert(not _fancy_panel)
-	_fancy_panel = PanelContainer.new()
-	_fancy_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_fancy_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_fancy_panel, true, Node.INTERNAL_MODE_BACK)
-	_fancy_panel.minimum_size_changed.connect(func() -> void: custom_minimum_size = _fancy_panel.get_minimum_size())
-
 func _setup_flex_container() -> void:
 	assert(not _flex_container)
 	_flex_container = FlexContainer.new()
+	_flex_container.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_flex_container.fill = false
 	_flex_container.alignment = flex_alignment
 	_flex_container.direction = direction
@@ -138,7 +129,8 @@ func _setup_flex_container() -> void:
 	_flex_container.add_theme_constant_override("margin_top", margin_top)
 	_flex_container.add_theme_constant_override("margin_right", margin_right)
 	_flex_container.add_theme_constant_override("margin_bottom", margin_bottom)
-	_fancy_panel.add_child(_flex_container)
+	add_child(_flex_container, true, Node.INTERNAL_MODE_BACK)
+	_flex_container.minimum_size_changed.connect(func() -> void: custom_minimum_size = _flex_container.get_minimum_size())
 
 func _setup_fancy_glyph() -> void:
 	assert(not _fancy_glyph)
@@ -191,21 +183,9 @@ func _setup_fancy_text() -> void:
 	_flex_container.add(_fancy_text)
 
 func _update_style() -> void:
-	_fancy_panel.add_theme_stylebox_override("panel", _get_panel_style())
 	_glyph_icon.modulate = _get_glyph_icon_color()
 	_glyph_text.add_theme_color_override("default_color", _get_glyph_font_color())
 	_fancy_text.add_theme_color_override("default_color", _get_text_color())
-
-func _get_panel_style() -> StyleBox:
-	if flat: return StyleBoxEmpty.new()
-	var panel_style: StyleBox = get_theme_stylebox("normal")
-	if disabled: panel_style = get_theme_stylebox("disabled")
-	elif button_pressed:
-		if _hovered: panel_style = get_theme_stylebox("hover_pressed")
-		else: panel_style = get_theme_stylebox("pressed")
-	elif _hovered: panel_style = get_theme_stylebox("hover")
-	elif has_focus(): panel_style = get_theme_stylebox("focus")
-	return panel_style
 
 func _get_glyph_icon_color() -> Color:
 	var glyph_color: Color = get_theme_color("icon_normal_color")

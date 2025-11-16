@@ -59,7 +59,7 @@ func _on_pressed() -> void:
 
 func _on_decision_made(selected_story_decision: StoryDecision, _selected_how_many_times: int) -> void:
 	_selected = selected_story_decision == story_decision
-	disable()
+	deactivate()
 	disabled = not _selected
 	release_focus()
 	_update_style()
