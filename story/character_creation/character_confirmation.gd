@@ -9,6 +9,7 @@ signal character_confirmed(character_name: String)
 @export var _name: LineEdit
 
 func _ready() -> void:
+	register_text_enter(_name)
 	_on_name_changed(_name.text)
 
 func confirm() -> void:
@@ -24,9 +25,5 @@ func _on_name_changed(new_text: String) -> void:
 	name_changed.emit(new_text)
 
 func _on_confirmed() -> void:
+	if _name.text.is_empty(): return
 	character_confirmed.emit(_name.text)
-
-func _on_name_submitted(new_text: String) -> void:
-	if new_text.is_empty(): return
-	name_changed.emit(new_text)
-	character_confirmed.emit(new_text)

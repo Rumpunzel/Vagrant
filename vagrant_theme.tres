@@ -1,8 +1,37 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://n4spn3vwys5s"]
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://n4spn3vwys5s"]
 
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="1_8hd5q"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8hd5q"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8hd5q"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+expand_margin_left = 5.0
+expand_margin_top = 31.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
+
 [resource]
+AcceptDialog/styles/panel = SubResource("StyleBoxEmpty_8hd5q")
 HeaderLarge/base_type = &"Label"
 HeaderLarge/font_sizes/bold_font_size = 32
 HeaderLarge/font_sizes/bold_italics_font_size = 32
@@ -40,3 +69,5 @@ MarginContainer/constants/margin_right = 8
 MarginContainer/constants/margin_top = 8
 RichTextLabel/colors/font_shadow_color = Color(0, 0, 0, 1)
 RichTextLabel/constants/shadow_outline_size = 2
+Window/fonts/title_font = ExtResource("1_8hd5q")
+Window/styles/embedded_border = SubResource("StyleBoxFlat_8hd5q")
