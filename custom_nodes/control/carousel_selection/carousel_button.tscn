@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bio0tn8287gj"]
 
-[ext_resource type="Script" uid="uid://bbmf80basdafn" path="res://custom_nodes/control/carousel_button.gd" id="1_a2uw8"]
+[ext_resource type="Script" uid="uid://bbmf80basdafn" path="res://custom_nodes/control/carousel_selection/carousel_button.gd" id="1_a2uw8"]
 [ext_resource type="Script" uid="uid://coqwnstoj346c" path="res://addons/tooltips_pro/scripts/tooltip_trigger.gd" id="2_e8jpn"]
 
 [node name="CarouselButton" type="Button" node_paths=PackedStringArray("tooltip_trigger")]
