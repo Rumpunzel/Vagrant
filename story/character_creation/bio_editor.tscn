@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://story/character_creation/bio_editor.gd" id="1_furgd"]
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="2_gdvnu"]
-[ext_resource type="Material" uid="uid://b852rmgnfrqr8" path="res://characters/character_sheet/portrait_vignette.tres" id="2_puilj"]
 [ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://icons/editor/infinity.svg" id="3_1khh3"]
-[ext_resource type="Texture2D" uid="uid://b61yq2djpyvxb" path="res://assets/portraits/HE-BA-BR-F115/Fulllength.png" id="4_3p0bc"]
+[ext_resource type="Material" uid="uid://cq38j4iccgxe4" path="res://characters/character_sheet/big_portrait_vignette.tres" id="3_gdvnu"]
+[ext_resource type="Texture2D" uid="uid://cxtqc6li0hcbj" path="res://assets/portraits/HE-DR-FS-F102/Fulllength.png" id="4_gdvnu"]
 [ext_resource type="Texture2D" uid="uid://dkot0xb7ohews" path="res://icons/editor/chevron-left-large.svg" id="4_puilj"]
 [ext_resource type="Texture2D" uid="uid://k8k7mhb6md3e" path="res://icons/editor/card-random.svg" id="6_c7qpy"]
-[ext_resource type="Script" uid="uid://doguhqeqp85e2" path="res://custom_nodes/control/hover_fade.gd" id="7_dekt0"]
+[ext_resource type="Script" uid="uid://bvnsiwp3j8rtw" path="res://custom_nodes/control/hover_button.gd" id="6_gdvnu"]
 [ext_resource type="Texture2D" uid="uid://di721a0116neh" path="res://icons/editor/chevron-right-large.svg" id="8_gdvnu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3p0bc"]
@@ -54,7 +54,7 @@ keycode = 4194321
 [sub_resource type="Shortcut" id="Shortcut_nu3qc"]
 events = [SubResource("InputEventKey_dekt0"), SubResource("InputEventKey_xbko4")]
 
-[node name="BioEditor" type="VBoxContainer" node_paths=PackedStringArray("_name", "_title", "_portrait", "_random_button", "_sex_button")]
+[node name="BioEditor" type="VBoxContainer" node_paths=PackedStringArray("_name", "_title", "_portrait")]
 offset_right = 480.0
 offset_bottom = 817.0
 theme_override_constants/separation = 32
@@ -63,8 +63,6 @@ _portraits_directory = "res://assets/portraits"
 _name = NodePath("PanelContainer/MarginContainer/VBoxContainer/Name")
 _title = NodePath("PanelContainer/MarginContainer/VBoxContainer/Title")
 _portrait = NodePath("PanelContainer/MarginContainer/VBoxContainer/MarginContainer/Portrait")
-_random_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer/Random")
-_sex_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer/Sex")
 metadata/_custom_type_script = "uid://be2c5murx8xba"
 
 [node name="Title" type="Label" parent="."]
@@ -112,19 +110,18 @@ theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 
 [node name="Portrait" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer"]
-material = ExtResource("2_puilj")
+material = ExtResource("3_gdvnu")
 layout_mode = 2
-tooltip_text = "res://assets/portraits/HE-BA-BR-F115/Fulllength.png"
 mouse_default_cursor_shape = 16
-texture = ExtResource("4_3p0bc")
+texture = ExtResource("4_gdvnu")
 expand_mode = 3
-stretch_mode = 5
+stretch_mode = 4
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Previous" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+[node name="Previous" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Previous"
@@ -133,19 +130,16 @@ shortcut = SubResource("Shortcut_3p0bc")
 icon = ExtResource("4_puilj")
 flat = true
 expand_icon = true
-
-[node name="HoverFade" type="Node" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/Previous" node_paths=PackedStringArray("control_to_fade", "hover_neighbors")]
-script = ExtResource("7_dekt0")
-control_to_fade = NodePath("")
-hover_neighbors = [NodePath("../../VBoxContainer/Random/HoverFade"), NodePath("../../VBoxContainer/Sex/HoverFade"), NodePath("../../Next/HoverFade")]
-metadata/_custom_type_script = "uid://doguhqeqp85e2"
+script = ExtResource("6_gdvnu")
+hover_neighbors = [NodePath("../VBoxContainer/Random"), NodePath("../VBoxContainer/Sex"), NodePath("../Next")]
+metadata/_custom_type_script = "uid://bvnsiwp3j8rtw"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="Random" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Random" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
 layout_mode = 2
 size_flags_vertical = 3
 tooltip_text = "Random
@@ -156,19 +150,16 @@ icon = ExtResource("6_c7qpy")
 flat = true
 icon_alignment = 1
 expand_icon = true
-
-[node name="HoverFade" type="Node" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer/Random" node_paths=PackedStringArray("control_to_fade", "hover_neighbors")]
-script = ExtResource("7_dekt0")
-control_to_fade = NodePath("")
-hover_neighbors = [NodePath("../../../Previous/HoverFade"), NodePath("../../Sex/HoverFade"), NodePath("../../../Next/HoverFade")]
-metadata/_custom_type_script = "uid://doguhqeqp85e2"
+script = ExtResource("6_gdvnu")
+hover_neighbors = [NodePath("../../Previous"), NodePath("../Sex"), NodePath("../../Next")]
+metadata/_custom_type_script = "uid://bvnsiwp3j8rtw"
 
 [node name="Control" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Sex" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Sex" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
 layout_mode = 2
 size_flags_vertical = 3
 tooltip_text = "Filter Sex
@@ -178,14 +169,11 @@ icon = ExtResource("3_1khh3")
 flat = true
 icon_alignment = 1
 expand_icon = true
+script = ExtResource("6_gdvnu")
+hover_neighbors = [NodePath("../../Previous"), NodePath("../Random"), NodePath("../../Next")]
+metadata/_custom_type_script = "uid://bvnsiwp3j8rtw"
 
-[node name="HoverFade" type="Node" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/VBoxContainer/Sex" node_paths=PackedStringArray("control_to_fade", "hover_neighbors")]
-script = ExtResource("7_dekt0")
-control_to_fade = NodePath("")
-hover_neighbors = [NodePath("../../../Previous/HoverFade"), NodePath("../../Random/HoverFade"), NodePath("../../../Next/HoverFade")]
-metadata/_custom_type_script = "uid://doguhqeqp85e2"
-
-[node name="Next" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+[node name="Next" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Next"
@@ -194,12 +182,9 @@ shortcut = SubResource("Shortcut_nu3qc")
 icon = ExtResource("8_gdvnu")
 flat = true
 expand_icon = true
-
-[node name="HoverFade" type="Node" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/Next" node_paths=PackedStringArray("control_to_fade", "hover_neighbors")]
-script = ExtResource("7_dekt0")
-control_to_fade = NodePath("")
-hover_neighbors = [NodePath("../../Previous/HoverFade"), NodePath("../../VBoxContainer/Random/HoverFade"), NodePath("../../VBoxContainer/Sex/HoverFade")]
-metadata/_custom_type_script = "uid://doguhqeqp85e2"
+script = ExtResource("6_gdvnu")
+hover_neighbors = [NodePath("../Previous"), NodePath("../VBoxContainer/Random"), NodePath("../VBoxContainer/Sex")]
+metadata/_custom_type_script = "uid://bvnsiwp3j8rtw"
 
 [connection signal="text_changed" from="PanelContainer/MarginContainer/VBoxContainer/Name" to="." method="_on_name_changed"]
 [connection signal="text_changed" from="PanelContainer/MarginContainer/VBoxContainer/Title" to="." method="_on_title_changed"]

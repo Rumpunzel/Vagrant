@@ -57,6 +57,7 @@ var _portrait_index: int = 0 :
 		details_changed.emit(_name.text, _title.text, _portrait.texture)
 
 func _ready() -> void:
+	if Engine.is_editor_hint(): return
 	_compiled_portrait_pattern = RegEx.new()
 	for sex: Sex in Sex.values():
 		var regex: RegEx = RegEx.new()

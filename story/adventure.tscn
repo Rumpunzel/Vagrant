@@ -147,7 +147,7 @@ margin_bottom = 0
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="RestBones" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(126, 32)
+custom_minimum_size = Vector2(130, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2

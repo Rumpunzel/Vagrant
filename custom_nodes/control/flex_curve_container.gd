@@ -33,6 +33,7 @@ func get_elements() -> Array[Control]:
 
 func _align_elements_on_curve() -> void:
 	if not is_node_ready(): await ready
+	if not is_inside_tree(): return
 	await get_tree().process_frame
 	var curve_containers: Array[MarginContainer] = _get_curve_containers()
 	for container_index: int in curve_containers.size():

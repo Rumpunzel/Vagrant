@@ -31,8 +31,8 @@ var _dice_request: DiceRequest :
 		_breath_dice_selection_buttons.setup_breath_dice(character.breath_dice)
 		_breath_dice_selection_buttons.update_dice_request(_dice_request)
 		_enable_hud()
-		var all_dice_selected: bool = _dice_request.selected_breath_dice == character.get_available_breath_dice()
-		_all_in_button.set_pressed_no_signal(all_dice_selected)
+		_update_all_in_button(_dice_request.selected_breath_dice, character)
+		_dice_request.selected_breath_dice_changed.connect(_update_all_in_button.bind(character))
 		#_ok_button.grab_focus()
 
 func request_save(save_request: SaveRequest) -> void:
@@ -63,6 +63,10 @@ func _disable_hud() -> void:
 	_ok_button.active = false
 	_all_in_button.disabled = true
 	_all_in_button.active = false
+
+func _update_all_in_button(selected_breath_dice: Array[BreathDie], character: Character) -> void:
+	var all_dice_selected: bool = selected_breath_dice == character.get_available_breath_dice()
+	_all_in_button.set_pressed_no_signal(all_dice_selected)
 
 func _on_confirmed() -> void:
 	confirmed.emit()
