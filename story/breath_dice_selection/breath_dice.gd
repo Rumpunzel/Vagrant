@@ -26,6 +26,7 @@ func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
 		var group: BreathDiceGroup = _groups.get(breath_die.die_type)
 		if not group:
 			group = _breath_dice_group.instantiate()
+			group.breath_die_type = breath_die.die_type
 			_groups[breath_die.die_type] = group
 			add(group)
 		group.add_breath_die(breath_die)

@@ -105,7 +105,7 @@ func _on_mouse_entered() -> void:
 	_on_hover()
 
 func _on_mouse_exited() -> void:
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): return
+	if trigger_control.has_focus() or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): return
 	_on_unhover()
 
 func _on_focus_entered() -> void:

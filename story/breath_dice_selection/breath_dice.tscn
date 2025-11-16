@@ -12,7 +12,6 @@ point_count = 3
 offset_right = 416.0
 offset_bottom = 125.0
 mouse_filter = 2
-mouse_behavior_recursive = 1
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0

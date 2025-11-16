@@ -1,3 +1,4 @@
+@tool
 class_name CharacterPortraits
 extends PanelContainer
 
@@ -14,6 +15,12 @@ signal character_selected(character: Character, character_portrait: CharacterPor
 @export var _portraits: FlexContainer
 @export var _character_portrait: PackedScene
 
+func _ready() -> void:
+	if not Engine.is_editor_hint(): return
+	var character_portrait: CharacterPortrait = _character_portrait.instantiate()
+	_portraits.add(character_portrait)
+	character_portrait.select()
+
 func _update_character_list(updated_characters: Dictionary[CharacterProfile, Character]) -> void:
 	_portraits.clear()
 	var button_group: ButtonGroup = ButtonGroup.new()
@@ -23,3 +30,4 @@ func _update_character_list(updated_characters: Dictionary[CharacterProfile, Cha
 		character_portrait.setup(button_group)
 		character_portrait.character_selected.connect(character_selected.emit.bind(character_portrait))
 		_portraits.add(character_portrait)
+		character_portrait.select()

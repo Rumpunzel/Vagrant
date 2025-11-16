@@ -30,6 +30,10 @@ signal character_selected(character: Character)
 func setup(button_group: ButtonGroup) -> void:
 	_button.button_group = button_group
 
+func select() -> void:
+	_button.button_pressed = true
+	_on_button_pressed()
+
 func _update() -> void:
 	var character_profile: CharacterProfile = character.character_profile
 	_portrait.texture = character_profile.get_portrait(_portrait_identifier)
@@ -38,12 +42,10 @@ func _on_character_profile_changed(_character_profile: CharacterProfile) -> void
 	_update()
 
 func _on_save_requested(_save_request: SaveRequest) -> void:
-	_button.button_pressed = true
-	_on_button_pressed()
+	select()
 
 func _on_fight_requested(_fight_request: FightRequest) -> void:
-	_button.button_pressed = true
-	_on_button_pressed()
+	select()
 
 func _on_button_pressed() -> void:
 	character_selected.emit(character)
