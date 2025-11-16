@@ -1,0 +1,60 @@
+[gd_scene load_steps=9 format=3 uid="uid://d113047tjj0nn"]
+
+[ext_resource type="Script" uid="uid://erm4wr0n564s" path="res://custom_nodes/control/carousel_button.gd" id="1_a2uw8"]
+[ext_resource type="PackedScene" uid="uid://btxanxg8xvqp" path="res://story/stance_selection/stance_selection_button.tscn" id="2_nkp3s"]
+[ext_resource type="Texture2D" uid="uid://buvbksy3o46rm" path="res://icons/editor/hero_icons/chevron-left.svg" id="3_emyf3"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="4_2cv45"]
+[ext_resource type="PackedScene" uid="uid://mt5mbq7b5lu0" path="res://story/stance_selection/stance_selection.tscn" id="5_3yvp3"]
+[ext_resource type="Texture2D" uid="uid://ctxdc156sk6t4" path="res://icons/editor/hero_icons/chevron-right.svg" id="6_36dhg"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="7_c8dn6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kixjq"]
+
+[node name="CarouselButton" type="PanelContainer" node_paths=PackedStringArray("_stance_selection", "_previous", "_next")]
+offset_right = 258.0
+offset_bottom = 32.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_kixjq")
+script = ExtResource("1_a2uw8")
+_stance_selection = NodePath("MarginContainer/HBoxContainer/StanceSelection")
+_previous = NodePath("MarginContainer/HBoxContainer/Previous")
+_next = NodePath("MarginContainer/HBoxContainer/Next")
+metadata/_custom_type_script = "uid://bns33lugkmi4j"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Previous" parent="MarginContainer/HBoxContainer" instance=ExtResource("2_nkp3s")]
+layout_mode = 2
+theme_override_colors/icon_normal_color = Color(0.56078434, 0.5176471, 0.45490196, 1)
+theme_override_colors/icon_focus_color = Color(0.56078434, 0.5176471, 0.45490196, 1)
+theme_override_colors/icon_pressed_color = Color(0.56078434, 0.5176471, 0.45490196, 1)
+theme_override_colors/icon_hover_color = Color(0.56078434, 0.5176471, 0.45490196, 1)
+theme_override_colors/icon_hover_pressed_color = Color(0.56078434, 0.5176471, 0.45490196, 1)
+theme_override_colors/icon_disabled_color = Color(0.56078434, 0.5176471, 0.45490196, 0.4)
+icon = ExtResource("3_emyf3")
+attribute = ExtResource("4_2cv45")
+
+[node name="StanceSelection" parent="MarginContainer/HBoxContainer" instance=ExtResource("5_3yvp3")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Next" parent="MarginContainer/HBoxContainer" instance=ExtResource("2_nkp3s")]
+layout_mode = 2
+theme_override_colors/icon_normal_color = Color(0.39215687, 0.53333336, 0.6117647, 1)
+theme_override_colors/icon_focus_color = Color(0.39215687, 0.53333336, 0.6117647, 1)
+theme_override_colors/icon_pressed_color = Color(0.39215687, 0.53333336, 0.6117647, 1)
+theme_override_colors/icon_hover_color = Color(0.39215687, 0.53333336, 0.6117647, 1)
+theme_override_colors/icon_hover_pressed_color = Color(0.39215687, 0.53333336, 0.6117647, 1)
+theme_override_colors/icon_disabled_color = Color(0.39215687, 0.53333336, 0.6117647, 0.4)
+icon = ExtResource("6_36dhg")
+attribute = ExtResource("7_c8dn6")
+
+[connection signal="pressed" from="MarginContainer/HBoxContainer/Previous" to="." method="_on_previous_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/Next" to="." method="_on_next_pressed"]
