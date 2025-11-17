@@ -38,7 +38,7 @@ extends Resource
 @export var origins: Array[Origin]
 
 @export_placeholder("Title") var _title: String
-@export var _breath_dice: Dictionary[DieType, int] = {
+@export var breath_die_types: Dictionary[DieType, int] = {
 	Rules.d4: 1,
 	Rules.d6: 1,
 	Rules.d8: 1,
@@ -76,7 +76,7 @@ func get_attribute_scores() -> Dictionary[CharacterAttribute, AttributeScore]:
 	return attibute_scores
 
 func get_breath_dice() -> Array[BreathDie]:
-	return DiceRoller.generate_breath_dice_pool(_breath_dice)
+	return DiceRoller.generate_breath_dice_pool(breath_die_types)
 
 func get_title() -> String:
 	return Origin.concatenate_with_icons(origins) if _title.is_empty() else _title

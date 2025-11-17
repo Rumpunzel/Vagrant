@@ -42,7 +42,7 @@ func _get_dice_results(save_result: SaveResult) -> String:
 	var hint: String = ""
 	for die: BreathDie in save_result.dice:
 		hint += "%s" % die
-		if not die.is_alive(): hint += " ☠"
+		if not die.alive: hint += " ☠"
 		if save_result.get_highest_dice().has(die): hint += " ✔"
 		hint += "\n"
 	return "[hint=%s]%s[/hint]" % [hint, dice_results]

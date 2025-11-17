@@ -1,20 +1,14 @@
 @tool
 class_name BreathDice
-extends FlexCurveContainer
+extends PanelContainer
 
-@export var character: Character :
-	set(new_character):
-		assert(new_character)
-		if character != null:
-			character.breath_dice_changed.disconnect(setup_breath_dice)
-		character = new_character
-		setup_breath_dice(character.breath_dice)
-		character.breath_dice_changed.connect(setup_breath_dice)
+@export var character: Character : set = _set_character
 
 @export_group("Configuration")
+@export var _die_types: FlexContainer
 @export var _breath_dice_group: PackedScene
 
-var _groups: Dictionary[DieType, BreathDiceGroup] = {}
+var _button_groups: Dictionary[DieType, BreathDiceGroup] = {}
 
 func _ready() -> void:
 	if not Engine.is_editor_hint(): return
@@ -25,17 +19,33 @@ func _ready() -> void:
 		Rules.d10: 1,
 		Rules.d12: 1,
 	}
+	setup_die_types(debug_dice_pool.keys())
 	var debug_breath_dice: Array[BreathDie] = DiceRoller.generate_breath_dice_pool(debug_dice_pool)
 	setup_breath_dice(debug_breath_dice)
 
+func setup_die_types(die_types: Array[DieType] = Rules.BREATH_DICE) -> void:
+	_button_groups.clear()
+	_die_types.clear()
+	for die_type: DieType in die_types:
+		var button_group: BreathDiceGroup = _button_groups.get(die_type)
+		if not button_group:
+			button_group = _breath_dice_group.instantiate()
+			button_group.die_type = die_type
+			_button_groups[die_type] = button_group
+			_die_types.add(button_group)
+
 func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
-	_groups.clear()
-	clear()
-	for breath_die: BreathDie in breath_dice:
-		var group: BreathDiceGroup = _groups.get(breath_die.die_type)
-		if not group:
-			group = _breath_dice_group.instantiate()
-			group.breath_die_type = breath_die.die_type
-			_groups[breath_die.die_type] = group
-			add(group)
-		group.add_breath_die(breath_die)
+	if _button_groups.is_empty(): setup_die_types()
+	for die_type: DieType in _button_groups.keys():
+		var relevant_breath_dice: Array[BreathDie] = []
+		relevant_breath_dice.assign(breath_dice.filter(func(breath_die: BreathDie) -> bool: return breath_die.die_type == die_type))
+		var button_group: BreathDiceGroup = _button_groups[die_type]
+		button_group.setup_breath_dice(relevant_breath_dice)
+
+func _set_character(new_character: Character) -> void:
+	assert(new_character)
+	if character != null:
+		character.breath_dice_changed.disconnect(setup_breath_dice)
+	character = new_character
+	setup_breath_dice(character.breath_dice)
+	character.breath_dice_changed.connect(setup_breath_dice)

@@ -12,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://87t1400wcx4g" path="res://icons/dice/d12.png" id="9_ujme7"]
 [ext_resource type="Script" uid="uid://ju76mobdc4ok" path="res://story/breath_dice_selection/dice_dropdown.gd" id="10_2ue2l"]
 [ext_resource type="Script" uid="uid://o5jur8n8f1c" path="res://custom_nodes/control/rectifier.gd" id="11_wtjm1"]
-[ext_resource type="PackedScene" uid="uid://cgl4tskvsu25d" path="res://story/breath_dice_selection/breath_dice.tscn" id="12_ppey5"]
+[ext_resource type="PackedScene" uid="uid://cgl4tskvsu25d" path="res://story/breath_dice_selection/breath_dice_display.tscn" id="12_ppey5"]
 [ext_resource type="PackedScene" uid="uid://cfnlwcs3oai0c" path="res://story/breath_dice_selection/breath_die_selection_button.tscn" id="13_rd636"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gel83"]

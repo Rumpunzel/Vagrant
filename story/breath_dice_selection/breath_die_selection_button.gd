@@ -1,6 +1,6 @@
 @tool
 class_name BreathDieSelectionButton
-extends DisplayButton
+extends BreathDieButton
 
 signal breath_die_selected(breath_die: BreathDie)
 signal breath_die_deselected(breath_die: BreathDie)
@@ -12,16 +12,6 @@ signal breath_die_deselected(breath_die: BreathDie)
 
 @export_group("Configuration")
 @export var _update_delay_timer: Timer
-
-var breath_die: BreathDie :
-	set(new_breath_die):
-		assert(new_breath_die)
-		assert(new_breath_die != breath_die)
-		breath_die = new_breath_die
-		icon = breath_die.die_type.icon
-		text = ""
-		_update()
-		breath_die.state_changed.connect(_on_die_state_changed)
 
 func update_dice_request(dice_request: DiceRequest) -> void:
 	assert(dice_request)
@@ -61,22 +51,13 @@ func update_fight_result(fight_result: FightResult) -> void:
 	_update()
 	#set_font_colors(fight_result.get_die_color(breath_die))
 
-func _update() -> void:
-	disabled = not breath_die.is_alive()
-	if disabled:
-		tooltip_text = "This die is exhausted."
-		mouse_default_cursor_shape = Control.CURSOR_HELP
-	else:
-		tooltip_text = "[%s]" % breath_die.die_type
-		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-
 func _on_selected_breath_dice_changed(selected_breath_dice: Array[BreathDie]) -> void:
 	button_pressed = selected_breath_dice.has(breath_die)
 
-func _on_die_state_changed(_die_state: BreathDie.State) -> void:
+func _on_die_state_changed(alive: bool) -> void:
 	# Only update in real time outside of breath die selection
 	if button_pressed: return
-	_update()
+	super._on_die_state_changed(alive)
 
 func _on_toggled(toggled_on: bool) -> void:
 	if toggled_on: breath_die_selected.emit(breath_die)

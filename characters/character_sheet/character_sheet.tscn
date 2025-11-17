@@ -13,17 +13,17 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c5c64"]
 
-[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_name", "_title", "_attributes", "_breath_dice", "_ability_labels")]
+[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_name", "_title", "_attributes", "_ability_labels", "_portrait", "_breath_dice")]
 offset_right = 412.0
 offset_bottom = 412.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_c5c64")
 script = ExtResource("1_uqhlh")
-_portrait = NodePath("Portrait")
 _name = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Name")
 _title = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/Title")
 _attributes = NodePath("MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/CharacterAttributesPanel")
-_breath_dice = NodePath("MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/BreathDiceSelectionButtons")
 _ability_labels = NodePath("MarginContainer/VBoxContainer/VBoxContainer/AbilityLabels")
+_portrait = NodePath("Portrait")
+_breath_dice = NodePath("MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/BreathDiceSelectionButtons")
 metadata/_custom_type_script = "uid://dkwi26f6nf1xj"
 
 [node name="Portrait" type="TextureRect" parent="."]

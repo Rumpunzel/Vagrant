@@ -21,11 +21,11 @@ extends PanelContainer
 @export var _breath_dice: BreathDice
 
 func update_die_types() -> void:
-	var spendable_breath_dice: Array[BreathDie] = character.get_spendable_breath_dice()
-	var spendable_die_types: Array[DieType] = []
-	for breath_die: BreathDie in spendable_breath_dice:
-		if not breath_die.die_type in spendable_die_types: spendable_die_types.append(breath_die.die_type)
-	_die_selection.die_types = spendable_die_types
+	#var spendable_breath_dice: Array[BreathDie] = character.get_spendable_breath_dice()
+	#var spendable_die_types: Array[DieType] = []
+	#for breath_die: BreathDie in spendable_breath_dice:
+		#if not breath_die.die_type in spendable_die_types: spendable_die_types.append(breath_die.die_type)
+	#_die_selection.die_types = spendable_die_types
 	visible = character.can_catch_breath()
 
 func _on_breath_dice_states_changed() -> void:

@@ -1,22 +1,13 @@
 @tool
 class_name BreathDiceSelectionButtonGroup
-extends FlexContainer
-
-@export var breath_die_type: DieType :
-	set(new_breath_die_type):
-		breath_die_type = new_breath_die_type
-		_all_button.text = "%s" % breath_die_type
+extends BreathDiceGroup
 
 @export_group("Configuration")
 @export var _all_button: DisplayButton
-@export var _breath_die_selection_button: PackedScene
 
-func add_button(breath_die: BreathDie) -> void:
-	var button: BreathDieSelectionButton = _breath_die_selection_button.instantiate()
-	button.breath_die = breath_die
-	button.toggled.connect(_on_button_toggled)
-	_all_button.visible = not get_elements().is_empty()
-	add(button)
+func _ready() -> void:
+	die_type_changed.connect(_on_die_type_changed)
+	breath_die_button_added.connect(_on_breath_die_button_added)
 
 func update_dice_request(dice_request: DiceRequest) -> void:
 	_all_button.active = true
@@ -50,3 +41,12 @@ func _on_button_toggled(_toggled_on: bool = false) -> void:
 func _on_all_button_toggled(toggled_on: bool) -> void:
 	if toggled_on: for button: BreathDieSelectionButton in get_elements(): button.select()
 	else: for button: BreathDieSelectionButton in get_elements(): button.deselect()
+
+func _on_die_type_changed(_die_typ: DieType) -> void:
+	_all_button.text = "%s" % die_type
+
+func _on_breath_die_button_added(breath_die_button: BreathDieSelectionButton) -> void:
+	assert(breath_die_button)
+	assert(breath_die_button is BreathDieSelectionButton)
+	breath_die_button.toggled.connect(_on_button_toggled)
+	_all_button.visible = get_elements().size() > 1

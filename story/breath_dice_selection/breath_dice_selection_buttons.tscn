@@ -6,16 +6,16 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_35nxq"]
 
-[node name="BreathDiceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_buttons")]
+[node name="BreathDiceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_die_types")]
 offset_right = 238.0
 offset_bottom = 89.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_35nxq")
 script = ExtResource("1_0p7wt")
-_buttons = NodePath("ButtonGroups")
-_breath_dice_selection_group = ExtResource("2_3dl60")
+_die_types = NodePath("DieTypes")
+_breath_dice_group = ExtResource("2_3dl60")
 metadata/_custom_type_script = "uid://7mksap2q7pd0"
 
-[node name="ButtonGroups" type="MarginContainer" parent="."]
+[node name="DieTypes" type="MarginContainer" parent="."]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
