@@ -10,7 +10,6 @@ extends PanelContainer
 		_portrait.texture = character.character_profile.get_portrait(_portrait_identifier)
 		_breath_dice.character = character
 		update_die_types()
-		var lost_breath_dice: Array[BreathDie] = character.get_lost_breath_dice()
 		character.breath_dice_states_changed.connect(_on_breath_dice_states_changed)
 
 @export var _portrait_identifier: String = "Small.png"

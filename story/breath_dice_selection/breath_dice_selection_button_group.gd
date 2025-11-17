@@ -9,6 +9,10 @@ func _ready() -> void:
 	die_type_changed.connect(_on_die_type_changed)
 	breath_die_button_added.connect(_on_breath_die_button_added)
 
+func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
+	super.setup_breath_dice(breath_dice)
+	_all_button.visible = breath_dice.size() > 1
+
 func update_dice_request(dice_request: DiceRequest) -> void:
 	_all_button.active = true
 	for button: BreathDieSelectionButton in get_elements(): button.update_dice_request(dice_request)
@@ -46,7 +50,4 @@ func _on_die_type_changed(_die_typ: DieType) -> void:
 	_all_button.text = "%s" % die_type
 
 func _on_breath_die_button_added(breath_die_button: BreathDieSelectionButton) -> void:
-	assert(breath_die_button)
-	assert(breath_die_button is BreathDieSelectionButton)
 	breath_die_button.toggled.connect(_on_button_toggled)
-	_all_button.visible = get_elements().size() > 1

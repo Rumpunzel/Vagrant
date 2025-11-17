@@ -20,6 +20,12 @@ signal fight_rolled(fight_result: FightResult)
 		breath_dice = character_profile.get_breath_dice()
 		character_profile_changed.emit(character_profile)
 
+@export var _exhaustion: Array[DieType] :
+	set(new_exhaustion):
+		if new_exhaustion == _exhaustion: return
+		_exhaustion = new_exhaustion
+		exhaustion_changed.emit(_exhaustion)
+
 var attribute_scores: Dictionary[CharacterAttribute, AttributeScore] :
 	set(new_attribute_scores):
 		if new_attribute_scores == attribute_scores: return
@@ -31,35 +37,34 @@ var breath_dice: Array[BreathDie] :
 		if new_breath_dice == breath_dice: return
 		for breath_die: BreathDie in breath_dice: breath_die.state_changed.disconnect(_on_breath_die_state_changed)
 		breath_dice = new_breath_dice
-		for breath_die: BreathDie in breath_dice: breath_die.state_changed.connect(_on_breath_die_state_changed)
+		for breath_die: BreathDie in breath_dice:
+			assert(breath_die.alive)
+			breath_die.state_changed.connect(_on_breath_die_state_changed.bind(breath_die))
 		breath_dice_changed.emit(breath_dice)
-
-var exhaustion: Array[DieType] :
-	set(new_exhaustion):
-		if new_exhaustion == exhaustion: return
-		exhaustion = new_exhaustion
-		exhaustion_changed.emit(exhaustion)
 
 func _init(new_character_profile: CharacterProfile = null) -> void:
 	character_profile = new_character_profile
 
 func request_save(save_request: SaveRequest) -> void:
+	assert(save_request)
 	save_request.save_rolled.connect(_on_save_rolled)
 	save_requested.emit(save_request)
 
 func request_fight(fight_request: FightRequest) -> void:
+	assert(fight_request)
 	fight_request.fight_rolled.connect(_on_fight_rolled)
 	fight_requested.emit(fight_request)
 
-# The dice used for saves remain forever "laid on the table"
-# Hence the charater may receive a new copy of thier breath dice to continue their adventure
-func continue_with_new_breath_dice(only_alive: bool = true) -> void:
-	var breath_dice_to_copy: Array[BreathDie] = get_available_breath_dice() if only_alive else breath_dice
-	breath_dice.assign(breath_dice_to_copy.map(func(die: BreathDie) -> BreathDie: return die.duplicate()))
-	breath_dice_changed.emit(breath_dice)
-
 func can_catch_breath() -> bool:
-	return not get_lost_breath_dice().is_empty()
+	return has_lost_breath()
+
+func has_lost_breath() -> bool:
+	for die_type: DieType in character_profile.breath_die_types.keys():
+		var dice_count: int = 0
+		for breath_die: BreathDie in breath_dice:
+			if breath_die.die_type == die_type: dice_count -= 1
+		if dice_count < character_profile.breath_die_types[die_type]: return true
+	return false
 
 func get_portrait() -> Texture2D:
 	return character_profile.portrait
@@ -84,29 +89,24 @@ func get_highest_attribute() -> CharacterAttribute:
 			highest_attribute_score = attribute_score
 	return highest_attribute
 
-func get_available_breath_dice() -> Array[BreathDie]:
-	return breath_dice.filter(func(die: BreathDie) -> bool: return die.alive)
-
-func get_lost_breath_dice() -> Array[BreathDie]:
-	return breath_dice.filter(func(die: BreathDie) -> bool: return not die.alive)
-
-func get_breath_dice_count(breath_die_type: DieType, include_exhausted: bool = false) -> int:
+func get_breath_dice_count(breath_die_type: DieType) -> int:
 	var count: int = 0
-	for die: BreathDie in breath_dice: if die.die_type == breath_die_type and (include_exhausted or die.alive): count +=1
+	for die: BreathDie in breath_dice: if die.die_type == breath_die_type: count +=1
 	return count
 
 func get_auto_selected_breath_dice(with_attribute: CharacterAttribute) -> Array[BreathDie]:
-	return get_available_breath_dice().filter(func(die: BreathDie) -> bool: return die.is_auto_selected(get_attribute_score(with_attribute)))
+	var attribute_score: AttributeScore = get_attribute_score(with_attribute)
+	return breath_dice.filter(func(die: BreathDie) -> bool: return die.is_auto_selected(attribute_score))
 
 func _on_save_rolled(save_result: SaveResult) -> void:
 	save_result.save_request.save_rolled.disconnect(_on_save_rolled)
 	save_rolled.emit(save_result)
-	continue_with_new_breath_dice()
 
 func _on_fight_rolled(fight_result: FightResult) -> void:
 	fight_result.fight_request.fight_rolled.disconnect(_on_fight_rolled)
 	fight_rolled.emit(fight_result)
-	continue_with_new_breath_dice()
 
-func _on_breath_die_state_changed(_alive: bool) -> void:
+func _on_breath_die_state_changed(alive: bool, breath_die: BreathDie) -> void:
+	assert(breath_die.alive == alive)
+	if not alive: breath_dice.erase(breath_die)
 	breath_dice_states_changed.emit()

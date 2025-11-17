@@ -13,8 +13,8 @@ func setup(button_group: ButtonGroup) -> void:
 	_button.button_group = button_group
 
 func select() -> void:
-	_button.button_pressed = true
-	_on_button_pressed()
+	if not _button.button_pressed: _button.button_pressed = true
+	else: character_selected.emit(character)
 
 func _update() -> void:
 	var character_profile: CharacterProfile = character.character_profile

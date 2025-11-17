@@ -77,7 +77,7 @@ expand_margin_right = 2.0
 expand_margin_bottom = 4.0
 
 [sub_resource type="Gradient" id="Gradient_lpl5g"]
-offsets = PackedFloat32Array(0.13092986, 0.23092985, 0.6309298, 0.93092984)
+offsets = PackedFloat32Array(0.0783651, 0.17836511, 0.578365, 0.87836504)
 colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0.2, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_mm3k5"]
