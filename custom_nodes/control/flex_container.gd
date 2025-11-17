@@ -40,10 +40,21 @@ func add(element: Control) -> void:
 		Direction.RIGHT_TO_LEFT, Direction.BOTTOM_TO_TOP: _box_container.move_child(element, 0)
 		_: assert(false, "Does not exist")
 
+func remove(element: Control) -> void:
+	assert(element)
+	if not _box_container: return
+	_box_container.remove_child(element)
+
+func remove_last() -> Control:
+	if not _box_container: return
+	var last_element: Control = get_elements().back()
+	remove(last_element)
+	return last_element
+
 func clear() -> void:
 	if not _box_container: return
 	assert(_box_container)
-	for element: Control in _box_container.get_children():
+	for element: Control in get_elements():
 		_box_container.remove_child(element)
 		element.queue_free()
 

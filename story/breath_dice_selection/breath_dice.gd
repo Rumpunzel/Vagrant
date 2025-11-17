@@ -19,11 +19,18 @@ func _ready() -> void:
 		Rules.d10: 1,
 		Rules.d12: 1,
 	}
-	setup_die_types(debug_dice_pool.keys())
 	var debug_breath_dice: Array[BreathDie] = DiceRoller.generate_breath_dice_pool(debug_dice_pool)
 	setup_breath_dice(debug_breath_dice)
 
-func setup_die_types(die_types: Array[DieType] = Rules.BREATH_DICE) -> void:
+func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
+	if _button_groups.is_empty(): _setup_die_types()
+	for die_type: DieType in _button_groups.keys():
+		var relevant_breath_dice: Array[BreathDie] = []
+		relevant_breath_dice.assign(breath_dice.filter(func(breath_die: BreathDie) -> bool: return breath_die.die_type == die_type))
+		var button_group: BreathDiceGroup = _button_groups[die_type]
+		button_group.setup_breath_dice(relevant_breath_dice)
+
+func _setup_die_types(die_types: Array[DieType] = Rules.BREATH_DICE) -> void:
 	_button_groups.clear()
 	_die_types.clear()
 	for die_type: DieType in die_types:
@@ -33,14 +40,6 @@ func setup_die_types(die_types: Array[DieType] = Rules.BREATH_DICE) -> void:
 			button_group.die_type = die_type
 			_button_groups[die_type] = button_group
 			_die_types.add(button_group)
-
-func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
-	if _button_groups.is_empty(): setup_die_types()
-	for die_type: DieType in _button_groups.keys():
-		var relevant_breath_dice: Array[BreathDie] = []
-		relevant_breath_dice.assign(breath_dice.filter(func(breath_die: BreathDie) -> bool: return breath_die.die_type == die_type))
-		var button_group: BreathDiceGroup = _button_groups[die_type]
-		button_group.setup_breath_dice(relevant_breath_dice)
 
 func _set_character(new_character: Character) -> void:
 	assert(new_character)
