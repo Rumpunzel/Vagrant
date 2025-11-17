@@ -4,6 +4,7 @@ extends Resource
 signal character_profile_changed(character_profile: CharacterProfile)
 signal attribute_scores_changed(character: Character)
 signal breath_dice_changed(breath_dice: Array[BreathDie])
+signal breath_dice_states_changed
 
 signal save_requested(save_request: SaveRequest)
 signal save_rolled(save_result: SaveResult)
@@ -27,7 +28,9 @@ var attribute_scores: Dictionary[CharacterAttribute, AttributeScore] :
 var breath_dice: Array[BreathDie] :
 	set(new_breath_dice):
 		if new_breath_dice == breath_dice: return
+		for breath_die: BreathDie in breath_dice: breath_die.state_changed.disconnect(_on_breath_die_state_changed)
 		breath_dice = new_breath_dice
+		for breath_die: BreathDie in breath_dice: breath_die.state_changed.connect(_on_breath_die_state_changed)
 		breath_dice_changed.emit(breath_dice)
 
 func _init(new_character_profile: CharacterProfile = null) -> void:
@@ -46,6 +49,9 @@ func request_fight(fight_request: FightRequest) -> void:
 func continue_with_new_breath_dice() -> void:
 	breath_dice.assign(breath_dice.map(func(die: BreathDie) -> BreathDie: return die.duplicate()))
 	breath_dice_changed.emit(breath_dice)
+
+func can_catch_breath() -> bool:
+	return not get_exhausted_breath_dice().is_empty() and not get_spendable_breath_dice().is_empty()
 
 func get_portrait() -> Texture2D:
 	return character_profile.portrait
@@ -81,6 +87,15 @@ func get_breath_dice_count(breath_die_type: DieType, include_exhausted: bool = f
 func get_auto_selected_breath_dice(with_attribute: CharacterAttribute) -> Array[BreathDie]:
 	return get_available_breath_dice().filter(func(die: BreathDie) -> bool: return die.is_auto_selected(get_attribute_score(with_attribute)))
 
+func get_exhausted_breath_dice() -> Array[BreathDie]:
+	return breath_dice.filter(func(die: BreathDie) -> bool: return die.is_exhausted())
+
+func get_spendable_breath_dice() -> Array[BreathDie]:
+	return breath_dice.filter(func(die: BreathDie) -> bool: return die.is_spendable())
+
+func get_lost_breath_dice() -> Array[BreathDie]:
+	return breath_dice.filter(func(die: BreathDie) -> bool: return die.is_lost())
+
 func _on_save_rolled(save_result: SaveResult) -> void:
 	save_result.save_request.save_rolled.disconnect(_on_save_rolled)
 	save_rolled.emit(save_result)
@@ -90,3 +105,6 @@ func _on_fight_rolled(fight_result: FightResult) -> void:
 	fight_result.fight_request.fight_rolled.disconnect(_on_fight_rolled)
 	fight_rolled.emit(fight_result)
 	continue_with_new_breath_dice()
+
+func _on_breath_die_state_changed(_state: BreathDie.State) -> void:
+	breath_dice_states_changed.emit()

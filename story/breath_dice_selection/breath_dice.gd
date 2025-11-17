@@ -2,6 +2,15 @@
 class_name BreathDice
 extends FlexCurveContainer
 
+@export var character: Character :
+	set(new_character):
+		assert(new_character)
+		if character != null:
+			character.breath_dice_changed.disconnect(setup_breath_dice)
+		character = new_character
+		setup_breath_dice(character.breath_dice)
+		character.breath_dice_changed.connect(setup_breath_dice)
+
 @export_group("Configuration")
 @export var _breath_dice_group: PackedScene
 

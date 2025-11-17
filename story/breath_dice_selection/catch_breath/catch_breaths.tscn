@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://ccpu52v8m0ynd"]
+
+[ext_resource type="Script" uid="uid://bdkka8mnk20a1" path="res://story/breath_dice_selection/catch_breath/catch_breaths.gd" id="1_sxsp0"]
+[ext_resource type="PackedScene" uid="uid://cmcakuu2jj3j1" path="res://story/breath_dice_selection/catch_breath/catch_breath.tscn" id="3_b5g0c"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3elgv"]
+
+[node name="CatchBreaths" type="PanelContainer"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 192.0
+offset_bottom = 326.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_3elgv")
+script = ExtResource("1_sxsp0")
+_catch_breath = ExtResource("3_b5g0c")
+metadata/_custom_type_script = "uid://bdkka8mnk20a1"

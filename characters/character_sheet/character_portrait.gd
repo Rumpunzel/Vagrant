@@ -9,16 +9,14 @@ signal character_selected(character: Character)
 		if new_character == character: return
 		if character != null:
 			character.character_profile_changed.disconnect(_on_character_profile_changed)
-			character.breath_dice_changed.disconnect(_breath_dice.setup_breath_dice)
 			character.save_requested.disconnect(_on_save_requested)
 			character.fight_requested.disconnect(_on_fight_requested)
 		character = new_character
+		_breath_dice.character = character
 		character.character_profile_changed.connect(_on_character_profile_changed)
-		character.breath_dice_changed.connect(_breath_dice.setup_breath_dice)
 		character.save_requested.connect(_on_save_requested)
 		character.fight_requested.connect(_on_fight_requested)
 		_update()
-		_breath_dice.setup_breath_dice(character.breath_dice)
 
 @export var _portrait_identifier: String = "Small.png"
 

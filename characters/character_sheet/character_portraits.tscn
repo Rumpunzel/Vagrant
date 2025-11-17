@@ -9,7 +9,7 @@
 [node name="CharacterPortraits" type="PanelContainer" node_paths=PackedStringArray("_portraits")]
 theme_override_styles/panel = SubResource("StyleBoxEmpty_hspyn")
 script = ExtResource("1_3g15m")
-_portraits = NodePath("Portraits")
+_portraits = NodePath("")
 _character_portrait = ExtResource("2_bjk71")
 metadata/_custom_type_script = "uid://biit618mirgcj"
 
@@ -21,3 +21,4 @@ theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("2_tro4e")
 fill = false
+metadata/_custom_type_script = "uid://dqkpaquatj11m"

@@ -1,25 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://djhw2fda1vbnb"]
+[gd_scene load_steps=2 format=3 uid="uid://djhw2fda1vbnb"]
 
-[ext_resource type="Script" path="res://custom_nodes/control/carousel_selection/carousel_panel.gd" id="1_si1nr"]
-[ext_resource type="Script" uid="uid://coqwnstoj346c" path="res://addons/tooltips_pro/scripts/tooltip_trigger.gd" id="3_nfvak"]
+[ext_resource type="Script" uid="uid://eqbtedg5yfgr" path="res://custom_nodes/control/carousel_selection/carousel_panel.gd" id="1_si1nr"]
 
-[node name="CarouselPanel" type="PanelContainer" node_paths=PackedStringArray("tooltip_trigger", "label")]
-offset_right = 307.0
-offset_bottom = 29.0
+[node name="CarouselPanel" type="PanelContainer" node_paths=PackedStringArray("label")]
+offset_right = 306.0
+offset_bottom = 39.0
 mouse_default_cursor_shape = 16
 script = ExtResource("1_si1nr")
-tooltip_trigger = NodePath("TooltipTrigger")
-label = NodePath("Label")
-metadata/_custom_type_script = "uid://l21k6tdkpggf"
+label = NodePath("MarginContainer/Label")
+metadata/_custom_type_script = "uid://eqbtedg5yfgr"
 
-[node name="TooltipTrigger" type="Node" parent="." node_paths=PackedStringArray("trigger_node")]
-script = ExtResource("3_nfvak")
-trigger_node = NodePath("..")
-origin = 2
-metadata/_custom_type_script = "uid://coqwnstoj346c"
-
-[node name="Label" type="Label" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-text = "Blood"
+
+[node name="Label" type="Label" parent="MarginContainer"]
+layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1

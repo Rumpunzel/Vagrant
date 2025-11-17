@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=21 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://cjud36jst3ajk" path="res://story/adventure.gd" id="1_bnng7"]
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="2_kq5yh"]
@@ -11,12 +11,13 @@
 [ext_resource type="PackedScene" uid="uid://d2hp0hcp2w5ro" path="res://characters/character_sheet/character_portraits.tscn" id="7_nlwo0"]
 [ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://story/dorian.tres" id="7_pqpya"]
 [ext_resource type="Script" uid="uid://c7qjo0ilqtmp6" path="res://custom_nodes/control/fancy_hover_button.gd" id="9_hspyn"]
-[ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://story/mechanics/icons/magic-potion.svg" id="10_nlwo0"]
-[ext_resource type="Texture2D" uid="uid://qbxnlgxl1qta" path="res://story/mechanics/icons/campfire.svg" id="11_deuvi"]
-[ext_resource type="Texture2D" uid="uid://bj76caxo53saa" path="res://story/mechanics/icons/camping-tent.svg" id="12_j416b"]
-[ext_resource type="Texture2D" uid="uid://c4nfw1eoy5wcn" path="res://icons/chest.svg" id="13_uoow2"]
-[ext_resource type="Texture2D" uid="uid://bnwiiw0h5j0kx" path="res://story/mechanics/icons/treasure-map.svg" id="14_j416b"]
-[ext_resource type="Texture2D" uid="uid://7jv6h70htbfm" path="res://story/mechanics/icons/tied-scroll.svg" id="15_uoow2"]
+[ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://story/mechanics/icons/magic-potion.svg" id="9_v6tb7"]
+[ext_resource type="Texture2D" uid="uid://qbxnlgxl1qta" path="res://story/mechanics/icons/campfire.svg" id="11_g78ot"]
+[ext_resource type="Texture2D" uid="uid://bj76caxo53saa" path="res://story/mechanics/icons/camping-tent.svg" id="12_q6o7u"]
+[ext_resource type="Texture2D" uid="uid://c4nfw1eoy5wcn" path="res://icons/chest.svg" id="13_5cn0n"]
+[ext_resource type="Texture2D" uid="uid://bnwiiw0h5j0kx" path="res://story/mechanics/icons/treasure-map.svg" id="14_ron8s"]
+[ext_resource type="Texture2D" uid="uid://7jv6h70htbfm" path="res://story/mechanics/icons/tied-scroll.svg" id="15_5bppy"]
+[ext_resource type="PackedScene" uid="uid://ccpu52v8m0ynd" path="res://story/breath_dice_selection/catch_breath/catch_breaths.tscn" id="18_phnkx"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ipvic"]
 
@@ -119,7 +120,7 @@ layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 text = "Catch Breath"
-icon = ExtResource("10_nlwo0")
+icon = ExtResource("9_v6tb7")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
@@ -136,7 +137,7 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 disabled = true
 text = "Make Camp"
-icon = ExtResource("11_deuvi")
+icon = ExtResource("11_g78ot")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
@@ -153,7 +154,7 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 disabled = true
 text = "Rest Bones"
-icon = ExtResource("12_j416b")
+icon = ExtResource("12_q6o7u")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
@@ -170,11 +171,11 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 disabled = true
 text = "Admire Loot"
-icon = ExtResource("13_uoow2")
+icon = ExtResource("13_5cn0n")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-hover_neighbors = [NodePath("../PonderMap"), NodePath("../AssessTroupe")]
+hover_neighbors = [NodePath("../PonderMap"), NodePath("../AssessVenture")]
 glyph_size = Vector2(32, 32)
 margin_top = 0
 margin_bottom = 0
@@ -187,24 +188,24 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 disabled = true
 text = "Ponder Map"
-icon = ExtResource("14_j416b")
+icon = ExtResource("14_ron8s")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
-hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../AssessTroupe")]
+hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../AssessVenture")]
 glyph_size = Vector2(32, 32)
 margin_top = 0
 margin_bottom = 0
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="AssessTroupe" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(155, 32)
+[node name="AssessVenture" type="Button" parent="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(162, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 disabled = true
-text = "Assess Troupe"
-icon = ExtResource("15_uoow2")
+text = "Assess Venture"
+icon = ExtResource("15_5bppy")
 flat = true
 alignment = 0
 script = ExtResource("9_hspyn")
@@ -231,5 +232,18 @@ layout_mode = 2
 [node name="StoryBook" parent="HSplitContainer" instance=ExtResource("5_p35e8")]
 layout_mode = 2
 
+[node name="CatchBreathDialog" type="ConfirmationDialog" parent="."]
+transparent_bg = true
+oversampling_override = 1.0
+position = Vector2i(256, 256)
+size = Vector2i(200, 193)
+unresizable = true
+transparent = true
+
+[node name="CatchBreaths" parent="CatchBreathDialog" node_paths=PackedStringArray("characters") instance=ExtResource("18_phnkx")]
+offset_bottom = 144.0
+characters = NodePath("../../Characters")
+
 [connection signal="character_selected" from="HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="HSplitContainer/VSplitContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
+[connection signal="pressed" from="HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/CatchBreath" to="CatchBreathDialog" method="popup_centered"]
 [connection signal="page_entered" from="HSplitContainer/StoryBook" to="." method="_on_story_book_page_entered"]

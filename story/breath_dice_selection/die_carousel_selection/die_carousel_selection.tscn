@@ -1,0 +1,21 @@
+[gd_scene load_steps=9 format=3 uid="uid://cro66c6ccb2ox"]
+
+[ext_resource type="Script" uid="uid://ddo20y1ieseoy" path="res://story/breath_dice_selection/die_carousel_selection/die_carousel_selection.gd" id="1_ringg"]
+[ext_resource type="Script" uid="uid://ci73mrt3tkiel" path="res://dice/die_types/die_type.gd" id="2_mxytl"]
+[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/die_types/d4.tres" id="3_7802p"]
+[ext_resource type="PackedScene" uid="uid://dg5km0cv75hok" path="res://story/breath_dice_selection/die_carousel_selection/die_carousel_panel.tscn" id="3_dxb2l"]
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="4_2qppf"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="5_iolas"]
+[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/die_types/d10.tres" id="6_hjexs"]
+[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/die_types/d12.tres" id="7_qcbwx"]
+
+[node name="DieCarouselSelection" type="HBoxContainer"]
+offset_right = 389.0
+offset_bottom = 48.0
+mouse_filter = 0
+script = ExtResource("1_ringg")
+die_types = Array[ExtResource("2_mxytl")]([ExtResource("3_7802p"), ExtResource("4_2qppf"), ExtResource("5_iolas"), ExtResource("6_hjexs"), ExtResource("7_qcbwx")])
+selected = 0
+items = Array[String](["d4", "d6", "d8", "d10", "d12"])
+panel = ExtResource("3_dxb2l")
+metadata/_custom_type_script = "uid://ddo20y1ieseoy"
