@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="AdventurePage" load_steps=12 format=3 uid="uid://d3cv8d5e65vwh"]
+
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/adventure_condition.gd" id="1_k8kem"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/adventure_decision.gd" id="1_npy2t"]
+[ext_resource type="Texture2D" uid="uid://e5mx4r2ak0u5" path="res://assets/monster_portraits/oracle.jpeg" id="3_k8kem"]
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="3_t43k6"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="5_k8kem"]
+[ext_resource type="Script" uid="uid://df6f7mcpin5we" path="res://adventure/adventure_save_decision.gd" id="5_yeb4i"]
+
+[sub_resource type="Resource" id="Resource_j24m5"]
+script = ExtResource("3_t43k6")
+_description = "She throws a strange artifact at your head, then dabs on the haters."
+_background = ExtResource("3_k8kem")
+
+[sub_resource type="Resource" id="Resource_fqbk4"]
+script = ExtResource("1_npy2t")
+description = "Approach and greet her."
+transition = SubResource("Resource_j24m5")
+
+[sub_resource type="Resource" id="Resource_0x8r7"]
+script = ExtResource("3_t43k6")
+_description = "Oops, you accidentaly the claps of your ass cheeks.
+Dummy thicc."
+
+[sub_resource type="Resource" id="Resource_b3ed1"]
+script = ExtResource("3_t43k6")
+_description = "You hide among the barnacles and flotsam."
+
+[sub_resource type="Resource" id="Resource_yrhxu"]
+script = ExtResource("5_yeb4i")
+details = "Shipwreck stuff."
+attribute = ExtResource("5_k8kem")
+difficulty = 5
+failure_transition = SubResource("Resource_0x8r7")
+description = "Hide in the shipwreck."
+transition = SubResource("Resource_b3ed1")
+
+[resource]
+script = ExtResource("3_t43k6")
+_title = "The Mysterious Woman"
+_description = "A young woman knocks her mace against the heavy gate of the ruined keep."
+_one_time_only = true
+_decisions = Array[ExtResource("1_npy2t")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])
+_exclusivity = 7

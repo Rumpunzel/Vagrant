@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cq38j4iccgxe4"]
+
+[ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://game/characters/fade_vignette.gdshader" id="1_p23qy"]
+
+[resource]
+shader = ExtResource("1_p23qy")
+shader_parameter/power = 1.0
+shader_parameter/up = 0.1
+shader_parameter/down = 0.1
+shader_parameter/left = 0.1
+shader_parameter/right = 0.1
+shader_parameter/up_clip = 0.0
+shader_parameter/down_clip = 0.0
+shader_parameter/left_clip = 0.0
+shader_parameter/right_clip = 0.0

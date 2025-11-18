@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://d2hp0hcp2w5ro"]
+
+[ext_resource type="Script" uid="uid://biit618mirgcj" path="res://game/characters/character_portraits.gd" id="1_3g15m"]
+[ext_resource type="PackedScene" uid="uid://buthtgmdftvn7" path="res://game/characters/character_portrait.tscn" id="2_bjk71"]
+[ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="2_tro4e"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hspyn"]
+
+[node name="CharacterPortraits" type="PanelContainer" node_paths=PackedStringArray("_portraits")]
+theme_override_styles/panel = SubResource("StyleBoxEmpty_hspyn")
+script = ExtResource("1_3g15m")
+_portraits = NodePath("")
+_character_portrait = ExtResource("2_bjk71")
+metadata/_custom_type_script = "uid://biit618mirgcj"
+
+[node name="Portraits" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+script = ExtResource("2_tro4e")
+fill = false
+metadata/_custom_type_script = "uid://dqkpaquatj11m"

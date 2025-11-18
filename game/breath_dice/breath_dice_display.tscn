@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3 uid="uid://cgl4tskvsu25d"]
+
+[ext_resource type="Script" uid="uid://xxm306h18glv" path="res://game/breath_dice/breath_dice.gd" id="1_3iahj"]
+[ext_resource type="PackedScene" uid="uid://bgdje6c0bdu1a" path="res://game/breath_dice/breath_dice_display_group.tscn" id="2_2rtqm"]
+[ext_resource type="Script" uid="uid://dfm6y6ow1f5e1" path="res://custom_nodes/control/flex_curve_container.gd" id="3_4x401"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3iahj"]
+
+[sub_resource type="Curve" id="Curve_jdcxm"]
+_limits = [-0.25, 0.25, 0.0, 4.0]
+_data = [Vector2(0, -0.05), 0.0, -0.17, 0, 0, Vector2(2, -0.2), 0.0, 0.0, 0, 0, Vector2(4, -0.05), 0.17, 0.0, 0, 0]
+point_count = 3
+
+[node name="BreathDiceDisplay" type="PanelContainer" node_paths=PackedStringArray("_die_types")]
+offset_right = 416.0
+offset_bottom = 125.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_3iahj")
+script = ExtResource("1_3iahj")
+_die_types = NodePath("DieTypes")
+_breath_dice_group = ExtResource("2_2rtqm")
+metadata/_custom_type_script = "uid://xxm306h18glv"
+
+[node name="DieTypes" type="MarginContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+script = ExtResource("3_4x401")
+offset_curve = SubResource("Curve_jdcxm")
+separation = 0
+metadata/_custom_type_script = "uid://dfm6y6ow1f5e1"

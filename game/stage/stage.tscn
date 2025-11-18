@@ -1,0 +1,116 @@
+[gd_scene load_steps=14 format=3 uid="uid://l8n866i755ja"]
+
+[ext_resource type="Script" uid="uid://bysk8fr0ekhsg" path="res://game/stage/stage.gd" id="1_gw8ty"]
+[ext_resource type="PackedScene" uid="uid://b11javrif3o0h" path="res://game/stage/background_rect.tscn" id="3_8h6qk"]
+[ext_resource type="Texture2D" uid="uid://cuq6rhaoxdxx6" path="res://assets/tables/1045.jpg" id="3_h1mbo"]
+[ext_resource type="Script" uid="uid://8x7jso8c44ri" path="res://game/stage/candle.gd" id="4_oqyx5"]
+[ext_resource type="AudioStream" uid="uid://bd5biskko2bix" path="res://assets/sfx/ambience/the-crackling-sound-of-a-candle-burning.mp3" id="5_h1mbo"]
+[ext_resource type="Shader" uid="uid://chm2iklhnb1pg" path="res://game/stage/blur.gdshader" id="5_hdi0x"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h1mbo"]
+
+[sub_resource type="Gradient" id="Gradient_c7u3m"]
+offsets = PackedFloat32Array(0, 0.282, 0.608, 0.962)
+colors = PackedColorArray(1, 0.802, 0.668, 0.216, 0.892, 0.728, 0.64, 0.525, 0.31, 0.057, 0, 0.724, 0.102126, 0.0078073, 1.20327e-08, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_oqyx5"]
+gradient = SubResource("Gradient_c7u3m")
+width = 512
+height = 512
+fill = 1
+fill_from = Vector2(0.3, 0.2)
+fill_to = Vector2(1.25, 1.25)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_oqyx5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_515v2"]
+shader = ExtResource("5_hdi0x")
+shader_parameter/blur_type = 1
+shader_parameter/blur_amount = 4
+shader_parameter/blur_radius = 1.0
+shader_parameter/blur_direction = Vector2(1, 1)
+
+[sub_resource type="Gradient" id="Gradient_vew8o"]
+colors = PackedColorArray(0, 0, 0, 0.501961, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_2xsor"]
+gradient = SubResource("Gradient_vew8o")
+width = 256
+height = 256
+fill_from = Vector2(0.5, 1)
+fill_to = Vector2(0.6, 0.4)
+metadata/_snap_enabled = true
+
+[node name="Stage" type="CanvasLayer" node_paths=PackedStringArray("_ambience", "_music", "_area_backgrounds", "_event_backgrounds")]
+layer = -100
+script = ExtResource("1_gw8ty")
+_ambience = NodePath("Ambience")
+_music = NodePath("Music")
+_area_backgrounds = NodePath("PanelContainer/MarginContainer/AreaBackgrounds")
+_event_backgrounds = NodePath("PanelContainer/MarginContainer/EventBackgrounds")
+_background = ExtResource("3_8h6qk")
+metadata/_custom_type_script = "uid://bysk8fr0ekhsg"
+
+[node name="Ambience" type="AudioStreamPlayer" parent="."]
+volume_db = -80.0
+autoplay = true
+bus = &"SFX"
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+autoplay = true
+bus = &"Music"
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_h1mbo")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="Table" type="TextureRect" parent="PanelContainer/MarginContainer"]
+modulate = Color(0.2, 0.2, 0.2, 1)
+layout_mode = 2
+texture = ExtResource("3_h1mbo")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Candle" type="TextureRect" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+texture = SubResource("GradientTexture2D_oqyx5")
+stretch_mode = 6
+script = ExtResource("4_oqyx5")
+_candle_noise = SubResource("FastNoiseLite_oqyx5")
+metadata/_custom_type_script = "uid://8x7jso8c44ri"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="PanelContainer/MarginContainer/Candle"]
+stream = ExtResource("5_h1mbo")
+autoplay = true
+bus = &"RoomAmbience"
+parameters/looping = true
+
+[node name="AreaBackgrounds" type="MarginContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="Blur" type="ColorRect" parent="PanelContainer/MarginContainer"]
+visible = false
+material = SubResource("ShaderMaterial_515v2")
+layout_mode = 2
+
+[node name="Gradient" type="TextureRect" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+texture = SubResource("GradientTexture2D_2xsor")
+
+[node name="EventBackgrounds" type="MarginContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2

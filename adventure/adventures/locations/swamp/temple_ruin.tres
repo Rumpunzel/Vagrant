@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="AdventurePage" load_steps=9 format=3 uid="uid://cs40ge42lw0ry"]
+
+[ext_resource type="Resource" uid="uid://kfbf7v18dp6a" path="res://adventure/adventures/locations/swamp/swamp.tres" id="1_8bxsp"]
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/adventure_condition.gd" id="2_6pnwp"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/adventure_decision.gd" id="2_r3twy"]
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="3_6p547"]
+[ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="3_34ol8"]
+[ext_resource type="Resource" uid="uid://bxwqtk0p80o4g" path="res://adventure/adventures/locations/swamp/events/lurker_ambush.tres" id="6_quuub"]
+
+[sub_resource type="Resource" id="Resource_vvpox"]
+script = ExtResource("3_34ol8")
+_leads_to = "res://adventure/adventures/locations/beach/rocky_shore.tres"
+
+[sub_resource type="Resource" id="Resource_e22nq"]
+script = ExtResource("2_r3twy")
+description = "Go back to the beach."
+transition = SubResource("Resource_vvpox")
+
+[resource]
+script = ExtResource("3_6p547")
+_title = "Temple Ruin"
+_description = "The air is damp and smells of rotten earth.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed orci orci. Donec tincidunt arcu viverra, lacinia enim at, pharetra orci. Integer ac neque sit amet nunc venenatis fermentum ut mollis eros. Maecenas egestas tortor at dui mattis pulvinar. Mauris rutrum ligula id massa euismod scelerisque. Cras sed molestie orci. Phasellus non finibus felis. Aenean purus lectus, tempus quis enim in, tincidunt laoreet arcu. Nullam in eleifend purus. Etiam eros lacus, lacinia id metus sed, faucibus viverra tortor. Phasellus sit amet leo sit amet massa consectetur porttitor. Vestibulum in facilisis lorem. Etiam est sapien, condimentum sed convallis vel, auctor in mi. Proin sit amet ornare tortor. Proin commodo quam mi, at placerat dolor cursus faucibus. Ut dictum accumsan neque eget consectetur."
+_area = ExtResource("1_8bxsp")
+_decisions = Array[ExtResource("2_r3twy")]([SubResource("Resource_e22nq")])
+_events = Array[ExtResource("3_6p547")]([ExtResource("6_quuub")])

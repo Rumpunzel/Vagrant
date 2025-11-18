@@ -1,0 +1,111 @@
+[gd_scene load_steps=24 format=3 uid="uid://cc3qx1qt3ie00"]
+
+[ext_resource type="Script" uid="uid://lb6h1lmdmt18" path="res://game/characters/character_creation/character_creation.gd" id="1_x4txh"]
+[ext_resource type="PackedScene" uid="uid://rhjhk5tcywjv" path="res://game/characters/character_creation/attributes_roller.tscn" id="2_dbv81"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="5_nflbs"]
+[ext_resource type="PackedScene" uid="uid://0mji1mdlk5op" path="res://game/characters/character_creation/origins_picker.tscn" id="5_s0bgh"]
+[ext_resource type="Script" uid="uid://dl1dakg5uysj3" path="res://characters/base_attribute_score.gd" id="6_jseid"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="7_6xssx"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="8_jukr5"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="9_ee4h7"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="10_hukh5"]
+[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/die_types/d4.tres" id="11_17b3i"]
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="12_aw34e"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="13_rkh3b"]
+[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/die_types/d10.tres" id="14_r3wai"]
+[ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://game/characters/inventory/inventory.tscn" id="15_b7plt"]
+[ext_resource type="PackedScene" uid="uid://p4lx6exsethc" path="res://game/characters/character_creation/bio_editor.tscn" id="15_gqnl0"]
+[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/die_types/d12.tres" id="15_soikm"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="16_gqdoy"]
+[ext_resource type="Resource" uid="uid://1n7f7ltq8e42" path="res://characters/origins/merchant.tres" id="17_bk2yy"]
+[ext_resource type="PackedScene" uid="uid://djjmsn1ujgubu" path="res://game/characters/character_creation/character_confirmation.tscn" id="17_fixuy"]
+[ext_resource type="Resource" uid="uid://bj6k6l430dyvn" path="res://characters/origins/scoundrel.tres" id="18_bk2yy"]
+[ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="19_vjv61"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hvcdy"]
+
+[sub_resource type="Resource" id="Resource_3w741"]
+script = ExtResource("19_vjv61")
+attribute_scores = Dictionary[ExtResource("5_nflbs"), ExtResource("6_jseid")]({
+ExtResource("7_6xssx"): null,
+ExtResource("8_jukr5"): null,
+ExtResource("9_ee4h7"): null
+})
+origins = Array[ExtResource("16_gqdoy")]([ExtResource("17_bk2yy"), ExtResource("18_bk2yy")])
+breath_die_types = Dictionary[ExtResource("10_hukh5"), int]({
+ExtResource("11_17b3i"): 1,
+ExtResource("12_aw34e"): 1,
+ExtResource("13_rkh3b"): 1,
+ExtResource("14_r3wai"): 1,
+ExtResource("15_soikm"): 1
+})
+
+[node name="CharacterCreation" type="Node" node_paths=PackedStringArray("_attributes_roller", "_origins_picker", "_inventory", "_bio_editor", "_continue", "_character_confirmation")]
+script = ExtResource("1_x4txh")
+_attributes_roller = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller")
+_origins_picker = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker")
+_inventory = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/Inventory")
+_bio_editor = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BioEditor")
+_continue = NodePath("PanelContainer/MarginContainer/VBoxContainer/Continue")
+_character_confirmation = NodePath("CharacterConfirmation")
+metadata/_custom_type_script = "uid://lb6h1lmdmt18"
+
+[node name="CharacterConfirmation" parent="." instance=ExtResource("17_fixuy")]
+visible = false
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_hvcdy")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 128
+theme_override_constants/margin_top = 96
+theme_override_constants/margin_right = 128
+theme_override_constants/margin_bottom = 96
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="Stats" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="AttributesRoller" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("2_dbv81")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OriginsPicker" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("5_s0bgh")]
+layout_mode = 2
+_character_profile = SubResource("Resource_3w741")
+
+[node name="Inventory" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("15_b7plt")]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BioEditor" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("15_gqnl0")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Continue" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Continue"
+
+[connection signal="character_confirmed" from="CharacterConfirmation" to="." method="_on_character_confirmed"]
+[connection signal="name_changed" from="CharacterConfirmation" to="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BioEditor" method="_on_character_name_changed"]
+[connection signal="attributes_rolled" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller" to="." method="_on_attributes_rolled"]
+[connection signal="origins_picked" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker" to="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BioEditor" method="_on_origins_picked"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Continue" to="." method="_on_continue_pressed"]

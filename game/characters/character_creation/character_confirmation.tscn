@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://djjmsn1ujgubu"]
+
+[ext_resource type="Script" uid="uid://ce156jxbb2grx" path="res://game/characters/character_creation/character_confirmation.gd" id="1_4or8n"]
+[ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="2_ju15t"]
+
+[node name="CharacterConfirmation" type="ConfirmationDialog" node_paths=PackedStringArray("_name")]
+auto_translate_mode = 1
+transparent_bg = true
+oversampling_override = 1.0
+title = "Please choose a name..."
+position = Vector2i(960, 540)
+size = Vector2i(512, 98)
+visible = true
+transparent = true
+popup_window = true
+min_size = Vector2i(512, 0)
+ok_button_text = "Finish"
+script = ExtResource("1_4or8n")
+_name = NodePath("Name")
+metadata/_custom_type_script = "uid://ce156jxbb2grx"
+
+[node name="Name" type="LineEdit" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 504.0
+offset_bottom = 49.0
+theme_override_fonts/font = ExtResource("2_ju15t")
+theme_override_font_sizes/font_size = 24
+placeholder_text = "Name"
+alignment = 1
+
+[connection signal="confirmed" from="." to="." method="_on_confirmed"]
+[connection signal="text_changed" from="Name" to="." method="_on_name_changed"]

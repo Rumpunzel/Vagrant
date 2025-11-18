@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://c07vtb4ob281a"]
+
+[ext_resource type="Script" uid="uid://bns33lugkmi4j" path="res://game/stance_selection/stance_selection.gd" id="1_11rov"]
+[ext_resource type="PackedScene" uid="uid://mt5mbq7b5lu0" path="res://game/stance_selection/stance_panel.tscn" id="2_oo80h"]
+[ext_resource type="PackedScene" uid="uid://bio0tn8287gj" path="res://game/stance_selection/carousel_button.tscn" id="3_vnpj5"]
+
+[node name="StanceSelection" type="HBoxContainer"]
+offset_right = 389.0
+offset_bottom = 48.0
+mouse_filter = 0
+script = ExtResource("1_11rov")
+selected = 2
+items = Array[String](["Guts", "Blood", "Nerves"])
+panel = ExtResource("2_oo80h")
+previous_button = ExtResource("3_vnpj5")
+next_button = ExtResource("3_vnpj5")
+metadata/_custom_type_script = "uid://bns33lugkmi4j"

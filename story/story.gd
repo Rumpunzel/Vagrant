@@ -27,6 +27,7 @@ var current_story_book_page: StoryBookPage:
 			for choice: StoryBookChoice in current_story_book_page.choices: choice.chosen.disconnect(_on_choice_made)
 		_page_stack.push_back(current_story_book_page)
 		current_story_book_page = story_book_page
+		assert(current_story_book_page )
 		var page_log: Array[StoryBookPage] = _page_log.get_or_add(current_story_book_page.adventure_page, [] as Array[StoryBookPage])
 		page_log.append(current_story_book_page)
 		#for event: AdventurePage in current_story_book_page.get_events(self): _page_log[event] = get_how_often_page_has_been_entered(event) + 1
