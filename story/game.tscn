@@ -1,0 +1,184 @@
+[gd_scene load_steps=15 format=3 uid="uid://s37d5en4o8aa"]
+
+[ext_resource type="Script" uid="uid://bigow78ew8h8d" path="res://story/game.gd" id="1_atxdk"]
+[ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://characters/character_sheet/character_sheet.tscn" id="8_fhiuv"]
+[ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://story/dorian.tres" id="9_jxe0l"]
+[ext_resource type="PackedScene" uid="uid://d2hp0hcp2w5ro" path="res://characters/character_sheet/character_portraits.tscn" id="10_kxl6u"]
+[ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://story/mechanics/icons/magic-potion.svg" id="11_1tysk"]
+[ext_resource type="Script" uid="uid://c7qjo0ilqtmp6" path="res://custom_nodes/control/fancy_hover_button.gd" id="12_o8l3e"]
+[ext_resource type="Texture2D" uid="uid://qbxnlgxl1qta" path="res://story/mechanics/icons/campfire.svg" id="13_fuw60"]
+[ext_resource type="Texture2D" uid="uid://bj76caxo53saa" path="res://story/mechanics/icons/camping-tent.svg" id="14_jq5sc"]
+[ext_resource type="Texture2D" uid="uid://c4nfw1eoy5wcn" path="res://icons/chest.svg" id="15_sty2o"]
+[ext_resource type="Texture2D" uid="uid://bnwiiw0h5j0kx" path="res://story/mechanics/icons/treasure-map.svg" id="16_ox48i"]
+[ext_resource type="Texture2D" uid="uid://7jv6h70htbfm" path="res://story/mechanics/icons/tied-scroll.svg" id="17_odjb4"]
+[ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="18_0de30"]
+[ext_resource type="PackedScene" uid="uid://ccpu52v8m0ynd" path="res://story/breath_dice_selection/catch_breath/catch_breaths.tscn" id="20_ec5j1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q7j6d"]
+
+[node name="Game" type="VSplitContainer"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 32
+script = ExtResource("1_atxdk")
+
+[node name="CatchBreathDialog" type="ConfirmationDialog" parent="."]
+transparent_bg = true
+oversampling_override = 1.0
+position = Vector2i(256, 256)
+size = Vector2i(200, 193)
+unresizable = true
+transparent = true
+
+[node name="CatchBreaths" parent="CatchBreathDialog" instance=ExtResource("20_ec5j1")]
+offset_bottom = 144.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 2
+
+[node name="Control" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="CharacterSheet" parent="VBoxContainer" instance=ExtResource("8_fhiuv")]
+layout_mode = 2
+size_flags_horizontal = 0
+_character_profile = ExtResource("9_jxe0l")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="CharacterPortraits" parent="HBoxContainer" instance=ExtResource("10_kxl6u")]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="CatchBreath" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(145, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+text = "Catch Breath"
+icon = ExtResource("11_1tysk")
+flat = true
+alignment = 0
+script = ExtResource("12_o8l3e")
+hover_neighbors = [NodePath("../MakeCamp"), NodePath("../RestBones")]
+glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="MakeCamp" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(136, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Make Camp"
+icon = ExtResource("13_fuw60")
+flat = true
+alignment = 0
+script = ExtResource("12_o8l3e")
+hover_neighbors = [NodePath("../CatchBreath"), NodePath("../RestBones")]
+glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="RestBones" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(130, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Rest Bones"
+icon = ExtResource("14_jq5sc")
+flat = true
+alignment = 0
+script = ExtResource("12_o8l3e")
+hover_neighbors = [NodePath("../MakeCamp"), NodePath("../CatchBreath")]
+glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="AdmireLoot" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(140, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Admire Loot"
+icon = ExtResource("15_sty2o")
+flat = true
+alignment = 0
+script = ExtResource("12_o8l3e")
+hover_neighbors = [NodePath("../PonderMap"), NodePath("../AssessVenture")]
+glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="PonderMap" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(139, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Ponder Map"
+icon = ExtResource("16_ox48i")
+flat = true
+alignment = 0
+script = ExtResource("12_o8l3e")
+hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../AssessVenture")]
+glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="AssessVenture" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(162, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Assess Venture"
+icon = ExtResource("17_odjb4")
+flat = true
+alignment = 0
+script = ExtResource("12_o8l3e")
+hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../PonderMap")]
+glyph_size = Vector2(32, 32)
+margin_top = 0
+margin_bottom = 0
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="GameInfo" type="TabContainer" parent="HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+current_tab = 0
+
+[node name="DiceLog" type="MarginContainer" parent="HBoxContainer/GameInfo"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="DiceLog" parent="HBoxContainer/GameInfo/DiceLog" instance=ExtResource("18_0de30")]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+
+[connection signal="character_selected" from="HBoxContainer/CharacterPortraits" to="VBoxContainer/CharacterSheet" method="_on_character_selected"]
+[connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/CatchBreath" to="CatchBreathDialog" method="popup_centered"]
