@@ -11,17 +11,19 @@ config_version=5
 [application]
 
 config/name="Vagrant"
-run/main_scene="uid://baflfbgcr5cbu"
+run/main_scene="uid://b0wuigen3gx4"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icons/fantasy/map.png"
 
 [autoload]
 
+Main="*res://main.gd"
 Rules="*res://rules.gd"
 DiceRoller="*res://dice/dice_roller.gd"
 DiceRollSounds="*res://dice/dice_roll_sounds.gd"
 TooltipManager="*res://addons/tooltips_pro/scripts/tooltip_manager.gd"
 TooltipPlaceholderVariables="*res://addons/tooltips_pro/scripts/tooltip_placeholder_variables.gd"
+Stage="*res://story/stage/stage.tscn"
 
 [debug]
 

@@ -1,11 +1,32 @@
-[gd_resource type="Resource" script_class="CharacterProfile" load_steps=3 format=3 uid="uid://3lhxtoqoq8kx"]
+[gd_resource type="Resource" script_class="CharacterProfile" load_steps=14 format=3 uid="uid://3lhxtoqoq8kx"]
 
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_2l6ra"]
+[ext_resource type="Script" uid="uid://dl1dakg5uysj3" path="res://characters/base_attribute_score.gd" id="2_gb0d8"]
 [ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="2_ptc7l"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="3_iaqdp"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="4_4rrr4"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="5_k1w4d"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="6_jysbr"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="6_vfwdl"]
+[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/die_types/d4.tres" id="7_mpqnr"]
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="8_k7ltg"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="9_u66ws"]
+[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/die_types/d10.tres" id="10_ay36s"]
+[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/die_types/d12.tres" id="11_6lrue"]
 
 [resource]
 script = ExtResource("2_ptc7l")
 name = "The Vagrant"
-attribute_scores = null
-breath_die_types = null
+attribute_scores = Dictionary[ExtResource("1_2l6ra"), ExtResource("2_gb0d8")]({
+ExtResource("3_iaqdp"): null,
+ExtResource("4_4rrr4"): null,
+ExtResource("5_k1w4d"): null
+})
+breath_die_types = Dictionary[ExtResource("6_vfwdl"), int]({
+ExtResource("7_mpqnr"): 1,
+ExtResource("8_k7ltg"): 1,
+ExtResource("9_u66ws"): 1,
+ExtResource("10_ay36s"): 1,
+ExtResource("11_6lrue"): 1
+})
 metadata/_custom_type_script = "uid://dv67s18uf5thf"

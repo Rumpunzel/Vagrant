@@ -1,78 +1,9 @@
-@tool
 class_name Adventure
-extends PanelContainer
+extends Resource
 
-signal story_book_page_entered(story_page: StoryPage)
+@export var title: String
+@export var starting_page: StoryPage
+@export var protagonist: CharacterProfile
 
-@export var adventure_tome: AdventureTome :
-	set(new_adventure_tome):
-		adventure_tome = new_adventure_tome
-		_title.type_text(adventure_tome.title)
-
-@export_group("Configuration")
-@export var _story: Story
-@export var _characters: Characters
-@export var _title: TypingLabel
-@export var _story_book: StoryBook
-
-var current_page: StoryPage
-
-# StoryDecision -> int (how many times the decision has been made)
-var _decision_log: Dictionary[StoryDecision, int] = { }
-# StorySaveDecision -> Array[SaveResult]
-var _save_decision_log: Dictionary[StorySaveDecision, Array]= { }
-# StoryFightDecision -> Array[FightResult]
-var _fight_decision_log: Dictionary[StoryFightDecision, Array]= { }
-# StoryPage -> int (how many times the page has been entered)
-var _page_log: Dictionary[StoryPage, int] = { }
-var _page_stack: Array[StoryPage] = [ ]
-
-func setup(new_adventure_tome: AdventureTome, protagonist_profile: CharacterProfile) -> void:
-	adventure_tome = new_adventure_tome
-	_characters.create_protagonist(protagonist_profile)
-	_story_book.setup(adventure_tome, _story, _characters)
-	_story.start_adventure(self)
-
-func get_how_often_decision_has_been_made(story_decision: StoryDecision) -> int:
-	if story_decision is StorySaveDecision:
-		if not _save_decision_log.has(story_decision): return 0
-		var save_decision_results: Array[SaveResult] = _save_decision_log.get(story_decision)
-		return save_decision_results.size()
-	return _decision_log.get(story_decision, 0)
-
-func get_how_often_page_has_been_entered(story_page: StoryPage) -> int:
-	return _page_log.get(story_page, 0)
-
-func update_decision_log(story_decision: StoryDecision) -> int:
-	var selected_how_many_times: int = get_how_often_decision_has_been_made(story_decision) + 1
-	_decision_log[story_decision] = selected_how_many_times
-	return selected_how_many_times
-
-func update_save_decision_log(story_save_decision: StorySaveDecision, save_result: SaveResult) -> int:
-	var save_results: Array[SaveResult] = _save_decision_log.get(story_save_decision, [ ] as Array[SaveResult])
-	save_results.append(save_result)
-	var selected_how_many_times: int = save_results.size()
-	_save_decision_log[story_save_decision] = save_results
-	return selected_how_many_times
-
-func update_fight_decision_log(story_fight_decision: StoryFightDecision, fight_result: FightResult) -> int:
-	var fight_results: Array[FightResult] = _fight_decision_log.get(story_fight_decision, [ ] as Array[FightResult])
-	fight_results.append(fight_result)
-	var selected_how_many_times: int = fight_results.size()
-	_fight_decision_log[story_fight_decision] = fight_results
-	return selected_how_many_times
-
-func update_page_log(story_page: StoryPage) -> StoryPage:
-	if story_page == null: story_page = _page_stack.pop_back()
-	#elif current_page == story_page:
-		#print_debug("Already on page: <%s>!" % current_page)
-		#return
-	_page_log[story_page] = get_how_often_page_has_been_entered(story_page) + 1
-	for event: StoryPage in story_page.get_events(_story):
-		_page_log[event] = get_how_often_page_has_been_entered(event) + 1
-	_page_stack.push_back(current_page)
-	current_page = story_page
-	return current_page
-
-func _on_story_book_page_entered(page_entry: PageEntry) -> void:
-	story_book_page_entered.emit(page_entry.get_story_page(), _story)
+func start_adventure() -> void:
+	Main.enter_story(self)

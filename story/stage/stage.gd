@@ -1,5 +1,4 @@
 @tool
-class_name Stage
 extends CanvasLayer
 
 @export var area_background: Texture : set = _set_area_background
@@ -17,10 +16,10 @@ extends CanvasLayer
 var _current_area_background: BackgroundRect
 var _current_event_background: BackgroundRect
 
-func set_story_page(story_page: StoryPage, story: Story) -> void:
-	_set_area_background(story_page.get_area_background())
-	_set_event_background(story_page.get_background(story))
-	_set_ambience(story_page.get_ambience(story))
+func enter_story_book_page(story_book_page: StoryBookPage) -> void:
+	_set_area_background(story_book_page.area_background)
+	_set_event_background(story_book_page.background)
+	_set_ambience(story_book_page.ambience)
 
 func _set_area_background(background_texture: Texture2D) -> void:
 	area_background = background_texture
