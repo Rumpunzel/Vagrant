@@ -4,10 +4,10 @@ extends RefCounted
 
 signal chosen
 
-static func from_story_decision(story_decision: StoryDecision, protagonist: Character) -> StoryBookChoice:
-	if story_decision is StorySaveDecision: return StoryBookSaveDecision.new(story_decision as StorySaveDecision, protagonist)
-	elif story_decision is StoryFightDecision: return StoryBookFightDecision.new(story_decision as StoryFightDecision, protagonist)
-	return StoryBookDecision.new(story_decision)
+static func from_story_decision(adventure_decision: AdventureDecision, protagonist: Character) -> StoryBookChoice:
+	if adventure_decision is AdventureSaveDecision: return StoryBookSaveDecision.new(adventure_decision as AdventureSaveDecision, protagonist)
+	elif adventure_decision is AdventureFightDecision: return StoryBookFightDecision.new(adventure_decision as AdventureFightDecision, protagonist)
+	return StoryBookDecision.new(adventure_decision)
 
 @abstract func chose() -> void
 @abstract func discard() -> void
@@ -15,12 +15,12 @@ static func from_story_decision(story_decision: StoryDecision, protagonist: Char
 @abstract func is_chosen() -> bool
 @abstract func is_dice_choice() -> bool
 
-@abstract func get_story_decision() -> StoryDecision
-@abstract func get_transition() -> StoryPage
+@abstract func get_adventure_decision() -> AdventureDecision
+@abstract func get_transition() -> AdventurePage
 
-func get_description() -> String: return get_story_decision().description
-func get_icon() -> Texture2D: return get_story_decision().get_icon()
-func get_icon_color() -> Color: return get_story_decision().get_color()
+func get_description() -> String: return get_adventure_decision().description
+func get_icon() -> Texture2D: return get_adventure_decision().get_icon()
+func get_icon_color() -> Color: return get_adventure_decision().get_color()
 
 func _chose() -> void:
 	chosen.emit()

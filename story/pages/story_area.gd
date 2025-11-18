@@ -1,4 +1,4 @@
-class_name StoryArea
+class_name AdventureArea
 extends Resource
 
 @export_placeholder("Name") var name: String

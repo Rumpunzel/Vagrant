@@ -1,13 +1,13 @@
-class_name StoryDecision
+class_name AdventureDecision
 extends Resource
 
 @export_multiline var description: String
-@export var transition: StoryPageReference
+@export var transition: AdventurePageReference
 
 @export var _icon: Texture2D
 @export var _color: Color = Color.WHITE
 
-static func get_continue() -> StoryDecision:
+static func get_continue() -> AdventureDecision:
 	return load("uid://b4qjxus6rghvc")
 
 func get_icon() -> Texture2D: return _icon

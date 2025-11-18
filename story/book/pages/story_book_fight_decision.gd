@@ -1,7 +1,7 @@
 class_name StoryBookFightDecision
 extends StoryBookDiceDecision
 
-var _story_fight_decision: StoryFightDecision
+var _adventure_fight_decision: AdventureFightDecision
 
 var fight_request: FightRequest :
 	set(new_fight_request):
@@ -17,12 +17,12 @@ var fight_result: FightResult :
 		assert(not fight_result)
 		fight_result = new_fight_result
 
-func _init(story_fight_decision: StoryFightDecision, protagonist: Character) -> void:
-	_story_fight_decision = story_fight_decision
+func _init(adventure_fight_decision: AdventureFightDecision, protagonist: Character) -> void:
+	_adventure_fight_decision = adventure_fight_decision
 	_protagonist = protagonist
 
-func get_story_decision() -> StoryFightDecision: return _story_fight_decision
-func get_transition() -> StoryPage: return null
+func get_adventure_decision() -> AdventureFightDecision: return _adventure_fight_decision
+func get_transition() -> AdventurePage: return null
 
 func get_dice_request() -> FightRequest: return fight_request
 func get_dice_result() -> FightResult: return fight_result

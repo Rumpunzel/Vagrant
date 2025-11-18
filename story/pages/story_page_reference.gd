@@ -1,6 +1,6 @@
 @tool
-class_name StoryPageReference
+@abstract
+class_name AdventurePageReference
 extends Resource
 
-func get_story_page() -> StoryPage:
-	return null
+@abstract func get_adventure_page() -> AdventurePage

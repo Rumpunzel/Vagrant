@@ -1,9 +1,9 @@
 class_name StoryBookSaveDecision
 extends StoryBookDiceDecision
 
-var _story_save_decision: StorySaveDecision
+var _adventure_save_decision: AdventureSaveDecision
 
-var save_request: SaveRequest :
+var save_request: SaveRequest:
 	set(new_save_request):
 		assert((new_save_request == null) != (save_request == null)) # One of the must be null, the other must not
 		if save_request:
@@ -11,22 +11,22 @@ var save_request: SaveRequest :
 		save_request = new_save_request
 		save_request.save_rolled.connect(_on_dice_rolled)
 
-var save_result: SaveResult :
+var save_result: SaveResult:
 	set(new_save_result):
 		assert(new_save_result)
 		assert(not save_result)
 		save_result = new_save_result
 
-func _init(story_save_decision: StorySaveDecision, protagonist: Character) -> void:
-	_story_save_decision = story_save_decision
+func _init(adventure_save_decision: AdventureSaveDecision, protagonist: Character) -> void:
+	_adventure_save_decision = adventure_save_decision
 	_protagonist = protagonist
 
-func get_story_decision() -> StorySaveDecision: return _story_save_decision
-func get_transition() -> StoryPage:
+func get_adventure_decision() -> AdventureSaveDecision: return _adventure_save_decision
+func get_transition() -> AdventurePage:
 	if save_result.get_save_outcome() != SaveResult.Outcome.FAILURE:
-		return _story_save_decision.transition.get_story_page()
+		return _adventure_save_decision.transition.get_adventure_page()
 	else:
-		return _story_save_decision.failure_transition.get_story_page()
+		return _adventure_save_decision.failure_transition.get_adventure_page()
 
 func get_dice_request() -> SaveRequest: return save_request
 func get_dice_result() -> SaveResult: return save_result

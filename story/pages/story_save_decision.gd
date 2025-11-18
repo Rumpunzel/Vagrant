@@ -1,10 +1,10 @@
-class_name StorySaveDecision
-extends StoryDiceDecision
+class_name AdventureSaveDecision
+extends AdventureDiceDecision
 
 @export_multiline var details: String
 @export var attribute: CharacterAttribute
 @export_range(0, 12) var difficulty: int
-@export var failure_transition: StoryPageReference
+@export var failure_transition: AdventurePageReference
 
 func to_dice_request(protagonist: Character) -> SaveRequest:
 	return SaveRequest.new(protagonist, attribute, self)

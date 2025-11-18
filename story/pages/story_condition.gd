@@ -1,4 +1,4 @@
-class_name StoryCondition
+class_name AdventureCondition
 extends Resource
 
 func is_true() -> bool:

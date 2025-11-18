@@ -3,15 +3,15 @@ extends DiceRequest
 
 signal save_rolled(save_result: SaveResult)
 
-var source: StorySaveDecision
+var source: AdventureSaveDecision
 
 func _init(
 	for_character: Character,
 	with_attribute: CharacterAttribute,
-	story_decision: StorySaveDecision,
+	adventure_decision: AdventureSaveDecision,
 ) -> void:
 	super(for_character, with_attribute)
-	source = story_decision
+	source = adventure_decision
 	for_character.request_save(self)
 
 func roll_save() -> void:

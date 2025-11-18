@@ -1,5 +1,5 @@
 @abstract
-class_name StoryDiceDecision
-extends StoryDecision
+class_name AdventureDiceDecision
+extends AdventureDecision
 
 @abstract func to_dice_request(protagonist: Character) -> DiceRequest

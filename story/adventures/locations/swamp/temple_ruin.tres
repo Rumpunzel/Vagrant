@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="StoryPage" load_steps=9 format=3 uid="uid://cs40ge42lw0ry"]
+[gd_resource type="Resource" script_class="AdventurePage" load_steps=9 format=3 uid="uid://cs40ge42lw0ry"]
 
 [ext_resource type="Resource" uid="uid://kfbf7v18dp6a" path="res://story/adventures/locations/swamp/swamp.tres" id="1_8bxsp"]
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://story/pages/story_condition.gd" id="2_6pnwp"]

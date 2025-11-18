@@ -2,32 +2,32 @@
 class_name StoryBookPage
 extends RefCounted
 
-var story_page: StoryPage
+var adventure_page: AdventurePage
 var page_title: String
 var description: String
 var background: Texture2D
 var area_background: Texture2D
 var ambience: AudioStream
 var choices: Array[StoryBookChoice]
-var events: Array[StoryPage]
+var events: Array[AdventurePage]
 
 func _init(
 	protagonist: Character,
-	from_story_page: StoryPage,
+	from_adventure_page: AdventurePage,
 	from_page_title: String,
 	from_description: String,
 	from_background: Texture2D,
 	from_ambience: AudioStream,
-	from_choices: Array[StoryDecision],
-	from_events: Array[StoryPage],
+	from_choices: Array[AdventureDecision],
+	from_events: Array[AdventurePage],
 ) -> void:
-	story_page = from_story_page
+	adventure_page = from_adventure_page
 	page_title = from_page_title
 	description = from_description
 	background = from_background
-	area_background = story_page.get_area_background()
+	area_background = adventure_page.get_area_background()
 	ambience = from_ambience
-	if from_choices.is_empty(): from_choices.append(StoryDecision.get_continue())
+	if from_choices.is_empty(): from_choices.append(AdventureDecision.get_continue())
 	choices.assign(from_choices.map(StoryBookChoice.from_story_decision.bind(protagonist)))
 	events = from_events
 

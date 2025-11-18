@@ -1,6 +1,6 @@
 @tool
-class_name StoryPage
-extends StoryPageReference
+class_name AdventurePage
+extends AdventurePageReference
 
 enum Exclusivity {
 	NONE = 0,
@@ -11,24 +11,24 @@ enum Exclusivity {
 
 @export_placeholder("Title") var _title: String
 @export_multiline var _description: String
-@export var _area: StoryArea
+@export var _area: AdventureArea
 @export var _background: Texture2D
 @export var _ambience: AudioStream
 @export var _one_time_only: bool = false
-@export var _conditions: Array[StoryCondition]
-@export var _decisions: Array[StoryDecision]
+@export var _conditions: Array[AdventureCondition]
+@export var _decisions: Array[AdventureDecision]
 @export_flags("Hide Base:1", "Hide Below:2", "Hide Above:4", "Hide All:7")
 var _exclusivity: int = 0
-@export var _events: Array[StoryPage]
+@export var _events: Array[AdventurePage]
 
 func are_all_prerequisites_fullfilled(story: Story) -> bool:
 	if _one_time_only and story.get_how_often_page_has_been_entered(self) > 1: return false
-	for condition: StoryCondition in _conditions:
+	for condition: AdventureCondition in _conditions:
 		if condition.is_true(): return true
 	return _conditions.is_empty()
 
 func get_page_title(story: Story) -> String:
-	for event: StoryPage in _events:
+	for event: AdventurePage in _events:
 		if event.are_all_prerequisites_fullfilled(story):
 			var event_title: String = event.get_page_title(story)
 			if not event_title.is_empty(): return event_title
@@ -37,7 +37,7 @@ func get_page_title(story: Story) -> String:
 
 func get_description(story: Story) -> String:
 	var combined_description: String = ""
-	for event: StoryPage in _events:
+	for event: AdventurePage in _events:
 		if event.are_all_prerequisites_fullfilled(story):
 			if event.exclude_above(): combined_description = ""
 			combined_description += "%s" % event.get_description(story)
@@ -47,7 +47,7 @@ func get_description(story: Story) -> String:
 	return ("[p]%s[/p]" % _description) + combined_description
 
 func get_background(story: Story) -> Texture2D:
-	for event: StoryPage in _events:
+	for event: AdventurePage in _events:
 		if event.are_all_prerequisites_fullfilled(story):
 			var event_background: Texture2D = event.get_background(story)
 			if event_background: return event_background
@@ -59,16 +59,16 @@ func get_area_background() -> Texture2D:
 	return _area.background if _area else null
 
 func get_ambience(story: Story) -> AudioStream:
-	for event: StoryPage in _events:
+	for event: AdventurePage in _events:
 		if event.are_all_prerequisites_fullfilled(story):
 			var event_ambience: AudioStream = event.get_ambience(story)
 			if event_ambience != null: return event_ambience
 	var area_ambience: AudioStream = _area.ambience if _area != null else null
 	return _ambience if _ambience != null else area_ambience
 
-func get_decisions(story: Story) ->  Array[StoryDecision]:
-	var combined_decisions: Array[StoryDecision] = [ ]
-	for event: StoryPage in _events:
+func get_decisions(story: Story) ->  Array[AdventureDecision]:
+	var combined_decisions: Array[AdventureDecision] = [ ]
+	for event: AdventurePage in _events:
 		if event.are_all_prerequisites_fullfilled(story):
 			if event.exclude_above(): combined_decisions = [ ]
 			combined_decisions.append_array(event.get_decisions(story))
@@ -78,9 +78,9 @@ func get_decisions(story: Story) ->  Array[StoryDecision]:
 	combined_decisions.append_array(_decisions)
 	return combined_decisions
 
-func get_events(story: Story) -> Array[StoryPage]:
-	var events: Array[StoryPage] = [ ]
-	for event: StoryPage in _events:
+func get_events(story: Story) -> Array[AdventurePage]:
+	var events: Array[AdventurePage] = [ ]
+	for event: AdventurePage in _events:
 		if event.are_all_prerequisites_fullfilled(story):
 			if event.exclude_above(): events = [ ]
 			events.append(event)
@@ -98,5 +98,5 @@ func exclude_below() -> bool:
 func exclude_above() -> bool:
 	return _exclusivity & Exclusivity.EXCLUDE_ABOVE
 
-func get_story_page() -> StoryPage:
+func get_adventure_page() -> AdventurePage:
 	return self
