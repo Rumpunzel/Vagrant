@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://cy2ymcfk2tejn"]
+[gd_scene load_steps=11 format=3 uid="uid://cy2ymcfk2tejn"]
 
 [ext_resource type="Script" uid="uid://7rp8e3m8fvuh" path="res://story/book/story_entry.gd" id="1_ywxnt"]
 [ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://story/book/dialog_button.tscn" id="2_ilo4x"]
 [ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://story/book/fade_vignette.gdshader" id="3_hn353"]
 [ext_resource type="Script" uid="uid://0inxk2dmireb" path="res://story/stage/background_rect.gd" id="4_h86xk"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="5_g4vxc"]
+[ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="6_ilo4x"]
 [ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="6_ywxnt"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://story/breath_dice_selection/breath_dice_selection.tscn" id="7_sl3wq"]
 
@@ -90,9 +91,11 @@ visible_characters_behavior = 1
 script = ExtResource("5_g4vxc")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="Choices" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="Choices" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 0
+script = ExtResource("6_ilo4x")
+direction = 2
+metadata/_custom_type_script = "uid://dqkpaquatj11m"
 
 [node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer"]
 process_mode = 3

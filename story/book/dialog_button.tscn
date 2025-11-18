@@ -94,6 +94,7 @@ custom_minimum_size = Vector2(208, 32)
 offset_right = 371.0
 offset_bottom = 75.0
 mouse_default_cursor_shape = 2
+toggle_mode = true
 shortcut = SubResource("Shortcut_4452u")
 text = "Hide in the shipwreck."
 flat = true
@@ -104,3 +105,5 @@ glyph = "1."
 stream = SubResource("AudioStreamRandomizer_rbcg6")
 pitch_scale = 0.71
 metadata/_custom_type_script = "uid://1rnnvyy1byjt"
+
+[connection signal="toggled" from="." to="." method="_on_toggled"]

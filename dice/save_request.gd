@@ -15,6 +15,7 @@ func _init(
 	for_character.request_save(self)
 
 func roll_save() -> void:
+	assert(character)
 	var attribute_score: AttributeScore = character.get_attribute_score(attribute)
 	for die: BreathDie in selected_breath_dice: die.roll_save(attribute_score.get_score())
 	var save_result: SaveResult = SaveResult.new(self)

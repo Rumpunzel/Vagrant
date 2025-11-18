@@ -20,14 +20,9 @@ enum State {
 @export var _background: BackgroundRect
 @export var _body_container: Container
 
-var _story: Story
-var _characters: Characters
-
-func setup_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:
-	_story = story
-	_characters = characters
-	set_story_page(new_story_page)
-	#var background: Texture2D = get_story_page().get_background(_story)
+func setup_page(new_story_book_page: StoryBookPage) -> void:
+	set_story_book_page(new_story_book_page)
+	#var background: Texture2D = get_story_book_page().background
 	#_background.texture = background
 	#if background:
 		#_background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
@@ -40,8 +35,8 @@ func setup_page(story: Story, characters: Characters, new_story_page: StoryPage)
 
 @abstract func is_dice_page() -> bool
 
-@abstract func get_story_page() -> StoryPage
-@abstract func set_story_page(new_story_page: StoryPage) -> void
+@abstract func get_story_book_page() -> StoryBookPage
+@abstract func set_story_book_page(new_story_page: StoryBookPage) -> void
 
 func _get_fade_out_delay() -> float:
 	return _dice_fade_out_delay if is_dice_page() else _fade_out_delay
@@ -54,7 +49,7 @@ func _set_state(new_state: State) -> void:
 			if not _background.texture:
 				var self_tween: Tween = create_tween()
 				self_tween.tween_property(self, "self_modulate", Color.TRANSPARENT, _fade_out_duration).set_delay(_get_fade_out_delay())
-				_background.texture = get_story_page().get_area_background()
+				_background.texture = get_story_book_page().area_background
 				_background.fade_in()
 			var tween: Tween = create_tween()
 			tween.tween_property(_body_container, "modulate", _past_modulate, _fade_out_duration).set_delay(_get_fade_out_delay())
@@ -68,7 +63,7 @@ func _set_state(new_state: State) -> void:
 
 func _on_mouse_entered() -> void:
 	assert(state == State.PAST)
-	if get_story_page().get_background(_story): _background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
+	if get_story_book_page().background: _background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
 	var tween: Tween = create_tween()
 	tween.tween_property(_body_container, "modulate", Color.WHITE, _fade_in_duration)
 

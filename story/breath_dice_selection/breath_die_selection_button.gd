@@ -23,6 +23,7 @@ func update_dice_request(dice_request: DiceRequest) -> void:
 
 func update_save_result(save_result: SaveResult) -> void:
 	assert(save_result)
+	save_result.save_request.selected_breath_dice_changed.disconnect(_on_selected_breath_dice_changed)
 	breath_die_selected.disconnect(save_result.save_request.select_breath_die)
 	breath_die_deselected.disconnect(save_result.save_request.deselect_breath_die)
 	if not save_result.save_request.selected_breath_dice.has(breath_die): return
@@ -40,6 +41,7 @@ func update_save_result(save_result: SaveResult) -> void:
 
 func update_fight_result(fight_result: FightResult) -> void:
 	assert(fight_result)
+	fight_result.fight_request.selected_breath_dice_changed.disconnect(_on_selected_breath_dice_changed)
 	breath_die_selected.disconnect(fight_result.fight_request.select_breath_die)
 	breath_die_deselected.disconnect(fight_result.fight_request.deselect_breath_die)
 	if not fight_result.fight_request.selected_breath_dice.has(breath_die): return

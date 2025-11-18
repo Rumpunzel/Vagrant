@@ -2,20 +2,18 @@
 class_name StoryEntry
 extends PageEntry
 
-@export var story_page: StoryPage
-
 @export_range(0.0, 1.0) var _options_fade_in_duration: float = 0.25
 @export_range(0.0, 1.0) var _options_fade_in_delay: float = 0.1
 
 @export_group("Configuration")
 @export var _title: TypingLabel
 @export var _description: TypingLabel
-@export var _choices: Container
+@export var _choices: FlexContainer
 @export var _breath_dice_collapsible_container: CollapsibleContainer
 @export var _breath_dice_selection: BreathDiceSelection
 @export var _dialog_button: PackedScene
 
-var _selected_story_decision: StoryDecision
+var story_book_page: StoryBookPage : set = set_story_book_page
 
 var _save_request: SaveRequest:
 	set(new_save_request):
@@ -26,7 +24,6 @@ var _save_request: SaveRequest:
 		_breath_dice_selection.request_save(_save_request)
 		await get_tree().process_frame
 		_breath_dice_collapsible_container.open_tween()
-var _save_result: SaveResult
 
 var _fight_request: FightRequest:
 	set(new_fight_request):
@@ -37,51 +34,37 @@ var _fight_request: FightRequest:
 		_breath_dice_selection.request_fight(_fight_request)
 		await get_tree().process_frame
 		_breath_dice_collapsible_container.open_tween()
-var _fight_result: FightResult
-
-func setup_page(story: Story, characters: Characters, new_story_page: StoryPage) -> void:
-	super.setup_page(story, characters, new_story_page)
-	_update_decisions(story_page.get_decisions(_story))
 
 func enter_page() -> void:
-	var title: String = story_page.get_page_title(_story)
+	var title: String = story_book_page.page_title
 	if not title.is_empty(): _title.type_text(title)
 	else: _title.visible = false
-	_description.type_text(story_page.get_description(_story))
-	_story.decision_made.connect(_on_decision_made)
-
-func _exit_tree() -> void:
-	if _story and _story.decision_made.is_connected(_on_decision_made): _story.decision_made.disconnect(_on_decision_made)
+	_description.type_text(story_book_page.description)
 
 func is_dice_page() -> bool:
-	assert(not _save_result or _save_request)
-	assert(not _fight_result or _fight_request)
-	return _save_result or _fight_result
+	var chosen_choice: StoryBookChoice = story_book_page.get_chosen_choice()
+	return chosen_choice and chosen_choice.is_dice_choice()
 
-func get_story_page() -> StoryPage:
-	return story_page
+func get_story_book_page() -> StoryBookPage:
+	return story_book_page
 
-func set_story_page(new_story_page: StoryPage) -> void:
-	story_page = new_story_page
+func set_story_book_page(new_story_book_page: StoryBookPage) -> void:
+	assert(new_story_book_page)
+	story_book_page = new_story_book_page
+	_update_choices(story_book_page.choices)
 
-func _update_decisions(story_decisions: Array[StoryDecision]) -> void:
-	for dialog_button: DialogButton in _choices.get_children():
-		_choices.remove_child(dialog_button)
-		dialog_button.queue_free()
-	for story_decision: StoryDecision in story_decisions:
-		var dialog_button: DialogButton = _create_dialog_button(story_decision)
-		dialog_button.save_requested.connect(_on_save_requested)
-		dialog_button.fight_requested.connect(_on_fight_requested)
-	if story_decisions.is_empty():
-		_create_dialog_button(StoryDecision.get_continue())
+func _update_choices(story_book_choices: Array[StoryBookChoice]) -> void:
+	_choices.clear()
+	for story_book_choice: StoryBookChoice in story_book_choices: _add_dialog_button(story_book_choice)
 
-func _create_dialog_button(story_decision: StoryDecision) -> DialogButton:
+func _add_dialog_button(story_book_choice: StoryBookChoice) -> void:
 	var dialog_button: DialogButton = _dialog_button.instantiate()
-	dialog_button.setup(_story, _characters, story_decision)
+	dialog_button.story_book_choice = story_book_choice
 	dialog_button.modulate.a = 0.0
 	dialog_button.hide()
-	_choices.add_child(dialog_button)
-	return dialog_button
+	_choices.add(dialog_button)
+	story_book_choice.chosen.connect(_on_choice_made)
+	if story_book_choice is StoryBookDiceDecision: (story_book_choice as StoryBookDiceDecision).dice_requested.connect(_on_dice_requested)
 
 func _fade_in(element: Control, duration: float, delay: float = 0.0) -> void:
 	if element.visible: return
@@ -98,52 +81,33 @@ func _fade_out(element: Control, duration: float, delay: float = 0.0) -> void:
 
 func _set_state(new_state: State) -> void:
 	super._set_state(new_state)
-	match state:
-		State.PAST:
-			for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = false
-		State.PRESENT:
-			for dialog_button: DialogButton in _choices.get_children(): dialog_button.active = true
-		_: assert(false, "StoryEntry.State %s is not supported!" % state)
+	for dialog_button: DialogButton in _choices.get_elements(): dialog_button.state = state
 
 func _on_description_finished_typing() -> void:
 	var buttons: Array[DialogButton] = []
-	buttons.assign(_choices.get_children())
+	buttons.assign(_choices.get_elements())
 	for index: int in buttons.size():
 		var button: DialogButton = buttons[index]
 		_fade_in(button, _options_fade_in_duration, _options_fade_in_delay * index)
 
-func _on_decision_made(_story_decision: StoryDecision, _selected_how_many_times: int) -> void:
-	_description.set_text_normally()
+func _on_choice_made() -> void:
 	state = State.PAST
-	_story.decision_made.disconnect(_on_decision_made)
 
-func _on_save_requested(save_request: SaveRequest, source: StoryDecision) -> void:
+func _on_dice_requested(dice_request: DiceRequest) -> void:
+	assert(dice_request)
+	if dice_request is SaveRequest: _on_save_requested(dice_request as SaveRequest)
+	elif dice_request is FightRequest: _on_fight_requested(dice_request as FightRequest)
+	else: assert(false, "Undefined")
+
+func _on_save_requested(save_request: SaveRequest) -> void:
 	assert(save_request)
-	assert(source)
-	_selected_story_decision = source
 	_save_request = save_request
-	_save_request.save_rolled.connect(_on_save_rolled)
 	_fight_request = null
 
-func _on_save_rolled(save_result: SaveResult) -> void:
-	assert(_selected_story_decision is StorySaveDecision)
-	_breath_dice_collapsible_container.auto_update_size = CollapsibleContainer.AutoUpdateSizeOptions.DISABLED
-	_save_result = save_result
-	_story.make_save_decision(_selected_story_decision as StorySaveDecision, _save_result)
-
-func _on_fight_requested(fight_request: FightRequest, source: StoryDecision) -> void:
+func _on_fight_requested(fight_request: FightRequest) -> void:
 	assert(fight_request)
-	assert(source)
-	_selected_story_decision = source
 	_fight_request = fight_request
-	_fight_request.fight_rolled.connect(_on_fight_rolled)
 	_save_request = null
-
-func _on_fight_rolled(fight_result: FightResult) -> void:
-	assert(_selected_story_decision is StoryFightDecision)
-	_breath_dice_collapsible_container.auto_update_size = CollapsibleContainer.AutoUpdateSizeOptions.DISABLED
-	_fight_result = fight_result
-	_story.make_fight_decision(_selected_story_decision as StoryFightDecision, _fight_result)
 
 func _on_breath_dice_selection_confirmed() -> void:
 	if _save_request:
@@ -153,3 +117,4 @@ func _on_breath_dice_selection_confirmed() -> void:
 		assert(not _save_request)
 		_fight_request.roll_fight()
 	else: assert(false)
+	_breath_dice_collapsible_container.auto_update_size = CollapsibleContainer.AutoUpdateSizeOptions.DISABLED

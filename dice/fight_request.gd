@@ -16,6 +16,7 @@ func _init(for_character: Character, story_decision: StoryFightDecision) -> void
 	for_character.request_fight(self)
 
 func roll_fight() -> void:
+	assert(character)
 	var attribute_score: AttributeScore = character.get_attribute_score(attribute)
 	for die: BreathDie in selected_breath_dice: die.roll_save(attribute_score.get_score())
 	var fight_result: FightResult = FightResult.new(self)
