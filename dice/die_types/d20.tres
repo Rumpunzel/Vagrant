@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://fu2ayqrbg2y8" path="res://icons/dice/d20_blank.png" id="2_u4i7a"]
 [ext_resource type="AudioStream" uid="uid://rw8xyr5nba4b" path="res://assets/sfx/dice/foley_2_dice_throw_on_carpeted_floor.mp3" id="3_24he3"]
 [ext_resource type="Texture2D" uid="uid://dtq1ar3jab6pw" path="res://icons/dice/d20_filled.png" id="3_u4i7a"]
-[ext_resource type="Script" uid="uid://ci73mrt3tkiel" path="res://dice/die_types/die_type.gd" id="4_o7osb"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="4_o7osb"]
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_362el"]
 streams_count = 1

@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cro66c6ccb2ox"]
 
 [ext_resource type="Script" uid="uid://ddo20y1ieseoy" path="res://story/breath_dice_selection/die_carousel_selection/die_carousel_selection.gd" id="1_ringg"]
-[ext_resource type="Script" uid="uid://ci73mrt3tkiel" path="res://dice/die_types/die_type.gd" id="2_mxytl"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="2_mxytl"]
 [ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/die_types/d4.tres" id="3_7802p"]
 [ext_resource type="PackedScene" uid="uid://dg5km0cv75hok" path="res://story/breath_dice_selection/die_carousel_selection/die_carousel_panel.tscn" id="3_dxb2l"]
 [ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="4_2qppf"]

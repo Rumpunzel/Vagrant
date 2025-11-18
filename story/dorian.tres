@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CharacterProfile" load_steps=29 format=3 uid="uid://73nsysikxf7j"]
 
 [ext_resource type="Texture2D" uid="uid://cm66gscm7nqr4" path="res://assets/portraits/HE-MF-2H-M116/Medium.png" id="1_080vh"]
-[ext_resource type="Script" uid="uid://ci73mrt3tkiel" path="res://dice/die_types/die_type.gd" id="1_phsde"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="1_phsde"]
 [ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/die_types/d4.tres" id="2_ru31n"]
 [ext_resource type="Texture2D" uid="uid://bolerkcu4rmi" path="res://assets/portraits/HE-MF-2H-M116/Small.png" id="2_ygwnf"]
 [ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="3_wa8fo"]
@@ -65,6 +65,7 @@ dice = Array[ExtResource("10_gmgy5")]([SubResource("Resource_ay5a8"), SubResourc
 [resource]
 script = ExtResource("17_ckreo")
 name = "Dorian"
+title = "Test Adventurer"
 portrait = ExtResource("16_rt0sg")
 _portrait_directory = "res://assets/portraits/HE-MF-2H-M116"
 _additional_portraits = Dictionary[String, Texture2D]({
@@ -77,4 +78,10 @@ ExtResource("11_38m1i"): SubResource("Resource_auy6q"),
 ExtResource("12_vsf3q"): SubResource("Resource_q8koy")
 })
 origins = Array[ExtResource("13_gam16")]([ExtResource("14_1atq2"), ExtResource("15_60rk6")])
-_title = "Test Adventurer"
+breath_die_types = Dictionary[ExtResource("1_phsde"), int]({
+ExtResource("2_ru31n"): 1,
+ExtResource("3_wa8fo"): 1,
+ExtResource("4_dmj07"): 1,
+ExtResource("5_73k2y"): 1,
+ExtResource("6_ws2or"): 1
+})

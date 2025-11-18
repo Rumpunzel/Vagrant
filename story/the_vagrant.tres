@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CharacterProfile" load_steps=3 format=3 uid="uid://3lhxtoqoq8kx"]
+
+[ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="2_ptc7l"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="6_jysbr"]
+
+[resource]
+script = ExtResource("2_ptc7l")
+name = "The Vagrant"
+attribute_scores = null
+breath_die_types = null
+metadata/_custom_type_script = "uid://dv67s18uf5thf"

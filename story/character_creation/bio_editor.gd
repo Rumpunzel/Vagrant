@@ -10,6 +10,17 @@ enum Sex {
 	FEMALE,
 }
 
+@export var _character_profile: CharacterProfile:
+	set(new_character_profile):
+		assert(new_character_profile)
+		_character_profile = new_character_profile
+		_name.text = _character_profile.name
+		_title.text = _character_profile.title
+		if _character_profile.portrait:
+			var portrait_directory_path: String = _character_profile.portrait.resource_path.get_base_dir()
+			_portrait_index = _portrait_directories[Sex.ANY].find(portrait_directory_path)
+		else: _character_profile.portrait = _portrait.texture
+
 @export_dir var _portraits_directory: String
 @export var _portrait_file_name: String = "Fulllength.png"
 @export var _search_recursively: bool = true
@@ -25,7 +36,7 @@ enum Sex {
 	Sex.MALE: "-M\\d+$",
 	Sex.FEMALE: "-F\\d+$",
 }
-@export var _sex: Sex = Sex.ANY :
+@export var _sex: Sex = Sex.ANY:
 	set(new_sex):
 		_sex = new_sex
 		_sex_button.icon = _icons[_sex]
@@ -45,7 +56,7 @@ var _compiled_patterns: Dictionary[Sex, RegEx]
 
 # Dictionary[Sex, Array[String]]
 var _portrait_directories: Dictionary[Sex, Array] = {}
-var _portrait_index: int = 0 :
+var _portrait_index: int = 0:
 	set(new_portrait_index):
 		_portrait_index = new_portrait_index
 		_portrait_index %= _portrait_directories[_sex].size()
@@ -54,6 +65,7 @@ var _portrait_index: int = 0 :
 		var portrait: Texture2D = load(portrait_path)
 		_portrait.texture = portrait
 		_portrait.tooltip_text = portrait_path
+		if _character_profile: _character_profile.portrait = _portrait.texture
 		details_changed.emit(_name.text, _title.text, _portrait.texture)
 
 func _ready() -> void:
@@ -65,6 +77,9 @@ func _ready() -> void:
 		_compiled_patterns[sex] = regex
 	_load_portraits()
 	randomize_portrait()
+
+func setup(character_profile: CharacterProfile) -> void:
+	_character_profile = character_profile
 
 func randomize_portrait() -> void:
 	var new_portrait_index: int = _portrait_index
@@ -80,10 +95,12 @@ func _load_portraits() -> void:
 	_sex_button.tooltip_text = "Filter Sex\n%d Portraits" % _portrait_directories[_sex].size()
 
 func _on_name_changed(new_text: String) -> void:
+	if _character_profile: _character_profile.name = new_text
 	details_changed.emit(new_text, _title.text, _portrait.texture)
 
-func _on_title_changed(_new_text: String) -> void:
-	details_changed.emit(_name.text, _title.text, _portrait.texture)
+func _on_title_changed(new_text: String) -> void:
+	if _character_profile: _character_profile.title = new_text
+	details_changed.emit(_name.text, new_text, _portrait.texture)
 
 func _on_sex_pressed() -> void:
 	_sex = (_sex + 1) % Sex.size() as Sex

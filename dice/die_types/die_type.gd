@@ -7,7 +7,7 @@ signal rolled(die_type: Die, result: int, roll_sound: AudioStream)
 @export var icon: Texture2D
 @export var icon_blank: Texture2D
 @export var icon_filled: Texture2D
-@export var faces: int = 12
+@export var faces: int
 @export var roll_sound: AudioStream
 
 func roll(play_sound: bool) -> int:

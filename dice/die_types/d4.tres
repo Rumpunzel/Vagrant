@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://d12l3mfoh65ag" path="res://icons/dice/d4.png" id="1_qsbnp"]
 [ext_resource type="Texture2D" uid="uid://ddlb0pg3uhjsq" path="res://icons/dice/d4_blank.png" id="1_sgw26"]
 [ext_resource type="AudioStream" uid="uid://73uau43jljta" path="res://assets/sfx/dice/268257-DICE_on_Hard_Wood-Throw_and_Roll_-Standard-5_Five_Dice-v2.wav" id="2_j4iqi"]
-[ext_resource type="Script" uid="uid://ci73mrt3tkiel" path="res://dice/die_types/die_type.gd" id="2_r0o0g"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="2_r0o0g"]
 [ext_resource type="AudioStream" uid="uid://ceqqtx7yy26vb" path="res://assets/sfx/dice/foley_2_dice_throw_on_game_board.mp3" id="3_2gs3f"]
 [ext_resource type="Texture2D" uid="uid://bpro7kxm2x4a4" path="res://icons/dice/d4_filled.png" id="3_twva0"]
 

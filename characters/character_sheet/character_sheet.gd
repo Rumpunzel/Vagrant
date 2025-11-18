@@ -15,7 +15,7 @@ func _ready() -> void:
 func _update() -> void:
 	super._update()
 	_name.text = _character_profile.name
-	_title.text = _character_profile.get_title()
+	_title.text = _character_profile.get_formatted_title()
 	_ability_labels.update_abilities(_character_profile.origins)
 
 func _set_character(new_character: Character) -> void:
