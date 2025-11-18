@@ -117,7 +117,7 @@ func get_attribute_scores() -> Dictionary[CharacterAttribute, AttributeScore]:
 func get_available_doubles() -> int:
 	var doubles_rolled: int = 0
 	for attribute_score: BaseAttributeScore in attribute_scores.values():
-		if attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
+		if attribute_score and attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
 	return doubles_rolled
 
 func get_attribute_modifiers() -> Array[AttributeScore.Modifier]:
