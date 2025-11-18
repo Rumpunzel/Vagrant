@@ -13,7 +13,7 @@ extends PageEntry
 @export var _breath_dice_selection: BreathDiceSelection
 @export var _dialog_button: PackedScene
 
-var story_book_page: StoryBookPage : set = set_story_book_page
+var story_page: StoryPage : set = set_story_page
 
 var _save_request: SaveRequest:
 	set(new_save_request):
@@ -36,35 +36,35 @@ var _fight_request: FightRequest:
 		_breath_dice_collapsible_container.open_tween()
 
 func enter_page() -> void:
-	var title: String = story_book_page.page_title
+	var title: String = story_page.page_title
 	if not title.is_empty(): _title.type_text(title)
 	else: _title.visible = false
-	_description.type_text(story_book_page.description)
+	_description.type_text(story_page.description)
 
 func is_dice_page() -> bool:
-	var chosen_choice: StoryBookChoice = story_book_page.get_chosen_choice()
+	var chosen_choice: StoryChoice = story_page.get_chosen_choice()
 	return chosen_choice and chosen_choice.is_dice_choice()
 
-func get_story_book_page() -> StoryBookPage:
-	return story_book_page
+func get_story_page() -> StoryPage:
+	return story_page
 
-func set_story_book_page(new_story_book_page: StoryBookPage) -> void:
-	assert(new_story_book_page)
-	story_book_page = new_story_book_page
-	_update_choices(story_book_page.choices)
+func set_story_page(new_story_page: StoryPage) -> void:
+	assert(new_story_page)
+	story_page = new_story_page
+	_update_choices(story_page.choices)
 
-func _update_choices(story_book_choices: Array[StoryBookChoice]) -> void:
+func _update_choices(story_choices: Array[StoryChoice]) -> void:
 	_choices.clear()
-	for story_book_choice: StoryBookChoice in story_book_choices: _add_dialog_button(story_book_choice)
+	for story_choice: StoryChoice in story_choices: _add_dialog_button(story_choice)
 
-func _add_dialog_button(story_book_choice: StoryBookChoice) -> void:
+func _add_dialog_button(story_choice: StoryChoice) -> void:
 	var dialog_button: DialogButton = _dialog_button.instantiate()
-	dialog_button.story_book_choice = story_book_choice
+	dialog_button.story_choice = story_choice
 	dialog_button.modulate.a = 0.0
 	dialog_button.hide()
 	_choices.add(dialog_button)
-	story_book_choice.chosen.connect(_on_choice_made)
-	if story_book_choice is StoryBookDiceDecision: (story_book_choice as StoryBookDiceDecision).dice_requested.connect(_on_dice_requested)
+	story_choice.chosen.connect(_on_choice_made)
+	if story_choice is StoryDiceDecision: (story_choice as StoryDiceDecision).dice_requested.connect(_on_dice_requested)
 
 func _fade_in(element: Control, duration: float, delay: float = 0.0) -> void:
 	if element.visible: return

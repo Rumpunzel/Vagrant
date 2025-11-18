@@ -27,11 +27,11 @@ func _flip_page() -> void:
 	_current_page_entry.resized.connect(_on_current_page_entry_resized)
 	page_entered.emit(_current_page_entry)
 
-func _on_story_book_page_entered(story_book_page: StoryBookPage) -> void:
-	assert(story_book_page)
+func _on_story_page_entered(story_page: StoryPage) -> void:
+	assert(story_page)
 	var previous_page: PageEntry = _current_page_entry
-	_current_page_entry = story_book_page.create_story_entry()
-	_current_page_entry.setup_page(story_book_page)
+	_current_page_entry = story_page.create_story_entry()
+	_current_page_entry.setup_page(story_page)
 	if not previous_page: _flip_page()
 	else:
 		var delay: float = _dice_page_turn_delay if previous_page.is_dice_page() else _page_turn_delay

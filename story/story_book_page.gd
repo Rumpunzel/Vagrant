@@ -1,5 +1,5 @@
 @tool
-class_name StoryBookPage
+class_name StoryPage
 extends RefCounted
 
 var adventure_page: AdventurePage
@@ -8,7 +8,7 @@ var description: String
 var background: Texture2D
 var area_background: Texture2D
 var ambience: AudioStream
-var choices: Array[StoryBookChoice]
+var choices: Array[StoryChoice]
 var events: Array[AdventurePage]
 
 func _init(
@@ -28,7 +28,7 @@ func _init(
 	area_background = adventure_page.get_area_background()
 	ambience = from_ambience
 	if from_choices.is_empty(): from_choices.append(AdventureDecision.get_continue())
-	choices.assign(from_choices.map(StoryBookChoice.from_story_decision.bind(protagonist)))
+	choices.assign(from_choices.map(StoryChoice.from_story_decision.bind(protagonist)))
 	events = from_events
 
 func create_story_entry() -> StoryEntry:
@@ -36,6 +36,6 @@ func create_story_entry() -> StoryEntry:
 	var story_entry: StoryEntry = story_entry_scene.instantiate()
 	return story_entry
 
-func get_chosen_choice() -> StoryBookChoice:
-	for choice: StoryBookChoice in choices: if choice.is_chosen(): return choice
+func get_chosen_choice() -> StoryChoice:
+	for choice: StoryChoice in choices: if choice.is_chosen(): return choice
 	return null

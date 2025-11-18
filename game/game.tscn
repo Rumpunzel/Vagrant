@@ -6,3 +6,4 @@
 [node name="Game" type="Node"]
 script = ExtResource("1_80nbo")
 default_adventure = ExtResource("2_e2o6t")
+metadata/_custom_type_script = "uid://r3vwl1b18g4l"

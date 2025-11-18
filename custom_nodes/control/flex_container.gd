@@ -22,7 +22,7 @@ enum Direction {
 		if not is_node_ready(): return
 		_setup()
 
-var _box_container: BoxContainer: set = _set_box_container
+var _box_container: BoxContainer : set = _set_box_container
 
 func add(element: Control) -> void:
 	assert(element)

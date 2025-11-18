@@ -1,5 +1,5 @@
-class_name StoryBookDecision
-extends StoryBookChoice
+class_name StoryDecision
+extends StoryChoice
 
 var _adventure_decision: AdventureDecision
 var _chosen: bool = false
@@ -12,7 +12,7 @@ func chose() -> void:
 	_chosen = true
 	_chose()
 
-func discard() -> void: assert(not is_chosen(), "Chosen StoryBookDecisions cannot be discarded!")
+func discard() -> void: assert(not is_chosen(), "Chosen StoryDecisions cannot be discarded!")
 
 func is_chosen() -> bool: return _chosen
 func is_dice_choice() -> bool: return false

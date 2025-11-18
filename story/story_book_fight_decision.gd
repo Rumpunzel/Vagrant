@@ -1,9 +1,9 @@
-class_name StoryBookFightDecision
-extends StoryBookDiceDecision
+class_name StoryFightDecision
+extends StoryDiceDecision
 
 var _adventure_fight_decision: AdventureFightDecision
 
-var fight_request: FightRequest :
+var fight_request: FightRequest:
 	set(new_fight_request):
 		assert((new_fight_request == null) != (fight_request == null)) # One of the must be null, the other must not
 		if fight_request:
@@ -11,7 +11,7 @@ var fight_request: FightRequest :
 		fight_request = new_fight_request
 		fight_request.fight_rolled.connect(_on_dice_rolled)
 
-var fight_result: FightResult :
+var fight_result: FightResult:
 	set(new_fight_result):
 		assert(new_fight_result)
 		assert(not fight_result)

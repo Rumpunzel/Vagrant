@@ -9,13 +9,13 @@ extends FancyButton
 			StoryEntry.State.PRESENT:
 				activate()
 				disabled = false
-				if story_book_choice: story_book_choice.discard()
+				if story_choice: story_choice.discard()
 				_set_index()
 			StoryEntry.State.PAST:
 				deactivate()
-				disabled = story_book_choice.is_chosen()
-				if story_book_choice.is_chosen(): glyph = "✔"
-				else: story_book_choice.discard()
+				disabled = story_choice.is_chosen()
+				if story_choice.is_chosen(): glyph = "✔"
+				else: story_choice.discard()
 				release_focus()
 				_update_style()
 			_: assert(false, "Does not exist")
@@ -23,15 +23,15 @@ extends FancyButton
 @export_group("Configuration")
 @export var shortcuts: Array[Shortcut] = []
 
-var story_book_choice: StoryBookChoice:
-	set(new_story_book_choice):
-		assert(new_story_book_choice)
-		story_book_choice = new_story_book_choice
-		var description: String = story_book_choice.get_description()
+var story_choice: StoryChoice:
+	set(new_story_choice):
+		assert(new_story_choice)
+		story_choice = new_story_choice
+		var description: String = story_choice.get_description()
 		set(&"text", description)
 		name = description
-		set(&"icon", story_book_choice.get_icon())
-		set_icon_colors(story_book_choice.get_icon_color())
+		set(&"icon", story_choice.get_icon())
+		set_icon_colors(story_choice.get_icon_color())
 
 func _ready() -> void:
 	_set_index()
@@ -44,8 +44,8 @@ func _set_index() -> void:
 
 func _on_toggled(toggled_on: bool) -> void:
 	if toggled_on:
-		assert(not story_book_choice.is_chosen())
-		story_book_choice.chose()
+		assert(not story_choice.is_chosen())
+		story_choice.chose()
 	else:
-		assert(story_book_choice.is_chosen())
-		story_book_choice.discard()
+		assert(story_choice.is_chosen())
+		story_choice.discard()

@@ -25,7 +25,7 @@ shader_parameter/right_clip = 0.0
 
 [node name="StoryEntry" type="PanelContainer" node_paths=PackedStringArray("_title", "_description", "_choices", "_breath_dice_collapsible_container", "_breath_dice_selection", "_background", "_body_container")]
 offset_right = 473.0
-offset_bottom = 355.0
+offset_bottom = 371.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_ywxnt")
 script = ExtResource("1_ywxnt")
 _title = NodePath("MarginContainer/VBoxContainer/Title")
@@ -103,7 +103,7 @@ editor_description = "
 			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
 			
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
-custom_minimum_size = Vector2(425, 507)
+custom_minimum_size = Vector2(425, 185)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0

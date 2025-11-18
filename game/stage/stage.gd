@@ -16,10 +16,10 @@ extends CanvasLayer
 var _current_area_background: BackgroundRect
 var _current_event_background: BackgroundRect
 
-func enter_story_book_page(story_book_page: StoryBookPage) -> void:
-	_set_area_background(story_book_page.area_background)
-	_set_event_background(story_book_page.background)
-	_set_ambience(story_book_page.ambience)
+func enter_story_page(story_page: StoryPage) -> void:
+	_set_area_background(story_page.area_background)
+	_set_event_background(story_page.background)
+	_set_ambience(story_page.ambience)
 
 func _set_area_background(background_texture: Texture2D) -> void:
 	area_background = background_texture

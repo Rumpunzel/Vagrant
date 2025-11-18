@@ -1,5 +1,5 @@
-class_name StoryBookSaveDecision
-extends StoryBookDiceDecision
+class_name StorySaveDecision
+extends StoryDiceDecision
 
 var _adventure_save_decision: AdventureSaveDecision
 

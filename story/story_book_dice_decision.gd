@@ -1,6 +1,6 @@
 @abstract
-class_name StoryBookDiceDecision
-extends StoryBookChoice
+class_name StoryDiceDecision
+extends StoryChoice
 
 signal dice_requested(dice_request: DiceRequest)
 

@@ -1,13 +1,13 @@
 @abstract
-class_name StoryBookChoice
+class_name StoryChoice
 extends RefCounted
 
 signal chosen
 
-static func from_story_decision(adventure_decision: AdventureDecision, protagonist: Character) -> StoryBookChoice:
-	if adventure_decision is AdventureSaveDecision: return StoryBookSaveDecision.new(adventure_decision as AdventureSaveDecision, protagonist)
-	elif adventure_decision is AdventureFightDecision: return StoryBookFightDecision.new(adventure_decision as AdventureFightDecision, protagonist)
-	return StoryBookDecision.new(adventure_decision)
+static func from_story_decision(adventure_decision: AdventureDecision, protagonist: Character) -> StoryChoice:
+	if adventure_decision is AdventureSaveDecision: return StorySaveDecision.new(adventure_decision as AdventureSaveDecision, protagonist)
+	elif adventure_decision is AdventureFightDecision: return StoryFightDecision.new(adventure_decision as AdventureFightDecision, protagonist)
+	return StoryDecision.new(adventure_decision)
 
 @abstract func chose() -> void
 @abstract func discard() -> void
