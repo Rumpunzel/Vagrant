@@ -19,13 +19,15 @@ var protagonist: Character
 
 var current_story_page: StoryPage:
 	set(story_page):
-		if story_page == null: story_page = _page_stack.pop_back()
+		if story_page == null:
+			var last_adventure_page: AdventurePage = _page_stack.pop_back()
+			story_page = _create_story_page(last_adventure_page)
 		#elif current_page == story_page:
 			#print_debug("Already on page: <%s>!" % current_page)
 			#return
 		if current_story_page:
+			_page_stack.push_back(current_story_page.adventure_page)
 			for choice: StoryChoice in current_story_page.choices: choice.chosen.disconnect(_on_choice_made)
-		_page_stack.push_back(current_story_page)
 		current_story_page = story_page
 		assert(current_story_page)
 		var page_log: Array[StoryPage] = _page_log.get_or_add(current_story_page.adventure_page, [] as Array[StoryPage])
@@ -40,7 +42,7 @@ var _current_dice_request: DiceRequest:
 	set(new_dice_request):
 		_current_dice_request = new_dice_request
 
-var _page_stack: Array[StoryPage] = []
+var _page_stack: Array[AdventurePage] = []
 # StoryPage -> Array[StoryPage]
 var _page_log: Dictionary[AdventurePage, Array] = {}
 # AdventureDecision -> StoryChoice (individual times the decision has been made)
@@ -55,7 +57,7 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	enter_page(adventure.starting_page)
 
 func enter_page(adventure_page: AdventurePage) -> void:
-	current_story_page = _create_adventure_book_page(adventure_page) if adventure_page else null
+	current_story_page = _create_story_page(adventure_page) if adventure_page else null
 
 func request_save(save_request: SaveRequest) -> void:
 	_current_dice_request = save_request
@@ -78,7 +80,7 @@ func get_how_often_decision_has_been_made(story_decision: AdventureDecision) -> 
 func get_how_often_page_has_been_entered(adventure_page: AdventurePage) -> int:
 	return _page_log.get(adventure_page, 0)
 
-func _create_adventure_book_page(adventure_page: AdventurePage) -> StoryPage:
+func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	assert(protagonist)
 	assert(adventure_page)
 	return StoryPage.new(

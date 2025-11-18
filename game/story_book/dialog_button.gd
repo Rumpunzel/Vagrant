@@ -13,7 +13,7 @@ extends FancyButton
 				_set_index()
 			StoryEntry.State.PAST:
 				deactivate()
-				disabled = story_choice.is_chosen()
+				disabled = not story_choice.is_chosen()
 				if story_choice.is_chosen(): glyph = "✔"
 				else: story_choice.discard()
 				release_focus()
