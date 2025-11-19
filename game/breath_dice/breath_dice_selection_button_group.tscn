@@ -19,6 +19,7 @@ _all_button = NodePath("Buttons/AllButton")
 _breath_die_button = ExtResource("3_6gpjh")
 element_size = 64.0
 separation = 2
+fill = true
 container_root = NodePath("Buttons")
 container_index_in_root = 0
 direction = 2

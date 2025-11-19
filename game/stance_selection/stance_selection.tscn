@@ -4,14 +4,19 @@
 [ext_resource type="PackedScene" uid="uid://mt5mbq7b5lu0" path="res://game/stance_selection/stance_panel.tscn" id="2_oo80h"]
 [ext_resource type="PackedScene" uid="uid://bio0tn8287gj" path="res://game/stance_selection/carousel_button.tscn" id="3_vnpj5"]
 
-[node name="StanceSelection" type="HBoxContainer"]
+[node name="StanceSelection" type="MarginContainer"]
 offset_right = 389.0
-offset_bottom = 48.0
+offset_bottom = 55.0
 mouse_filter = 0
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
 script = ExtResource("1_11rov")
 selected = 2
 items = Array[String](["Guts", "Blood", "Nerves"])
 panel = ExtResource("2_oo80h")
 previous_button = ExtResource("3_vnpj5")
 next_button = ExtResource("3_vnpj5")
+alignment = 1
 metadata/_custom_type_script = "uid://bns33lugkmi4j"

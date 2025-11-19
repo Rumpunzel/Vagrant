@@ -7,6 +7,7 @@
 offset_right = 307.0
 offset_bottom = 29.0
 mouse_default_cursor_shape = 2
+icon_alignment = 1
 script = ExtResource("1_a2uw8")
 tooltip_trigger = NodePath("TooltipTrigger")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"

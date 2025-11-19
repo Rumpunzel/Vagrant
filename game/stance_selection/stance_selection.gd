@@ -29,6 +29,11 @@ func get_next() -> CarouselButton:
 	assert(_next is CarouselButton)
 	return _next
 
+func _setup() -> void:
+	super._setup()
+	_previous.icon = preload("uid://buvbksy3o46rm")
+	_next.icon = preload("uid://ctxdc156sk6t4")
+
 func _set_selected_attribute(attribute: CharacterAttribute) -> void:
 	assert(attribute)
 	if not is_node_ready(): await  ready
@@ -43,11 +48,6 @@ func _set_selected_attribute(attribute: CharacterAttribute) -> void:
 	get_next().tooltip_trigger.tooltip_strings = next_attribute.abilities
 	## Signal
 	attribute_selected.emit(attribute)
-
-func _setup_carousel() -> void:
-	super._setup_carousel()
-	_previous.icon = preload("uid://buvbksy3o46rm")
-	_next.icon = preload("uid://ctxdc156sk6t4")
 
 func _set_selected(new_index: int) -> void:
 	super._set_selected(new_index)

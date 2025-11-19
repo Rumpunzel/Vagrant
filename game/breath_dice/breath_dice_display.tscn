@@ -31,4 +31,5 @@ theme_override_constants/margin_bottom = 0
 script = ExtResource("3_4x401")
 offset_curve = SubResource("Curve_jdcxm")
 separation = 0
+fill = true
 metadata/_custom_type_script = "uid://dfm6y6ow1f5e1"

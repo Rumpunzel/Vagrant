@@ -11,15 +11,16 @@ enum Direction {
 
 @export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var element_size: float = 0.0
 @export_range(-64, 64, 1, "suffix:px") var separation: int = 4
-@export var fill: bool = true
+@export var fill: bool
 @export var container_root: Control
 @export var container_index_in_root: int = -1
-@export var alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_BEGIN
+@export var alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_BEGIN :
+	set(new_alignment):
+		alignment = new_alignment
+		if _box_container: _box_container.alignment = alignment
 @export var direction: Direction = Direction.LEFT_TO_RIGHT:
 	set(new_direction):
-		if new_direction == direction: return
 		direction = new_direction
-		if not is_node_ready(): return
 		_setup()
 
 var _box_container: BoxContainer : set = _set_box_container
