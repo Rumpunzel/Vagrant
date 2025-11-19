@@ -9,29 +9,31 @@ extends FancyButton
 			StoryEntry.State.PRESENT:
 				activate()
 				disabled = false
-				if story_choice: story_choice.discard()
+				if _story_choice: _story_choice.discard()
 				_set_index()
 			StoryEntry.State.PAST:
 				deactivate()
-				disabled = not story_choice.is_chosen()
-				if story_choice.is_chosen(): glyph = "✔"
-				else: story_choice.discard()
+				disabled = not _story_choice.is_chosen()
+				if _story_choice.is_chosen(): set(&"icon", _chosen_icon)
+				else: _story_choice.discard()
 				release_focus()
 				_update_style()
 			_: assert(false, "Does not exist")
 
+@export var _chosen_icon: Texture2D
+
 @export_group("Configuration")
 @export var shortcuts: Array[Shortcut] = []
 
-var story_choice: StoryChoice:
+var _story_choice: StoryChoice:
 	set(new_story_choice):
 		assert(new_story_choice)
-		story_choice = new_story_choice
-		var description: String = story_choice.get_description()
+		_story_choice = new_story_choice
+		var description: String = _story_choice.get_description()
 		set(&"text", description)
 		name = description
-		set(&"icon", story_choice.get_icon())
-		set_icon_colors(story_choice.get_icon_color())
+		set(&"icon", _story_choice.get_icon())
+		set_icon_colors(_story_choice.get_icon_color())
 
 func _ready() -> void:
 	_set_index()
@@ -39,13 +41,16 @@ func _ready() -> void:
 	if index >= shortcuts.size(): return
 	shortcut = shortcuts[index]
 
+func setup(story_choice: StoryChoice, dialog_button_group: ButtonGroup) -> void:
+	_story_choice = story_choice
+	button_group = dialog_button_group
+
 func _set_index() -> void:
 	glyph = "%d." % [get_index() + 1]
 
 func _on_toggled(toggled_on: bool) -> void:
 	if toggled_on:
-		assert(not story_choice.is_chosen())
-		story_choice.chose()
-	else:
-		assert(story_choice.is_chosen())
-		story_choice.discard()
+		assert(not _story_choice.is_chosen())
+		grab_focus()
+		_story_choice.chose()
+	else: _story_choice.discard()

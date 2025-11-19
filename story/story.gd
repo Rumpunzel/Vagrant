@@ -3,6 +3,7 @@ class_name Story
 extends Node
 
 signal story_page_entered(story_page: StoryPage)
+signal dice_requested(dice_request: DiceRequest)
 
 @export_group("Configuration")
 @export var _party: Characters
@@ -27,7 +28,9 @@ var current_story_page: StoryPage:
 			#return
 		if current_story_page:
 			_page_stack.push_back(current_story_page.adventure_page)
-			for choice: StoryChoice in current_story_page.choices: choice.chosen.disconnect(_on_choice_made)
+			for choice: StoryChoice in current_story_page.choices:
+				choice.chosen.disconnect(_on_choice_made)
+				if choice is StoryDiceDecision: (choice as StoryDiceDecision).dice_requested.disconnect(_on_dice_requested)
 		current_story_page = story_page
 		assert(current_story_page)
 		var page_log: Array[StoryPage] = _page_log.get_or_add(current_story_page.adventure_page, [] as Array[StoryPage])
@@ -35,12 +38,15 @@ var current_story_page: StoryPage:
 		#for event: AdventurePage in current_story_page.get_events(self): _page_log[event] = get_how_often_page_has_been_entered(event) + 1
 		@warning_ignore("unsafe_method_access")
 		Stage.enter_story_page(current_story_page)
-		for choice: StoryChoice in current_story_page.choices: choice.chosen.connect(_on_choice_made.bind(choice))
+		for choice: StoryChoice in current_story_page.choices:
+			choice.chosen.connect(_on_choice_made.bind(choice))
+			if choice is StoryDiceDecision: (choice as StoryDiceDecision).dice_requested.connect(_on_dice_requested)
 		story_page_entered.emit(current_story_page)
 
 var _current_dice_request: DiceRequest:
 	set(new_dice_request):
 		_current_dice_request = new_dice_request
+		dice_requested.emit(_current_dice_request)
 
 var _page_stack: Array[AdventurePage] = []
 # StoryPage -> Array[StoryPage]
@@ -84,7 +90,7 @@ func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	assert(protagonist)
 	assert(adventure_page)
 	return StoryPage.new(
-		protagonist,
+		func() -> Character: return protagonist,
 		adventure_page,
 		adventure_page.get_page_title(self),
 		adventure_page.get_description(self),
@@ -101,3 +107,12 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 		var decision_log: Array[StoryChoice] = _decision_log.get_or_add(story_decision, [] as Array[StoryChoice])
 		decision_log.append(story_choice)
 	enter_page(story_choice.get_transition())
+
+func _on_dice_requested(dice_request: DiceRequest) -> void:
+	if dice_request: dice_requested.emit(dice_request)
+
+func _on_character_selected(character: Character, _character_portrait: CharacterPortrait) -> void:
+	if not _current_dice_request: return
+	assert(character)
+	protagonist = character
+	_current_dice_request.character = protagonist

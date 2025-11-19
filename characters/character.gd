@@ -7,11 +7,6 @@ signal breath_dice_changed(breath_dice: Array[BreathDie])
 signal breath_dice_states_changed
 signal exhaustion_changed(exhaustion: Array[DieType])
 
-signal save_requested(save_request: SaveRequest)
-signal save_rolled(save_result: SaveResult)
-signal fight_requested(fight_request: FightRequest)
-signal fight_rolled(fight_result: FightResult)
-
 @export var character_profile: CharacterProfile :
 	set(new_character_profile):
 		if new_character_profile == character_profile: return
@@ -44,16 +39,6 @@ var breath_dice: Array[BreathDie] :
 
 func _init(new_character_profile: CharacterProfile = null) -> void:
 	character_profile = new_character_profile
-
-func request_save(save_request: SaveRequest) -> void:
-	assert(save_request)
-	save_request.save_rolled.connect(_on_save_rolled)
-	save_requested.emit(save_request)
-
-func request_fight(fight_request: FightRequest) -> void:
-	assert(fight_request)
-	fight_request.fight_rolled.connect(_on_fight_rolled)
-	fight_requested.emit(fight_request)
 
 func can_catch_breath() -> bool:
 	return has_lost_breath()
@@ -97,14 +82,6 @@ func get_breath_dice_count(breath_die_type: DieType) -> int:
 func get_auto_selected_breath_dice(with_attribute: CharacterAttribute) -> Array[BreathDie]:
 	var attribute_score: AttributeScore = get_attribute_score(with_attribute)
 	return breath_dice.filter(func(die: BreathDie) -> bool: return die.is_auto_selected(attribute_score))
-
-func _on_save_rolled(save_result: SaveResult) -> void:
-	save_result.save_request.save_rolled.disconnect(_on_save_rolled)
-	save_rolled.emit(save_result)
-
-func _on_fight_rolled(fight_result: FightResult) -> void:
-	fight_result.fight_request.fight_rolled.disconnect(_on_fight_rolled)
-	fight_rolled.emit(fight_result)
 
 func _on_breath_die_state_changed(alive: bool, breath_die: BreathDie) -> void:
 	assert(breath_die.alive == alive)

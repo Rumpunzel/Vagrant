@@ -31,16 +31,10 @@ enum IconType {
 			_: assert(false, "Does not exist")
 @export var icon_type: IconType = IconType.NORMAL
 
-@onready var _default_mouse_cursor: Control.CursorShape = mouse_default_cursor_shape
-
 func _update() -> void:
 	disabled = not breath_die.alive
-	if disabled:
-		tooltip_text = "This die is lost."
-		mouse_default_cursor_shape = Control.CURSOR_HELP
-	else:
-		tooltip_text = "%s" % breath_die.die_type
-		mouse_default_cursor_shape = _default_mouse_cursor
+	if disabled: tooltip_text = "This die is lost."
+	else: tooltip_text = "%s" % breath_die.die_type
 
 func _on_die_state_changed(_alive: bool) -> void:
 	_update()

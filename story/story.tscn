@@ -250,6 +250,9 @@ layout_mode = 2
 [node name="StoryBook" parent="Game/PanelContainer/MarginContainer/HSplitContainer" instance=ExtResource("20_pr7tg")]
 layout_mode = 2
 
+[connection signal="dice_requested" from="." to="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer/CharacterSheet" method="_on_dice_requested"]
+[connection signal="dice_requested" from="." to="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" method="_on_dice_requested"]
 [connection signal="story_page_entered" from="." to="Game/PanelContainer/MarginContainer/HSplitContainer/StoryBook" method="_on_story_page_entered"]
+[connection signal="character_selected" from="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="." method="_on_character_selected"]
 [connection signal="character_selected" from="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
 [connection signal="pressed" from="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/CatchBreath" to="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/CatchBreathDialog" method="popup_centered"]

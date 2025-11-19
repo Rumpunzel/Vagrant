@@ -9,6 +9,7 @@ var save_request: SaveRequest:
 		if save_request:
 			save_request.save_rolled.disconnect(_on_dice_rolled)
 		save_request = new_save_request
+		if not save_request: return
 		save_request.save_rolled.connect(_on_dice_rolled)
 
 var save_result: SaveResult:
@@ -17,9 +18,9 @@ var save_result: SaveResult:
 		assert(not save_result)
 		save_result = new_save_result
 
-func _init(adventure_save_decision: AdventureSaveDecision, protagonist: Character) -> void:
+func _init(adventure_save_decision: AdventureSaveDecision, protagonist_getter: Callable) -> void:
 	_adventure_save_decision = adventure_save_decision
-	_protagonist = protagonist
+	_protagonist_getter = protagonist_getter
 
 func get_adventure_decision() -> AdventureSaveDecision: return _adventure_save_decision
 func get_transition() -> AdventurePage:
@@ -32,7 +33,6 @@ func get_dice_request() -> SaveRequest: return save_request
 func get_dice_result() -> SaveResult: return save_result
 
 func set_dice_request(dice_request: DiceRequest) -> void:
-	assert(dice_request is SaveRequest)
 	save_request = dice_request
 	super.set_dice_request(dice_request)
 

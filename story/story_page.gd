@@ -12,7 +12,7 @@ var choices: Array[StoryChoice]
 var events: Array[AdventurePage]
 
 func _init(
-	protagonist: Character,
+	protagonist_getter: Callable,
 	from_adventure_page: AdventurePage,
 	from_page_title: String,
 	from_description: String,
@@ -28,7 +28,7 @@ func _init(
 	area_background = adventure_page.get_area_background()
 	ambience = from_ambience
 	if from_choices.is_empty(): from_choices.append(AdventureDecision.get_continue())
-	choices.assign(from_choices.map(StoryChoice.from_story_decision.bind(protagonist)))
+	choices.assign(from_choices.map(StoryChoice.from_story_decision.bind(protagonist_getter)))
 	events = from_events
 
 func create_story_entry() -> StoryEntry:

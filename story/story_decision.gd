@@ -19,5 +19,5 @@ func is_dice_choice() -> bool: return false
 
 func get_adventure_decision() -> AdventureDecision: return _adventure_decision
 func get_transition() -> AdventurePage:
-	var transition: AdventureTransition = _adventure_decision.transition
+	var transition: AdventurePageReference = _adventure_decision.transition
 	return transition.get_adventure_page() if transition else null

@@ -1,7 +1,8 @@
-[gd_scene load_steps=24 format=3 uid="uid://d0ecexfpobl4m"]
+[gd_scene load_steps=25 format=3 uid="uid://d0ecexfpobl4m"]
 
 [ext_resource type="Script" uid="uid://1rnnvyy1byjt" path="res://game/story_book/dialog_button.gd" id="1_smxr3"]
 [ext_resource type="AudioStream" uid="uid://1j01m4qmcdw4" path="res://assets/sfx/match-lighting-candle.mp3" id="2_rbcg6"]
+[ext_resource type="Texture2D" uid="uid://dijf8incgp7wf" path="res://assets/editor_icons/hero_icons/check-circle.svg" id="2_sbvtn"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_w0yih"]
 device = -1
@@ -100,6 +101,7 @@ text = "Hide in the shipwreck."
 flat = true
 alignment = 0
 script = ExtResource("1_smxr3")
+_chosen_icon = ExtResource("2_sbvtn")
 shortcuts = Array[Shortcut]([SubResource("Shortcut_4452u"), SubResource("Shortcut_fg3ec"), SubResource("Shortcut_5aiqg"), SubResource("Shortcut_ypkvd"), SubResource("Shortcut_o3aia"), SubResource("Shortcut_jht22"), SubResource("Shortcut_2q0j8"), SubResource("Shortcut_giagg"), SubResource("Shortcut_uumch"), SubResource("Shortcut_akluy")])
 glyph = "1."
 stream = SubResource("AudioStreamRandomizer_rbcg6")

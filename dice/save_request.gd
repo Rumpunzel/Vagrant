@@ -12,7 +12,6 @@ func _init(
 ) -> void:
 	super(for_character, with_attribute)
 	source = adventure_decision
-	for_character.request_save(self)
 
 func roll_save() -> void:
 	assert(character)

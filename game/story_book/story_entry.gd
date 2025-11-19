@@ -55,11 +55,12 @@ func set_story_page(new_story_page: StoryPage) -> void:
 
 func _update_choices(story_choices: Array[StoryChoice]) -> void:
 	_choices.clear()
-	for story_choice: StoryChoice in story_choices: _add_dialog_button(story_choice)
+	var dialog_button_group: ButtonGroup = ButtonGroup.new()
+	for story_choice: StoryChoice in story_choices: _add_dialog_button(story_choice, dialog_button_group)
 
-func _add_dialog_button(story_choice: StoryChoice) -> void:
+func _add_dialog_button(story_choice: StoryChoice, dialog_button_group: ButtonGroup) -> void:
 	var dialog_button: DialogButton = _dialog_button.instantiate()
-	dialog_button.story_choice = story_choice
+	dialog_button.setup(story_choice, dialog_button_group)
 	dialog_button.modulate.a = 0.0
 	dialog_button.hide()
 	_choices.add(dialog_button)
@@ -94,10 +95,12 @@ func _on_choice_made() -> void:
 	state = State.PAST
 
 func _on_dice_requested(dice_request: DiceRequest) -> void:
-	assert(dice_request)
 	if dice_request is SaveRequest: _on_save_requested(dice_request as SaveRequest)
 	elif dice_request is FightRequest: _on_fight_requested(dice_request as FightRequest)
-	else: assert(false, "Undefined")
+	else:
+		assert(not dice_request)
+		_save_request = null
+		_fight_request = null
 
 func _on_save_requested(save_request: SaveRequest) -> void:
 	assert(save_request)

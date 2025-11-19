@@ -13,7 +13,6 @@ var selected_weapon_dice: Array[WeaponDie] :
 func _init(for_character: Character, adventure_decision: AdventureFightDecision) -> void:
 	super(for_character, for_character.get_highest_attribute())
 	source = adventure_decision
-	for_character.request_fight(self)
 
 func roll_fight() -> void:
 	assert(character)

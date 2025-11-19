@@ -4,12 +4,12 @@ extends StoryChoice
 
 signal dice_requested(dice_request: DiceRequest)
 
-var _protagonist: Character
+var _protagonist_getter: Callable
 
 func chose() -> void:
 	assert(not is_chosen())
 	if get_dice_request(): return
-	set_dice_request(get_adventure_decision().to_dice_request(_protagonist))
+	set_dice_request(get_adventure_decision().to_dice_request(get_protagonist()))
 
 func discard() -> void:
 	assert(not is_chosen())
@@ -19,6 +19,7 @@ func discard() -> void:
 func is_chosen() -> bool: return get_dice_result() != null
 func is_dice_choice() -> bool: return true
 
+func get_protagonist() -> Character: return _protagonist_getter.call()
 @abstract func get_adventure_decision() -> AdventureDiceDecision
 @abstract func get_dice_request() -> DiceRequest
 @abstract func get_dice_result() -> DiceResult

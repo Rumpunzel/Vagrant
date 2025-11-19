@@ -9,6 +9,7 @@ var fight_request: FightRequest:
 		if fight_request:
 			fight_request.fight_rolled.disconnect(_on_dice_rolled)
 		fight_request = new_fight_request
+		if not fight_request: return
 		fight_request.fight_rolled.connect(_on_dice_rolled)
 
 var fight_result: FightResult:
@@ -17,18 +18,22 @@ var fight_result: FightResult:
 		assert(not fight_result)
 		fight_result = new_fight_result
 
-func _init(adventure_fight_decision: AdventureFightDecision, protagonist: Character) -> void:
+func _init(adventure_fight_decision: AdventureFightDecision, protagonist_getter: Callable) -> void:
 	_adventure_fight_decision = adventure_fight_decision
-	_protagonist = protagonist
+	_protagonist_getter = protagonist_getter
 
 func get_adventure_decision() -> AdventureFightDecision: return _adventure_fight_decision
 func get_transition() -> AdventurePage: return null
+
+func get_icon_color() -> Color:
+	var custom_color: Color = get_adventure_decision().get_color()
+	if custom_color != Color.WHITE: return custom_color
+	return get_protagonist().get_highest_attribute().color
 
 func get_dice_request() -> FightRequest: return fight_request
 func get_dice_result() -> FightResult: return fight_result
 
 func set_dice_request(dice_request: DiceRequest) -> void:
-	assert(dice_request is FightRequest)
 	fight_request = dice_request as FightRequest
 	super.set_dice_request(dice_request)
 
