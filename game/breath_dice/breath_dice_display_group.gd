@@ -2,24 +2,29 @@
 class_name BreathDiceDisplayGroup
 extends BreathDiceGroup
 
-var _exhausted: Array[DieType] :
+@export var _exhaustion_modulate: Color = Color.DARK_RED
+
+var _exhaustion: Array[DieType] :
 	set(new_exhaustion):
-		_exhausted = new_exhaustion
+		_exhaustion = new_exhaustion
 		_update_visibility()
 
 func _ready() -> void:
 	die_type_changed.connect(_on_die_type_changed)
 	breath_die_button_added.connect(_on_breath_die_button_added)
 
+func is_exhausted() -> bool: return _exhaustion.has(die_type)
+
 func set_exhaustion(exhaustion: Array[DieType]) -> void:
-	_exhausted = exhaustion
+	_exhaustion = exhaustion
 
 func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
 	super.set_breath_dice(new_breath_dice)
 	_update_visibility()
 
 func _update_visibility() -> void:
-	visible = not (_exhausted.has(die_type) and breath_dice.is_empty())
+	modulate = _exhaustion_modulate if is_exhausted() else Color.WHITE
+	modulate.a = 0.0 if is_exhausted() and breath_dice.is_empty() else 1.0
 
 func _update_tooltip() -> void:
 	tooltip_text = "%d%s" % [get_elements().size(), die_type]

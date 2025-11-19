@@ -24,8 +24,6 @@ func add_breath_die(breath_die: BreathDie) -> void:
 	add(breath_die_button)
 	breath_die_button_added.emit(breath_die_button)
 
-@abstract func set_exhaustion(exhaustion: Array[DieType]) -> void
-
 func highlight(frequency: float = 1.0) -> void:
 	assert(frequency > 0.0)
 	if _highlight_tween: _highlight_tween.kill()
@@ -35,7 +33,11 @@ func highlight(frequency: float = 1.0) -> void:
 
 func stop_highlighting() -> void:
 	if _highlight_tween: _highlight_tween.kill()
+	if is_exhausted(): return
 	modulate.a = 1.0
+
+@abstract func is_exhausted() -> bool
+@abstract func set_exhaustion(exhaustion: Array[DieType]) -> void
 
 func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
 	breath_dice = new_breath_dice
@@ -47,6 +49,7 @@ func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
 		dummy_button.flat = true
 		dummy_button.tooltip_text = "All %s are lost." % die_type
 		dummy_button.mouse_default_cursor_shape = Control.CURSOR_FORBIDDEN
+		dummy_button.show_behind_parent = true
 		add(dummy_button)
 	for breath_die: BreathDie in breath_dice:
 		assert(breath_die.die_type == die_type)

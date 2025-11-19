@@ -10,6 +10,8 @@ func _ready() -> void:
 	die_type_changed.connect(_on_die_type_changed)
 	breath_die_button_added.connect(_on_breath_die_button_added)
 
+func is_exhausted() -> bool: return _exhaustion.visible
+
 func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
 	super.set_breath_dice(new_breath_dice)
 	_all_button.visible = breath_dice.size() > 1

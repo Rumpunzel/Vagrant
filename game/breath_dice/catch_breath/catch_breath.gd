@@ -29,8 +29,8 @@ signal status_changed
 var _die_to_exhaust: DieType :
 	set(new_die_to_exhaust):
 		_die_to_exhaust = new_die_to_exhaust
-		if _die_to_exhaust: _update_highlights()
-		else: _breath_dice.stop_highlighting()
+		_update_highlights()
+		if not _die_to_exhaust: _breath_dice.stop_highlighting()
 		status_changed.emit()
 
 func catch_breath() -> bool:
@@ -53,6 +53,9 @@ func update_exhaustion() -> void:
 
 func _update_highlights() -> void:
 	_breath_dice.highlight(character.get_recoverable_breath_dice(_die_to_exhaust).keys())
+	var potential_exhaustion: Array[DieType] = character.exhaustion.duplicate()
+	if _die_to_exhaust: potential_exhaustion.append(_die_to_exhaust)
+	for button_group: BreathDiceGroup in _breath_dice.button_groups.values(): button_group.set_exhaustion(potential_exhaustion)
 
 func can_catch_breath() -> bool:
 	return _die_to_exhaust and character.can_catch_breath(_die_to_exhaust)
