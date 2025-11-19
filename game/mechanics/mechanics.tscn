@@ -43,7 +43,7 @@ layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="CatchBreath" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(131, 32)
+custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -53,13 +53,16 @@ flat = true
 alignment = 0
 script = ExtResource("2_bi4s4")
 hover_neighbors = [NodePath("../MakeCamp"), NodePath("../RestBones")]
-margin_left = 1
-margin_right = 1
+glyph_size = Vector2(32, 32)
+margin_left = 0
+margin_top = 0
+margin_right = 0
+margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="MakeCamp" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(122, 32)
+custom_minimum_size = Vector2(128, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -70,13 +73,16 @@ flat = true
 alignment = 0
 script = ExtResource("2_bi4s4")
 hover_neighbors = [NodePath("../CatchBreath"), NodePath("../RestBones")]
-margin_left = 1
-margin_right = 1
+glyph_size = Vector2(32, 32)
+margin_left = 0
+margin_top = 0
+margin_right = 0
+margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="RestBones" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(116, 32)
+custom_minimum_size = Vector2(122, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -87,13 +93,16 @@ flat = true
 alignment = 0
 script = ExtResource("2_bi4s4")
 hover_neighbors = [NodePath("../MakeCamp"), NodePath("../CatchBreath")]
-margin_left = 1
-margin_right = 1
+glyph_size = Vector2(32, 32)
+margin_left = 0
+margin_top = 0
+margin_right = 0
+margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="AdmireLoot" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(126, 32)
+custom_minimum_size = Vector2(132, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -104,13 +113,16 @@ flat = true
 alignment = 0
 script = ExtResource("2_bi4s4")
 hover_neighbors = [NodePath("../PonderMap"), NodePath("../AssessVenture")]
-margin_left = 1
-margin_right = 1
+glyph_size = Vector2(32, 32)
+margin_left = 0
+margin_top = 0
+margin_right = 0
+margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="PonderMap" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(125, 32)
+custom_minimum_size = Vector2(131, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -121,13 +133,16 @@ flat = true
 alignment = 0
 script = ExtResource("2_bi4s4")
 hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../AssessVenture")]
-margin_left = 1
-margin_right = 1
+glyph_size = Vector2(32, 32)
+margin_left = 0
+margin_top = 0
+margin_right = 0
+margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="AssessVenture" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(148, 32)
+custom_minimum_size = Vector2(154, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
@@ -138,8 +153,11 @@ flat = true
 alignment = 0
 script = ExtResource("2_bi4s4")
 hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../PonderMap")]
-margin_left = 1
-margin_right = 1
+glyph_size = Vector2(32, 32)
+margin_left = 0
+margin_top = 0
+margin_right = 0
+margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
