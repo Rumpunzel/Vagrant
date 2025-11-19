@@ -4,7 +4,6 @@ extends CarouselPanel
 
 @export var die_type: DieType :
 	set(new_die_type):
-		assert(new_die_type)
 		die_type = new_die_type
 		if not is_node_ready(): await ready
 		if die_type:

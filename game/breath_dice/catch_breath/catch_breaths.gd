@@ -2,6 +2,7 @@
 class_name CatchBreaths
 extends CharacterList
 
+signal status_changed(can_catch_breath: bool)
 signal caught_breath
 
 @export_group("Configuration")
@@ -15,6 +16,7 @@ func _ready() -> void:
 func _create_character_entry(character: Character) -> Control:
 	var catch_breath: CatchBreath = _catch_breath.instantiate()
 	catch_breath.character = character
+	catch_breath.status_changed.connect(_on_status_changed)
 	return catch_breath
 
 func _get_catch_breaths() -> Array[CatchBreath]:
@@ -22,6 +24,20 @@ func _get_catch_breaths() -> Array[CatchBreath]:
 	catch_breaths.assign(_character_list.get_elements())
 	return catch_breaths
 
+func _on_status_changed() -> void:
+	var catch_breaths: Array[CatchBreath] = _get_catch_breaths()
+	if catch_breaths.is_empty():
+		status_changed.emit(false)
+		return
+	for catch_breath: CatchBreath in catch_breaths:
+		if not catch_breath.can_catch_breath():
+			status_changed.emit(false)
+			return
+	status_changed.emit(true)
+
 func _on_confirmed() -> void:
-	for catch_breath: CatchBreath in _get_catch_breaths(): catch_breath.catch_breath()
-	caught_breath.emit()
+	var characters_caught_breath: Array[Character] = []
+	for catch_breath: CatchBreath in _get_catch_breaths():
+		var did_catch_breath: bool = catch_breath.catch_breath()
+		if did_catch_breath: characters_caught_breath.append(catch_breath.character)
+	if not characters_caught_breath.is_empty(): caught_breath.emit()

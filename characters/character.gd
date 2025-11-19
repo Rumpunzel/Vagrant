@@ -15,11 +15,12 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 		breath_dice = character_profile.get_breath_dice()
 		character_profile_changed.emit(character_profile)
 
-@export var _exhaustion: Array[DieType] :
+@export var exhaustion: Array[DieType] :
 	set(new_exhaustion):
-		if new_exhaustion == _exhaustion: return
-		_exhaustion = new_exhaustion
-		exhaustion_changed.emit(_exhaustion)
+		if new_exhaustion == exhaustion: return
+		exhaustion = new_exhaustion
+		exhaustion.sort_custom(DieType.compare_ascending)
+		exhaustion_changed.emit(exhaustion)
 
 var attribute_scores: Dictionary[CharacterAttribute, AttributeScore] :
 	set(new_attribute_scores):
@@ -41,25 +42,27 @@ var breath_dice: Array[BreathDie] :
 func _init(new_character_profile: CharacterProfile = null) -> void:
 	character_profile = new_character_profile
 
-func catch_breath(die_type_to_exhaust: DieType) -> void:
-	assert(can_catch_breath())
-	assert(not _exhaustion.has(die_type_to_exhaust))
-	_exhaustion.append(die_type_to_exhaust)
-	_exhaustion.sort_custom(DieType.compare_ascending)
+func catch_breath(die_to_exhaust: DieType) -> void:
+	assert(die_to_exhaust)
+	assert(can_catch_breath(die_to_exhaust))
+	assert(not exhaustion.has(die_to_exhaust))
+	## Exhaustion
+	var new_exhaustion: Array[DieType] = exhaustion.duplicate()
+	new_exhaustion.append(die_to_exhaust)
+	exhaustion = new_exhaustion
+	## Breath Dice Recovery
 	var new_breath_dice: Array[BreathDie] = breath_dice.duplicate()
-	var breath_die_types: Dictionary[DieType, int] = character_profile.breath_die_types
-	for breath_die_type: DieType in breath_die_types.keys():
-		if _exhaustion.has(breath_die_type): continue
-		var dice_to_recover: int = breath_die_types[breath_die_type]
-		for breath_die: BreathDie in new_breath_dice: if breath_die.die_type == breath_die_type: dice_to_recover -= 1
-		if dice_to_recover <= 0: continue
+	var recoverable_breath_dice: Dictionary[DieType, int] = get_recoverable_breath_dice(die_to_exhaust)
+	for breath_die_type: DieType in recoverable_breath_dice.keys():
+		assert(not exhaustion.has(breath_die_type))
+		var dice_to_recover: int = recoverable_breath_dice[breath_die_type]
 		var recovered_breath_dice: Array[BreathDie] = breath_die_type.get_breath_dice_pool(dice_to_recover)
 		new_breath_dice.append_array(recovered_breath_dice)
 	assert(breath_dice != new_breath_dice)
 	breath_dice = new_breath_dice
 
-func can_catch_breath() -> bool:
-	return not get_lost_breath_dice().is_empty() and not get_available_exhaustion().is_empty()
+func can_catch_breath(die_to_exhaust: DieType) -> bool:
+	return not get_recoverable_breath_dice(die_to_exhaust).is_empty() and get_available_exhaustion().size() > 1
 
 func get_lost_breath_dice() -> Dictionary[DieType, int]:
 	var lost_breath_die_types: Dictionary[DieType, int] = {}
@@ -70,10 +73,16 @@ func get_lost_breath_dice() -> Dictionary[DieType, int]:
 		if missing_dice_count > 0: lost_breath_die_types[die_type] = missing_dice_count
 	return lost_breath_die_types
 
+func get_recoverable_breath_dice(die_to_exhaust: DieType) -> Dictionary[DieType, int]:
+	var recoverable_breath_dice: Dictionary[DieType, int] = get_lost_breath_dice()
+	recoverable_breath_dice.erase(die_to_exhaust)
+	for die_type: DieType in exhaustion: recoverable_breath_dice.erase(die_type)
+	return recoverable_breath_dice
+
 func get_available_exhaustion() -> Array[DieType]:
 	var unexhausted_die_types: Array[DieType] = []
 	var breath_die_types: Dictionary[DieType, int] = character_profile.breath_die_types
-	unexhausted_die_types.assign(breath_die_types.keys().filter(func(die_type: DieType) -> bool: return not _exhaustion.has(die_type)))
+	unexhausted_die_types.assign(breath_die_types.keys().filter(func(die_type: DieType) -> bool: return not exhaustion.has(die_type)))
 	return unexhausted_die_types
 
 func get_smallest_exhaustion() -> DieType:

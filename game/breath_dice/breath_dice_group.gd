@@ -1,4 +1,5 @@
 @tool
+@abstract
 class_name BreathDiceGroup
 extends FlexContainer
 
@@ -13,9 +14,31 @@ signal breath_die_button_added(breath_die_button: BreathDieButton)
 @export_group("Configuration")
 @export var _breath_die_button: PackedScene
 
+var breath_dice: Array[BreathDie] : set = set_breath_dice
+
 var _highlight_tween: Tween
 
-func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
+func add_breath_die(breath_die: BreathDie) -> void:
+	var breath_die_button: BreathDieButton = _breath_die_button.instantiate()
+	breath_die_button.breath_die = breath_die
+	add(breath_die_button)
+	breath_die_button_added.emit(breath_die_button)
+
+@abstract func set_exhaustion(exhaustion: Array[DieType]) -> void
+
+func highlight(frequency: float = 1.0) -> void:
+	assert(frequency > 0.0)
+	if _highlight_tween: _highlight_tween.kill()
+	_highlight_tween = create_tween().set_loops()
+	_highlight_tween.tween_property(self, "modulate:a", 0.5, 1.0 / frequency).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_IN)
+	_highlight_tween.tween_property(self, "modulate:a", modulate.a, 1.0 / frequency).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
+
+func stop_highlighting() -> void:
+	if _highlight_tween: _highlight_tween.kill()
+	modulate.a = 1.0
+
+func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
+	breath_dice = new_breath_dice
 	clear()
 	if breath_dice.is_empty():
 		var dummy_button: BreathDieButton = _breath_die_button.instantiate()
@@ -28,20 +51,3 @@ func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
 	for breath_die: BreathDie in breath_dice:
 		assert(breath_die.die_type == die_type)
 		add_breath_die(breath_die)
-
-func add_breath_die(breath_die: BreathDie) -> void:
-	var breath_die_button: BreathDieButton = _breath_die_button.instantiate()
-	breath_die_button.breath_die = breath_die
-	add(breath_die_button)
-	breath_die_button_added.emit(breath_die_button)
-
-func highlight(frequency: float = 1.0) -> void:
-	assert(frequency > 0.0)
-	if _highlight_tween: _highlight_tween.kill()
-	_highlight_tween = create_tween().set_loops()
-	_highlight_tween.tween_property(self, "modulate:a", 0.5, 1.0 / frequency).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_IN)
-	_highlight_tween.tween_property(self, "modulate:a", modulate.a, 1.0 / frequency).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
-
-func stop_highlighting() -> void:
-	if _highlight_tween: _highlight_tween.kill()
-	modulate.a = 1.0

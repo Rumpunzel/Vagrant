@@ -12,11 +12,12 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q7j6d"]
 
-[node name="Mechanics" type="PanelContainer" node_paths=PackedStringArray("_catch_breaths", "_catch_breath_button")]
+[node name="Mechanics" type="PanelContainer" node_paths=PackedStringArray("_catch_breath_popup", "_catch_breaths", "_catch_breath_button")]
 offset_right = 164.0
 offset_bottom = 208.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
 script = ExtResource("1_0hjxh")
+_catch_breath_popup = NodePath("CatchBreathDialog")
 _catch_breaths = NodePath("CatchBreathDialog/CatchBreaths")
 _catch_breath_button = NodePath("MarginContainer/VBoxContainer/CatchBreath")
 metadata/_custom_type_script = "uid://cgdirjbx82wdh"
@@ -143,4 +144,5 @@ flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [connection signal="confirmed" from="CatchBreathDialog" to="CatchBreathDialog/CatchBreaths" method="_on_confirmed"]
+[connection signal="status_changed" from="CatchBreathDialog/CatchBreaths" to="." method="_on_catch_breaths_status_changed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/CatchBreath" to="CatchBreathDialog" method="popup_centered"]

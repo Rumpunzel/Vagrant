@@ -13,8 +13,8 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	visible = character != null
 
-func _update() -> void:
-	super._update()
+func profile_update() -> void:
+	super.profile_update()
 	_name.text = _character_profile.name
 	_title.text = _character_profile.get_formatted_title()
 	_ability_labels.update_abilities(_character_profile.origins)

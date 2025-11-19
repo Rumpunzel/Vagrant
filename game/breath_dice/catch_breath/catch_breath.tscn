@@ -63,3 +63,5 @@ items = Array[String](["d4", "d6", "d8", "d10", "d12", "None"])
 
 [node name="BreathDice" parent="MarginContainer/VBoxContainer" instance=ExtResource("12_ppey5")]
 layout_mode = 2
+
+[connection signal="die_type_selected" from="MarginContainer/VBoxContainer/DieSelection" to="." method="_on_die_type_selected"]

@@ -12,6 +12,7 @@ signal attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, Attrib
 			if not _character_profile.attribute_scores.has(attribute) or not _character_profile.attribute_scores.get(attribute): continue
 			var attribute_score_roller: AttributeScoreRoller = _attribute_score_rollers[attribute]
 			attribute_score_roller.score = _character_profile.attribute_scores[attribute]
+			attribute_score_roller.disable()
 
 @export_group("Configuration")
 @export var _attribute_score_roller: PackedScene

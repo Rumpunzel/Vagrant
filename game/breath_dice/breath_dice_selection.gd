@@ -20,6 +20,9 @@ signal confirmed
 var _dice_request: DiceRequest :
 	set(new_dice_request):
 		assert(new_dice_request)
+		if _dice_request:
+			_dice_request.selected_breath_dice_changed.disconnect(_update_all_in_button)
+			_dice_request.character.exhaustion_changed.disconnect(_breath_dice_selection_buttons.set_exhaustion)
 		_dice_request = new_dice_request
 		var character: Character = _dice_request.character
 		_portrait.texture = character.character_profile.get_portrait(_portrait_identifier)
@@ -32,7 +35,9 @@ var _dice_request: DiceRequest :
 		_breath_dice_selection_buttons.update_dice_request(_dice_request)
 		_enable_hud()
 		_update_all_in_button(_dice_request.selected_breath_dice, character)
+		_breath_dice_selection_buttons.set_exhaustion(character.exhaustion)
 		_dice_request.selected_breath_dice_changed.connect(_update_all_in_button.bind(character))
+		character.exhaustion_changed.connect(_breath_dice_selection_buttons.set_exhaustion)
 		#_ok_button.grab_focus()
 
 func request_save(save_request: SaveRequest) -> void:
@@ -89,6 +94,8 @@ func _on_fight_rolled(fight_result: FightResult) -> void:
 	_on_rolled()
 
 func _on_rolled() -> void:
+	_dice_request.selected_breath_dice_changed.disconnect(_update_all_in_button)
+	_dice_request.character.exhaustion_changed.disconnect(_breath_dice_selection_buttons.set_exhaustion)
 	_dice_log_dice_request_entry.visible = false
 	_dice_log_save_result_entry.visible = true
 	_breath_dice_selection_buttons.deactivate_buttons()

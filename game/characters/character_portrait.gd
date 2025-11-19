@@ -20,10 +20,6 @@ func select() -> void:
 func select_no_signal() -> void:
 	_button.set_pressed_no_signal(true)
 
-func _update() -> void:
-	var character_profile: CharacterProfile = character.character_profile
-	_portrait.texture = character_profile.get_portrait(_portrait_identifier)
-
 func _update_portrait() -> void:
 	_portrait.texture = _character_profile.get_portrait(_portrait_identifier)
 

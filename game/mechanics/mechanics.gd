@@ -7,20 +7,20 @@ extends PanelContainer
 		assert(not _party)
 		_party = new_party
 		_catch_breaths.characters = _party
-		_update_catch_breath_button()
-		_party.character_added.connect(_on_character_added)
 
 @export_group("Configuration")
+@export var _catch_breath_popup: ConfirmationDialog
 @export var _catch_breaths: CatchBreaths
 @export var _catch_breath_button: Button
 
-func _on_character_added(character: Character) -> void:
-	character.breath_dice_changed.connect(_update_catch_breath_button.unbind(1))
-	character.breath_dice_states_changed.connect(_update_catch_breath_button)
+func _ready() -> void:
+	_catch_breath_popup.get_ok_button().mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_catch_breath_popup.get_cancel_button().mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
-func _update_catch_breath_button() -> void:
+func _on_catch_breaths_status_changed(can_catch_breath: bool) -> void:
+	_catch_breath_popup.get_ok_button().disabled = not can_catch_breath
 	for character: Character in _party.characters.values():
-		if character.can_catch_breath():
+		if character.can_catch_breath(null):
 			_catch_breath_button.disabled = false
 			return
-	_catch_breath_button.disabled = true
+	_catch_breath_button.disabled = not can_catch_breath

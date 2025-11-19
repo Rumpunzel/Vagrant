@@ -40,14 +40,17 @@ func update() -> void:
 	_attribute_score.score = attribute_score
 	_score.text = "%s = %d" % [attribute_score.get_details(), attribute_score.get_score()]
 
+func disable() -> void:
+	_button.disabled = true
+	_button.active = false
+	var next: Control = find_valid_focus_neighbor(SIDE_RIGHT)
+	if not next: next = find_valid_focus_neighbor(SIDE_LEFT)
+	if next: next.grab_focus()
+
 func _get_attribute_score() -> AttributeScore:
 	return AttributeScore.create_with_modifiers(attribute, score, modifiers)
 
 func _on_button_pressed() -> void:
-	_button.disabled = true
-	_button.active = false
+	disable()
 	score = DiceRoller.roll_attribute()
 	attribute_score_rolled.emit(attribute, score)
-	var next: Control = find_valid_focus_neighbor(SIDE_RIGHT)
-	if not next: next = find_valid_focus_neighbor(SIDE_LEFT)
-	if next: next.grab_focus()

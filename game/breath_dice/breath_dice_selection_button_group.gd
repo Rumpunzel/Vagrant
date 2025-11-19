@@ -3,15 +3,19 @@ class_name BreathDiceSelectionButtonGroup
 extends BreathDiceGroup
 
 @export_group("Configuration")
+@export var _exhaustion: TextureRect
 @export var _all_button: DisplayButton
 
 func _ready() -> void:
 	die_type_changed.connect(_on_die_type_changed)
 	breath_die_button_added.connect(_on_breath_die_button_added)
 
-func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
-	super.setup_breath_dice(breath_dice)
+func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
+	super.set_breath_dice(new_breath_dice)
 	_all_button.visible = breath_dice.size() > 1
+
+func set_exhaustion(exhaustion: Array[DieType]) -> void:
+	_exhaustion.visible = exhaustion.has(die_type)
 
 func update_dice_request(dice_request: DiceRequest) -> void:
 	for button: BreathDieSelectionButton in get_elements(): button.current_dice_request = dice_request
