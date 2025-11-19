@@ -50,11 +50,6 @@ func _ready() -> void:
 	trigger_control.focus_entered.connect(_on_focus_entered)
 	trigger_control.focus_exited.connect(_on_focus_exited)
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if get_state() == State.HOVERED and event.is_action_pressed("ui_cancel"):
-		_on_unhover()
-		get_viewport().set_input_as_handled()
-
 func show(color_modulate: Color = _modulate, show_neighbours: bool = true) -> void:
 	_fade_in(color_modulate)
 	if not show_neighbours: return

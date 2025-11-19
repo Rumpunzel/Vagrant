@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://m2hkfwiqdk33"]
+[gd_scene load_steps=12 format=3 uid="uid://m2hkfwiqdk33"]
 
 [ext_resource type="Script" uid="uid://cgdirjbx82wdh" path="res://game/mechanics/mechanics.gd" id="1_0hjxh"]
 [ext_resource type="PackedScene" uid="uid://ccpu52v8m0ynd" path="res://game/breath_dice/catch_breath/catch_breaths.tscn" id="1_x3l5n"]
 [ext_resource type="Script" uid="uid://c7qjo0ilqtmp6" path="res://custom_nodes/control/fancy_hover_button.gd" id="2_bi4s4"]
+[ext_resource type="Script" uid="uid://dcbtc7gltxkcb" path="res://custom_nodes/window_blur_toggler.gd" id="2_lbybe"]
 [ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://game/icons/magic-potion.svg" id="2_rd57s"]
 [ext_resource type="Texture2D" uid="uid://qbxnlgxl1qta" path="res://game/icons/campfire.svg" id="4_0hjxh"]
 [ext_resource type="Texture2D" uid="uid://bj76caxo53saa" path="res://game/icons/camping-tent.svg" id="5_lbybe"]
@@ -27,12 +28,18 @@ transparent_bg = true
 oversampling_override = 1.0
 title = "Choose Exhaustion..."
 position = Vector2i(256, 256)
-size = Vector2i(200, 193)
+size = Vector2i(236, 193)
 unresizable = true
 transparent = true
 ok_button_text = "Catch Breath"
 
+[node name="WindowBlurToggler" type="Node" parent="CatchBreathDialog" node_paths=PackedStringArray("trigger_window")]
+script = ExtResource("2_lbybe")
+trigger_window = NodePath("..")
+metadata/_custom_type_script = "uid://dcbtc7gltxkcb"
+
 [node name="CatchBreaths" parent="CatchBreathDialog" instance=ExtResource("1_x3l5n")]
+offset_right = 228.0
 offset_bottom = 144.0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

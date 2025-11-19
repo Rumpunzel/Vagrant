@@ -29,7 +29,7 @@ func highlight(frequency: float = 1.0) -> void:
 	if _highlight_tween: _highlight_tween.kill()
 	_highlight_tween = create_tween().set_loops()
 	_highlight_tween.tween_property(self, "modulate:a", 0.5, 1.0 / frequency).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_IN).from(1.0)
-	_highlight_tween.tween_property(self, "modulate:a", 1.0, 1.0 / frequency).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT).from(0.5)
+	_highlight_tween.tween_property(self, "modulate:a", 1.0, 1.0 / frequency).set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_IN).from(0.5)
 
 func stop_highlighting() -> void:
 	if _highlight_tween: _highlight_tween.kill()
