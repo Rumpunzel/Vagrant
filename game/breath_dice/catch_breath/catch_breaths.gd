@@ -23,5 +23,5 @@ func _get_catch_breaths() -> Array[CatchBreath]:
 	return catch_breaths
 
 func _on_confirmed() -> void:
-	for catch_breath: CatchBreath in _get_catch_breaths(): catch_breath.catch_breath()#
+	for catch_breath: CatchBreath in _get_catch_breaths(): catch_breath.catch_breath()
 	caught_breath.emit()

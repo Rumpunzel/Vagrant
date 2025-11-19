@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=3 format=3 uid="uid://b1c6aib060ja5"]
+[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=4 format=3 uid="uid://b1c6aib060ja5"]
 
+[ext_resource type="Texture2D" uid="uid://b1s6hs7g8cdui" path="res://game/icons/crossed-axes.svg" id="1_8xoo1"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_27sg8"]
 [ext_resource type="Texture2D" uid="uid://bkw7nl4evlydc" path="res://characters/attributes/icons/cracked-helm.svg" id="1_ga1e2"]
 
@@ -7,6 +8,7 @@
 script = ExtResource("1_27sg8")
 descriptor = "Guts"
 icon = ExtResource("1_ga1e2")
+fight_icon = ExtResource("1_8xoo1")
 color = Color(0.56078434, 0.5176471, 0.45490196, 1)
 details = "Strength, endurance, and grit."
 stance_description = "Charge with might and ferocity!"

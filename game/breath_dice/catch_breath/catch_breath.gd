@@ -22,14 +22,14 @@ extends PanelContainer
 @export var _breath_dice: BreathDice
 
 func catch_breath() -> void:
-	if not visible: return
+	if not character.can_catch_breath(): return
 	character.catch_breath(_die_selection.get_selected_die_type())
 
 func update_die_types() -> void:
-	visible = character.has_lost_breath()
-	var available_exhaustion: Array[DieType] = character.get_available_exhaustion()
-	_die_selection.die_types = available_exhaustion
+	#visible = character.has_lost_breath()
+	_die_selection.die_types = character.get_available_exhaustion()
 	_die_selection.set_selected_die_type(character.get_smallest_exhaustion())
+	_breath_dice.highlight(character.get_lost_breath_dice().keys())
 
 func _on_breath_dice_changed() -> void:
 	update_die_types()

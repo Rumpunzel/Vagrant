@@ -30,6 +30,12 @@ func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
 		var button_group: BreathDiceGroup = _button_groups[die_type]
 		button_group.setup_breath_dice(relevant_breath_dice)
 
+func highlight(die_types: Array[DieType]) -> void:
+	for die_type: DieType in _button_groups.keys():
+		var button_group: BreathDiceGroup = _button_groups[die_type]
+		if die_types.has(die_type): button_group.highlight()
+		else: button_group.stop_highlighting()
+
 func _setup_die_types(die_types: Array[DieType] = Rules.BREATH_DICE) -> void:
 	_button_groups.clear()
 	_die_types.clear()

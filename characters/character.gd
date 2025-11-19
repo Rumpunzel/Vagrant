@@ -42,6 +42,7 @@ func _init(new_character_profile: CharacterProfile = null) -> void:
 	character_profile = new_character_profile
 
 func catch_breath(die_type_to_exhaust: DieType) -> void:
+	assert(can_catch_breath())
 	assert(not _exhaustion.has(die_type_to_exhaust))
 	_exhaustion.append(die_type_to_exhaust)
 	_exhaustion.sort_custom(DieType.compare_ascending)
@@ -58,7 +59,16 @@ func catch_breath(die_type_to_exhaust: DieType) -> void:
 	breath_dice = new_breath_dice
 
 func can_catch_breath() -> bool:
-	return has_lost_breath() and not get_available_exhaustion().is_empty()
+	return not get_lost_breath_dice().is_empty() and not get_available_exhaustion().is_empty()
+
+func get_lost_breath_dice() -> Dictionary[DieType, int]:
+	var lost_breath_die_types: Dictionary[DieType, int] = {}
+	var breath_die_types: Dictionary[DieType, int] = character_profile.breath_die_types
+	for die_type: DieType in breath_die_types.keys():
+		var missing_dice_count: int = breath_die_types[die_type]
+		for breath_die: BreathDie in breath_dice: if breath_die.die_type == die_type: missing_dice_count -= 1
+		if missing_dice_count > 0: lost_breath_die_types[die_type] = missing_dice_count
+	return lost_breath_die_types
 
 func get_available_exhaustion() -> Array[DieType]:
 	var unexhausted_die_types: Array[DieType] = []
@@ -71,15 +81,6 @@ func get_smallest_exhaustion() -> DieType:
 	for die_type: DieType in get_available_exhaustion():
 		if not smallest_die_type or die_type.faces < smallest_die_type.faces: smallest_die_type = die_type
 	return smallest_die_type
-
-func has_lost_breath() -> bool:
-	var breath_die_types: Dictionary[DieType, int] = character_profile.breath_die_types
-	for die_type: DieType in breath_die_types.keys():
-		var dice_count: int = 0
-		for breath_die: BreathDie in breath_dice:
-			if breath_die.die_type == die_type: dice_count += 1
-		if dice_count < breath_die_types[die_type]: return true
-	return false
 
 func get_portrait() -> Texture2D:
 	return character_profile.portrait

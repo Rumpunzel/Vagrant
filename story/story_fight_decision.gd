@@ -25,6 +25,11 @@ func _init(adventure_fight_decision: AdventureFightDecision, protagonist_getter:
 func get_adventure_decision() -> AdventureFightDecision: return _adventure_fight_decision
 func get_transition() -> AdventurePage: return null
 
+func get_icon() -> Texture2D:
+	var custom_icon: Texture2D = get_adventure_decision().get_icon()
+	if custom_icon: return custom_icon
+	return get_protagonist().get_highest_attribute().fight_icon
+
 func get_icon_color() -> Color:
 	var custom_color: Color = get_adventure_decision().get_color()
 	if custom_color != Color.WHITE: return custom_color

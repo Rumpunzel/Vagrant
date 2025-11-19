@@ -1,12 +1,14 @@
-[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=3 format=3 uid="uid://2vf8mdpla1u2"]
+[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=4 format=3 uid="uid://2vf8mdpla1u2"]
 
 [ext_resource type="Texture2D" uid="uid://wqwykjabmg6s" path="res://characters/attributes/icons/skull-crack.svg" id="1_rkmxj"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_wgpsi"]
+[ext_resource type="Texture2D" uid="uid://c18vwojibiavq" path="res://characters/origins/icons/crossbow.svg" id="1_wtrd3"]
 
 [resource]
 script = ExtResource("1_wgpsi")
 descriptor = "Nerves"
 icon = ExtResource("1_rkmxj")
+fight_icon = ExtResource("1_wtrd3")
 color = Color(0.39215687, 0.53333336, 0.6117647, 1)
 details = "Precision, composure, and stealth."
 stance_description = "Feint and trick with guile and precision!"
