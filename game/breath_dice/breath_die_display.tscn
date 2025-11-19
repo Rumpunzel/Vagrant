@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://c4kqwadk1w71t"]
 
-[ext_resource type="Texture2D" uid="uid://ce4s8bjlixkxf" path="res://dice/icons/d8_blank.png" id="1_rtq5t"]
+[ext_resource type="Texture2D" uid="uid://sue7comyk6aq" path="res://dice/icons/d8.png" id="1_bixec"]
 [ext_resource type="Script" uid="uid://c1troxvm5qfk6" path="res://game/breath_dice/breath_die_button.gd" id="2_rtq5t"]
 [ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="3_6wbwr"]
 [ext_resource type="Script" uid="uid://o5jur8n8f1c" path="res://custom_nodes/control/rectifier.gd" id="4_ccr72"]
@@ -8,16 +8,15 @@
 [node name="BreathDieDisplay" type="Button"]
 offset_right = 63.0
 offset_bottom = 71.0
-focus_mode = 0
-mouse_filter = 1
-button_mask = 0
-icon = ExtResource("1_rtq5t")
+mouse_default_cursor_shape = 16
+icon = ExtResource("1_bixec")
 flat = true
 expand_icon = true
 script = ExtResource("2_rtq5t")
 die_type = ExtResource("3_6wbwr")
 icon_type = 1
-active = false
+_active_cursor = 16
+_inactive_cursor = 8
 metadata/_custom_type_script = "uid://c1troxvm5qfk6"
 
 [node name="Rectifier" type="Node" parent="." node_paths=PackedStringArray("control_to_rectify")]

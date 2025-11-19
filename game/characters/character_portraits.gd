@@ -37,4 +37,5 @@ func _get_portraits() -> Array[CharacterPortrait]:
 	return portraits
 
 func _on_dice_requested(dice_request: DiceRequest) -> void:
+	if not dice_request: return
 	_character_portraits[dice_request.character].select_no_signal()

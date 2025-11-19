@@ -43,10 +43,17 @@ var current_story_page: StoryPage:
 			if choice is StoryDiceDecision: (choice as StoryDiceDecision).dice_requested.connect(_on_dice_requested)
 		story_page_entered.emit(current_story_page)
 
-var _current_dice_request: DiceRequest:
-	set(new_dice_request):
-		_current_dice_request = new_dice_request
+var _current_dice_request: DiceRequest :
+	set(new_current_dice_request):
+		if _current_dice_request:
+			if _current_dice_request is SaveRequest: (_current_dice_request as SaveRequest).save_rolled.disconnect(_on_save_rolled)
+			elif _current_dice_request is FightRequest: (_current_dice_request as FightRequest).fight_rolled.disconnect(_on_fight_rolled)
+		_current_dice_request = new_current_dice_request
 		dice_requested.emit(_current_dice_request)
+		if not _current_dice_request: return
+		if _current_dice_request is SaveRequest: (_current_dice_request as SaveRequest).save_rolled.connect(_on_save_rolled)
+		elif _current_dice_request is FightRequest: (_current_dice_request as FightRequest).fight_rolled.connect(_on_fight_rolled)
+		else: assert(false, "Not implemented!")
 
 var _page_stack: Array[AdventurePage] = []
 # StoryPage -> Array[StoryPage]
@@ -109,7 +116,17 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 	enter_page(story_choice.get_transition())
 
 func _on_dice_requested(dice_request: DiceRequest) -> void:
-	if dice_request: dice_requested.emit(dice_request)
+	_current_dice_request = dice_request
+
+func _on_save_rolled(save_result: SaveResult) -> void:
+	assert(save_result)
+	assert(save_result.save_request == _current_dice_request)
+	_current_dice_request = null
+
+func _on_fight_rolled(fight_result: FightResult) -> void:
+	assert(fight_result)
+	assert(fight_result.fight_request == _current_dice_request)
+	_current_dice_request = null
 
 func _on_character_selected(character: Character, _character_portrait: CharacterPortrait) -> void:
 	if not _current_dice_request: return

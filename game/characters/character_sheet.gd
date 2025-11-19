@@ -47,9 +47,9 @@ func _on_character_selected(selected_character: Character, source: Control) -> v
 	show()
 
 func _on_dice_requested(dice_request: DiceRequest) -> void:
-	character = dice_request.character
+	if dice_request: character = dice_request.character
 	_breath_dice.update_dice_request(dice_request)
-	show()
+	if dice_request: show()
 
 func _on_save_dialog_file_selected(path: String) -> void:
 	ResourceSaver.save(character.character_profile, path, ResourceSaver.FLAG_CHANGE_PATH)

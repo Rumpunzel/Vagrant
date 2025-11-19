@@ -33,8 +33,8 @@ enum IconType {
 
 func _update() -> void:
 	disabled = not breath_die.alive
-	if disabled: tooltip_text = "This die is lost."
-	else: tooltip_text = "%s" % breath_die.die_type
+	if disabled: tooltip_text = "This %s is lost"  % breath_die.die_type
+	else: tooltip_text = "%s breath die" % breath_die.die_type
 
 func _on_die_state_changed(_alive: bool) -> void:
 	_update()

@@ -55,6 +55,7 @@ folder_colors={
 "res://adventure/": "orange",
 "res://assets/": "red",
 "res://characters/": "yellow",
+"res://custom_nodes/": "teal",
 "res://dice/": "purple",
 "res://game/": "green",
 "res://story/": "blue"

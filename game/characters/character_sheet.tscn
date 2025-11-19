@@ -110,6 +110,7 @@ alignment = 1
 
 [node name="BreathDiceSelectionButtons" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
 layout_mode = 2
+_reset_on_deactivation = true
 
 [node name="AbilityLabels" parent="MarginContainer/VBoxContainer/VBoxContainer" instance=ExtResource("5_davb4")]
 layout_mode = 2

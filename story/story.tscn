@@ -1,26 +1,17 @@
-[gd_scene load_steps=20 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=12 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="1_yob3j"]
 [ext_resource type="Script" uid="uid://ff8rnwb5cmjw" path="res://characters/characters.gd" id="3_kidyl"]
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="6_lxldy"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="7_dg13j"]
-[ext_resource type="PackedScene" uid="uid://ccpu52v8m0ynd" path="res://game/breath_dice/catch_breath/catch_breaths.tscn" id="8_tarmy"]
+[ext_resource type="PackedScene" uid="uid://m2hkfwiqdk33" path="res://game/mechanics/mechanics.tscn" id="8_xa0d8"]
 [ext_resource type="PackedScene" uid="uid://14h1hukjjol7" path="res://game/characters/character_sheet.tscn" id="9_y6kqs"]
 [ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://characters/dorian.tres" id="10_vgyf7"]
 [ext_resource type="PackedScene" uid="uid://d2hp0hcp2w5ro" path="res://game/characters/character_portraits.tscn" id="11_8nc86"]
-[ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://game/icons/magic-potion.svg" id="12_2kn6m"]
-[ext_resource type="Script" uid="uid://c7qjo0ilqtmp6" path="res://custom_nodes/control/fancy_hover_button.gd" id="13_mtsjq"]
-[ext_resource type="Texture2D" uid="uid://qbxnlgxl1qta" path="res://game/icons/campfire.svg" id="14_7wg6d"]
-[ext_resource type="Texture2D" uid="uid://bj76caxo53saa" path="res://game/icons/camping-tent.svg" id="15_xcn82"]
-[ext_resource type="Texture2D" uid="uid://c4nfw1eoy5wcn" path="res://assets/icons/chest.svg" id="16_dgx2s"]
-[ext_resource type="Texture2D" uid="uid://bnwiiw0h5j0kx" path="res://game/icons/treasure-map.svg" id="17_bft4j"]
-[ext_resource type="Texture2D" uid="uid://7jv6h70htbfm" path="res://game/icons/tied-scroll.svg" id="18_ukabl"]
 [ext_resource type="PackedScene" uid="uid://b3gs2sjljccqk" path="res://dice/dice_log/dice_log.tscn" id="19_5ocuy"]
 [ext_resource type="PackedScene" uid="uid://coh7y85ggx45i" path="res://game/story_book/story_book.tscn" id="20_pr7tg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_22632"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q7j6d"]
 
 [node name="Story" type="Node" node_paths=PackedStringArray("_party", "_title")]
 physics_interpolation_mode = 2
@@ -45,10 +36,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_22632")
 
 [node name="MarginContainer" type="MarginContainer" parent="Game/PanelContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 128
 theme_override_constants/margin_top = 96
 theme_override_constants/margin_right = 128
@@ -110,128 +103,8 @@ theme_override_constants/separation = 16
 layout_mode = 2
 characters = NodePath("../../../../../../../Party")
 
-[node name="PanelContainer" type="PanelContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer"]
+[node name="Mechanics" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" instance=ExtResource("8_xa0d8")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
-
-[node name="CatchBreathDialog" type="ConfirmationDialog" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer"]
-transparent_bg = true
-oversampling_override = 1.0
-position = Vector2i(256, 256)
-size = Vector2i(200, 193)
-unresizable = true
-transparent = true
-
-[node name="CatchBreaths" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/CatchBreathDialog" instance=ExtResource("8_tarmy")]
-offset_bottom = 144.0
-
-[node name="MarginContainer" type="MarginContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="CatchBreath" type="Button" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(145, 32)
-layout_mode = 2
-size_flags_vertical = 3
-mouse_default_cursor_shape = 2
-text = "Catch Breath"
-icon = ExtResource("12_2kn6m")
-flat = true
-alignment = 0
-script = ExtResource("13_mtsjq")
-hover_neighbors = [NodePath("../MakeCamp"), NodePath("../RestBones")]
-glyph_size = Vector2(32, 32)
-margin_top = 0
-margin_bottom = 0
-metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
-
-[node name="MakeCamp" type="Button" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(136, 32)
-layout_mode = 2
-size_flags_vertical = 3
-mouse_default_cursor_shape = 2
-disabled = true
-text = "Make Camp"
-icon = ExtResource("14_7wg6d")
-flat = true
-alignment = 0
-script = ExtResource("13_mtsjq")
-hover_neighbors = [NodePath("../CatchBreath"), NodePath("../RestBones")]
-glyph_size = Vector2(32, 32)
-margin_top = 0
-margin_bottom = 0
-metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
-
-[node name="RestBones" type="Button" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(130, 32)
-layout_mode = 2
-size_flags_vertical = 3
-mouse_default_cursor_shape = 2
-disabled = true
-text = "Rest Bones"
-icon = ExtResource("15_xcn82")
-flat = true
-alignment = 0
-script = ExtResource("13_mtsjq")
-hover_neighbors = [NodePath("../MakeCamp"), NodePath("../CatchBreath")]
-glyph_size = Vector2(32, 32)
-margin_top = 0
-margin_bottom = 0
-metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
-
-[node name="AdmireLoot" type="Button" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(140, 32)
-layout_mode = 2
-size_flags_vertical = 3
-mouse_default_cursor_shape = 2
-disabled = true
-text = "Admire Loot"
-icon = ExtResource("16_dgx2s")
-flat = true
-alignment = 0
-script = ExtResource("13_mtsjq")
-hover_neighbors = [NodePath("../PonderMap"), NodePath("../AssessVenture")]
-glyph_size = Vector2(32, 32)
-margin_top = 0
-margin_bottom = 0
-metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
-
-[node name="PonderMap" type="Button" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(139, 32)
-layout_mode = 2
-size_flags_vertical = 3
-mouse_default_cursor_shape = 2
-disabled = true
-text = "Ponder Map"
-icon = ExtResource("17_bft4j")
-flat = true
-alignment = 0
-script = ExtResource("13_mtsjq")
-hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../AssessVenture")]
-glyph_size = Vector2(32, 32)
-margin_top = 0
-margin_bottom = 0
-metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
-
-[node name="AssessVenture" type="Button" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
-custom_minimum_size = Vector2(162, 32)
-layout_mode = 2
-size_flags_vertical = 3
-mouse_default_cursor_shape = 2
-disabled = true
-text = "Assess Venture"
-icon = ExtResource("18_ukabl")
-flat = true
-alignment = 0
-script = ExtResource("13_mtsjq")
-hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../PonderMap")]
-glyph_size = Vector2(32, 32)
-margin_top = 0
-margin_bottom = 0
-metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [node name="GameInfo" type="TabContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer"]
 visible = false
@@ -255,4 +128,3 @@ layout_mode = 2
 [connection signal="story_page_entered" from="." to="Game/PanelContainer/MarginContainer/HSplitContainer/StoryBook" method="_on_story_page_entered"]
 [connection signal="character_selected" from="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="." method="_on_character_selected"]
 [connection signal="character_selected" from="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
-[connection signal="pressed" from="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/CatchBreath" to="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/PanelContainer/CatchBreathDialog" method="popup_centered"]

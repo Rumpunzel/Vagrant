@@ -12,7 +12,11 @@ signal style_changed
 		button_mask = MOUSE_BUTTON_MASK_LEFT if active else 0
 		focus_mode = Control.FOCUS_ALL if active else Control.FOCUS_NONE
 		mouse_filter = Control.MOUSE_FILTER_STOP if active else Control.MOUSE_FILTER_PASS
+		mouse_default_cursor_shape = _active_cursor if active else _inactive_cursor
 		activation_changed.emit(active)
+
+@export var _active_cursor: CursorShape = CursorShape.CURSOR_POINTING_HAND
+@export var _inactive_cursor: CursorShape = CursorShape.CURSOR_ARROW
 
 func select() -> void:
 	if not disabled: button_pressed = true
@@ -23,8 +27,11 @@ func deselect() -> void:
 func activate() -> void:
 	active = true
 
-func deactivate() -> void:
+func deactivate(reset_on_deactivation: bool = false) -> void:
 	active = false
+	if reset_on_deactivation:
+		assert(toggle_mode)
+		button_pressed = false
 
 func set_font_colors(color: Color) -> void:
 	add_theme_color_override("font_color", color)

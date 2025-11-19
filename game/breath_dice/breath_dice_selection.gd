@@ -80,14 +80,12 @@ func _on_save_rolled(save_result: SaveResult) -> void:
 	assert(save_result)
 	assert(save_result.save_request == _dice_request)
 	_dice_log_save_result_entry.initialize_save_result(save_result)
-	_breath_dice_selection_buttons.update_save_result(save_result)
 	_on_rolled()
 
 func _on_fight_rolled(fight_result: FightResult) -> void:
 	assert(fight_result)
 	assert(fight_result.fight_request == _dice_request)
 	_dice_log_save_result_entry.initialize_fight_result(fight_result)
-	_breath_dice_selection_buttons.update_fight_result(fight_result)
 	_on_rolled()
 
 func _on_rolled() -> void:

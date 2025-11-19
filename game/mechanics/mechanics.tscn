@@ -1,0 +1,178 @@
+[gd_scene load_steps=10 format=3 uid="uid://m2hkfwiqdk33"]
+
+[ext_resource type="PackedScene" uid="uid://ccpu52v8m0ynd" path="res://game/breath_dice/catch_breath/catch_breaths.tscn" id="1_x3l5n"]
+[ext_resource type="Script" uid="uid://c7qjo0ilqtmp6" path="res://custom_nodes/control/fancy_hover_button.gd" id="2_bi4s4"]
+[ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://game/icons/magic-potion.svg" id="2_rd57s"]
+[ext_resource type="Texture2D" uid="uid://qbxnlgxl1qta" path="res://game/icons/campfire.svg" id="4_0hjxh"]
+[ext_resource type="Texture2D" uid="uid://bj76caxo53saa" path="res://game/icons/camping-tent.svg" id="5_lbybe"]
+[ext_resource type="Texture2D" uid="uid://c4nfw1eoy5wcn" path="res://assets/icons/chest.svg" id="6_pem0e"]
+[ext_resource type="Texture2D" uid="uid://bnwiiw0h5j0kx" path="res://game/icons/treasure-map.svg" id="7_01xi3"]
+[ext_resource type="Texture2D" uid="uid://7jv6h70htbfm" path="res://game/icons/tied-scroll.svg" id="8_uo25f"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q7j6d"]
+
+[node name="Mechanics" type="PanelContainer"]
+theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
+
+[node name="CatchBreathDialog" type="ConfirmationDialog" parent="."]
+transparent_bg = true
+oversampling_override = 1.0
+position = Vector2i(256, 256)
+size = Vector2i(200, 193)
+unresizable = true
+transparent = true
+
+[node name="CatchBreaths" parent="CatchBreathDialog" instance=ExtResource("1_x3l5n")]
+offset_bottom = 144.0
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="CatchBreath" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(26, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+text = "Catch Breath"
+icon = ExtResource("2_rd57s")
+flat = true
+alignment = 0
+script = ExtResource("2_bi4s4")
+hover_neighbors = [NodePath("../MakeCamp"), NodePath("../RestBones")]
+glyph = 2
+glyph_size = ""
+glyph_margin_left = null
+glyph_margin_top = Vector2(24, 24)
+margin_left = 1.0
+margin_top = null
+margin_right = 1
+flex_alignment = 1
+_active_cursor = null
+_inactive_cursor = null
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="MakeCamp" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(26, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Make Camp"
+icon = ExtResource("4_0hjxh")
+flat = true
+alignment = 0
+script = ExtResource("2_bi4s4")
+hover_neighbors = [NodePath("../CatchBreath"), NodePath("../RestBones")]
+glyph = 2
+glyph_size = ""
+glyph_margin_left = null
+glyph_margin_top = Vector2(24, 24)
+margin_left = 1.0
+margin_top = null
+margin_right = 1
+flex_alignment = 1
+_active_cursor = null
+_inactive_cursor = null
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="RestBones" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(26, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Rest Bones"
+icon = ExtResource("5_lbybe")
+flat = true
+alignment = 0
+script = ExtResource("2_bi4s4")
+hover_neighbors = [NodePath("../MakeCamp"), NodePath("../CatchBreath")]
+glyph = 2
+glyph_size = ""
+glyph_margin_left = null
+glyph_margin_top = Vector2(24, 24)
+margin_left = 1.0
+margin_top = null
+margin_right = 1
+flex_alignment = 1
+_active_cursor = null
+_inactive_cursor = null
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="AdmireLoot" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(26, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Admire Loot"
+icon = ExtResource("6_pem0e")
+flat = true
+alignment = 0
+script = ExtResource("2_bi4s4")
+hover_neighbors = [NodePath("../PonderMap"), NodePath("../AssessVenture")]
+glyph = 2
+glyph_size = ""
+glyph_margin_left = null
+glyph_margin_top = Vector2(24, 24)
+margin_left = 1.0
+margin_top = null
+margin_right = 1
+flex_alignment = 1
+_active_cursor = null
+_inactive_cursor = null
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="PonderMap" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(26, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Ponder Map"
+icon = ExtResource("7_01xi3")
+flat = true
+alignment = 0
+script = ExtResource("2_bi4s4")
+hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../AssessVenture")]
+glyph = 2
+glyph_size = ""
+glyph_margin_left = null
+glyph_margin_top = Vector2(24, 24)
+margin_left = 1.0
+margin_top = null
+margin_right = 1
+flex_alignment = 1
+_active_cursor = null
+_inactive_cursor = null
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[node name="AssessVenture" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+custom_minimum_size = Vector2(26, 32)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+disabled = true
+text = "Assess Venture"
+icon = ExtResource("8_uo25f")
+flat = true
+alignment = 0
+script = ExtResource("2_bi4s4")
+hover_neighbors = [NodePath("../AdmireLoot"), NodePath("../PonderMap")]
+glyph = 2
+glyph_size = ""
+glyph_margin_left = null
+glyph_margin_top = Vector2(24, 24)
+margin_left = 1.0
+margin_top = null
+margin_right = 1
+flex_alignment = 1
+_active_cursor = null
+_inactive_cursor = null
+metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/CatchBreath" to="CatchBreathDialog" method="popup_centered"]
