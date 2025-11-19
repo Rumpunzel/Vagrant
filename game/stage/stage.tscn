@@ -10,15 +10,15 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h1mbo"]
 
 [sub_resource type="Gradient" id="Gradient_c7u3m"]
-offsets = PackedFloat32Array(0, 0.282, 0.608, 0.962)
-colors = PackedColorArray(1, 0.802, 0.668, 0.216, 0.892, 0.728, 0.64, 0.525, 0.31, 0.057, 0, 0.724, 0.102126, 0.0078073, 1.20327e-08, 1)
+offsets = PackedFloat32Array(0, 0.282, 0.3608871, 0.42741936, 0.4919355, 0.6048387, 0.962)
+colors = PackedColorArray(1, 0.801869, 0.6681772, 0.11100001, 0.8921665, 0.728065, 0.6398056, 0.404, 0.6844701, 0.48865277, 0.41154563, 0.51816463, 0.6302477, 0.4262314, 0.35086948, 0.509, 0.5754012, 0.3629287, 0.29167798, 0.57811666, 0.31, 0.057, 0, 0.724, 0.102126, 0.0078073, 1.20327e-08, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_oqyx5"]
 gradient = SubResource("Gradient_c7u3m")
 width = 512
 height = 512
 fill = 1
-fill_from = Vector2(0.3, 0.2)
+fill_from = Vector2(0.3, 0.1)
 fill_to = Vector2(1.25, 1.25)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_oqyx5"]
@@ -83,6 +83,7 @@ expand_mode = 1
 stretch_mode = 6
 
 [node name="Candle" type="TextureRect" parent="PanelContainer/MarginContainer"]
+modulate = Color(1, 1, 1, 0.8)
 layout_mode = 2
 texture = SubResource("GradientTexture2D_oqyx5")
 stretch_mode = 6
