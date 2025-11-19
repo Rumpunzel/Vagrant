@@ -7,8 +7,11 @@ signal die_type_selected(die_type: DieType)
 @export var die_types: Array[DieType] :
 	set(new_die_types):
 		die_types = new_die_types
-		items.assign(die_types.map(func(die_type: DieType) -> String: return die_type.to_string()))
+		if include_null_die: die_types.append(null)
+		items.assign(die_types.map(func(die_type: DieType) -> String: return die_type.to_string() if die_type else ("None" if null_text.is_empty() else null_text)))
 		selected = 0
+@export var include_null_die: bool
+@export_placeholder("None") var null_text: String
 
 func _ready() -> void:
 	if not Engine.is_editor_hint(): return
@@ -20,6 +23,12 @@ func get_panel() -> DieCarouselPanel:
 
 func get_item_count() -> int:
 	return die_types.size()
+
+func get_selected_die_type() -> DieType:
+	return die_types[selected]
+
+func set_selected_die_type(die_type: DieType) -> void:
+	selected = die_types.find(die_type)
 
 func _set_selected(new_index: int) -> void:
 	super._set_selected(new_index)

@@ -4,14 +4,14 @@
 [ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="2_4uxri"]
 [ext_resource type="Texture2D" uid="uid://sue7comyk6aq" path="res://dice/icons/d8.png" id="3_isn18"]
 
-[node name="DieCarouselPanel" type="PanelContainer" node_paths=PackedStringArray("_tooltip_trigger", "_icon")]
+[node name="DieCarouselPanel" type="PanelContainer" node_paths=PackedStringArray("_icon", "label")]
 offset_right = 307.0
 offset_bottom = 307.0
 mouse_default_cursor_shape = 16
 script = ExtResource("1_l5hil")
 die_type = ExtResource("2_4uxri")
-_tooltip_trigger = NodePath("")
 _icon = NodePath("MarginContainer/Icon")
+label = NodePath("MarginContainer/Label")
 metadata/_custom_type_script = "uid://clirdct88es60"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -23,3 +23,6 @@ layout_mode = 2
 texture = ExtResource("3_isn18")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer"]
+layout_mode = 2

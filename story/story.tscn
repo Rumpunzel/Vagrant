@@ -103,8 +103,9 @@ theme_override_constants/separation = 16
 layout_mode = 2
 characters = NodePath("../../../../../../../Party")
 
-[node name="Mechanics" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" instance=ExtResource("8_xa0d8")]
+[node name="Mechanics" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" node_paths=PackedStringArray("_party") instance=ExtResource("8_xa0d8")]
 layout_mode = 2
+_party = NodePath("../../../../../../../Party")
 
 [node name="GameInfo" type="TabContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer"]
 visible = false

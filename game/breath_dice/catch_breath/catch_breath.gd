@@ -5,12 +5,14 @@ extends PanelContainer
 	set(new_character):
 		assert(new_character)
 		if character:
-			character.breath_dice_states_changed.disconnect(_on_breath_dice_states_changed)
+			character.breath_dice_changed.disconnect(_on_breath_dice_changed.unbind(1))
+			character.breath_dice_states_changed.disconnect(_on_breath_dice_changed)
 		character = new_character
 		_portrait.texture = character.character_profile.get_portrait(_portrait_identifier)
 		_breath_dice.character = character
 		update_die_types()
-		character.breath_dice_states_changed.connect(_on_breath_dice_states_changed)
+		character.breath_dice_changed.connect(_on_breath_dice_changed.unbind(1))
+		character.breath_dice_states_changed.connect(_on_breath_dice_changed)
 
 @export var _portrait_identifier: String = "Small.png"
 
@@ -19,13 +21,15 @@ extends PanelContainer
 @export var _die_selection: DieCarouselSelection
 @export var _breath_dice: BreathDice
 
-func update_die_types() -> void:
-	#var spendable_breath_dice: Array[BreathDie] = character.get_spendable_breath_dice()
-	#var spendable_die_types: Array[DieType] = []
-	#for breath_die: BreathDie in spendable_breath_dice:
-		#if not breath_die.die_type in spendable_die_types: spendable_die_types.append(breath_die.die_type)
-	#_die_selection.die_types = spendable_die_types
-	visible = character.can_catch_breath()
+func catch_breath() -> void:
+	if not visible: return
+	character.catch_breath(_die_selection.get_selected_die_type())
 
-func _on_breath_dice_states_changed() -> void:
+func update_die_types() -> void:
+	visible = character.has_lost_breath()
+	var available_exhaustion: Array[DieType] = character.get_available_exhaustion()
+	_die_selection.die_types = available_exhaustion
+	_die_selection.set_selected_die_type(character.get_smallest_exhaustion())
+
+func _on_breath_dice_changed() -> void:
 	update_die_types()

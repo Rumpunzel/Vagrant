@@ -10,10 +10,10 @@ func _init(new_die_type: DieType = null, new_result: int = 0) -> void:
 	die_type = new_die_type
 	result = new_result
 
-static func sort_ascending(first_die: Die, second_die: Die) -> bool:
+static func compare_ascending(first_die: Die, second_die: Die) -> bool:
 	return first_die.die_type.faces < second_die.die_type.faces
 
-static func sort_descending(first_die: Die, second_die: Die) -> bool:
+static func compare_descending(first_die: Die, second_die: Die) -> bool:
 	return first_die.die_type.faces > second_die.die_type.faces
 
 func roll(play_sound: bool = true) -> int:

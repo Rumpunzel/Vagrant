@@ -10,6 +10,12 @@ signal rolled(die_type: Die, result: int, roll_sound: AudioStream)
 @export var faces: int
 @export var roll_sound: AudioStream
 
+static func compare_ascending(first_die: DieType, second_die: DieType) -> bool:
+	return first_die.faces < second_die.faces
+
+static func compare_descending(first_die: DieType, second_die: DieType) -> bool:
+	return first_die.faces > second_die.faces
+
 func roll(play_sound: bool) -> int:
 	var result: int = randi_range(1, faces)
 	rolled.emit(self, result, roll_sound if play_sound else null)

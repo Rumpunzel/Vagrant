@@ -32,6 +32,7 @@ var breath_dice: Array[BreathDie] :
 		if new_breath_dice == breath_dice: return
 		for breath_die: BreathDie in breath_dice: breath_die.state_changed.disconnect(_on_breath_die_state_changed)
 		breath_dice = new_breath_dice
+		breath_dice.sort_custom(BreathDie.compare_ascending)
 		for breath_die: BreathDie in breath_dice:
 			assert(breath_die.alive)
 			breath_die.state_changed.connect(_on_breath_die_state_changed.bind(breath_die))
@@ -40,15 +41,44 @@ var breath_dice: Array[BreathDie] :
 func _init(new_character_profile: CharacterProfile = null) -> void:
 	character_profile = new_character_profile
 
+func catch_breath(die_type_to_exhaust: DieType) -> void:
+	assert(not _exhaustion.has(die_type_to_exhaust))
+	_exhaustion.append(die_type_to_exhaust)
+	_exhaustion.sort_custom(DieType.compare_ascending)
+	var new_breath_dice: Array[BreathDie] = breath_dice.duplicate()
+	var breath_die_types: Dictionary[DieType, int] = character_profile.breath_die_types
+	for breath_die_type: DieType in breath_die_types.keys():
+		if _exhaustion.has(breath_die_type): continue
+		var dice_to_recover: int = breath_die_types[breath_die_type]
+		for breath_die: BreathDie in new_breath_dice: if breath_die.die_type == breath_die_type: dice_to_recover -= 1
+		if dice_to_recover <= 0: continue
+		var recovered_breath_dice: Array[BreathDie] = breath_die_type.get_breath_dice_pool(dice_to_recover)
+		new_breath_dice.append_array(recovered_breath_dice)
+	assert(breath_dice != new_breath_dice)
+	breath_dice = new_breath_dice
+
 func can_catch_breath() -> bool:
-	return has_lost_breath()
+	return has_lost_breath() and not get_available_exhaustion().is_empty()
+
+func get_available_exhaustion() -> Array[DieType]:
+	var unexhausted_die_types: Array[DieType] = []
+	var breath_die_types: Dictionary[DieType, int] = character_profile.breath_die_types
+	unexhausted_die_types.assign(breath_die_types.keys().filter(func(die_type: DieType) -> bool: return not _exhaustion.has(die_type)))
+	return unexhausted_die_types
+
+func get_smallest_exhaustion() -> DieType:
+	var smallest_die_type: DieType = null
+	for die_type: DieType in get_available_exhaustion():
+		if not smallest_die_type or die_type.faces < smallest_die_type.faces: smallest_die_type = die_type
+	return smallest_die_type
 
 func has_lost_breath() -> bool:
-	for die_type: DieType in character_profile.breath_die_types.keys():
+	var breath_die_types: Dictionary[DieType, int] = character_profile.breath_die_types
+	for die_type: DieType in breath_die_types.keys():
 		var dice_count: int = 0
 		for breath_die: BreathDie in breath_dice:
-			if breath_die.die_type == die_type: dice_count -= 1
-		if dice_count < character_profile.breath_die_types[die_type]: return true
+			if breath_die.die_type == die_type: dice_count += 1
+		if dice_count < breath_die_types[die_type]: return true
 	return false
 
 func get_portrait() -> Texture2D:

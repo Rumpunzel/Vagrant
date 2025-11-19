@@ -2,6 +2,8 @@
 class_name CatchBreaths
 extends CharacterList
 
+signal caught_breath
+
 @export_group("Configuration")
 @export var _catch_breath: PackedScene
 
@@ -19,3 +21,7 @@ func _get_catch_breaths() -> Array[CatchBreath]:
 	var catch_breaths: Array[CatchBreath] = []
 	catch_breaths.assign(_character_list.get_elements())
 	return catch_breaths
+
+func _on_confirmed() -> void:
+	for catch_breath: CatchBreath in _get_catch_breaths(): catch_breath.catch_breath()#
+	caught_breath.emit()

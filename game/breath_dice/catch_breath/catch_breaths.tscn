@@ -1,9 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://ccpu52v8m0ynd"]
+[gd_scene load_steps=8 format=3 uid="uid://ccpu52v8m0ynd"]
 
 [ext_resource type="Script" uid="uid://bdkka8mnk20a1" path="res://game/breath_dice/catch_breath/catch_breaths.gd" id="1_sxsp0"]
+[ext_resource type="AudioStream" uid="uid://dbfjqkvcu6d7u" path="res://assets/sfx/catch_breath/breathe-in-breathe-out-101088.mp3" id="3_316lr"]
 [ext_resource type="PackedScene" uid="uid://cmcakuu2jj3j1" path="res://game/breath_dice/catch_breath/catch_breath.tscn" id="3_b5g0c"]
+[ext_resource type="AudioStream" uid="uid://bs6urik77h7or" path="res://assets/sfx/catch_breath/breath-out-242642.mp3" id="3_vacvj"]
+[ext_resource type="AudioStream" uid="uid://biskqjy1s03q3" path="res://assets/sfx/catch_breath/sigh-100452.mp3" id="4_vacvj"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3elgv"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ux8cv"]
+streams_count = 2
+stream_0/stream = ExtResource("3_316lr")
+stream_1/stream = ExtResource("4_vacvj")
 
 [node name="CatchBreaths" type="PanelContainer"]
 offset_left = 8.0
@@ -14,3 +22,15 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_3elgv")
 script = ExtResource("1_sxsp0")
 _catch_breath = ExtResource("3_b5g0c")
 metadata/_custom_type_script = "uid://bdkka8mnk20a1"
+
+[node name="Chime" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_vacvj")
+pitch_scale = 0.8
+bus = &"SFX"
+
+[node name="BreathSounds" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_ux8cv")
+bus = &"SFX"
+
+[connection signal="caught_breath" from="." to="BreathSounds" method="play"]
+[connection signal="caught_breath" from="." to="Chime" method="play"]

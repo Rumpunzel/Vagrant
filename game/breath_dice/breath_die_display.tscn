@@ -1,26 +1,52 @@
 [gd_scene load_steps=5 format=3 uid="uid://c4kqwadk1w71t"]
 
-[ext_resource type="Texture2D" uid="uid://sue7comyk6aq" path="res://dice/icons/d8.png" id="1_bixec"]
-[ext_resource type="Script" uid="uid://c1troxvm5qfk6" path="res://game/breath_dice/breath_die_button.gd" id="2_rtq5t"]
+[ext_resource type="Script" uid="uid://b3gd7vv36vx5e" path="res://game/breath_dice/breath_die_display.gd" id="2_nbqno"]
+[ext_resource type="Texture2D" uid="uid://ce4s8bjlixkxf" path="res://dice/icons/d8_blank.png" id="2_s640w"]
 [ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="3_6wbwr"]
 [ext_resource type="Script" uid="uid://o5jur8n8f1c" path="res://custom_nodes/control/rectifier.gd" id="4_ccr72"]
 
-[node name="BreathDieDisplay" type="Button"]
+[node name="BreathDieDisplay" type="Button" node_paths=PackedStringArray("_shadow")]
 offset_right = 63.0
 offset_bottom = 71.0
+focus_mode = 0
+mouse_filter = 1
 mouse_default_cursor_shape = 16
-icon = ExtResource("1_bixec")
+button_mask = 0
+icon = ExtResource("2_s640w")
 flat = true
 expand_icon = true
-script = ExtResource("2_rtq5t")
+script = ExtResource("2_nbqno")
+_shadow = NodePath("MarginContainer/Shadow")
 die_type = ExtResource("3_6wbwr")
 icon_type = 1
-_active_cursor = 16
-_inactive_cursor = 8
-metadata/_custom_type_script = "uid://c1troxvm5qfk6"
+active = false
+_inactive_cursor = 16
+metadata/_custom_type_script = "uid://b3gd7vv36vx5e"
 
 [node name="Rectifier" type="Node" parent="." node_paths=PackedStringArray("control_to_rectify")]
 script = ExtResource("4_ccr72")
-control_to_rectify = NodePath("..")
+control_to_rectify = NodePath("")
 height_to_width_ratio = 1.0
 metadata/_custom_type_script = "uid://o5jur8n8f1c"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="Shadow" type="TextureRect" parent="MarginContainer"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_s640w")
+expand_mode = 1
+stretch_mode = 5

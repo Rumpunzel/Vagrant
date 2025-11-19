@@ -2,6 +2,7 @@
 class_name Characters
 extends Node
 
+signal character_added(character: Character)
 signal characters_updated(characters: Dictionary[CharacterProfile, Character])
 
 var characters: Dictionary[CharacterProfile, Character] = { }
@@ -11,6 +12,7 @@ func create_character(character_profile: CharacterProfile) -> Character:
 	var character: Character = Character.new(character_profile)
 	characters[character_profile] = character
 	character.character_profile_changed.connect(_on_character_profile_changed.bind(character))
+	character_added.emit(character)
 	characters_updated.emit(characters)
 	return character
 

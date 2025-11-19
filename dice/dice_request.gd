@@ -20,7 +20,7 @@ func _init(for_character: Character, with_attribute: CharacterAttribute) -> void
 func select_breath_die(breath_die: BreathDie) -> void:
 	if selected_breath_dice.has(breath_die): return
 	selected_breath_dice.append(breath_die)
-	selected_breath_dice.sort_custom(Die.sort_ascending)
+	selected_breath_dice.sort_custom(Die.compare_ascending)
 	selected_breath_dice_changed.emit(selected_breath_dice)
 
 func deselect_breath_die(breath_die: BreathDie) -> void:

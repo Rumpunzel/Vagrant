@@ -12,7 +12,7 @@ signal item_selected(item_index: int)
 		selected = mini(selected, item_count - 1)
 		_previous.disabled = item_count <= 1
 		_next.disabled = item_count <= 1
-@export var flat_buttons: bool = false
+@export var flat_buttons: bool
 
 @export_group("Configuration")
 @export var panel: PackedScene :
