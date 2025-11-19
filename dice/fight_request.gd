@@ -11,11 +11,12 @@ var selected_weapon_dice: Array[WeaponDie] :
 		selected_weapon_dice_changed.emit(selected_weapon_dice)
 
 func _init(for_character: Character, adventure_decision: AdventureFightDecision) -> void:
-	super(for_character, for_character.get_highest_attribute())
+	super(for_character, for_character.get_favored_attribute())
 	source = adventure_decision
 
 func roll_fight() -> void:
 	assert(character)
+	character.most_recently_chosen_attribute = attribute
 	var attribute_score: AttributeScore = character.get_attribute_score(attribute)
 	for die: BreathDie in selected_breath_dice: die.roll_save(attribute_score.get_score())
 	var fight_result: FightResult = FightResult.new(self)

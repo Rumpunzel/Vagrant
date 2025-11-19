@@ -3,6 +3,8 @@ class_name StoryChoice
 extends RefCounted
 
 signal chosen
+@warning_ignore("unused_signal")
+signal icon_changed
 
 static func from_story_decision(adventure_decision: AdventureDecision, protagonist_getter: Callable) -> StoryChoice:
 	if adventure_decision is AdventureSaveDecision: return StorySaveDecision.new(adventure_decision as AdventureSaveDecision, protagonist_getter)

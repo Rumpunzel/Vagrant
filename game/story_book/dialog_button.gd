@@ -28,12 +28,15 @@ extends FancyButton
 var _story_choice: StoryChoice:
 	set(new_story_choice):
 		assert(new_story_choice)
+		if _story_choice is StoryDiceDecision:
+			(_story_choice as StoryDiceDecision).icon_changed.disconnect(_update_icon)
 		_story_choice = new_story_choice
 		var description: String = _story_choice.get_description()
 		set(&"text", description)
 		name = description
-		set(&"icon", _story_choice.get_icon())
-		set_icon_colors(_story_choice.get_icon_color())
+		_update_icon()
+		if _story_choice is StoryDiceDecision:
+			(_story_choice as StoryDiceDecision).icon_changed.connect(_update_icon)
 
 func _ready() -> void:
 	_set_index()
@@ -44,6 +47,10 @@ func _ready() -> void:
 func setup(story_choice: StoryChoice, dialog_button_group: ButtonGroup) -> void:
 	_story_choice = story_choice
 	button_group = dialog_button_group
+
+func _update_icon() -> void:
+	set(&"icon", _story_choice.get_icon())
+	set_icon_colors(_story_choice.get_icon_color())
 
 func _set_index() -> void:
 	glyph = "%d." % [get_index() + 1]

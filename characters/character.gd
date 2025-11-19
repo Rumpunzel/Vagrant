@@ -27,6 +27,7 @@ var attribute_scores: Dictionary[CharacterAttribute, AttributeScore] :
 		if new_attribute_scores == attribute_scores: return
 		attribute_scores = new_attribute_scores
 		attribute_scores_changed.emit(self)
+var most_recently_chosen_attribute: CharacterAttribute
 
 var breath_dice: Array[BreathDie] :
 	set(new_breath_dice):
@@ -103,6 +104,9 @@ func get_highest_attribute_score() -> AttributeScore:
 		if not highest_attribute_score or attribute_score.get_score() > highest_attribute_score.get_score():
 			highest_attribute_score = attribute_score
 	return highest_attribute_score
+
+func get_favored_attribute() -> CharacterAttribute:
+	return most_recently_chosen_attribute if most_recently_chosen_attribute else get_highest_attribute()
 
 func get_highest_attribute() -> CharacterAttribute:
 	var highest_attribute: CharacterAttribute = null
