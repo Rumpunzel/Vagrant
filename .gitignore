@@ -3,3 +3,4 @@
 *.tmp
 *.dll
 /.vscode
+/obsidian_vault/Vagrant/.obsidian
