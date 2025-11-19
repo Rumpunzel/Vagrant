@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cxpqjywsmrwhw" path="res://game/icons/crossed-chains.svg" id="4_lj6pr"]
 
 [node name="DieCarouselPanel" type="PanelContainer" node_paths=PackedStringArray("_icon", "label")]
-custom_minimum_size = Vector2(64, 64)
+custom_minimum_size = Vector2(96, 96)
 offset_right = 307.0
 offset_bottom = 307.0
 mouse_default_cursor_shape = 16
