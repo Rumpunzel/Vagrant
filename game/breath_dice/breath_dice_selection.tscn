@@ -93,6 +93,7 @@ offset_right = 0.0
 offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
+selected = 2
 
 [node name="DiceRequestEntry" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_tj3a7")]
 layout_mode = 2

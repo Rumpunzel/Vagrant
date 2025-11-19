@@ -32,6 +32,7 @@ func set_selected_die_type(die_type: DieType) -> void:
 
 func _set_selected(new_index: int) -> void:
 	super._set_selected(new_index)
+	if Engine.is_editor_hint(): return
 	if selected < 0:
 		die_type_selected.emit(null)
 		return

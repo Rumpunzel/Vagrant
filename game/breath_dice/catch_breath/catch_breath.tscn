@@ -1,9 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://cmcakuu2jj3j1"]
+[gd_scene load_steps=14 format=3 uid="uid://cmcakuu2jj3j1"]
 
 [ext_resource type="Script" uid="uid://xk01rqwtyg43" path="res://game/breath_dice/catch_breath/catch_breath.gd" id="1_cr5x3"]
 [ext_resource type="Texture2D" uid="uid://457ox5k8siu6" path="res://assets/portraits/HE-BA-BR-F115/Small.png" id="2_cr5x3"]
 [ext_resource type="Material" uid="uid://cq38j4iccgxe4" path="res://game/characters/big_portrait_vignette.tres" id="3_cr5x3"]
 [ext_resource type="PackedScene" uid="uid://cro66c6ccb2ox" path="res://game/breath_dice/die_carousel_selection/die_carousel_selection.tscn" id="3_mtsql"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="5_84plu"]
+[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/die_types/d4.tres" id="6_gabwy"]
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="7_ok55u"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="8_cuj8h"]
+[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/die_types/d10.tres" id="9_01jcs"]
+[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/die_types/d12.tres" id="10_rrex4"]
 [ext_resource type="PackedScene" uid="uid://cgl4tskvsu25d" path="res://game/breath_dice/breath_dice_display.tscn" id="12_ppey5"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gel83"]
@@ -29,8 +35,8 @@ offset_right = 184.0
 offset_bottom = 346.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_gel83")
 script = ExtResource("1_cr5x3")
-_portrait = NodePath("MarginContainer/VBoxContainer/PanelContainer/Portrait")
-_die_selection = NodePath("MarginContainer/VBoxContainer/DieSelection")
+_portrait = NodePath("MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/Portrait")
+_die_selection = NodePath("MarginContainer/VBoxContainer/HBoxContainer/DieSelection")
 _breath_dice = NodePath("MarginContainer/VBoxContainer/BreathDice")
 metadata/_custom_type_script = "uid://xk01rqwtyg43"
 
@@ -45,23 +51,29 @@ theme_override_constants/margin_bottom = 24
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_gel83")
 
-[node name="Portrait" type="TextureRect" parent="MarginContainer/VBoxContainer/PanelContainer"]
+[node name="Portrait" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer"]
 material = ExtResource("3_cr5x3")
 layout_mode = 2
 texture = ExtResource("2_cr5x3")
-expand_mode = 5
+expand_mode = 3
 stretch_mode = 4
 
-[node name="DieSelection" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_mtsql")]
+[node name="DieSelection" parent="MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("3_mtsql")]
 layout_mode = 2
+die_types = Array[ExtResource("5_84plu")]([ExtResource("6_gabwy"), ExtResource("7_ok55u"), ExtResource("8_cuj8h"), ExtResource("9_01jcs"), ExtResource("10_rrex4"), null])
 include_null_die = true
 items = Array[String](["d4", "d6", "d8", "d10", "d12", "None"])
+direction = 3
 
 [node name="BreathDice" parent="MarginContainer/VBoxContainer" instance=ExtResource("12_ppey5")]
 layout_mode = 2
 
-[connection signal="die_type_selected" from="MarginContainer/VBoxContainer/DieSelection" to="." method="_on_die_type_selected"]
+[connection signal="die_type_selected" from="MarginContainer/VBoxContainer/HBoxContainer/DieSelection" to="." method="_on_die_type_selected"]
