@@ -1,5 +1,5 @@
 @tool
-class_name BaseAttributeScore
+class_name RolledAttributeScore
 extends DiceResult
 
 func get_score() -> int:

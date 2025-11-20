@@ -2,7 +2,7 @@
 class_name AttributeScoreRoller
 extends PanelContainer
 
-signal attribute_score_rolled(attribute: CharacterAttribute, attribute_score: BaseAttributeScore)
+signal attribute_score_rolled(attribute: CharacterAttribute, attribute_score: RolledAttributeScore)
 
 @export var attribute: CharacterAttribute :
 	set(new_attribute):
@@ -21,7 +21,7 @@ signal attribute_score_rolled(attribute: CharacterAttribute, attribute_score: Ba
 @export var _details: RichTextLabel
 @export var _score: RichTextLabel
 
-var score: BaseAttributeScore :
+var score: RolledAttributeScore :
 	set(new_score):
 		score = new_score
 		_button.disabled = true  

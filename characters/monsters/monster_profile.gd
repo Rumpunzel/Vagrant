@@ -16,7 +16,7 @@ extends Resource
 static func create(
 	new_name: String,
 	new_portrait: Texture2D,
-	new_attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore],
+	new_attribute_scores: Dictionary[CharacterAttribute, RolledAttributeScore],
 	new_origins: Array[Origin],
 ) -> CharacterProfile:
 	var character_profile: CharacterProfile = CharacterProfile.new()

@@ -5,7 +5,7 @@ extends Resource
 signal name_changed(name: String)
 signal title_changed(title: String)
 signal portrait_changed(portrait: Texture2D)
-signal attribute_scores_changed(attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore])
+signal attribute_scores_changed(attribute_scores: Dictionary[CharacterAttribute, RolledAttributeScore])
 signal origins_changed(origins: Array[Origin])
 
 @export_placeholder("Name") var name: String:
@@ -42,7 +42,7 @@ signal origins_changed(origins: Array[Origin])
 		if directory_path == _portrait_directory: return
 		_portrait_directory = directory_path
 
-@export var attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore] = {
+@export var attribute_scores: Dictionary[CharacterAttribute, RolledAttributeScore] = {
 	Rules.STRENGTH: null,
 	Rules.AGILITY: null,
 	Rules.INTELLIGENCE: null,
@@ -71,7 +71,7 @@ signal origins_changed(origins: Array[Origin])
 static func create(
 	new_name: String,
 	new_portrait: Texture2D,
-	new_attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore],
+	new_attribute_scores: Dictionary[CharacterAttribute, RolledAttributeScore],
 	new_origins: Array[Origin],
 	new_title: String,
 ) -> CharacterProfile:
@@ -108,7 +108,7 @@ func get_portrait(identifier: String) -> Texture2D:
 func get_available_doubles() -> int:
 	assert(has_valid_attributes())
 	var doubles_rolled: int = 0
-	for attribute_score: BaseAttributeScore in attribute_scores.values():
+	for attribute_score: RolledAttributeScore in attribute_scores.values():
 		if attribute_score and attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
 	return doubles_rolled
 

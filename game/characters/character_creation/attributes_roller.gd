@@ -33,6 +33,6 @@ func setup(character_profile: CharacterProfile) -> void:
 func update_modifiers(modifers: Array[AttributeScore.Modifier]) -> void:
 	for_each_element(func(attribute_score_roller: AttributeScoreRoller) -> void: attribute_score_roller.modifiers = modifers)
 
-func _on_attribute_score_rolled(attribute: CharacterAttribute, attribute_score: BaseAttributeScore) -> void:
+func _on_attribute_score_rolled(attribute: CharacterAttribute, attribute_score: RolledAttributeScore) -> void:
 	_character_profile.attribute_scores[attribute] = attribute_score
 	if _character_profile.has_valid_attributes(): attributes_rolled.emit(_character_profile.attribute_scores)

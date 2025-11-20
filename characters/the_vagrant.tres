@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CharacterProfile" load_steps=14 format=3 uid="uid://3lhxtoqoq8kx"]
 
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_2l6ra"]
-[ext_resource type="Script" uid="uid://dl1dakg5uysj3" path="res://characters/base_attribute_score.gd" id="2_gb0d8"]
+[ext_resource type="Script" uid="uid://dl1dakg5uysj3" path="res://characters/rolled_attribute_score.gd" id="2_gb0d8"]
 [ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="2_ptc7l"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="3_iaqdp"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="4_4rrr4"]

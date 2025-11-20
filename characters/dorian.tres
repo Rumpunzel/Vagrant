@@ -9,7 +9,7 @@
 [ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/die_types/d10.tres" id="5_73k2y"]
 [ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/die_types/d12.tres" id="6_ws2or"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="7_26oka"]
-[ext_resource type="Script" uid="uid://dl1dakg5uysj3" path="res://characters/base_attribute_score.gd" id="8_ijf3i"]
+[ext_resource type="Script" uid="uid://dl1dakg5uysj3" path="res://characters/rolled_attribute_score.gd" id="8_ijf3i"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="9_1jxcb"]
 [ext_resource type="Script" uid="uid://cjmf7olgdwlrk" path="res://dice/die.gd" id="10_gmgy5"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="11_38m1i"]

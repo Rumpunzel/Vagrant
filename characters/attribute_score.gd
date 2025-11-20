@@ -7,11 +7,11 @@ enum Type {
 }
 
 var _attribute: CharacterAttribute
-var _base: BaseAttributeScore
+var _base: RolledAttributeScore
 var _internal_modifiers: Array[Modifier]
 var _external_modifiers: Array[Modifier]
 
-func _init(attribute: CharacterAttribute, base: BaseAttributeScore, internal_modifiers: Array[Modifier], external_modifiers: Array[Modifier] = []) -> void:
+func _init(attribute: CharacterAttribute, base: RolledAttributeScore, internal_modifiers: Array[Modifier], external_modifiers: Array[Modifier] = []) -> void:
 	assert(attribute)
 	assert(base)
 	_attribute = attribute
@@ -20,7 +20,7 @@ func _init(attribute: CharacterAttribute, base: BaseAttributeScore, internal_mod
 	_external_modifiers = external_modifiers
 
 static func create(attribute: CharacterAttribute, rolled_dice: Array[Die]) -> AttributeScore:
-	var attribute_score: BaseAttributeScore = BaseAttributeScore.new(rolled_dice)
+	var attribute_score: RolledAttributeScore = RolledAttributeScore.new(rolled_dice)
 	return new(attribute, attribute_score, [])
 
 func get_score() -> int:

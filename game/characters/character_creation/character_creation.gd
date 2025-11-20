@@ -65,7 +65,7 @@ func _deactivate_continue() -> void:
 	_continue.disabled = true
 	_continue.focus_mode = Control.FOCUS_NONE
 
-func _on_attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, BaseAttributeScore]) -> void:
+func _on_attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, RolledAttributeScore]) -> void:
 	assert(character_profile.attribute_scores == attribute_scores)
 	_activate_continue()
 

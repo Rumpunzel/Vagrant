@@ -12,9 +12,9 @@ func roll_dice(dice_pool: Array[Die], play_sound: bool = true) -> Array[Die]:
 	for die: Die in dice_pool: roll_die(die, play_sound)
 	return dice_pool
 
-func roll_attribute() -> BaseAttributeScore:
+func roll_attribute() -> RolledAttributeScore:
 	var rolled_dice: Array[Die] = roll_dice(Rules.d6.get_dice_pool(2))
-	return BaseAttributeScore.new(rolled_dice)
+	return RolledAttributeScore.new(rolled_dice)
 
 func generate_dice_pool(dice: Dictionary[DieType, int]) -> Array[Die]:
 	var dice_pool: Array[Die] = [ ]
