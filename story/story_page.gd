@@ -34,6 +34,7 @@ func _init(
 func create_story_entry() -> StoryEntry:
 	var story_entry_scene: PackedScene = load("uid://cy2ymcfk2tejn")
 	var story_entry: StoryEntry = story_entry_scene.instantiate()
+	story_entry.setup_page(self)
 	return story_entry
 
 func get_chosen_choice() -> StoryChoice:

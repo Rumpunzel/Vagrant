@@ -41,6 +41,7 @@ func setup(character_profile: CharacterProfile) -> void:
 		_origins_list.set_item_tooltip(origin_index, origin.details)
 		if origin.type == Origin.Type.RARE: _origins_list.set_item_icon_modulate(origin_index, Color.GOLD)
 	_character_profile = character_profile
+	if Engine.is_editor_hint(): return
 	pick_random()
 
 func pick_random() -> void:

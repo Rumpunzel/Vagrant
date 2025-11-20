@@ -19,20 +19,20 @@
 [ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/die_types/d12.tres" id="15_soikm"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="16_gqdoy"]
 [ext_resource type="PackedScene" uid="uid://djjmsn1ujgubu" path="res://game/characters/character_creation/character_confirmation.tscn" id="17_fixuy"]
+[ext_resource type="Resource" uid="uid://c7j5c7ekitgl3" path="res://characters/origins/peasant.tres" id="18_1ougn"]
 [ext_resource type="Resource" uid="uid://cawcb1f8r3nb8" path="res://characters/origins/grunt.tres" id="18_ao0fp"]
-[ext_resource type="Resource" uid="uid://dqjtp62n331s7" path="res://characters/origins/tamer.tres" id="19_oamks"]
 [ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="19_vjv61"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hvcdy"]
 
-[sub_resource type="Resource" id="Resource_wmoc3"]
+[sub_resource type="Resource" id="Resource_ao0fp"]
 script = ExtResource("19_vjv61")
 attribute_scores = Dictionary[ExtResource("5_nflbs"), ExtResource("6_jseid")]({
 ExtResource("7_6xssx"): null,
 ExtResource("8_jukr5"): null,
 ExtResource("9_ee4h7"): null
 })
-origins = Array[ExtResource("16_gqdoy")]([ExtResource("18_ao0fp"), ExtResource("19_oamks")])
+origins = Array[ExtResource("16_gqdoy")]([ExtResource("18_1ougn"), ExtResource("18_ao0fp")])
 breath_die_types = Dictionary[ExtResource("10_hukh5"), int]({
 ExtResource("11_17b3i"): 1,
 ExtResource("12_aw34e"): 1,
@@ -95,7 +95,7 @@ fill = true
 
 [node name="OriginsPicker" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("5_s0bgh")]
 layout_mode = 2
-_character_profile = SubResource("Resource_wmoc3")
+_character_profile = SubResource("Resource_ao0fp")
 
 [node name="Inventory" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("15_b7plt")]
 visible = false

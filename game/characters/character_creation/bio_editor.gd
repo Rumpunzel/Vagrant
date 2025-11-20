@@ -58,15 +58,15 @@ var _compiled_patterns: Dictionary[Sex, RegEx]
 var _portrait_directories: Dictionary[Sex, Array] = {}
 var _portrait_index: int = 0:
 	set(new_portrait_index):
-		_portrait_index = new_portrait_index
-		_portrait_index %= _portrait_directories[_sex].size()
-		var directory_path: String = _portrait_directories[_sex][_portrait_index]
-		var portrait_path: String = directory_path.path_join(_portrait_file_name)
-		var portrait: Texture2D = load(portrait_path)
+		_portrait_index = posmod(new_portrait_index, _portrait_directories[_sex].size())
+		var portrait_path: String = _get_portrait_path_for_index(_portrait_index)
+		var portrait: Texture2D = Files.load_async(portrait_path)
 		_portrait.texture = portrait
 		_portrait.tooltip_text = portrait_path
 		if _character_profile: _character_profile.portrait = _portrait.texture
 		details_changed.emit(_name.text, _title.text, _portrait.texture)
+		ResourceLoader.load_threaded_request(_get_portrait_path_for_index(_portrait_index - 1))
+		ResourceLoader.load_threaded_request(_get_portrait_path_for_index(_portrait_index + 1))
 
 func _ready() -> void:
 	if Engine.is_editor_hint(): return
@@ -94,6 +94,12 @@ func _load_portraits() -> void:
 	_random_button.tooltip_text = "Random\n%d Portraits" % _portrait_directories[_sex].size()
 	_sex_button.tooltip_text = "Filter Sex\n%d Portraits" % _portrait_directories[_sex].size()
 
+func _get_portrait_path_for_index(portrait_index: int) -> String:
+	var portrait_directory: Array[String] =  _portrait_directories[_sex]
+	portrait_index = posmod(portrait_index, portrait_directory.size())
+	var directory_path: String = portrait_directory[portrait_index]
+	return directory_path.path_join(_portrait_file_name)
+
 func _on_name_changed(new_text: String) -> void:
 	if _character_profile: _character_profile.name = new_text
 	details_changed.emit(new_text, _title.text, _portrait.texture)
@@ -103,7 +109,7 @@ func _on_title_changed(new_text: String) -> void:
 	details_changed.emit(_name.text, new_text, _portrait.texture)
 
 func _on_sex_pressed() -> void:
-	_sex = (_sex + 1) % Sex.size() as Sex
+	_sex = posmod(_sex + 1, Sex.size()) as Sex
 
 func _on_previous_pressed() -> void:
 	_portrait_index -= 1

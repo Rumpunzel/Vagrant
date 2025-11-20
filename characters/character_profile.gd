@@ -30,6 +30,7 @@ signal origins_changed(origins: Array[Origin])
 		_portrait_directory = new_portrait_directory
 		portrait = load(_portrait_directory.path_join(_portrait_file_name)) if _portrait_directory else null
 		_additional_portraits.clear()
+		if not _portrait_directory: return
 		for portrait_file_name: String in _additional_portrait_file_names:
 			_additional_portraits[portrait_file_name] = load(_portrait_directory.path_join(portrait_file_name))
 @export var _additional_portraits: Dictionary[String, Texture2D]:

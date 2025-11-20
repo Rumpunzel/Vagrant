@@ -27,6 +27,8 @@ func are_all_prerequisites_fullfilled(story: Story) -> bool:
 		if condition.is_true(): return true
 	return _conditions.is_empty()
 
+func prepare() -> void: pass
+
 func get_page_title(story: Story) -> String:
 	for event: AdventurePage in _events:
 		if event.are_all_prerequisites_fullfilled(story):

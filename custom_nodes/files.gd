@@ -1,5 +1,16 @@
 class_name Files
 
+static func load_async(resource_path: String) -> Variant:
+	match ResourceLoader.load_threaded_get_status(resource_path):
+		ResourceLoader.ThreadLoadStatus.THREAD_LOAD_IN_PROGRESS, ResourceLoader.ThreadLoadStatus.THREAD_LOAD_LOADED:
+			return ResourceLoader.load_threaded_get(resource_path)
+		ResourceLoader.ThreadLoadStatus.THREAD_LOAD_INVALID_RESOURCE:
+			print_debug("Not queued, normally loading Resource at: %s" % resource_path)
+			return load(resource_path)
+		ResourceLoader.ThreadLoadStatus.THREAD_LOAD_FAILED: printerr("Failed to load Resource at: %s" % resource_path)
+		_: assert(false, "Does not exist")
+	return null
+
 static func list_all_directories(
 	directory_path: String,
 	search_recursively: bool = true,

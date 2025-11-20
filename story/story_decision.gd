@@ -1,7 +1,11 @@
 class_name StoryDecision
 extends StoryChoice
 
-var _adventure_decision: AdventureDecision
+var _adventure_decision: AdventureDecision :
+	set(new_adventure_decision):
+		_adventure_decision = new_adventure_decision
+		var transition: AdventurePageReference = _adventure_decision.transition
+		if transition: _adventure_decision.transition.prepare()
 var _chosen: bool = false
 
 func _init(adventure_decision: AdventureDecision) -> void:

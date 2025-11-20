@@ -31,7 +31,6 @@ func _on_story_page_entered(story_page: StoryPage) -> void:
 	assert(story_page)
 	var previous_page: PageEntry = _current_page_entry
 	_current_page_entry = story_page.create_story_entry()
-	_current_page_entry.setup_page(story_page)
 	if not previous_page: _flip_page()
 	else:
 		var delay: float = _dice_page_turn_delay if previous_page.is_dice_page() else _page_turn_delay
