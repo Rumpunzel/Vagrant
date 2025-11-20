@@ -30,6 +30,7 @@ _dice_log_save_result_entry = NodePath("MarginContainer/VBoxContainer/SaveResult
 metadata/_custom_type_script = "uid://dfxwf0abq0203"
 
 [node name="Vignette" parent="." instance=ExtResource("2_4r3qb")]
+self_modulate = Color(1, 1, 1, 0.6)
 layout_mode = 2
 
 [node name="Portrait" type="TextureRect" parent="Vignette"]
@@ -93,7 +94,6 @@ offset_right = 0.0
 offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
-selected = 2
 
 [node name="DiceRequestEntry" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_tj3a7")]
 layout_mode = 2

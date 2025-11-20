@@ -82,7 +82,7 @@ func _on_continue_pressed() -> void:
 	match _creation_stage:
 		CreationStage.ATTRIBUTES: _creation_stage = CreationStage.ORIGINS
 		CreationStage.ORIGINS: _creation_stage = CreationStage.DONE
-		CreationStage.DONE: pass
+		CreationStage.DONE: _character_confirmation.confirm()
 		_: assert(false, "CreationStage %s not supported!" % _creation_stage)
 
 func _on_character_confirmed(character_name: String) -> void:
