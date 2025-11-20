@@ -8,10 +8,10 @@ signal die_type_selected(die_type: DieType)
 	set(new_die_types):
 		die_types = new_die_types
 		if include_null_die: die_types.append(null)
-		items.assign(die_types.map(func(die_type: DieType) -> String: return die_type.to_string() if die_type else ("None" if null_text.is_empty() else null_text)))
+		items.assign(die_types.map(func(die_type: DieType) -> String: return die_type.to_string() if die_type else ("NONE" if null_text.is_empty() else null_text)))
 		selected = 0
 @export var include_null_die: bool
-@export_placeholder("None") var null_text: String
+@export_placeholder("NONE") var null_text: String
 
 func _ready() -> void:
 	if not Engine.is_editor_hint(): return

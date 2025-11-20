@@ -33,11 +33,10 @@ var _die_to_exhaust: DieType :
 		if not _die_to_exhaust: _breath_dice.stop_highlighting()
 		status_changed.emit()
 
-func catch_breath() -> bool:
+func catch_breath() -> void:
 	assert(_die_to_exhaust == _die_selection.get_selected_die_type())
-	if not _die_to_exhaust or not can_catch_breath(): return false
+	if not _die_to_exhaust or not can_catch_breath(): return
 	character.catch_breath(_die_to_exhaust)
-	return true
 
 func update_die_types() -> void:
 	#visible = character.has_lost_breath()

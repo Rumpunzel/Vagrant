@@ -1,5 +1,8 @@
 class_name Character
-extends Resource
+extends Node
+
+signal caught_breath(recovered_dice: Array[BreathDie])
+signal suffered_injury(injury: Injury)
 
 signal character_profile_changed(character_profile: CharacterProfile)
 signal injuries_changed(injuries: Array[Injury])
@@ -34,19 +37,18 @@ var breath_dice: Array[BreathDie] :
 
 var most_recently_chosen_attribute: CharacterAttribute
 
+# TODO: if you roll under an injury, increase magnitude by 1
 var _injuries: Array[Injury] :
 	set(new_injuries):
 		if new_injuries == _injuries: return
 		_injuries = new_injuries
 		injuries_changed.emit(_injuries)
 
-func _init(new_character_profile: CharacterProfile = null) -> void:
-	character_profile = new_character_profile
-
 func suffer_injury(injury: Injury) -> void:
 	assert(injury.magnitude > 0)
 	_injuries.append(injury)
 	injuries_changed.emit(_injuries)
+	suffered_injury.emit(injury)
 
 func catch_breath(die_to_exhaust: DieType) -> void:
 	assert(die_to_exhaust)
@@ -57,15 +59,17 @@ func catch_breath(die_to_exhaust: DieType) -> void:
 	new_exhaustion.append(die_to_exhaust)
 	exhaustion = new_exhaustion
 	## Breath Dice Recovery
-	var new_breath_dice: Array[BreathDie] = breath_dice.duplicate()
+	var recovered_breath_dice: Array[BreathDie] = []
 	var recoverable_breath_dice: Dictionary[DieType, int] = get_recoverable_breath_dice(die_to_exhaust)
 	for breath_die_type: DieType in recoverable_breath_dice.keys():
 		assert(not exhaustion.has(breath_die_type))
 		var dice_to_recover: int = recoverable_breath_dice[breath_die_type]
-		var recovered_breath_dice: Array[BreathDie] = breath_die_type.get_breath_dice_pool(dice_to_recover)
-		new_breath_dice.append_array(recovered_breath_dice)
+		recovered_breath_dice.append_array(breath_die_type.get_breath_dice_pool(dice_to_recover))
+	var new_breath_dice: Array[BreathDie] = breath_dice.duplicate()
+	new_breath_dice.append_array(recovered_breath_dice)
 	assert(breath_dice != new_breath_dice)
 	breath_dice = new_breath_dice
+	caught_breath.emit(recovered_breath_dice)
 
 func can_catch_breath(die_to_exhaust: DieType) -> bool:
 	return not get_recoverable_breath_dice(die_to_exhaust).is_empty() and get_available_exhaustion().size() > 1

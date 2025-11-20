@@ -3,7 +3,6 @@ class_name CatchBreaths
 extends CharacterList
 
 signal status_changed(can_catch_breath: bool)
-signal caught_breath
 
 @export_group("Configuration")
 @export var _catch_breath: PackedScene
@@ -36,8 +35,4 @@ func _on_status_changed() -> void:
 	status_changed.emit(true)
 
 func _on_confirmed() -> void:
-	var characters_caught_breath: Array[Character] = []
-	for catch_breath: CatchBreath in _get_catch_breaths():
-		var did_catch_breath: bool = catch_breath.catch_breath()
-		if did_catch_breath: characters_caught_breath.append(catch_breath.character)
-	if not characters_caught_breath.is_empty(): caught_breath.emit()
+	for catch_breath: CatchBreath in _get_catch_breaths(): catch_breath.catch_breath()

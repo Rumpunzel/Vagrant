@@ -9,8 +9,10 @@ var characters: Dictionary[CharacterProfile, Character] = { }
 
 func create_character(character_profile: CharacterProfile) -> Character:
 	assert(not characters.has(character_profile), "Character is not allowed to exist when being created!")
-	var character: Character = Character.new(character_profile)
+	var character: Character = preload("uid://bl0pdxri24fnh").instantiate()
+	character.character_profile = character_profile
 	characters[character_profile] = character
+	add_child(character)
 	character.character_profile_changed.connect(_on_character_profile_changed.bind(character))
 	character_added.emit(character)
 	characters_updated.emit(characters)
