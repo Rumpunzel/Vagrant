@@ -18,7 +18,7 @@ var _fight_result: FightResult:
 
 func resolve_consequences() -> void:
 	for consequence: StoryConsequence in get_consequences():
-		consequence.resolve()
+		consequence.resolve(null, 0)
 		assert(false)
 
 func get_adventure_decision() -> AdventureFightDecision: return _adventure_decision

@@ -18,9 +18,9 @@ var _save_result: SaveResult:
 
 func resolve_consequences() -> void:
 	if _save_result.is_success():
-		for consequence: StoryConsequence in get_consequences(): consequence.resolve()
+		for consequence: StoryConsequence in get_consequences(): consequence.resolve(null, 0)
 	else:
-		for consequence: StoryConsequence in get_failure_consequences(): consequence.resolve()
+		for consequence: StoryConsequence in get_failure_consequences(): consequence.resolve(get_protagonist(), _save_result.get_margin())
 
 func get_adventure_decision() -> AdventureSaveDecision: return _adventure_decision
 

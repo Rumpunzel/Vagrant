@@ -38,25 +38,31 @@ func get_external_modifier_sum() -> int:
 		sum += modifier.modifier.score_modifiers[_attribute]
 	return sum
 
+func get_color() -> Color:
+	var external_modifier_sum: int = get_external_modifier_sum()
+	if external_modifier_sum > 0: return Main.SUCCESS
+	if external_modifier_sum < 0: return Main.FAILURE
+	return Color.WHITE
+
 func get_details(icon_size: int = 32) -> String:
 	var details: String = ""
 	if _base.get_type() == AttributeScore.Type.DOUBLE: details += "[color=gold]"
-	details += "%s"
-	details += " [img=%dx%d,center,center]%s[/img]"
+	details += _base.to_string()
+	details += " [img=%dx%d,center,center]%s[/img]" % [icon_size, icon_size, "uid://dpmwlpo7a7q1r"]
 	if _base.get_type() == AttributeScore.Type.DOUBLE: details += "[/color]"
 	var internal_modifiers_details: Array[String] = []
 	for modifier: Modifier in _internal_modifiers:
 		var modifier_details: String = modifier.get_details(_attribute, icon_size)
 		if not modifier_details.is_empty(): internal_modifiers_details.append(modifier_details)
 	if not internal_modifiers_details.is_empty(): details += " "
-	details += "%s"
+	details += " ".join(internal_modifiers_details)
 	var external_modifiers_details: Array[String] = []
-	for modifier: Modifier in _internal_modifiers:
+	for modifier: Modifier in _external_modifiers:
 		var modifier_details: String = modifier.get_details(_attribute, icon_size)
 		if not modifier_details.is_empty(): external_modifiers_details.append(modifier_details)
 	if not external_modifiers_details.is_empty(): details += " "
-	details += "%s"
-	return details % [_base.to_string(), icon_size, icon_size, "uid://dpmwlpo7a7q1r", " ".join(internal_modifiers_details), " ".join(external_modifiers_details)]
+	details += " ".join(external_modifiers_details)
+	return details
 
 class Modifier extends RefCounted:
 	var modifier: AttributeScoreModifier

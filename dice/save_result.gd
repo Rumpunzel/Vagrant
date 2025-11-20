@@ -23,6 +23,9 @@ func get_breath_dice() -> Array[BreathDie]:
 func get_save_outcome() -> Outcome:
 	return Outcome.SUCCESS if get_highest_result() >= save_request.get_difficulty() else Outcome.FAILURE
 
+func get_margin() -> int:
+	return abs(save_request.get_difficulty() - get_highest_result())
+
 func get_highest_breath_dice() -> Array[BreathDie]:
 	var highest_breath_dice: Array[BreathDie] = []
 	highest_breath_dice.assign(get_highest_dice())

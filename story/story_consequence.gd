@@ -8,3 +8,7 @@ func _init(adventure_consequence: AdventureConsequence) -> void:
 
 static func from_adventure_consequence(adventure_consequence: AdventureConsequence) -> StoryConsequence:
 	return new(adventure_consequence)
+
+func resolve(protagonist: Character, damage: int) -> void:
+	assert(protagonist)
+	_adventure_consequence.resolve(protagonist, damage)

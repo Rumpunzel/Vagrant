@@ -14,7 +14,7 @@ func is_chosen() -> bool: return _chosen
 func is_dice_choice() -> bool: return false
 
 func resolve_consequences() -> void:
-	for consequence: StoryConsequence in get_consequences(): consequence.resolve()
+	for consequence: StoryConsequence in get_consequences(): consequence.resolve(null, 0)
 
 func get_adventure_decision() -> AdventureDecision: return _adventure_decision
 
