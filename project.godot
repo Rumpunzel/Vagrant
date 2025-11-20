@@ -13,7 +13,9 @@ config_version=5
 config/name="Vagrant"
 run/main_scene="uid://b0wuigen3gx4"
 config/features=PackedStringArray("4.5", "Forward Plus")
-config/icon="uid://bajorfeh7bpyj"
+boot_splash/fullsize=false
+boot_splash/image="uid://b78ro47ht4nhq"
+config/icon="uid://b78ro47ht4nhq"
 
 [autoload]
 
