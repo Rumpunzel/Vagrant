@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AdventureDecision" load_steps=3 format=3 uid="uid://b4qjxus6rghvc"]
 
-[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/adventure_decision.gd" id="1_vq2tg"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="1_vq2tg"]
 
 [sub_resource type="Resource" id="Resource_4me77"]
 

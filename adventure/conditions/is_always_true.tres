@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="AdventureIsAlwaysTrueCondition" load_steps=2 format=3 uid="uid://dr6nvcap2vk5f"]
+
+[ext_resource type="Script" uid="uid://c4bcwrmjaeach" path="res://adventure/conditions/adventure_is_always_true_condition.gd" id="1_wdm50"]
+
+[resource]
+script = ExtResource("1_wdm50")
+metadata/_custom_type_script = "uid://c4bcwrmjaeach"

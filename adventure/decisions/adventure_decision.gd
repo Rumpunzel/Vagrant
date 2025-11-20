@@ -3,7 +3,7 @@ extends Resource
 
 @export_multiline var description: String
 @export var transition: AdventurePageReference
-@export var consequences: Array[AdventureConsequence]
+@export var 
 
 @export var _icon: Texture2D
 @export var _color: Color = Color.WHITE

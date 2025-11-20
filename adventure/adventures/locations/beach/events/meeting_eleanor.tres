@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="AdventurePage" load_steps=13 format=3 uid="uid://d3cv8d5e65vwh"]
 
-[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/adventure_condition.gd" id="1_k8kem"]
-[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/adventure_decision.gd" id="1_npy2t"]
-[ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/adventure_consequence.gd" id="3_0imj5"]
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="1_k8kem"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="1_npy2t"]
+[ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/consequences/adventure_consequence.gd" id="3_0imj5"]
 [ext_resource type="Texture2D" uid="uid://e5mx4r2ak0u5" path="res://assets/monster_portraits/oracle.jpeg" id="3_k8kem"]
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="3_t43k6"]
 [ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="5_k8kem"]
-[ext_resource type="Script" uid="uid://df6f7mcpin5we" path="res://adventure/adventure_save_decision.gd" id="5_yeb4i"]
+[ext_resource type="Script" uid="uid://df6f7mcpin5we" path="res://adventure/decisions/adventure_save_decision.gd" id="5_yeb4i"]
 
 [sub_resource type="Resource" id="Resource_j24m5"]
 script = ExtResource("3_t43k6")
