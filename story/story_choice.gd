@@ -19,7 +19,7 @@ func _init(adventure_decision: AdventureDecision, protagonist_getter: Callable) 
 	_adventure_decision = adventure_decision
 	_protagonist_getter = protagonist_getter
 
-static func from_story_decision(adventure_decision: AdventureDecision, protagonist_getter: Callable) -> StoryChoice:
+static func from_adventure_decision(adventure_decision: AdventureDecision, protagonist_getter: Callable) -> StoryChoice:
 	if adventure_decision is AdventureSaveDecision: return StorySaveDecision.new(adventure_decision, protagonist_getter)
 	elif adventure_decision is AdventureFightDecision: return StoryFightDecision.new(adventure_decision, protagonist_getter)
 	return StoryDecision.new(adventure_decision, protagonist_getter)
@@ -37,7 +37,7 @@ static func from_story_decision(adventure_decision: AdventureDecision, protagoni
 
 func get_consequences() -> Array[StoryConsequence]:
 	var story_consequences: Array[StoryConsequence] = []
-	story_consequences.assign(get_adventure_decision().consequences.map(StoryConsequence.new))
+	story_consequences.assign(get_adventure_decision().consequences.map(StoryConsequence.from_adventure_consequence))
 	return story_consequences
 
 func get_description() -> String: return get_adventure_decision().description

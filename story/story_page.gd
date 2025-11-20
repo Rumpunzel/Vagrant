@@ -28,7 +28,7 @@ func _init(
 	area_background = adventure_page.get_area_background()
 	ambience = from_ambience
 	if from_choices.is_empty(): from_choices.append(AdventureDecision.get_continue())
-	choices.assign(from_choices.map(StoryChoice.from_story_decision.bind(protagonist_getter)))
+	choices.assign(from_choices.map(StoryChoice.from_adventure_decision.bind(protagonist_getter)))
 	events = from_events
 
 func create_story_entry() -> StoryEntry:

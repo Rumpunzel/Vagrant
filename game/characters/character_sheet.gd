@@ -24,6 +24,7 @@ func _get_breath_dice() -> BreathDice: return _breath_dice
 func _set_character(new_character: Character) -> void:
 	assert(new_character)
 	super._set_character(new_character)
+	if new_character == character: return
 	_attributes.character = character
 
 func _on_close_pressed() -> void:

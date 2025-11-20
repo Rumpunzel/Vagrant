@@ -9,16 +9,32 @@ enum Direction {
 	BOTTOM_TO_TOP,
 }
 
-@export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var element_size: float = 0.0
-@export_range(-64, 64, 1, "suffix:px") var separation: int = 4
-@export var fill: bool
-@export var container_root: Control
-@export var container_index_in_root: int = -1
+@export_range(0.0, 256.0, 1.0, "exp", "suffix:px") var element_size: float = 0.0:
+	set(new_element_size):
+		element_size = new_element_size
+		_setup()
+@export_range(-64, 64, 1, "suffix:px") var separation: int = 4:
+	set(new_separation):
+		separation = new_separation
+		if not is_node_ready(): await ready
+		_box_container.add_theme_constant_override("separation", separation)
+@export var fill: bool:
+	set(new_fill):
+		fill = new_fill
+		_setup()
+@export var container_root: Control:
+	set(new_container_root):
+		container_root = new_container_root
+		_setup()
+@export var container_index_in_root: int = -1:
+	set(new_container_index_in_root):
+		container_index_in_root = new_container_index_in_root
+		_setup()
 @export var alignment: BoxContainer.AlignmentMode = BoxContainer.AlignmentMode.ALIGNMENT_BEGIN :
 	set(new_alignment):
 		alignment = new_alignment
 		if _box_container: _box_container.alignment = alignment
-@export var direction: Direction = Direction.LEFT_TO_RIGHT:
+@export var direction: Direction = Direction.LEFT_TO_RIGHT :
 	set(new_direction):
 		direction = new_direction
 		_setup()
@@ -82,7 +98,7 @@ func _set_box_container(new_box_container: BoxContainer) -> void:
 	if _box_container:
 		elements = get_elements()
 		for_each_element(func(element: Control) -> void: _box_container.remove_child(element))
-		root.remove_child(_box_container)
+		_box_container.get_parent().remove_child(_box_container)
 		_box_container.queue_free()
 	_box_container = new_box_container
 	_box_container.alignment = alignment

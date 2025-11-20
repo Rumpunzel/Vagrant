@@ -34,9 +34,9 @@ details = "You feel the icy cold of its knive in the hairs standing on your back
 attribute = ExtResource("5_prahj")
 difficulty = 5
 failure_transition = SubResource("Resource_hg3kg")
+failure_consequences = Array[ExtResource("4_70bai")]([ExtResource("9_3b07n")])
 description = "Wun away!"
 transition = SubResource("Resource_qyl4k")
-consequences = Array[ExtResource("4_70bai")]([ExtResource("9_3b07n")])
 metadata/_custom_type_script = "uid://df6f7mcpin5we"
 
 [resource]

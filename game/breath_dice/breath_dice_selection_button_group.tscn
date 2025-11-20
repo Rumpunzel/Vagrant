@@ -28,6 +28,7 @@ metadata/_custom_type_script = "uid://c0lefpkt50bgv"
 [node name="Exhaustion" type="TextureRect" parent="."]
 modulate = Color(0.7977378, 0.7977378, 0.7977378, 1)
 layout_mode = 2
+mouse_filter = 2
 texture = ExtResource("3_jnk71")
 expand_mode = 1
 stretch_mode = 6
