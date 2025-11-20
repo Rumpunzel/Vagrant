@@ -106,7 +106,6 @@ func get_portrait(identifier: String) -> Texture2D:
 	return _additional_portraits.get(identifier, portrait)
 
 func get_available_doubles() -> int:
-	assert(has_valid_attributes())
 	var doubles_rolled: int = 0
 	for attribute_score: RolledAttributeScore in attribute_scores.values():
 		if attribute_score and attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1

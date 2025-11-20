@@ -55,7 +55,7 @@ func _update_highlights() -> void:
 	_breath_dice.highlight(character.get_recoverable_breath_dice(_die_to_exhaust).keys())
 	var potential_exhaustion: Array[DieType] = character.exhaustion.duplicate()
 	if _die_to_exhaust: potential_exhaustion.append(_die_to_exhaust)
-	for button_group: BreathDiceGroup in _breath_dice.button_groups.values(): button_group.set_exhaustion(potential_exhaustion)
+	for button_group: BreathDiceGroup in _breath_dice.button_groups.values(): button_group.exhaustion = potential_exhaustion
 
 func can_catch_breath() -> bool:
 	return _die_to_exhaust and character.can_catch_breath(_die_to_exhaust)

@@ -16,8 +16,8 @@ _icon = NodePath("MarginContainer/Icon")
 label = NodePath("MarginContainer/Label")
 metadata/_custom_type_script = "uid://clirdct88es60"
 
-[node name="Exhaustion" type="TextureRect" parent="."]
-modulate = Color(1, 1, 1, 0.6)
+[node name="ExhaustionIcon" type="TextureRect" parent="."]
+modulate = Color(0.45882353, 0.101960786, 0.12156863, 1)
 layout_mode = 2
 texture = ExtResource("4_lj6pr")
 expand_mode = 1

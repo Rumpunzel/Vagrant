@@ -2,23 +2,9 @@
 class_name BreathDiceDisplayGroup
 extends BreathDiceGroup
 
-var _exhaustion: Array[DieType] :
-	set(new_exhaustion):
-		_exhaustion = new_exhaustion
-		_update_visibility()
-
 func _ready() -> void:
 	die_type_changed.connect(_on_die_type_changed)
 	breath_die_button_added.connect(_on_breath_die_button_added)
-
-func is_exhausted() -> bool: return _exhaustion.has(die_type)
-
-func set_exhaustion(exhaustion: Array[DieType]) -> void:
-	_exhaustion = exhaustion
-
-func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
-	super.set_breath_dice(new_breath_dice)
-	_update_visibility()
 
 func _update_visibility() -> void:
 	modulate = Main.FAILURE if is_exhausted() else Color.WHITE

@@ -31,7 +31,7 @@ func setup_breath_dice(breath_dice: Array[BreathDie]) -> void:
 		button_group.breath_dice = relevant_breath_dice
 
 func set_exhaustion(exhaustion: Array[DieType]) -> void:
-	for button_group: BreathDiceGroup in button_groups.values(): button_group.set_exhaustion(exhaustion)
+	for button_group: BreathDiceGroup in button_groups.values(): button_group.exhaustion = exhaustion
 
 func highlight(die_types: Array[DieType]) -> void:
 	for die_type: DieType in button_groups.keys():

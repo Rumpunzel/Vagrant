@@ -15,6 +15,7 @@ signal breath_die_button_added(breath_die_button: BreathDieButton)
 @export var _breath_die_button: PackedScene
 
 var breath_dice: Array[BreathDie] : set = set_breath_dice
+var exhaustion: Array[DieType] : set = set_exhaustion
 
 var _highlight_tween: Tween
 
@@ -36,8 +37,7 @@ func stop_highlighting() -> void:
 	if is_exhausted(): return
 	modulate.a = 1.0
 
-@abstract func is_exhausted() -> bool
-@abstract func set_exhaustion(exhaustion: Array[DieType]) -> void
+func is_exhausted() -> bool: return exhaustion.has(die_type)
 
 func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
 	breath_dice = new_breath_dice
@@ -54,3 +54,9 @@ func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
 	for breath_die: BreathDie in breath_dice:
 		assert(breath_die.die_type == die_type)
 		add_breath_die(breath_die)
+
+func set_exhaustion(new_exhaustion: Array[DieType]) -> void:
+	exhaustion = new_exhaustion
+	_update_visibility()
+
+@abstract func _update_visibility() -> void

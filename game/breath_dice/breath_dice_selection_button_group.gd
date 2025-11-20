@@ -3,21 +3,12 @@ class_name BreathDiceSelectionButtonGroup
 extends BreathDiceGroup
 
 @export_group("Configuration")
-@export var _exhaustion: TextureRect
+@export var _exhaustion_icon: TextureRect
 @export var _all_button: DisplayButton
 
 func _ready() -> void:
 	die_type_changed.connect(_on_die_type_changed)
 	breath_die_button_added.connect(_on_breath_die_button_added)
-
-func is_exhausted() -> bool: return _exhaustion.visible
-
-func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
-	super.set_breath_dice(new_breath_dice)
-	_all_button.visible = breath_dice.size() > 1
-
-func set_exhaustion(exhaustion: Array[DieType]) -> void:
-	_exhaustion.visible = exhaustion.has(die_type)
 
 func update_dice_request(dice_request: DiceRequest) -> void:
 	for button: BreathDieSelectionButton in get_elements(): button.current_dice_request = dice_request
@@ -35,6 +26,11 @@ func deactivate(reset_on_deactivation: bool) -> void:
 	for button: BreathDieSelectionButton in get_elements(): button.deactivate(reset_on_deactivation)
 	_all_button.active = false
 	_all_button.disabled = true
+
+func _update_visibility() -> void:
+	modulate = Main.FAILURE if is_exhausted() else Color.WHITE
+	_exhaustion_icon.visible = is_exhausted() and breath_dice.is_empty()
+	_all_button.visible = breath_dice.size() > 1
 
 func _on_button_toggled(_toggled_on: bool = false) -> void:
 	var all_buttons_selected: bool = true

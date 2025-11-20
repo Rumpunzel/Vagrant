@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cxpqjywsmrwhw" path="res://game/icons/crossed-chains.svg" id="3_jnk71"]
 [ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="3_qcqnq"]
 
-[node name="BreathDiceSelectionButtonGroup" type="MarginContainer" node_paths=PackedStringArray("_exhaustion", "_all_button", "container_root")]
+[node name="BreathDiceSelectionButtonGroup" type="MarginContainer" node_paths=PackedStringArray("_exhaustion_icon", "_all_button", "container_root")]
 offset_right = 44.0
 offset_bottom = 145.0
 size_flags_horizontal = 3
@@ -14,7 +14,7 @@ theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 script = ExtResource("2_nci2h")
-_exhaustion = NodePath("Exhaustion")
+_exhaustion_icon = NodePath("ExhaustionIcon")
 _all_button = NodePath("Buttons/AllButton")
 _breath_die_button = ExtResource("3_6gpjh")
 element_size = 64.0
@@ -24,14 +24,6 @@ container_root = NodePath("Buttons")
 container_index_in_root = 0
 direction = 2
 metadata/_custom_type_script = "uid://c0lefpkt50bgv"
-
-[node name="Exhaustion" type="TextureRect" parent="."]
-modulate = Color(0.7977378, 0.7977378, 0.7977378, 1)
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("3_jnk71")
-expand_mode = 1
-stretch_mode = 6
 
 [node name="Buttons" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -46,5 +38,13 @@ text = "All"
 script = ExtResource("3_qcqnq")
 active = false
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
+
+[node name="ExhaustionIcon" type="TextureRect" parent="."]
+modulate = Color(0.45882353, 0.101960786, 0.12156863, 1)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_jnk71")
+expand_mode = 1
+stretch_mode = 6
 
 [connection signal="toggled" from="Buttons/AllButton" to="." method="_on_all_button_toggled"]
