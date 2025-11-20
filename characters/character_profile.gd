@@ -112,9 +112,10 @@ func get_available_doubles() -> int:
 	return doubles_rolled
 
 func get_attribute_modifiers() -> Array[AttributeScore.Modifier]:
-	assert(has_valid_origins())
 	var modifiers: Array[AttributeScore.Modifier] = []
-	for origin: Origin in origins: modifiers.append_array(origin.get_attribute_score_modifiers())
+	for origin: Origin in origins:
+		if not origin: continue
+		modifiers.append_array(origin.get_attribute_score_modifiers())
 	return modifiers
 
 func get_breath_dice() -> Array[BreathDie]:

@@ -9,8 +9,8 @@ signal attributes_rolled(attribute_scores: Dictionary[CharacterAttribute, Attrib
 		assert(new_character_profile)
 		_character_profile = new_character_profile
 		for attribute: CharacterAttribute in Rules.ATTRIBUTES:
-			if not _character_profile.attribute_scores.has(attribute) or not _character_profile.attribute_scores.get(attribute): continue
 			var attribute_score_roller: AttributeScoreRoller = _attribute_score_rollers[attribute]
+			if not _character_profile.attribute_scores.has(attribute) or not _character_profile.attribute_scores.get(attribute): continue
 			attribute_score_roller.score = _character_profile.attribute_scores[attribute]
 			attribute_score_roller.disable()
 
@@ -30,8 +30,8 @@ func _ready() -> void:
 func setup(character_profile: CharacterProfile) -> void:
 	_character_profile = character_profile
 
-func update_modifiers(modifers: Array[AttributeScore.Modifier]) -> void:
-	for_each_element(func(attribute_score_roller: AttributeScoreRoller) -> void: attribute_score_roller.modifiers = modifers)
+func update_modifiers(modifiers: Array[AttributeScore.Modifier]) -> void:
+	for_each_element(func(attribute_score_roller: AttributeScoreRoller) -> void: attribute_score_roller.modifiers = modifiers)
 
 func _on_attribute_score_rolled(attribute: CharacterAttribute, attribute_score: RolledAttributeScore) -> void:
 	_character_profile.attribute_scores[attribute] = attribute_score

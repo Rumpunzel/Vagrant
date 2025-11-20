@@ -36,6 +36,7 @@ func _ready() -> void:
 	if not get_viewport().gui_get_focus_owner(): _button.grab_focus()
 
 func update() -> void:
+	if not score: return
 	var attribute_score: AttributeScore = _get_attribute_score()
 	_attribute_score.score = attribute_score
 	_score.text = "%s = %d" % [attribute_score.get_details(), attribute_score.get_score()]

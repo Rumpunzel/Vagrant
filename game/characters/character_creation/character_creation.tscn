@@ -111,5 +111,6 @@ text = "Continue"
 [connection signal="character_confirmed" from="CharacterConfirmation" to="." method="_on_character_confirmed"]
 [connection signal="name_changed" from="CharacterConfirmation" to="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BioEditor" method="_on_character_name_changed"]
 [connection signal="attributes_rolled" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller" to="." method="_on_attributes_rolled"]
+[connection signal="origins_picked" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker" to="." method="_on_origins_picked"]
 [connection signal="origins_picked" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker" to="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BioEditor" method="_on_origins_picked"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Continue" to="." method="_on_continue_pressed"]
