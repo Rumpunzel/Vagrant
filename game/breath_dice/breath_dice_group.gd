@@ -49,11 +49,11 @@ func set_breath_dice(new_breath_dice: Array[BreathDie]) -> void:
 		dummy_button.flat = true
 		dummy_button.tooltip_text = "All %s are lost." % die_type
 		dummy_button.mouse_default_cursor_shape = Control.CURSOR_FORBIDDEN
-		dummy_button.show_behind_parent = true
 		add(dummy_button)
 	for breath_die: BreathDie in breath_dice:
 		assert(breath_die.die_type == die_type)
 		add_breath_die(breath_die)
+	_update_visibility()
 
 func set_exhaustion(new_exhaustion: Array[DieType]) -> void:
 	exhaustion = new_exhaustion

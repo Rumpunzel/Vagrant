@@ -28,7 +28,9 @@ func deactivate(reset_on_deactivation: bool) -> void:
 	_all_button.disabled = true
 
 func _update_visibility() -> void:
-	modulate = Main.FAILURE if is_exhausted() else Color.WHITE
+	for button: BreathDieSelectionButton in get_elements():
+		if is_exhausted(): button.set_icon_colors(Main.FAILURE)
+		else: button.remove_button_colors()
 	_exhaustion_icon.visible = is_exhausted() and breath_dice.is_empty()
 	_all_button.visible = breath_dice.size() > 1
 

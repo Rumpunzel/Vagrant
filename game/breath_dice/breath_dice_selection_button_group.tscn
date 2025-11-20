@@ -40,7 +40,7 @@ active = false
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
 [node name="ExhaustionIcon" type="TextureRect" parent="."]
-modulate = Color(0.45882353, 0.101960786, 0.12156863, 1)
+modulate = Color(1, 1, 1, 0.6)
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("3_jnk71")
