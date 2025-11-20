@@ -52,8 +52,8 @@ func _get_difficulty(save_result: SaveResult) -> String:
 	var save_outcome: SaveResult.Outcome = save_result.get_save_outcome()
 	var color: Color = Color.WHITE
 	match save_outcome:
-		SaveResult.Outcome.SUCCESS: color = Color.LIME_GREEN
-		SaveResult.Outcome.FAILURE: color= Color.FIREBRICK
+		SaveResult.Outcome.SUCCESS: color = Main.SUCCESS
+		SaveResult.Outcome.FAILURE: color= Main.FAILURE
 		_: assert(false, "SaveResult.Outcome %s is not supported!" % save_outcome)
 	difficulty = "[color=#%s]%s[/color]" % [color.to_html(), difficulty]
 	var hint: String = "Difficulty: %d → %s" % [save_result.save_request.get_difficulty(), SaveResult.Outcome.find_key(save_outcome)]

@@ -1,5 +1,9 @@
 extends Node
 
+const SUCCESS: Color = Color("#4F9C3E")
+const FAILURE: Color = Color("#751A1F")
+const INFO: Color = Color("#7C71A2")
+
 var _main_scene_path: String = ProjectSettings.get_setting("application/run/main_scene")
 var _character_creation_scene_path: String = "uid://cc3qx1qt3ie00"
 var _story_scene_path: String = "uid://db6oui711vqep"
