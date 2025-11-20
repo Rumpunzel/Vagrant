@@ -5,5 +5,4 @@ extends Resource
 @export var starting_page: AdventurePage
 @export var protagonist: CharacterProfile
 
-func start_adventure() -> void:
-	Main.enter_story(self)
+func start_adventure() -> void: Main.enter_story(self)

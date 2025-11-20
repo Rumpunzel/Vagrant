@@ -1,5 +1,5 @@
+@abstract
 class_name AdventureCondition
 extends Resource
 
-func is_true() -> bool:
-	return true
+@abstract func is_true() -> bool
