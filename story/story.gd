@@ -30,7 +30,7 @@ var current_story_page: StoryPage:
 			_page_stack.push_back(current_story_page.adventure_page)
 			for choice: StoryChoice in current_story_page.choices:
 				choice.chosen.disconnect(_on_choice_made)
-				if choice is StoryDiceDecision: (choice as StoryDiceDecision).dice_requested.disconnect(_on_dice_requested)
+				choice.dice_requested.disconnect(_on_dice_requested)
 		current_story_page = story_page
 		assert(current_story_page)
 		var page_log: Array[StoryPage] = _page_log.get_or_add(current_story_page.adventure_page, [] as Array[StoryPage])
@@ -40,19 +40,19 @@ var current_story_page: StoryPage:
 		Stage.enter_story_page(current_story_page)
 		for choice: StoryChoice in current_story_page.choices:
 			choice.chosen.connect(_on_choice_made.bind(choice))
-			if choice is StoryDiceDecision: (choice as StoryDiceDecision).dice_requested.connect(_on_dice_requested)
+			choice.dice_requested.connect(_on_dice_requested)
 		story_page_entered.emit(current_story_page)
 
 var _current_dice_request: DiceRequest :
 	set(new_current_dice_request):
 		if _current_dice_request:
-			if _current_dice_request is SaveRequest: (_current_dice_request as SaveRequest).save_rolled.disconnect(_on_save_rolled)
-			elif _current_dice_request is FightRequest: (_current_dice_request as FightRequest).fight_rolled.disconnect(_on_fight_rolled)
+			if _current_dice_request is SaveRequest: _current_dice_request.rolled.disconnect(_on_save_rolled)
+			elif _current_dice_request is FightRequest: _current_dice_request.rolled.disconnect(_on_fight_rolled)
 		_current_dice_request = new_current_dice_request
 		dice_requested.emit(_current_dice_request)
 		if not _current_dice_request: return
-		if _current_dice_request is SaveRequest: (_current_dice_request as SaveRequest).save_rolled.connect(_on_save_rolled)
-		elif _current_dice_request is FightRequest: (_current_dice_request as FightRequest).fight_rolled.connect(_on_fight_rolled)
+		if _current_dice_request is SaveRequest: _current_dice_request.rolled.connect(_on_save_rolled)
+		elif _current_dice_request is FightRequest: _current_dice_request.rolled.connect(_on_fight_rolled)
 		else: assert(false, "Not implemented!")
 
 var _page_stack: Array[AdventurePage] = []
@@ -113,6 +113,7 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 	if story_decision != AdventureDecision.get_continue():
 		var decision_log: Array[StoryChoice] = _decision_log.get_or_add(story_decision, [] as Array[StoryChoice])
 		decision_log.append(story_choice)
+	story_choice.resolve_consequences()
 	enter_page(story_choice.get_transition())
 
 func _on_dice_requested(dice_request: DiceRequest) -> void:

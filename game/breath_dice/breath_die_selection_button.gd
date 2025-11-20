@@ -19,8 +19,8 @@ var current_dice_request: DiceRequest :
 			current_dice_request.selected_breath_dice_changed.disconnect(_on_selected_breath_dice_changed)
 			breath_die_selected.disconnect(current_dice_request.select_breath_die)
 			breath_die_deselected.disconnect(current_dice_request.deselect_breath_die)
-			if current_dice_request is SaveRequest: (current_dice_request as SaveRequest).save_rolled.disconnect(_on_save_rolled)
-			elif current_dice_request is FightRequest: (current_dice_request as FightRequest).fight_rolled.disconnect(_on_fight_rolled)
+			if current_dice_request is SaveRequest: current_dice_request.rolled.disconnect(_on_save_rolled)
+			elif current_dice_request is FightRequest: current_dice_request.rolled.disconnect(_on_fight_rolled)
 		current_dice_request = new_current_dice_request
 		if current_dice_request:
 			active = true
@@ -32,8 +32,8 @@ var current_dice_request: DiceRequest :
 		current_dice_request.selected_breath_dice_changed.connect(_on_selected_breath_dice_changed)
 		breath_die_selected.connect(current_dice_request.select_breath_die)
 		breath_die_deselected.connect(current_dice_request.deselect_breath_die)
-		if current_dice_request is SaveRequest: (current_dice_request as SaveRequest).save_rolled.connect(_on_save_rolled)
-		elif current_dice_request is FightRequest: (current_dice_request as FightRequest).fight_rolled.connect(_on_fight_rolled)
+		if current_dice_request is SaveRequest: current_dice_request.rolled.connect(_on_save_rolled)
+		elif current_dice_request is FightRequest: current_dice_request.rolled.connect(_on_fight_rolled)
 		else: assert(false, "Not implemented!")
 
 func deactivate(reset_on_deactivation: bool = false) -> void:

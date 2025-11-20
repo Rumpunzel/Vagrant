@@ -1,16 +1,14 @@
 class_name StoryFightDecision
 extends StoryDiceDecision
 
-var _adventure_fight_decision: AdventureFightDecision
-
 var _fight_request: FightRequest:
 	set(new_fight_request):
 		assert((new_fight_request == null) != (_fight_request == null)) # One of the must be null, the other must not
 		if _fight_request:
-			_fight_request.fight_rolled.disconnect(_on_dice_rolled)
+			_fight_request.rolled.disconnect(_on_dice_rolled)
 		_fight_request = new_fight_request
 		if not _fight_request: return
-		_fight_request.fight_rolled.connect(_on_dice_rolled)
+		_fight_request.rolled.connect(_on_dice_rolled)
 
 var _fight_result: FightResult:
 	set(new_fight_result):
@@ -18,11 +16,12 @@ var _fight_result: FightResult:
 		assert(not _fight_result)
 		_fight_result = new_fight_result
 
-func _init(adventure_fight_decision: AdventureFightDecision, protagonist_getter: Callable) -> void:
-	_adventure_fight_decision = adventure_fight_decision
-	_protagonist_getter = protagonist_getter
+func resolve_consequences() -> void:
+	for consequence: StoryConsequence in get_consequences():
+		consequence.resolve()
+		assert(false)
 
-func get_adventure_decision() -> AdventureFightDecision: return _adventure_fight_decision
+func get_adventure_decision() -> AdventureFightDecision: return _adventure_decision
 func get_transition() -> AdventurePage: return null
 
 func get_icon() -> Texture2D:

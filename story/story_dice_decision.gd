@@ -2,10 +2,6 @@
 class_name StoryDiceDecision
 extends StoryChoice
 
-signal dice_requested(dice_request: DiceRequest)
-
-var _protagonist_getter: Callable
-
 func chose() -> void:
 	assert(not is_chosen())
 	if get_dice_request(): return
@@ -35,8 +31,7 @@ func set_dice_request(dice_request: DiceRequest) -> void:
 
 @abstract func set_dice_result(dice_result: DiceResult) -> void
 
-func _on_dice_request_attribute_changed(_attribute: CharacterAttribute) -> void:
-	icon_changed.emit()
+func _on_dice_request_attribute_changed(_attribute: CharacterAttribute) -> void: icon_changed.emit()
 
 func _on_dice_rolled(dice_result: DiceResult) -> void:
 	set_dice_result(dice_result)

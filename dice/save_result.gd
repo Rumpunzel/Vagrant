@@ -13,6 +13,8 @@ func _init(for_save_request: SaveRequest) -> void:
 	save_request = for_save_request
 	super(save_request.get_selected_dice())
 
+func is_success() -> bool: return get_save_outcome() == Outcome.SUCCESS
+
 func get_breath_dice() -> Array[BreathDie]:
 	var breath_dice: Array[BreathDie]
 	breath_dice.assign(dice)

@@ -21,12 +21,6 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 		exhaustion.sort_custom(DieType.compare_ascending)
 		exhaustion_changed.emit(exhaustion)
 
-var injuries: Array[Injury] :
-	set(new_injuries):
-		if new_injuries == injuries: return
-		injuries = new_injuries
-		injuries_changed.emit()
-
 var breath_dice: Array[BreathDie] :
 	set(new_breath_dice):
 		if new_breath_dice == breath_dice: return
@@ -40,8 +34,19 @@ var breath_dice: Array[BreathDie] :
 
 var most_recently_chosen_attribute: CharacterAttribute
 
+var _injuries: Array[Injury] :
+	set(new_injuries):
+		if new_injuries == _injuries: return
+		_injuries = new_injuries
+		injuries_changed.emit(_injuries)
+
 func _init(new_character_profile: CharacterProfile = null) -> void:
 	character_profile = new_character_profile
+
+func suffer_injury(injury: Injury) -> void:
+	assert(injury.magnitude > 0)
+	_injuries.append(injury)
+	injuries_changed.emit(_injuries)
 
 func catch_breath(die_to_exhaust: DieType) -> void:
 	assert(die_to_exhaust)
@@ -114,7 +119,7 @@ func get_internal_attribute_modifiers() -> Array[AttributeScore.Modifier]:
 
 func get_external_attribute_modifiers() -> Array[AttributeScore.Modifier]:
 	var modifiers: Array[AttributeScore.Modifier] = []
-	for injury: Injury in injuries: modifiers.append(injury.to_attribute_score_modifier())
+	for injury: Injury in _injuries: modifiers.append(injury.to_attribute_score_modifier())
 	return modifiers
 
 func get_highest_attribute_score() -> AttributeScore:

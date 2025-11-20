@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_u2ksw"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="3_jui2c"]
-[ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/consequences/adventure_consequence.gd" id="4_jui2c"]
+[ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_jui2c"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="4_vbvy7"]
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="5_5fv8t"]
 [ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://adventure/adventures/locations/beach/beach.tres" id="5_r3xmp"]

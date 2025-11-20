@@ -28,15 +28,13 @@ extends FancyButton
 var _story_choice: StoryChoice:
 	set(new_story_choice):
 		assert(new_story_choice)
-		if _story_choice is StoryDiceDecision:
-			(_story_choice as StoryDiceDecision).icon_changed.disconnect(_update_icon)
+		if _story_choice: _story_choice.icon_changed.disconnect(_update_icon)
 		_story_choice = new_story_choice
 		var description: String = _story_choice.get_description()
 		set(&"text", description)
 		name = description
 		_update_icon()
-		if _story_choice is StoryDiceDecision:
-			(_story_choice as StoryDiceDecision).icon_changed.connect(_update_icon)
+		_story_choice.icon_changed.connect(_update_icon)
 
 func _ready() -> void:
 	_set_index()

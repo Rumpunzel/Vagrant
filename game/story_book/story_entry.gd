@@ -65,7 +65,7 @@ func _add_dialog_button(story_choice: StoryChoice, dialog_button_group: ButtonGr
 	dialog_button.hide()
 	_choices.add(dialog_button)
 	story_choice.chosen.connect(_on_choice_made)
-	if story_choice is StoryDiceDecision: (story_choice as StoryDiceDecision).dice_requested.connect(_on_dice_requested)
+	story_choice.dice_requested.connect(_on_dice_requested)
 
 func _fade_in(element: Control, duration: float, delay: float = 0.0) -> void:
 	if element.visible: return
@@ -115,9 +115,9 @@ func _on_fight_requested(fight_request: FightRequest) -> void:
 func _on_breath_dice_selection_confirmed() -> void:
 	if _save_request:
 		assert(not _fight_request)
-		_save_request.roll_save()
+		_save_request.roll()
 	elif _fight_request:
 		assert(not _save_request)
-		_fight_request.roll_fight()
+		_fight_request.roll()
 	else: assert(false)
 	_breath_dice_collapsible_container.auto_update_size = CollapsibleContainer.AutoUpdateSizeOptions.DISABLED

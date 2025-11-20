@@ -44,7 +44,7 @@ func request_save(save_request: SaveRequest) -> void:
 	assert(save_request)
 	request_fight(null)
 	_dice_request = save_request
-	save_request.save_rolled.connect(_on_save_rolled)
+	save_request.rolled.connect(_on_save_rolled)
 
 func request_fight(fight_request: FightRequest) -> void:
 	if not fight_request:
@@ -60,7 +60,7 @@ func request_fight(fight_request: FightRequest) -> void:
 	_stance_selection.attribute_selected.connect(fight_request.set_attribute)
 	fight_request.attribute_changed.connect(_stance_selection.set_selected_attribute)
 	_stance_selection_collapsible_container.open_tween()
-	fight_request.fight_rolled.connect(_on_fight_rolled)
+	fight_request.rolled.connect(_on_fight_rolled)
 
 func _enable_hud() -> void:
 	_ok_button.disabled = false

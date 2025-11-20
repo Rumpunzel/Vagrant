@@ -36,5 +36,5 @@ func _on_character_profile_changed(character_profile: CharacterProfile) -> void:
 	update_attributes()
 
 func _on_injuries_changed(injuries: Array[Injury]) -> void:
-	assert(injuries == character.injuries)
+	assert(injuries == character._injuries)
 	update_attributes()
