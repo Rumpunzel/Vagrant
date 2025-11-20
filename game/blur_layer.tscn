@@ -10,14 +10,20 @@ shader_parameter/mix_percentage = 0.3
 
 [node name="BlurLayer" type="CanvasLayer" node_paths=PackedStringArray("_blur")]
 script = ExtResource("1_nl565")
-_blur = NodePath("Blur")
+_blur = NodePath("MarginContainer/Blur")
 
-[node name="Blur" type="ColorRect" parent="."]
-material = SubResource("ShaderMaterial_ftmra")
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 1912.0
-offset_bottom = 1072.0
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="Blur" type="ColorRect" parent="MarginContainer"]
+material = SubResource("ShaderMaterial_ftmra")
+layout_mode = 2
 mouse_filter = 2
