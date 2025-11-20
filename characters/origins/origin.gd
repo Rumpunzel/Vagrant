@@ -37,5 +37,5 @@ static func concatenate_with_icons(origins: Array[Origin]) -> String:
 func get_attribute_score_modifiers() -> Array[AttributeScore.Modifier]:
 	var mods: Array[AttributeScore.Modifier] = []
 	for modifier: AttributeScoreModifier in modifiers:
-		mods.append(AttributeScore.Modifier.new(modifier, self))
+		mods.append(AttributeScore.Modifier.new(modifier, icon))
 	return mods

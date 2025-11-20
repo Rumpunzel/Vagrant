@@ -105,27 +105,17 @@ func get_formatted_title() -> String:
 func get_portrait(identifier: String) -> Texture2D:
 	return _additional_portraits.get(identifier, portrait)
 
-func get_attribute_scores() -> Dictionary[CharacterAttribute, AttributeScore]:
-	var attibute_scores: Dictionary[CharacterAttribute, AttributeScore] = {}
-	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
-		var modifiers: Array[AttributeScore.Modifier] = []
-		for origin: Origin in origins:
-			modifiers.append_array(origin.get_attribute_score_modifiers())
-		attibute_scores[attribute] = AttributeScore.create_with_modifiers(attribute, attribute_scores[attribute], modifiers)
-	assert(attibute_scores.size() == Rules.ATTRIBUTES.size())
-	return attibute_scores
-
 func get_available_doubles() -> int:
+	assert(has_valid_attributes())
 	var doubles_rolled: int = 0
 	for attribute_score: BaseAttributeScore in attribute_scores.values():
 		if attribute_score and attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
 	return doubles_rolled
 
 func get_attribute_modifiers() -> Array[AttributeScore.Modifier]:
+	assert(has_valid_origins())
 	var modifiers: Array[AttributeScore.Modifier] = []
-	for origin: Origin in origins:
-		if not origin: continue
-		modifiers.append_array(origin.get_attribute_score_modifiers())
+	for origin: Origin in origins: modifiers.append_array(origin.get_attribute_score_modifiers())
 	return modifiers
 
 func get_breath_dice() -> Array[BreathDie]:

@@ -2,7 +2,7 @@ class_name Character
 extends Resource
 
 signal character_profile_changed(character_profile: CharacterProfile)
-signal attribute_scores_changed(character: Character)
+signal injuries_changed(injuries: Array[Injury])
 signal breath_dice_changed(breath_dice: Array[BreathDie])
 signal breath_dice_states_changed
 signal exhaustion_changed(exhaustion: Array[DieType])
@@ -11,7 +11,6 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 	set(new_character_profile):
 		if new_character_profile == character_profile: return
 		character_profile = new_character_profile
-		attribute_scores = character_profile.get_attribute_scores()
 		breath_dice = character_profile.get_breath_dice()
 		character_profile_changed.emit(character_profile)
 
@@ -22,12 +21,11 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 		exhaustion.sort_custom(DieType.compare_ascending)
 		exhaustion_changed.emit(exhaustion)
 
-var attribute_scores: Dictionary[CharacterAttribute, AttributeScore] :
-	set(new_attribute_scores):
-		if new_attribute_scores == attribute_scores: return
-		attribute_scores = new_attribute_scores
-		attribute_scores_changed.emit(self)
-var most_recently_chosen_attribute: CharacterAttribute
+var injuries: Array[Injury] :
+	set(new_injuries):
+		if new_injuries == injuries: return
+		injuries = new_injuries
+		injuries_changed.emit()
 
 var breath_dice: Array[BreathDie] :
 	set(new_breath_dice):
@@ -39,6 +37,8 @@ var breath_dice: Array[BreathDie] :
 			assert(breath_die.alive)
 			breath_die.state_changed.connect(_on_breath_die_state_changed.bind(breath_die))
 		breath_dice_changed.emit(breath_dice)
+
+var most_recently_chosen_attribute: CharacterAttribute
 
 func _init(new_character_profile: CharacterProfile = null) -> void:
 	character_profile = new_character_profile
@@ -80,6 +80,15 @@ func get_recoverable_breath_dice(die_to_exhaust: DieType) -> Dictionary[DieType,
 	for die_type: DieType in exhaustion: recoverable_breath_dice.erase(die_type)
 	return recoverable_breath_dice
 
+func get_breath_dice_count(breath_die_type: DieType) -> int:
+	var count: int = 0
+	for die: BreathDie in breath_dice: if die.die_type == breath_die_type: count +=1
+	return count
+
+func get_auto_selected_breath_dice(with_attribute: CharacterAttribute) -> Array[BreathDie]:
+	var attribute_score: AttributeScore = get_attribute_score(with_attribute)
+	return breath_dice.filter(func(die: BreathDie) -> bool: return die.is_auto_selected(attribute_score))
+
 func get_available_exhaustion() -> Array[DieType]:
 	var unexhausted_die_types: Array[DieType] = []
 	var breath_die_types: Dictionary[DieType, int] = character_profile.breath_die_types
@@ -96,11 +105,22 @@ func get_portrait() -> Texture2D:
 	return character_profile.portrait
 
 func get_attribute_score(attribute: CharacterAttribute) -> AttributeScore:
-	return attribute_scores.get(attribute)
+	return AttributeScore.new(attribute, character_profile.attribute_scores[attribute], get_internal_attribute_modifiers(), get_external_attribute_modifiers())
+
+func get_internal_attribute_modifiers() -> Array[AttributeScore.Modifier]:
+	var modifiers: Array[AttributeScore.Modifier] = []
+	modifiers.append_array(character_profile.get_attribute_modifiers())
+	return modifiers
+
+func get_external_attribute_modifiers() -> Array[AttributeScore.Modifier]:
+	var modifiers: Array[AttributeScore.Modifier] = []
+	for injury: Injury in injuries: modifiers.append(injury.to_attribute_score_modifier())
+	return modifiers
 
 func get_highest_attribute_score() -> AttributeScore:
 	var highest_attribute_score: AttributeScore = null
-	for attribute_score: AttributeScore in attribute_scores.values():
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
+		var attribute_score: AttributeScore = get_attribute_score(attribute)
 		if not highest_attribute_score or attribute_score.get_score() > highest_attribute_score.get_score():
 			highest_attribute_score = attribute_score
 	return highest_attribute_score
@@ -111,21 +131,12 @@ func get_favored_attribute() -> CharacterAttribute:
 func get_highest_attribute() -> CharacterAttribute:
 	var highest_attribute: CharacterAttribute = null
 	var highest_attribute_score: AttributeScore = null
-	for attribute: CharacterAttribute in attribute_scores.keys():
-		var attribute_score: AttributeScore = attribute_scores[attribute]
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
+		var attribute_score: AttributeScore = get_attribute_score(attribute)
 		if not highest_attribute or attribute_score.get_score() > highest_attribute_score.get_score():
 			highest_attribute = attribute
 			highest_attribute_score = attribute_score
 	return highest_attribute
-
-func get_breath_dice_count(breath_die_type: DieType) -> int:
-	var count: int = 0
-	for die: BreathDie in breath_dice: if die.die_type == breath_die_type: count +=1
-	return count
-
-func get_auto_selected_breath_dice(with_attribute: CharacterAttribute) -> Array[BreathDie]:
-	var attribute_score: AttributeScore = get_attribute_score(with_attribute)
-	return breath_dice.filter(func(die: BreathDie) -> bool: return die.is_auto_selected(attribute_score))
 
 func _on_breath_die_state_changed(alive: bool, breath_die: BreathDie) -> void:
 	assert(breath_die.alive == alive)

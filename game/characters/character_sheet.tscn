@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://14h1hukjjol7"]
+[gd_scene load_steps=14 format=3 uid="uid://14h1hukjjol7"]
 
 [ext_resource type="Script" uid="uid://dkwi26f6nf1xj" path="res://game/characters/character_sheet.gd" id="1_uqhlh"]
 [ext_resource type="PackedScene" uid="uid://bnmsu0sopc3eu" path="res://game/breath_dice/vignette.tscn" id="2_cajq1"]
@@ -9,7 +9,9 @@
 [ext_resource type="Texture2D" uid="uid://85u82srrqglx" path="res://assets/editor_icons/hero_icons/x-mark.svg" id="5_al7wq"]
 [ext_resource type="PackedScene" uid="uid://cjdgl0lvge2cl" path="res://game/characters/ability_labels.tscn" id="5_davb4"]
 [ext_resource type="Texture2D" uid="uid://c0ckr8il0i4ct" path="res://assets/editor_icons/save.svg" id="6_i22xi"]
+[ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="7_e5mew"]
 [ext_resource type="Texture2D" uid="uid://cg3jqm5s4qxhx" path="res://assets/editor_icons/load.svg" id="7_mkqqw"]
+[ext_resource type="Texture2D" uid="uid://bjnuqyclma3kc" path="res://game/icons/cross-mark.svg" id="8_f7jq7"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c5c64"]
 
@@ -105,10 +107,42 @@ layout_mode = 2
 [node name="CharacterAttributesPanel" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_mkqqw")]
 layout_mode = 2
 
-[node name="Injuries" type="LineEdit" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer"]
+[node name="Injuries" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="FlexContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/Injuries"]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+script = ExtResource("7_e5mew")
+metadata/_custom_type_script = "uid://dqkpaquatj11m"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/Injuries"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/Injuries/HBoxContainer"]
+layout_mode = 2
+text = "3 - Cut from a Lurker"
+icon = ExtResource("8_f7jq7")
+expand_icon = true
+
+[node name="OldInjuries" type="LineEdit" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 placeholder_text = "Injuries"
 alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+max_value = 12.0
+step = 1.0
+allow_greater = true
+show_percentage = false
 
 [node name="BreathDiceSelectionButtons" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
 layout_mode = 2

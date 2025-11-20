@@ -33,7 +33,6 @@ func _set_character(new_character: Character) -> void:
 	if new_character == character: return
 	if character != null:
 		character.character_profile_changed.disconnect(_on_character_profile_changed)
-		
 		character.exhaustion_changed.disconnect(_on_exhaustion_changed)
 	character = new_character
 	_character_profile = character.character_profile

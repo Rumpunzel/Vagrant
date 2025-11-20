@@ -23,11 +23,8 @@ func _get_breath_dice() -> BreathDice: return _breath_dice
 
 func _set_character(new_character: Character) -> void:
 	assert(new_character)
-	if character != null:
-		character.attribute_scores_changed.disconnect(_attributes.update_attributes)
 	super._set_character(new_character)
-	_attributes.update_attributes(character)
-	character.attribute_scores_changed.connect(_attributes.update_attributes)
+	_attributes.character = character
 
 func _on_close_pressed() -> void:
 	hide()

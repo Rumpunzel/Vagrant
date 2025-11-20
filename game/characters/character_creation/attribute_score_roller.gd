@@ -48,7 +48,7 @@ func disable() -> void:
 	if next: next.grab_focus()
 
 func _get_attribute_score() -> AttributeScore:
-	return AttributeScore.create_with_modifiers(attribute, score, modifiers)
+	return AttributeScore.new(attribute, score, modifiers)
 
 func _on_button_pressed() -> void:
 	disable()

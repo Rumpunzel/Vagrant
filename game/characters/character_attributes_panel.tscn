@@ -7,10 +7,12 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gi8qp"]
 
 [node name="CharacterAttributesPanel" type="PanelContainer" node_paths=PackedStringArray("_attributes")]
+offset_right = 287.0
+offset_bottom = 168.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_gi8qp")
 script = ExtResource("1_3heis")
-_attribute_score = ExtResource("2_5c0rt")
 _attributes = NodePath("Attributes")
+_attribute_score = ExtResource("2_5c0rt")
 metadata/_custom_type_script = "uid://dre6xu01ov0dm"
 
 [node name="Attributes" type="MarginContainer" parent="."]

@@ -6,51 +6,65 @@ enum Type {
 	DOUBLE,
 }
 
-var attribute: CharacterAttribute
-var base: BaseAttributeScore
-var modifiers: Array[Modifier]
+var _attribute: CharacterAttribute
+var _base: BaseAttributeScore
+var _internal_modifiers: Array[Modifier]
+var _external_modifiers: Array[Modifier]
 
-static func create(new_attribute: CharacterAttribute, rolled_dice: Array[Die]) -> AttributeScore:
+func _init(attribute: CharacterAttribute, base: BaseAttributeScore, internal_modifiers: Array[Modifier], external_modifiers: Array[Modifier] = []) -> void:
+	assert(attribute)
+	assert(base)
+	_attribute = attribute
+	_base = base
+	_internal_modifiers = internal_modifiers
+	_external_modifiers = external_modifiers
+
+static func create(attribute: CharacterAttribute, rolled_dice: Array[Die]) -> AttributeScore:
 	var attribute_score: BaseAttributeScore = BaseAttributeScore.new(rolled_dice)
-	return create_with_modifiers(new_attribute, attribute_score, [])
-
-static func create_with_modifiers(new_attribute: CharacterAttribute, new_base: BaseAttributeScore, new_modifiers: Array[Modifier]) -> AttributeScore:
-	var new_attribute_score: AttributeScore = AttributeScore.new()
-	new_attribute_score.attribute = new_attribute
-	new_attribute_score.base = new_base
-	new_attribute_score.modifiers = new_modifiers
-	return new_attribute_score
+	return new(attribute, attribute_score, [])
 
 func get_score() -> int:
-	var score: int = base.get_score()  if base else 0
-	for modifier: Modifier in modifiers:
-		score += modifier.modifier.score_modifiers[attribute]
-	return score
+	return _base.get_score() + get_internal_modifier_sum() + get_external_modifier_sum()
+
+func get_internal_modifier_sum() -> int:
+	var sum: int = 0
+	for modifier: Modifier in _internal_modifiers:
+		sum += modifier.modifier.score_modifiers[_attribute]
+	return sum
+
+func get_external_modifier_sum() -> int:
+	var sum: int = 0
+	for modifier: Modifier in _external_modifiers:
+		sum += modifier.modifier.score_modifiers[_attribute]
+	return sum
 
 func get_details(icon_size: int = 32) -> String:
 	var details: String = ""
-	if get_type() == AttributeScore.Type.DOUBLE: details += "[color=gold]"
+	if _base.get_type() == AttributeScore.Type.DOUBLE: details += "[color=gold]"
 	details += "%s"
-	details += " [img=32x32,center,center]%s[/img]"
-	if get_type() == AttributeScore.Type.DOUBLE: details += "[/color]"
-	var modifiers_details: Array[String] = []
-	for modifier: Modifier in modifiers:
-		var modifier_details: String = modifier.get_details(attribute, icon_size)
-		if not modifier_details.is_empty(): modifiers_details.append(modifier_details)
-	if not modifiers_details.is_empty(): details += " "
+	details += " [img=%dx%d,center,center]%s[/img]"
+	if _base.get_type() == AttributeScore.Type.DOUBLE: details += "[/color]"
+	var internal_modifiers_details: Array[String] = []
+	for modifier: Modifier in _internal_modifiers:
+		var modifier_details: String = modifier.get_details(_attribute, icon_size)
+		if not modifier_details.is_empty(): internal_modifiers_details.append(modifier_details)
+	if not internal_modifiers_details.is_empty(): details += " "
 	details += "%s"
-	return details % [base.to_string() if base else "-", "uid://dpmwlpo7a7q1r", " ".join(modifiers_details)]
-
-func get_type() -> Type:
-	return base.get_type() if base else Type.NORMAL
+	var external_modifiers_details: Array[String] = []
+	for modifier: Modifier in _internal_modifiers:
+		var modifier_details: String = modifier.get_details(_attribute, icon_size)
+		if not modifier_details.is_empty(): external_modifiers_details.append(modifier_details)
+	if not external_modifiers_details.is_empty(): details += " "
+	details += "%s"
+	return details % [_base.to_string(), icon_size, icon_size, "uid://dpmwlpo7a7q1r", " ".join(internal_modifiers_details), " ".join(external_modifiers_details)]
 
 class Modifier extends RefCounted:
 	var modifier: AttributeScoreModifier
-	var source: Origin
+	var source_icon: Texture2D
 	
-	func _init(new_modifier: AttributeScoreModifier, new_source: Origin) -> void:
+	func _init(new_modifier: AttributeScoreModifier, new_source_icon: Texture2D) -> void:
 		modifier = new_modifier
-		source = new_source
+		source_icon = new_source_icon
 	
 	func get_details(attribute: CharacterAttribute, icon_size: int) -> String:
-		return modifier.get_details(attribute, source, icon_size)
+		return modifier.get_details(attribute, source_icon, icon_size)
