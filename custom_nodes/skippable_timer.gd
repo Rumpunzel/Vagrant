@@ -6,4 +6,4 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_released("skip_dialog_typing"):
 		stop()
 		timeout.emit()
-		get_viewport().set_input_as_handled()
+		#get_viewport().set_input_as_handled()

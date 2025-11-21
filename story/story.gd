@@ -4,8 +4,15 @@ extends Node
 
 signal story_page_entered(story_page: StoryPage)
 signal dice_requested(dice_request: DiceRequest)
+signal save_rolled(save_result: SaveResult)
+signal fight_rolled(fight_result: FightResult)
+
+@export_range(0.0, 5.0) var _reveal_delay: float = 1.5
 
 @export_group("Configuration")
+@export var _update_delay_timer: Timer
+@export var _success_audio_player: AudioStreamPlayer
+@export var _failure_audio_player: AudioStreamPlayer
 @export var _party: Characters
 @export var _title: TypingLabel
 
@@ -36,8 +43,6 @@ var current_story_page: StoryPage:
 		var page_log: Array[StoryPage] = _page_log.get_or_add(current_story_page.adventure_page, [] as Array[StoryPage])
 		page_log.append(current_story_page)
 		#for event: AdventurePage in current_story_page.get_events(self): _page_log[event] = get_how_often_page_has_been_entered(event) + 1
-		@warning_ignore("unsafe_method_access")
-		Stage.enter_story_page(current_story_page)
 		for choice: StoryChoice in current_story_page.choices:
 			choice.chosen.connect(_on_choice_made.bind(choice))
 			choice.dice_requested.connect(_on_dice_requested)
@@ -123,11 +128,17 @@ func _on_save_rolled(save_result: SaveResult) -> void:
 	assert(save_result)
 	assert(save_result.save_request == _current_dice_request)
 	_current_dice_request = null
+	save_rolled.emit(save_result)
+	_update_delay_timer.start(_reveal_delay)
+	await _update_delay_timer.timeout
+	if save_result.is_success(): _success_audio_player.play()
+	else: _failure_audio_player.play()
 
 func _on_fight_rolled(fight_result: FightResult) -> void:
 	assert(fight_result)
 	assert(fight_result.fight_request == _current_dice_request)
 	_current_dice_request = null
+	fight_rolled.emit(fight_result)
 
 func _on_character_selected(character: Character, _character_portrait: CharacterPortrait) -> void:
 	if not _current_dice_request: return

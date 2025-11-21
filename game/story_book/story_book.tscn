@@ -70,7 +70,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("3_rpy1c")
-fill = false
 container_root = NodePath(".")
 alignment = 2
 direction = 2

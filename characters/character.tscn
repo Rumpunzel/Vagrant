@@ -43,7 +43,7 @@ bus = &"SFX"
 stream = SubResource("AudioStreamRandomizer_vliyq")
 bus = &"SFX"
 
-[connection signal="caught_breath" from="." to="BreathChime" method="play" unbinds=1]
 [connection signal="caught_breath" from="." to="BreathSounds" method="play" unbinds=1]
+[connection signal="caught_breath" from="." to="BreathChime" method="play" unbinds=1]
 [connection signal="suffered_injury" from="." to="InjurySounds" method="play" unbinds=1]
 [connection signal="suffered_injury" from="." to="DamageSounds" method="play" unbinds=1]

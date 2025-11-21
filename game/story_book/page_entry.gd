@@ -31,7 +31,9 @@ func setup_page(new_story_page: StoryPage) -> void:
 		#_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		#_background.show_behind_parent = true
 
-@abstract func enter_page() -> void
+func enter_page() -> void:
+	@warning_ignore("unsafe_method_access")
+	Stage.enter_story_page(get_story_page())
 
 @abstract func is_dice_page() -> bool
 

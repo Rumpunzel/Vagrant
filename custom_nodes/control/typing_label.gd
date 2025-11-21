@@ -42,7 +42,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if visible_ratio >= 1.0: return
 	if event.is_action_released("skip_dialog_typing"):
 		set_text_normally()
-		get_viewport().set_input_as_handled()
+		#get_viewport().set_input_as_handled()
 
 ## To use this script, simply call this method from anywhere with the text you want it to type
 func type_text(new_text: String, erase_text_first: bool = false) -> void:

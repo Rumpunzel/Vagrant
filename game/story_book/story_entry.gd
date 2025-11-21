@@ -36,6 +36,7 @@ var _fight_request: FightRequest:
 		_breath_dice_collapsible_container.open_tween()
 
 func enter_page() -> void:
+	super.enter_page()
 	var title: String = story_page.page_title
 	if not title.is_empty(): _title.type_text(title)
 	else: _title.visible = false
