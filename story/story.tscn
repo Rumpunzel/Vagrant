@@ -31,7 +31,7 @@ _update_delay_timer = NodePath("UpdateDelayTimer")
 _success_audio_player = NodePath("Success")
 _failure_audio_player = NodePath("Failure")
 _party = NodePath("Party")
-_title = NodePath("Game/PanelContainer/MarginContainer/Title")
+_title = NodePath("PanelContainer/MarginContainer/Title")
 metadata/_custom_type_script = "uid://dccrmadulf3fx"
 
 [node name="UpdateDelayTimer" type="Timer" parent="."]
@@ -53,9 +53,7 @@ metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
 script = ExtResource("3_kidyl")
 metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
 
-[node name="Game" type="Node" parent="."]
-
-[node name="PanelContainer" type="PanelContainer" parent="Game"]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -64,7 +62,7 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_22632")
 
-[node name="MarginContainer" type="MarginContainer" parent="Game/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 128
@@ -72,7 +70,7 @@ theme_override_constants/margin_top = 96
 theme_override_constants/margin_right = 128
 theme_override_constants/margin_bottom = 96
 
-[node name="Title" type="RichTextLabel" parent="Game/PanelContainer/MarginContainer"]
+[node name="Title" type="RichTextLabel" parent="PanelContainer/MarginContainer"]
 z_index = 10
 layout_mode = 2
 size_flags_horizontal = 6
@@ -95,62 +93,62 @@ script = ExtResource("7_dg13j")
 _characters_per_minute = 1000.0
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="HSplitContainer" type="HSplitContainer" parent="Game/PanelContainer/MarginContainer"]
+[node name="HSplitContainer" type="HSplitContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 32
 
-[node name="VSplitContainer" type="VSplitContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer"]
+[node name="VSplitContainer" type="VSplitContainer" parent="PanelContainer/MarginContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 alignment = 2
 
-[node name="Control" type="Control" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="CharacterSheet" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer" instance=ExtResource("9_y6kqs")]
+[node name="CharacterSheet" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer" instance=ExtResource("9_y6kqs")]
 layout_mode = 2
 size_flags_horizontal = 0
 _character_profile = ExtResource("10_vgyf7")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer"]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="CharacterPortraits" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" node_paths=PackedStringArray("characters") instance=ExtResource("11_8nc86")]
+[node name="CharacterPortraits" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" node_paths=PackedStringArray("characters") instance=ExtResource("11_8nc86")]
 layout_mode = 2
-characters = NodePath("../../../../../../../Party")
+characters = NodePath("../../../../../../Party")
 
-[node name="Mechanics" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" node_paths=PackedStringArray("_party") instance=ExtResource("8_xa0d8")]
+[node name="Mechanics" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" node_paths=PackedStringArray("_party") instance=ExtResource("8_xa0d8")]
 layout_mode = 2
-_party = NodePath("../../../../../../../Party")
+_party = NodePath("../../../../../../Party")
 
-[node name="GameInfo" type="TabContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer"]
+[node name="GameInfo" type="TabContainer" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="DiceLog" type="MarginContainer" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/GameInfo"]
+[node name="DiceLog" type="MarginContainer" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/GameInfo"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="DiceLog" parent="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/GameInfo/DiceLog" instance=ExtResource("19_5ocuy")]
+[node name="DiceLog" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/GameInfo/DiceLog" instance=ExtResource("19_5ocuy")]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 
-[node name="StoryBook" parent="Game/PanelContainer/MarginContainer/HSplitContainer" instance=ExtResource("20_pr7tg")]
+[node name="StoryBook" parent="PanelContainer/MarginContainer/HSplitContainer" instance=ExtResource("20_pr7tg")]
 layout_mode = 2
 
-[connection signal="dice_requested" from="." to="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer/CharacterSheet" method="_on_dice_requested"]
-[connection signal="dice_requested" from="." to="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" method="_on_dice_requested"]
-[connection signal="story_page_entered" from="." to="Game/PanelContainer/MarginContainer/HSplitContainer/StoryBook" method="_on_story_page_entered"]
-[connection signal="character_selected" from="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="." method="_on_character_selected"]
-[connection signal="character_selected" from="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="Game/PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
+[connection signal="dice_requested" from="." to="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer/CharacterSheet" method="_on_dice_requested"]
+[connection signal="dice_requested" from="." to="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" method="_on_dice_requested"]
+[connection signal="story_page_entered" from="." to="PanelContainer/MarginContainer/HSplitContainer/StoryBook" method="_on_story_page_entered"]
+[connection signal="character_selected" from="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="." method="_on_character_selected"]
+[connection signal="character_selected" from="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer/CharacterPortraits" to="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/VBoxContainer/CharacterSheet" method="_on_character_selected"]
