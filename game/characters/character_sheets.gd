@@ -1,12 +1,12 @@
 class_name CharacterSheets
 extends TabContainer
 
-@export var characters: Characters :
-	set(new_characters):
-		assert(not characters)
-		characters = new_characters
-		_update_character_list(characters.characters)
-		characters.characters_updated.connect(_update_character_list)
+@export var party: Party :
+	set(new_party):
+		assert(not party)
+		party = new_party
+		_update_character_list(party.characters)
+		party.characters_updated.connect(_update_character_list)
 
 @export_group("Configuration")
 @export var _character_sheet: PackedScene

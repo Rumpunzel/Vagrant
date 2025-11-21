@@ -3,7 +3,7 @@
 class_name CharacterList
 extends PanelContainer
 
-@export var characters: Characters : set = set_characters
+@export var party: Party : set = set_party
 
 @export_group("Layout")
 @export var margin_left: int = 0 :
@@ -59,9 +59,9 @@ func _setup_flex_container() -> void:
 	_character_list.add_theme_constant_override("margin_bottom", margin_bottom)
 	add_child(_character_list, true, Node.INTERNAL_MODE_BACK)
 
-func set_characters(new_characters: Characters) -> void:
-	assert(not characters)
-	assert(new_characters)
-	characters = new_characters
-	_update_character_list(characters.characters)
-	characters.characters_updated.connect(_update_character_list)
+func set_party(new_party: Party) -> void:
+	assert(not party)
+	assert(new_party)
+	party = new_party
+	_update_character_list(party.characters)
+	party.characters_updated.connect(_update_character_list)

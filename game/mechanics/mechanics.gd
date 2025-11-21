@@ -1,12 +1,12 @@
 class_name Mechanics
 extends PanelContainer
 
-@export var _party: Characters :
+@export var _party: Party :
 	set(new_party):
 		assert(new_party)
 		assert(not _party)
 		_party = new_party
-		_catch_breaths.characters = _party
+		_catch_breaths.party = _party
 
 @export_group("Configuration")
 @export var _catch_breath_popup: ConfirmationDialog

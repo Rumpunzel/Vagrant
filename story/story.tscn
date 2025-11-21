@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://db6oui711vqep"]
+[gd_scene load_steps=18 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="1_yob3j"]
 [ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="2_8y4gm"]
 [ext_resource type="AudioStream" uid="uid://ig3w2b4rf63g" path="res://assets/sfx/sample_confirm_success04_kofi_by_miraclei-360152.mp3" id="2_ftmra"]
 [ext_resource type="AudioStream" uid="uid://d2jboxmthybun" path="res://assets/sfx/sample_error_fail01_kofi_by_miraclei-360129.mp3" id="3_8y4gm"]
 [ext_resource type="Script" uid="uid://ff8rnwb5cmjw" path="res://characters/characters.gd" id="3_kidyl"]
+[ext_resource type="Script" uid="uid://cwsal1toei3e3" path="res://characters/party.gd" id="5_kyeoy"]
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="6_lxldy"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="7_dg13j"]
 [ext_resource type="PackedScene" uid="uid://m2hkfwiqdk33" path="res://game/mechanics/mechanics.tscn" id="8_xa0d8"]
@@ -46,8 +47,8 @@ stream = SubResource("AudioStreamRandomizer_kyeoy")
 stream = SubResource("AudioStreamRandomizer_ciwxw")
 
 [node name="Party" type="Node" parent="."]
-script = ExtResource("3_kidyl")
-metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
+script = ExtResource("5_kyeoy")
+metadata/_custom_type_script = "uid://cwsal1toei3e3"
 
 [node name="NPCs" type="Node" parent="."]
 script = ExtResource("3_kidyl")
@@ -122,9 +123,9 @@ _character_profile = ExtResource("10_vgyf7")
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="CharacterPortraits" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" node_paths=PackedStringArray("characters") instance=ExtResource("11_8nc86")]
+[node name="CharacterPortraits" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" node_paths=PackedStringArray("party") instance=ExtResource("11_8nc86")]
 layout_mode = 2
-characters = NodePath("../../../../../../Party")
+party = NodePath("../../../../../../Party")
 
 [node name="Mechanics" parent="PanelContainer/MarginContainer/HSplitContainer/VSplitContainer/HBoxContainer" node_paths=PackedStringArray("_party") instance=ExtResource("8_xa0d8")]
 layout_mode = 2

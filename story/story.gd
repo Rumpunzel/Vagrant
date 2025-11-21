@@ -13,7 +13,7 @@ signal fight_rolled(fight_result: FightResult)
 @export var _update_delay_timer: Timer
 @export var _success_audio_player: AudioStreamPlayer
 @export var _failure_audio_player: AudioStreamPlayer
-@export var _party: Characters
+@export var _party: Party
 @export var _title: TypingLabel
 
 var adventure: Adventure:
