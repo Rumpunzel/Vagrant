@@ -12,4 +12,4 @@ func to_attribute_score_modifier() -> AttributeScore.Modifier:
 	var score_modifier: AttributeScoreModifier = AttributeScoreModifier.new()
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
 		score_modifier.score_modifiers[attribute] = -magnitude
-	return AttributeScore.Modifier.new(score_modifier, _injury_icon)
+	return AttributeScore.Modifier.new(score_modifier, _injury_icon, true)

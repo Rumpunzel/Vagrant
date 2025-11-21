@@ -9,7 +9,7 @@ extends Resource
 	Rules.INTELLIGENCE: 1,
 }
 
-func get_details(attribute: CharacterAttribute, source_icon: Texture2D, icon_size: int) -> String:
+func get_details(attribute: CharacterAttribute, source_icon: Texture2D, icon_size: int, colored_icon: bool) -> String:
 	assert(attribute)
 	var details: String = ""
 	var score_modifier: int = score_modifiers[attribute]
@@ -19,5 +19,7 @@ func get_details(attribute: CharacterAttribute, source_icon: Texture2D, icon_siz
 	if score_modifier > 0: color = Main.SUCCESS
 	elif score_modifier < 0: color = Main.FAILURE
 	details += " [color=%s]%d[/color]" % [color.to_html(), abs(score_modifier)]
-	if source_icon: details += " [img color=\"%s\" width=\"%d\" height=\"%d\" align=\"center\" valign=\"center\"]%s[/img]" % [color.to_html(), icon_size, icon_size, source_icon.resource_path]
+	if source_icon:
+		var image_format: String = " [img color=\"%s\" width=\"%d\" height=\"%d\" align=\"center\" valign=\"center\"]%s[/img]"
+		details += image_format % [(color if colored_icon else Color.WHITE).to_html(), icon_size, icon_size, source_icon.resource_path]
 	return details

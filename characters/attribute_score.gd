@@ -28,14 +28,12 @@ func get_score() -> int:
 
 func get_internal_modifier_sum() -> int:
 	var sum: int = 0
-	for modifier: Modifier in _internal_modifiers:
-		sum += modifier.modifier.score_modifiers[_attribute]
+	for modifier: Modifier in _internal_modifiers: sum += modifier.get_score(_attribute)
 	return sum
 
 func get_external_modifier_sum() -> int:
 	var sum: int = 0
-	for modifier: Modifier in _external_modifiers:
-		sum += modifier.modifier.score_modifiers[_attribute]
+	for modifier: Modifier in _external_modifiers: sum += modifier.get_score(_attribute)
 	return sum
 
 func get_color() -> Color:
@@ -65,12 +63,14 @@ func get_details(icon_size: int = 32) -> String:
 	return details
 
 class Modifier extends RefCounted:
-	var modifier: AttributeScoreModifier
-	var source_icon: Texture2D
+	var _modifier: AttributeScoreModifier
+	var _source_icon: Texture2D
+	var _colored_icon: bool
 	
-	func _init(new_modifier: AttributeScoreModifier, new_source_icon: Texture2D) -> void:
-		modifier = new_modifier
-		source_icon = new_source_icon
+	func _init(modifier: AttributeScoreModifier, source_icon: Texture2D, colored_icon: bool) -> void:
+		_modifier = modifier
+		_source_icon = source_icon
+		_colored_icon =colored_icon
 	
-	func get_details(attribute: CharacterAttribute, icon_size: int) -> String:
-		return modifier.get_details(attribute, source_icon, icon_size)
+	func get_score(for_attribute: CharacterAttribute) -> int: return _modifier.score_modifiers[for_attribute]
+	func get_details(attribute: CharacterAttribute, icon_size: int) -> String: return _modifier.get_details(attribute, _source_icon, icon_size, _colored_icon)
