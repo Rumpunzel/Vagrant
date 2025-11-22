@@ -31,9 +31,11 @@ func get_highest_breath_dice() -> Array[BreathDie]:
 	highest_breath_dice.assign(get_highest_dice())
 	return highest_breath_dice
 
-func get_die_color(die: BreathDie) -> Color:
+func get_die_color(die: Die) -> Color:
+	assert(die is BreathDie)
+	var breath_die: BreathDie = die
 	match get_save_outcome():
-		Outcome.SUCCESS: if die.result == get_highest_result(): return Main.SUCCESS if die.alive else Main.INFO
+		Outcome.SUCCESS: if breath_die.result == get_highest_result(): return Main.SUCCESS if breath_die.alive else Main.INFO
 		Outcome.FAILURE: return Main.FAILURE
 		_: assert(false, "SaveResult.Outcome %s is not supported!" % get_save_outcome())
 	return Color.WHITE

@@ -1,4 +1,5 @@
 @tool
+@abstract
 class_name DiceResult
 extends Resource
 
@@ -16,6 +17,8 @@ func get_highest_result() -> int:
 
 func get_highest_dice() -> Array[Die]:
 	return dice.filter(func(die: Die) -> bool: return die.result == get_highest_result())
+
+@abstract func get_die_color(die: Die) -> Color
 
 func format_sum() -> String:
 	return "%s = %d" % [self, get_sum()]

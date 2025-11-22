@@ -13,3 +13,7 @@ func get_type() -> AttributeScore.Type:
 		if not die.result == last_result: return AttributeScore.Type.NORMAL
 		last_result = die.result
 	return AttributeScore.Type.DOUBLE
+
+func get_die_color(_die: Die) -> Color:
+	if get_type() == AttributeScore.Type.DOUBLE: return Color.GOLD
+	return Color.WHITE

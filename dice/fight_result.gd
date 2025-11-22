@@ -22,9 +22,9 @@ func get_breath_dice() -> Array[BreathDie]:
 #func get_fight_outcome() -> Outcome:
 	#return Outcome.SUCCESS if get_highest_result() >= fight_request.get_difficulty() else Outcome.FAILURE
 
-#func get_die_color(die: BreathDie) -> Color:
+func get_die_color(_die: Die) -> Color:
 	#match get_save_outcome():
 		#Outcome.SUCCESS: return Main.SUCCESS if die.is_alive() else Main.INFO
 		#Outcome.FAILURE: return Main.FAILURE
 		#_: assert(false, "SaveResult.Outcome %s is not supported!" % get_save_outcome())
-	#return Color.BLACK
+	return Color.WHITE
