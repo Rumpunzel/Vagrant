@@ -38,7 +38,7 @@ func _on_character_portraits_character_selected(character: Character, character_
 func _on_dice_requested(dice_request: DiceRequest) -> void:
 	for character: Character in _character_sheets.keys():
 		var character_sheet: CharacterSheet = _character_sheets[character]
-		if character == dice_request.character:
+		if dice_request and dice_request.character == character:
 			character_sheet.update_dice_request(dice_request)
 			var popout_window: PopoutWindow = _popout_windows[character]
 			if not popout_window.visible: popout_window.popup_above(_character_portraits.get_character_portrait(dice_request.character), _portrait_offset)
