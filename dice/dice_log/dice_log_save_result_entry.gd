@@ -8,7 +8,7 @@ extends DiceLogSaveEntry
 @export var _update_delay_timer: Timer
 
 func initialize_save_result(save_result: SaveResult) -> void:
-	var save_request: SaveRequest = save_result.save_request
+	var save_request: SaveRequest = save_result.get_dice_request()
 	var prefix: String = _get_prefix(save_request.character, save_request.attribute)
 	var message: String = "No Breath Dice!"
 	if not save_result.get_highest_dice().is_empty():
@@ -22,7 +22,7 @@ func initialize_save_result(save_result: SaveResult) -> void:
 	_entry.type_text("%s: %s" % [prefix, message])
 
 func initialize_fight_result(fight_result: FightResult) -> void:
-	var fight_request: FightRequest = fight_result.fight_request
+	var fight_request: FightRequest = fight_result.get_dice_request()
 	var prefix: String = _get_prefix(fight_request.character, fight_request.attribute)
 	var message: String = "No Breath Dice!"
 	if is_inside_tree():
@@ -49,13 +49,13 @@ func _get_dice_results(save_result: SaveResult) -> String:
 
 func _get_difficulty(save_result: SaveResult) -> String:
 	var difficulty: String = "%d" % save_result.get_highest_result()
-	var save_outcome: SaveResult.Outcome = save_result.get_save_outcome()
+	var save_outcome: SaveResult.Outcome = save_result.get_outcome()
 	var color: Color = Color.WHITE
 	match save_outcome:
 		SaveResult.Outcome.SUCCESS: color = Main.SUCCESS
 		SaveResult.Outcome.FAILURE: color= Main.FAILURE
 		_: assert(false, "SaveResult.Outcome %s is not supported!" % save_outcome)
 	difficulty = "[color=#%s]%s[/color]" % [color.to_html(), difficulty]
-	var hint: String = "Difficulty: %d → %s" % [save_result.save_request.get_difficulty(), SaveResult.Outcome.find_key(save_outcome)]
+	var hint: String = "Difficulty: %d → %s" % [save_result.get_dice_request().get_difficulty(), SaveResult.Outcome.find_key(save_outcome)]
 	difficulty = "[hint=%s]%s[/hint]" % [hint, difficulty]
 	return difficulty

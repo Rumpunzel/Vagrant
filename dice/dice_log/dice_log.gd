@@ -23,10 +23,11 @@ func _on_die_rolled(die: Die) -> void:
 	dice_log_entry.initialize_die_result(die)
 
 func _on_save_rolled(save_result: SaveResult) -> void:
-	if _current_entry_group == null or _current_entry_group.character != save_result.save_request.character:
+	var save_request: SaveRequest = save_result.get_dice_request()
+	if _current_entry_group == null or _current_entry_group.character != save_request.character:
 		if _current_entry_group != null: _current_entry_group.entry_added.disconnect(_on_entry_entered_tree)
 		_current_entry_group = _dice_log_entry_group.instantiate()
-		_current_entry_group.character = save_result.save_request.character
+		_current_entry_group.character = save_request.character
 		_current_entry_group.entry_added.connect(_on_entry_entered_tree)
 		_log_entries.add_child(_current_entry_group)
 	_current_entry_group.add_entry(save_result)

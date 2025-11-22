@@ -2,40 +2,15 @@
 class_name SaveResult
 extends DiceRequestResult
 
-enum Outcome {
-	FAILURE = -1,
-	SUCCESS = 1,
-}
-
-var save_request: SaveRequest
-
-func _init(for_save_request: SaveRequest) -> void:
-	save_request = for_save_request
-	super(save_request.get_selected_dice())
-
-func is_success() -> bool: return get_save_outcome() == Outcome.SUCCESS
-
-func get_breath_dice() -> Array[BreathDie]:
-	var breath_dice: Array[BreathDie]
-	breath_dice.assign(dice)
-	return breath_dice
-
-func get_save_outcome() -> Outcome:
-	return Outcome.SUCCESS if get_highest_result() >= save_request.get_difficulty() else Outcome.FAILURE
-
-func get_margin() -> int:
-	return abs(save_request.get_difficulty() - get_highest_result())
-
-func get_highest_breath_dice() -> Array[BreathDie]:
-	var highest_breath_dice: Array[BreathDie] = []
-	highest_breath_dice.assign(get_highest_dice())
-	return highest_breath_dice
+func get_dice_request() -> SaveRequest: return dice_request
+func get_outcome() -> Outcome: return Outcome.SUCCESS if get_highest_result() >= get_dice_request().get_difficulty() else Outcome.FAILURE
+func get_margin() -> int: return abs(get_dice_request().get_difficulty() - get_highest_result())
 
 func get_die_color(die: Die) -> Color:
 	assert(die is BreathDie)
 	var breath_die: BreathDie = die
-	match get_save_outcome():
+	match get_outcome():
 		Outcome.SUCCESS: if breath_die.result == get_highest_result(): return Main.SUCCESS if breath_die.alive else Main.INFO
 		Outcome.FAILURE: return Main.FAILURE
-		_: assert(false, "SaveResult.Outcome %s is not supported!" % get_save_outcome())
+		_: assert(false, "SaveResult.Outcome %s is not supported!" % get_outcome())
 	return Color.WHITE

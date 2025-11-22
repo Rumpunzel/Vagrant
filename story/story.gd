@@ -133,7 +133,7 @@ func _on_dice_requested(dice_request: DiceRequest) -> void:
 
 func _on_save_rolled(save_result: SaveResult) -> void:
 	assert(save_result)
-	assert(save_result.save_request == _current_dice_request)
+	assert(save_result.get_dice_request() == _current_dice_request)
 	_current_dice_request = null
 	save_rolled.emit(save_result)
 	_update_delay_timer.start(_reveal_delay)
@@ -143,7 +143,7 @@ func _on_save_rolled(save_result: SaveResult) -> void:
 
 func _on_fight_rolled(fight_result: FightResult) -> void:
 	assert(fight_result)
-	assert(fight_result.fight_request == _current_dice_request)
+	assert(fight_result.get_dice_request() == _current_dice_request)
 	_current_dice_request = null
 	fight_rolled.emit(fight_result)
 
