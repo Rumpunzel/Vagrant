@@ -1,6 +1,6 @@
 @tool
 class_name SaveResult
-extends DiceResult
+extends DiceRequestResult
 
 enum Outcome {
 	FAILURE = -1,

@@ -1,6 +1,6 @@
 @tool
 class_name FightResult
-extends DiceResult
+extends DiceRequestResult
 
 enum Outcome {
 	LOST = -1,
