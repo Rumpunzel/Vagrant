@@ -25,7 +25,6 @@ func popup_above(control: Control, offset: Vector2) -> void:
 func popout() -> void:
 	assert(not force_native)
 	assert(visible)
-	var delta_moved: Vector2i = position - _embedded_position
 	_embedded_position = position
 	hide()
 	force_native = true
@@ -34,8 +33,7 @@ func popout() -> void:
 	_close_button.hide()
 	show()
 	if _native_position: position = _native_position
-	else: position = get_tree().root.position 
-	position += delta_moved
+	else: position += get_tree().root.position 
 	position = position.clamp(Vector2i.ZERO, DisplayServer.screen_get_size(DisplayServer.SCREEN_OF_MAIN_WINDOW) - size)
 	request_attention()
 
