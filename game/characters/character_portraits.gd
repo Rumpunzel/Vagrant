@@ -15,6 +15,9 @@ func _ready() -> void:
 	_character_list.add(character_portrait)
 	character_portrait.select()
 
+func get_character_portrait(character: Character) -> CharacterPortrait:
+	return _character_portraits.get(character)
+
 func _create_character_entry(character: Character) -> CharacterPortrait:
 	var character_portrait: CharacterPortrait = _character_portrait.instantiate()
 	character_portrait.character = character

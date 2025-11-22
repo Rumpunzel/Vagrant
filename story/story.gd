@@ -23,7 +23,13 @@ var adventure: Adventure:
 		adventure = new_adventure
 		if not adventure: return
 		_title.type_text(adventure.title)
-var protagonist: Character
+
+var protagonist: Character :
+	set(new_protagonist):
+		assert(new_protagonist)
+		protagonist = new_protagonist
+		if not _current_dice_request: return
+		_current_dice_request.character = protagonist
 
 var current_story_page: StoryPage:
 	set(story_page):
@@ -56,6 +62,7 @@ var _current_dice_request: DiceRequest :
 		_current_dice_request = new_current_dice_request
 		dice_requested.emit(_current_dice_request)
 		if not _current_dice_request: return
+		_current_dice_request.character = protagonist
 		if _current_dice_request is SaveRequest: _current_dice_request.rolled.connect(_on_save_rolled)
 		elif _current_dice_request is FightRequest: _current_dice_request.rolled.connect(_on_fight_rolled)
 		else: assert(false, "Not implemented!")
@@ -140,8 +147,5 @@ func _on_fight_rolled(fight_result: FightResult) -> void:
 	_current_dice_request = null
 	fight_rolled.emit(fight_result)
 
-func _on_character_selected(character: Character, _character_portrait: CharacterPortrait) -> void:
-	if not _current_dice_request: return
-	assert(character)
+func _on_party_character_selected(character: Character) -> void:
 	protagonist = character
-	_current_dice_request.character = protagonist

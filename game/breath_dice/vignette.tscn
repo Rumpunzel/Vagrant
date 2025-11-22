@@ -16,4 +16,5 @@ texture = SubResource("GradientTexture2D_lcgf6")
 clip_children = 1
 offset_right = 64.0
 offset_bottom = 64.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_xnldi")

@@ -11,10 +11,13 @@ extends PanelContainer
 		if not _character_profile: return
 		profile_update()
 
+@export_placeholder("Character") var _name_suffix: String
+
 @export_group("Configuration")
 @export var _portrait: TextureRect
 
 func profile_update() -> void:
+	name = "%s - %s" % [_character_profile.name, _name_suffix]
 	_update_portrait()
 
 func character_update() -> void:
