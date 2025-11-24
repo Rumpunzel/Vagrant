@@ -21,6 +21,7 @@ func enter_story_page(story_page: StoryPage) -> void:
 	if _current_page_entry:
 		_current_page_entry.resized.disconnect(_on_current_page_entry_resized)
 		_current_page_entry.custom_minimum_size.y = 0
+		_current_page_entry.state = PageEntry.State.PAST
 	_current_page_entry = story_page.create_story_entry()
 	_flip_page()
 

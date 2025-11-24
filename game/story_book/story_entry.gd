@@ -86,7 +86,6 @@ func _on_description_finished_typing() -> void:
 
 func _on_choice_made(story_decision: StoryChoice) -> void:
 	chosen_decision = story_decision
-	state = State.PAST
 
 func _on_dice_requested(dice_request: DiceRequest, story_dice_decision: StoryDiceDecision) -> void:
 	chosen_decision = story_dice_decision
