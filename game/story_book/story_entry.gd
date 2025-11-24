@@ -14,26 +14,7 @@ extends PageEntry
 @export var _dialog_button: PackedScene
 
 var story_page: StoryPage : set = set_story_page
-
-var _save_request: SaveRequest:
-	set(new_save_request):
-		_save_request = new_save_request
-		if not _save_request:
-			if not _fight_request: _breath_dice_collapsible_container.close_tween()
-			return
-		_breath_dice_selection.request_save(_save_request)
-		await get_tree().process_frame
-		_breath_dice_collapsible_container.open_tween()
-
-var _fight_request: FightRequest:
-	set(new_fight_request):
-		_fight_request = new_fight_request
-		if not _fight_request:
-			if not _save_request: _breath_dice_collapsible_container.close_tween()
-			return
-		_breath_dice_selection.request_fight(_fight_request)
-		await get_tree().process_frame
-		_breath_dice_collapsible_container.open_tween()
+var chosen_decision: StoryChoice
 
 func enter_page() -> void:
 	super.enter_page()
@@ -41,6 +22,17 @@ func enter_page() -> void:
 	if not title.is_empty(): _title.type_text(title)
 	else: _title.visible = false
 	_description.type_text(story_page.description)
+
+func request_dice(dice_request: DiceRequest) -> void:
+	if not dice_request:
+		_breath_dice_collapsible_container.close_tween()
+		return
+	_breath_dice_selection.request_dice(dice_request)
+	await get_tree().process_frame
+	_breath_dice_collapsible_container.open_tween()
+
+func display_dice_result(dice_result: DiceRequestResult) -> void:
+	_breath_dice_selection.display_dice_result(dice_result)
 
 func is_dice_page() -> bool:
 	var chosen_choice: StoryChoice = story_page.get_chosen_choice()
@@ -65,8 +57,8 @@ func _add_dialog_button(story_choice: StoryChoice, dialog_button_group: ButtonGr
 	dialog_button.modulate.a = 0.0
 	dialog_button.hide()
 	_choices.add(dialog_button)
-	story_choice.chosen.connect(_on_choice_made)
-	story_choice.dice_requested.connect(_on_dice_requested)
+	story_choice.chosen.connect(_on_choice_made.bind(story_choice))
+	story_choice.dice_requested.connect(_on_dice_requested.bind(story_choice))
 
 func _fade_in(element: Control, duration: float, delay: float = 0.0) -> void:
 	if element.visible: return
@@ -92,33 +84,14 @@ func _on_description_finished_typing() -> void:
 		var button: DialogButton = buttons[index]
 		_fade_in(button, _options_fade_in_duration, _options_fade_in_delay * index)
 
-func _on_choice_made() -> void:
+func _on_choice_made(story_decision: StoryChoice) -> void:
+	chosen_decision = story_decision
 	state = State.PAST
 
-func _on_dice_requested(dice_request: DiceRequest) -> void:
-	if dice_request is SaveRequest: _on_save_requested(dice_request as SaveRequest)
-	elif dice_request is FightRequest: _on_fight_requested(dice_request as FightRequest)
-	else:
-		assert(not dice_request)
-		_save_request = null
-		_fight_request = null
-
-func _on_save_requested(save_request: SaveRequest) -> void:
-	assert(save_request)
-	_save_request = save_request
-	_fight_request = null
-
-func _on_fight_requested(fight_request: FightRequest) -> void:
-	assert(fight_request)
-	_fight_request = fight_request
-	_save_request = null
+func _on_dice_requested(dice_request: DiceRequest, story_dice_decision: StoryDiceDecision) -> void:
+	chosen_decision = story_dice_decision
+	request_dice(dice_request)
 
 func _on_breath_dice_selection_confirmed() -> void:
-	if _save_request:
-		assert(not _fight_request)
-		_save_request.roll()
-	elif _fight_request:
-		assert(not _save_request)
-		_fight_request.roll()
-	else: assert(false)
+	chosen_decision.roll()
 	_breath_dice_collapsible_container.auto_update_size = CollapsibleContainer.AutoUpdateSizeOptions.DISABLED

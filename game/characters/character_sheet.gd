@@ -18,6 +18,9 @@ func profile_update() -> void:
 func update_dice_request(dice_request: DiceRequest) -> void:
 	_breath_dice.update_dice_request(dice_request)
 
+func display_dice_result(dice_result: DiceRequestResult) -> void:
+	_breath_dice.update_results(dice_result)
+
 func _get_breath_dice() -> BreathDice: return _breath_dice
 
 func _set_character(new_character: Character) -> void:

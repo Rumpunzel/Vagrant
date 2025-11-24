@@ -15,6 +15,14 @@ func _ready() -> void:
 	_character_list.add(character_portrait)
 	character_portrait.select()
 
+func select(character: Character) -> void:
+	if not character: return
+	_character_portraits[character].select()
+
+func select_no_signal(character: Character) -> void:
+	if not character: return
+	_character_portraits[character].select_no_signal()
+
 func get_character_portrait(character: Character) -> CharacterPortrait:
 	return _character_portraits.get(character)
 
@@ -38,7 +46,3 @@ func _get_portraits() -> Array[CharacterPortrait]:
 	var portraits: Array[CharacterPortrait] = []
 	portraits.assign(_character_list.get_elements())
 	return portraits
-
-func _on_dice_requested(dice_request: DiceRequest) -> void:
-	if not dice_request: return
-	_character_portraits[dice_request.character].select_no_signal()

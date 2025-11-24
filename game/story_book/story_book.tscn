@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://coh7y85ggx45i"]
+[gd_scene load_steps=6 format=3 uid="uid://coh7y85ggx45i"]
 
 [ext_resource type="Script" uid="uid://bob1fhstr1o06" path="res://game/story_book/story_book.gd" id="1_cts4e"]
-[ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="3_kgpco"]
 [ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="3_rpy1c"]
 [ext_resource type="Script" uid="uid://cepjqieke7bvl" path="res://custom_nodes/control/auto_scroll_container.gd" id="4_evqjp"]
 [ext_resource type="Script" uid="uid://doguhqeqp85e2" path="res://custom_nodes/control/hover_fade.gd" id="4_s3kyl"]
@@ -19,7 +18,7 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 corner_detail = 5
 
-[node name="StoryBook" type="PanelContainer" node_paths=PackedStringArray("_page_turn_timer", "_page_content_slider", "_pages")]
+[node name="StoryBook" type="PanelContainer" node_paths=PackedStringArray("_page_content_slider", "_pages")]
 clip_contents = true
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,15 +28,9 @@ grow_vertical = 2
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_evqjp")
 script = ExtResource("1_cts4e")
-_page_turn_timer = NodePath("PageTurnDelay")
 _page_content_slider = NodePath("MarginContainer/HBoxContainer/PageContentSlider")
 _pages = NodePath("MarginContainer/HBoxContainer/ScrollContainer/Pages")
 metadata/_custom_type_script = "uid://bob1fhstr1o06"
-
-[node name="PageTurnDelay" type="Timer" parent="."]
-one_shot = true
-script = ExtResource("3_kgpco")
-metadata/_custom_type_script = "uid://losc8gq8exf0"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -76,6 +69,5 @@ direction = 2
 metadata/_custom_type_script = "uid://dqkpaquatj11m"
 
 [connection signal="resized" from="." to="." method="_on_resized"]
-[connection signal="timeout" from="PageTurnDelay" to="." method="_on_page_turn_delay_timeout"]
 [connection signal="value_changed" from="MarginContainer/HBoxContainer/PageContentSlider" to="." method="_on_page_content_slider_value_changed"]
 [connection signal="value_changed" from="MarginContainer/HBoxContainer/PageContentSlider" to="MarginContainer/HBoxContainer/ScrollContainer" method="reset_scroll_tracking" unbinds=1]

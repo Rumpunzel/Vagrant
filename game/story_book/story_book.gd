@@ -3,12 +3,9 @@ extends PanelContainer
 
 signal page_entered(page_entry: PageEntry)
 
-@export_range(0.0, 1.0, 0.1, "suffix:seconds") var _page_turn_delay: float = 0.0
-@export_range(0.0, 5.0, 0.1, "suffix:seconds") var _dice_page_turn_delay: float = 3.0
 @export_range(0.0, 1.0, 0.05, "suffix:percentage") var _initial_page_size: float = 0.5
 
 @export_group("Configuration")
-@export var _page_turn_timer: Timer
 @export var _page_content_slider: Slider
 @export var _pages: FlexContainer
 
@@ -19,6 +16,18 @@ func _ready() -> void:
 	_on_resized()
 	_page_content_slider.value = _page_content_slider.max_value * _initial_page_size
 
+func enter_story_page(story_page: StoryPage) -> void:
+	assert(story_page)
+	if _current_page_entry:
+		_current_page_entry.resized.disconnect(_on_current_page_entry_resized)
+		_current_page_entry.custom_minimum_size.y = 0
+	_current_page_entry = story_page.create_story_entry()
+	_flip_page()
+
+func display_dice_result(dice_result: DiceRequestResult) -> void:
+	assert(_current_page_entry)
+	_current_page_entry.display_dice_result(dice_result)
+
 func _flip_page() -> void:
 	assert(_current_page_entry)
 	_current_page_entry.custom_minimum_size.y = _page_content_slider.value
@@ -26,26 +35,6 @@ func _flip_page() -> void:
 	_current_page_entry.enter_page()
 	_current_page_entry.resized.connect(_on_current_page_entry_resized)
 	page_entered.emit(_current_page_entry)
-
-func _on_story_page_entered(story_page: StoryPage) -> void:
-	assert(story_page)
-	var previous_page: PageEntry = _current_page_entry
-	_current_page_entry = story_page.create_story_entry()
-	if not previous_page: _flip_page()
-	else:
-		var delay: float = _dice_page_turn_delay if previous_page.is_dice_page() else _page_turn_delay
-		if delay > 0:
-			_page_turn_timer.start(delay)
-			await _page_turn_timer.timeout
-			previous_page.resized.disconnect(_on_current_page_entry_resized)
-			previous_page.custom_minimum_size.y = 0
-		else:
-			previous_page.resized.disconnect(_on_current_page_entry_resized)
-			previous_page.custom_minimum_size.y = 0
-			_flip_page()
-
-func _on_page_turn_delay_timeout() -> void:
-	_flip_page()
 
 func _on_current_page_entry_resized() -> void:
 	assert(_current_page_entry)

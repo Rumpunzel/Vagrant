@@ -1,8 +1,8 @@
 [gd_scene load_steps=18 format=3 uid="uid://db6oui711vqep"]
 
 [ext_resource type="Script" uid="uid://dccrmadulf3fx" path="res://story/story.gd" id="1_yob3j"]
-[ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="2_8y4gm"]
 [ext_resource type="AudioStream" uid="uid://ig3w2b4rf63g" path="res://assets/sfx/sample_confirm_success04_kofi_by_miraclei-360152.mp3" id="2_ftmra"]
+[ext_resource type="Script" uid="uid://bifbvpipvu330" path="res://custom_nodes/event_queue.gd" id="2_kyeoy"]
 [ext_resource type="AudioStream" uid="uid://d2jboxmthybun" path="res://assets/sfx/sample_error_fail01_kofi_by_miraclei-360129.mp3" id="3_8y4gm"]
 [ext_resource type="Script" uid="uid://ff8rnwb5cmjw" path="res://characters/characters.gd" id="3_kidyl"]
 [ext_resource type="Script" uid="uid://cwsal1toei3e3" path="res://characters/party.gd" id="5_kyeoy"]
@@ -25,20 +25,21 @@ stream_0/stream = ExtResource("3_8y4gm")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_22632"]
 
-[node name="Story" type="Node" node_paths=PackedStringArray("_update_delay_timer", "_success_audio_player", "_failure_audio_player", "_party", "_title")]
+[node name="Story" type="Node" node_paths=PackedStringArray("_event_queue", "_success_audio_player", "_failure_audio_player", "_party", "_title", "_story_book")]
 physics_interpolation_mode = 2
 script = ExtResource("1_yob3j")
-_update_delay_timer = NodePath("UpdateDelayTimer")
+_event_queue = NodePath("EventQueue")
 _success_audio_player = NodePath("Success")
 _failure_audio_player = NodePath("Failure")
 _party = NodePath("Party")
 _title = NodePath("PanelContainer/MarginContainer/Title")
+_story_book = NodePath("PanelContainer/MarginContainer/HSplitContainer/StoryBook")
 metadata/_custom_type_script = "uid://dccrmadulf3fx"
 
-[node name="UpdateDelayTimer" type="Timer" parent="."]
+[node name="EventQueue" type="Timer" parent="."]
 one_shot = true
-script = ExtResource("2_8y4gm")
-metadata/_custom_type_script = "uid://losc8gq8exf0"
+script = ExtResource("2_kyeoy")
+metadata/_custom_type_script = "uid://bifbvpipvu330"
 
 [node name="Success" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamRandomizer_kyeoy")
@@ -134,8 +135,6 @@ layout_mode = 2
 layout_mode = 2
 
 [connection signal="dice_requested" from="." to="Party" method="_on_dice_requested"]
-[connection signal="dice_requested" from="." to="PanelContainer/MarginContainer/HSplitContainer/HBoxContainer/CharacterPortraits" method="_on_dice_requested"]
-[connection signal="story_page_entered" from="." to="PanelContainer/MarginContainer/HSplitContainer/StoryBook" method="_on_story_page_entered"]
 [connection signal="character_added" from="Party" to="Party" method="_on_character_added"]
 [connection signal="character_selected" from="Party" to="." method="_on_party_character_selected"]
 [connection signal="character_selected" from="PanelContainer/MarginContainer/HSplitContainer/HBoxContainer/CharacterPortraits" to="Party" method="_on_character_portraits_character_selected"]

@@ -2,37 +2,44 @@
 class_name StoryDiceDecision
 extends StoryChoice
 
+var dice_request: DiceRequest:
+	set(new_dice_request):
+		assert((new_dice_request == null) != (dice_request == null)) # One of the must be null, the other must not
+		if dice_request:
+			dice_request.attribute_changed.disconnect(_on_dice_request_attribute_changed)
+			dice_request.rolled.disconnect(_on_dice_rolled)
+		dice_request = new_dice_request
+		icon_changed.emit()
+		if not dice_request: return
+		dice_request.attribute_changed.connect(_on_dice_request_attribute_changed)
+		dice_request.rolled.connect(_on_dice_rolled)
+
+var dice_result: DiceRequestResult:
+	set(new_dice_result):
+		assert(new_dice_result)
+		assert(not dice_result)
+		dice_result = new_dice_result
+
 func chose() -> void:
 	assert(not is_chosen())
-	if get_dice_request(): return
-	set_dice_request(get_adventure_decision().to_dice_request(get_protagonist()))
+	assert(dice_request)
+	dice_requested.emit(dice_request)
 
-func discard() -> void:
+func roll() -> void:
 	assert(not is_chosen())
-	if not get_dice_request(): return
-	set_dice_request(null)
+	assert(dice_request)
+	roll_requested.emit(dice_request)
 
 func is_chosen() -> bool: return get_dice_result() != null
 func is_dice_choice() -> bool: return true
 
-func get_protagonist() -> Character: return _protagonist_getter.call()
-
 @abstract func get_adventure_decision() -> AdventureDiceDecision
-@abstract func get_dice_request() -> DiceRequest
-@abstract func get_dice_result() -> DiceResult
 
-func set_dice_request(dice_request: DiceRequest) -> void:
-	if get_dice_request():
-		get_dice_request().attribute_changed.disconnect(_on_dice_request_attribute_changed)
-	if dice_request:
-		dice_request.attribute_changed.connect(_on_dice_request_attribute_changed)
-	dice_requested.emit(dice_request)
-	icon_changed.emit()
-
-@abstract func set_dice_result(dice_result: DiceResult) -> void
+func _setup(protagonist: Character) -> void:
+	dice_request = get_adventure_decision().to_dice_request(protagonist)
 
 func _on_dice_request_attribute_changed(_attribute: CharacterAttribute) -> void: icon_changed.emit()
 
-func _on_dice_rolled(dice_result: DiceResult) -> void:
-	set_dice_result(dice_result)
-	_chose()
+func _on_dice_rolled(rolled_dice_result: DiceResult) -> void:
+	dice_result = rolled_dice_result
+	#_chose()

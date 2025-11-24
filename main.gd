@@ -28,7 +28,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		else:
 			viewport.set_input_as_handled()
 			var current_story: Story = scene_tree.current_scene
-			_enter_story(current_story.adventure, current_story.protagonist.character_profile)
+			_enter_story(current_story._adventure, current_story._protagonist.character_profile)
 
 func enter_character_creation(protagonist: CharacterProfile) -> CharacterCreation:
 	var scene_tree: SceneTree = get_tree()

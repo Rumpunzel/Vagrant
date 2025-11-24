@@ -14,6 +14,10 @@ signal character_selected(character: Character)
 var _character_sheets: Dictionary[Character, CharacterSheet]
 var _popout_windows: Dictionary[Character, PopoutWindow]
 
+func display_dice_result(dice_result: DiceRequestResult) -> void:
+	var character_sheet: CharacterSheet = _character_sheets[dice_result.dice_request.character]
+	character_sheet.display_dice_result(dice_result)
+
 func _popup_above_portrait(character_portrait: CharacterPortrait) -> void:
 	var popout_window: PopoutWindow = _popout_windows[character_portrait.character]
 	popout_window.popup_above(character_portrait, _portrait_offset)
@@ -36,6 +40,7 @@ func _on_character_portraits_character_selected(character: Character, character_
 	character_selected.emit(character)
 
 func _on_dice_requested(dice_request: DiceRequest) -> void:
+	if dice_request: _character_portraits.select_no_signal(dice_request.character)
 	for character: Character in _character_sheets.keys():
 		var character_sheet: CharacterSheet = _character_sheets[character]
 		if dice_request and dice_request.character == character:

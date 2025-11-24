@@ -13,7 +13,6 @@ enum State {
 @export_range(0.0, 1.0) var _fade_in_duration: float = 0.1
 @export_range(0.0, 3.0) var _fade_out_duration: float = 1.0
 @export_range(0.0, 1.0) var _fade_out_delay: float = 0.5
-@export_range(0.0, 5.0) var _dice_fade_out_delay: float = 3.0
 @export var _past_modulate: Color = Color(1.0, 1.0, 1.0, 0.25)
 
 @export_group("Configuration")
@@ -35,13 +34,12 @@ func enter_page() -> void:
 	@warning_ignore("unsafe_method_access")
 	Stage.enter_story_page(get_story_page())
 
+@abstract func display_dice_result(dice_result: DiceRequestResult) -> void
+
 @abstract func is_dice_page() -> bool
 
 @abstract func get_story_page() -> StoryPage
 @abstract func set_story_page(new_story_page: StoryPage) -> void
-
-func _get_fade_out_delay() -> float:
-	return _dice_fade_out_delay if is_dice_page() else _fade_out_delay
 
 func _set_state(new_state: State) -> void:
 	state = new_state
@@ -50,11 +48,11 @@ func _set_state(new_state: State) -> void:
 			_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			if not _background.texture:
 				var self_tween: Tween = create_tween()
-				self_tween.tween_property(self, "self_modulate", Color.TRANSPARENT, _fade_out_duration).set_delay(_get_fade_out_delay())
+				self_tween.tween_property(self, "self_modulate", Color.TRANSPARENT, _fade_out_duration).set_delay(_fade_out_delay)
 				_background.texture = get_story_page().area_background
 				_background.fade_in()
 			var tween: Tween = create_tween()
-			tween.tween_property(_body_container, "modulate", _past_modulate, _fade_out_duration).set_delay(_get_fade_out_delay())
+			tween.tween_property(_body_container, "modulate", _past_modulate, _fade_out_duration).set_delay(_fade_out_delay)
 			await tween.finished
 			for child: Control in get_children(): child.mouse_behavior_recursive = Control.MOUSE_BEHAVIOR_DISABLED
 			mouse_entered.connect(_on_mouse_entered)
