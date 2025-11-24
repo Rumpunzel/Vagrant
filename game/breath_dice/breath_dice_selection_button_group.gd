@@ -22,8 +22,28 @@ func deselect_all() -> void:
 	for button: BreathDieSelectionButton in get_elements(): button.deselect()
 	_all_button.set_pressed_no_signal(false)
 
-func deactivate(reset_on_deactivation: bool) -> void:
-	for button: BreathDieSelectionButton in get_elements(): button.deactivate(reset_on_deactivation)
+func update_results(dice_result: DiceRequestResult) -> void:
+	var breath_dice: Array[Die] = dice_result.get_breath_dice()
+	var index: int = 0
+	for breath_die: Die in breath_dice:
+		if breath_die.die_type != _die_type: continue
+		assert(index < _breath_dice_count)
+		var button: BreathDieSelectionButton = get_elements()[index]
+		button.update_result(breath_die)
+		index += 1
+
+func update_colors(dice_result: DiceRequestResult) -> void:
+	var breath_dice: Array[Die] = dice_result.get_breath_dice()
+	var index: int = 0
+	for breath_die: Die in breath_dice:
+		if breath_die.die_type != _die_type: continue
+		assert(index < _breath_dice_count)
+		var button: BreathDieSelectionButton = get_elements()[index]
+		button.set_font_colors(dice_result.get_die_color(breath_die))
+		index += 1
+
+func deactivate() -> void:
+	for button: BreathDieSelectionButton in get_elements(): button.deactivate()
 	_all_button.active = false
 	_all_button.disabled = true
 
@@ -31,8 +51,8 @@ func _update_visibility() -> void:
 	for button: BreathDieSelectionButton in get_elements():
 		if is_exhausted(): button.set_icon_colors(Main.FAILURE)
 		else: button.remove_button_colors()
-	_exhaustion_icon.visible = is_exhausted() and breath_dice.is_empty()
-	_all_button.visible = breath_dice.size() > 1
+	_exhaustion_icon.visible = is_exhausted() and _breath_dice_count <= 0
+	_all_button.visible = _breath_dice_count > 1
 
 func _on_button_toggled(_toggled_on: bool = false) -> void:
 	var all_buttons_selected: bool = true
@@ -45,7 +65,7 @@ func _on_all_button_toggled(toggled_on: bool) -> void:
 	else: for button: BreathDieSelectionButton in get_elements(): button.deselect()
 
 func _on_die_type_changed(_die_typ: DieType) -> void:
-	_all_button.text = "%s" % die_type
+	_all_button.text = "%s" % _die_type
 
 func _on_breath_die_button_added(breath_die_button: BreathDieSelectionButton) -> void:
 	breath_die_button.toggled.connect(_on_button_toggled)

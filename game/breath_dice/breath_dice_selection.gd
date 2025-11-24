@@ -40,6 +40,11 @@ var _dice_request: DiceRequest :
 		character.exhaustion_changed.connect(_breath_dice_selection_buttons.set_exhaustion)
 		#_ok_button.grab_focus()
 
+func request_dice(dice_request: DiceRequest) -> void:
+	if dice_request is SaveRequest: request_save(dice_request as SaveRequest)
+	elif dice_request is FightRequest: request_fight(dice_request as FightRequest)
+	else: assert(false, "Does not exist")
+
 func request_save(save_request: SaveRequest) -> void:
 	assert(save_request)
 	request_fight(null)
@@ -62,6 +67,9 @@ func request_fight(fight_request: FightRequest) -> void:
 	_stance_selection_collapsible_container.open_tween()
 	fight_request.rolled.connect(_on_fight_rolled)
 
+func display_dice_result(dice_result: DiceRequestResult) -> void:
+	_breath_dice_selection_buttons.update_colors(dice_result)
+
 func _enable_hud() -> void:
 	_ok_button.disabled = false
 	_ok_button.active = true
@@ -74,7 +82,7 @@ func _disable_hud() -> void:
 	_all_in_button.disabled = true
 	_all_in_button.active = false
 
-func _update_all_in_button(selected_breath_dice: Array[BreathDie], character: Character) -> void:
+func _update_all_in_button(selected_breath_dice: Dictionary[DieType, int], character: Character) -> void:
 	var all_dice_selected: bool = selected_breath_dice == character.breath_dice
 	_all_in_button.set_pressed_no_signal(all_dice_selected)
 
@@ -84,19 +92,20 @@ func _on_confirmed() -> void:
 func _on_save_rolled(save_result: SaveResult) -> void:
 	assert(save_result)
 	assert(save_result.get_dice_request() == _dice_request)
-	_dice_log_save_result_entry.initialize_save_result(save_result)
-	_on_rolled()
+	_dice_log_save_result_entry.initialize_dice_result(save_result)
+	_on_rolled(save_result)
 
 func _on_fight_rolled(fight_result: FightResult) -> void:
 	assert(fight_result)
 	assert(fight_result.get_dice_request() == _dice_request)
-	_dice_log_save_result_entry.initialize_fight_result(fight_result)
-	_on_rolled()
+	_dice_log_save_result_entry.initialize_dice_result(fight_result)
+	_on_rolled(fight_result)
 
-func _on_rolled() -> void:
+func _on_rolled(dice_result: DiceRequestResult) -> void:
 	_dice_request.selected_breath_dice_changed.disconnect(_update_all_in_button)
 	_dice_request.character.exhaustion_changed.disconnect(_breath_dice_selection_buttons.set_exhaustion)
 	_dice_log_dice_request_entry.visible = false
 	_dice_log_save_result_entry.visible = true
+	_breath_dice_selection_buttons.update_results(dice_result)
 	_breath_dice_selection_buttons.deactivate_buttons()
 	_disable_hud()

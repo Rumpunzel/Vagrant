@@ -21,20 +21,15 @@ func roll(play_sound: bool) -> int:
 	rolled.emit(self, result, roll_sound if play_sound else null)
 	return result
 
+func is_auto_selected(attribute_score: AttributeScore) -> bool:
+	return faces <= attribute_score.get_score()
+
 func get_die() -> Die:
 	return Die.new(self)
-
-func get_breath_die() -> BreathDie:
-	return BreathDie.new(self)
 
 func get_dice_pool(amount: int) -> Array[Die]:
 	var dice_pool: Array[Die] = [ ]
 	for _index: int in range(amount): dice_pool.append(get_die())
-	return dice_pool
-
-func get_breath_dice_pool(amount: int) -> Array[BreathDie]:
-	var dice_pool: Array[BreathDie] = [ ]
-	for _index: int in range(amount): dice_pool.append(get_breath_die())
 	return dice_pool
 
 func _to_string() -> String:

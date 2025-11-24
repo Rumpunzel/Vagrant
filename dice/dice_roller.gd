@@ -18,12 +18,5 @@ func roll_attribute() -> RolledAttributeScore:
 
 func generate_dice_pool(dice: Dictionary[DieType, int]) -> Array[Die]:
 	var dice_pool: Array[Die] = [ ]
-	for die_type: DieType in dice:
-		dice_pool += die_type.get_dice_pool(dice[die_type])
-	return dice_pool
-
-func generate_breath_dice_pool(dice: Dictionary[DieType, int]) -> Array[BreathDie]:
-	var dice_pool: Array[BreathDie] = [ ]
-	for die_type: DieType in dice:
-		dice_pool += die_type.get_breath_dice_pool(dice[die_type])
+	for die_type: DieType in dice: dice_pool += die_type.get_dice_pool(dice[die_type])
 	return dice_pool

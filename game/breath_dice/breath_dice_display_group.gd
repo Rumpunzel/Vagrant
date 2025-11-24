@@ -8,10 +8,10 @@ func _ready() -> void:
 
 func _update_visibility() -> void:
 	modulate = Main.FAILURE if is_exhausted() else Color.WHITE
-	modulate.a = 0.0 if is_exhausted() and breath_dice.is_empty() else 1.0
+	modulate.a = 0.0 if is_exhausted() and _breath_dice_count <= 0 else 1.0
 
 func _update_tooltip() -> void:
-	tooltip_text = "%d%s" % [get_elements().size(), die_type]
+	tooltip_text = "%d%s" % [get_elements().size(), _die_type]
 
 func _on_breath_die_button_added(breath_die_button: BreathDieButton) -> void:
 	var stack_color: Color = Color.WHITE * pow(0.5, get_elements().size() - 1)
@@ -20,5 +20,5 @@ func _on_breath_die_button_added(breath_die_button: BreathDieButton) -> void:
 	_update_visibility()
 	_update_tooltip()
 
-func _on_die_type_changed(_die_type: DieType) -> void:
+func _on_die_type_changed(_type: DieType) -> void:
 	_update_tooltip()

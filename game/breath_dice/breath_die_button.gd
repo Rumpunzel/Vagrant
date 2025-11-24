@@ -8,22 +8,12 @@ enum IconType {
 	FILLED,
 }
 
-@export var breath_die: BreathDie :
-	set(new_breath_die):
-		assert(new_breath_die)
-		if breath_die:
-			breath_die.state_changed.disconnect(_on_die_state_changed)
-		breath_die = new_breath_die
-		die_type = breath_die.die_type
-		_update()
-		breath_die.state_changed.connect(_on_die_state_changed)
 @export var die_type: DieType : set = set_die_type
 @export var icon_type: IconType = IconType.NORMAL
 
 func _update() -> void:
-	disabled = not breath_die.alive
-	if disabled: tooltip_text = "No %s"  % breath_die.die_type
-	else: tooltip_text = "%s breath die" % breath_die.die_type
+	if disabled: tooltip_text = "No %s"  % die_type
+	else: tooltip_text = "%s breath die" % die_type
 
 func set_die_type(new_die_type: DieType) -> void:
 	die_type = new_die_type
@@ -36,6 +26,4 @@ func set_die_type(new_die_type: DieType) -> void:
 		IconType.BLANK: icon = die_type.icon_blank
 		IconType.FILLED: icon = die_type.icon_filled
 		_: assert(false, "Does not exist")
-
-func _on_die_state_changed(_alive: bool) -> void:
 	_update()

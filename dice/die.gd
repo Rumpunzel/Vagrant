@@ -22,5 +22,8 @@ func roll(play_sound: bool = true) -> int:
 	rolled.emit(result)
 	return result
 
+func is_auto_selected(attribute_score: AttributeScore) -> bool:
+	return die_type.is_auto_selected(attribute_score)
+
 func _to_string() -> String:
 	return "%s → %d" % [die_type, result]

@@ -7,16 +7,14 @@ signal status_changed
 	set(new_character):
 		assert(new_character)
 		if character:
-			character.breath_dice_changed.disconnect(_on_breath_dice_changed.unbind(1))
-			character.breath_dice_states_changed.disconnect(_on_breath_dice_changed)
+			character.breath_dice_changed.disconnect(_on_breath_dice_changed)
 			character.exhaustion_changed.disconnect(_on_exhaustion_changed)
 		character = new_character
 		_portrait.texture = character.character_profile.get_portrait(_portrait_identifier)
 		_breath_dice.character = character
 		update_die_types()
 		update_exhaustion()
-		character.breath_dice_changed.connect(_on_breath_dice_changed.unbind(1))
-		character.breath_dice_states_changed.connect(_on_breath_dice_changed)
+		character.breath_dice_changed.connect(_on_breath_dice_changed)
 		character.exhaustion_changed.connect(_on_exhaustion_changed)
 
 @export var _portrait_identifier: String = "Small.png"
@@ -59,7 +57,8 @@ func _update_highlights() -> void:
 func can_catch_breath() -> bool:
 	return _die_to_exhaust and character.can_catch_breath(_die_to_exhaust)
 
-func _on_breath_dice_changed() -> void:
+func _on_breath_dice_changed(breath_dice: Dictionary[DieType, int]) -> void:
+	assert(breath_dice == character.breath_dice)
 	update_die_types()
 	status_changed.emit()
 

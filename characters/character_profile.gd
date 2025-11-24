@@ -56,14 +56,6 @@ signal origins_changed(origins: Array[Origin])
 		origins = new_origins
 		origins_changed.emit(origins)
 
-@export var breath_die_types: Dictionary[DieType, int] = {
-	Rules.d4: 1,
-	Rules.d6: 1,
-	Rules.d8: 1,
-	Rules.d10: 1,
-	Rules.d12: 1,
-}
-
 @export_group("Configuration")
 @export var _portrait_file_name: String = "Fulllength.png"
 @export var _additional_portrait_file_names: Array[String] = ["Medium.png", "Small.png"]
@@ -117,6 +109,3 @@ func get_attribute_modifiers() -> Array[AttributeScore.Modifier]:
 		if not origin: continue
 		modifiers.append_array(origin.get_attribute_score_modifiers())
 	return modifiers
-
-func get_breath_dice() -> Array[BreathDie]:
-	return DiceRoller.generate_breath_dice_pool(breath_die_types)

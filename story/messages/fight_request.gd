@@ -17,11 +17,6 @@ func get_source() -> AdventureFightDecision: return _source
 func get_stance_description(for_attribute: CharacterAttribute) -> String:
 	return get_source().stance_descriptions.get(for_attribute, for_attribute.stance_description)
 
-func get_selected_dice() -> Array[Die]:
-	var dice_snapshot: Array[Die] = []
-	dice_snapshot.assign(selected_weapon_dice)
-	return super.get_selected_dice() + dice_snapshot
-
 func _create_result() -> FightResult:
 	assert(character)
 	character.most_recently_chosen_attribute = attribute
