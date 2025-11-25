@@ -23,10 +23,10 @@ func is_success() -> bool: return get_outcome() == Outcome.SUCCESS
 @abstract func get_outcome() -> Outcome
 @abstract func get_margin() -> int
 
-func get_breath_dice() -> Array[Die]:
-	var breath_dice: Array[Die]
-	breath_dice.assign(dice)
-	return breath_dice
+func get_lost_breath_dice() -> Array[Die]:
+	var lost_breath_dice: Array[Die] = []
+	lost_breath_dice.assign(dice.filter(func(breath_die: Die) -> bool: return breath_die.result > dice_request.get_attribute_score().get_score()))
+	return lost_breath_dice
 
 func get_highest_breath_dice() -> Array[Die]:
 	var highest_breath_dice: Array[Die] = []

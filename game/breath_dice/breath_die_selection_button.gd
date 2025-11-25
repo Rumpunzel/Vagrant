@@ -9,6 +9,7 @@ extends BreathDieButton
 
 @export_group("Configuration")
 @export var _update_delay_timer: Timer
+@export var _lost_sounds: AudioStreamPlayer
 
 var current_dice_request: DiceRequest :
 	set(new_current_dice_request):
@@ -23,13 +24,20 @@ var current_dice_request: DiceRequest :
 		text = ""
 		current_dice_request.selected_breath_dice_changed.connect(_on_selected_breath_dice_changed)
 
-func update_result(breath_die: Die) -> void:
-	assert(breath_die)
+func update_result(result: int) -> void:
 	var update_delay: float = randf_range(_min_update_delay, _max_update_delay)
 	if is_inside_tree() and _randomly_delay_update:
 		_update_delay_timer.start(update_delay)
 		await _update_delay_timer.timeout
-	text = "%d" % breath_die.result
+	text = "%d" % result
+
+func update_state(dice_result: DiceRequestResult, breath_die: Die) -> void:
+	assert(dice_result)
+	assert(breath_die)
+	set_font_colors(dice_result.get_die_color(breath_die))
+	var was_lost: bool = dice_result.get_lost_breath_dice().has(breath_die)
+	disabled = was_lost
+	if was_lost: _lost_sounds.play()
 
 func deactivate(reset_on_deactivation: bool = false) -> void:
 	active = false

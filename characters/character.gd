@@ -38,6 +38,13 @@ var _injuries: Array[Injury] :
 		_injuries = new_injuries
 		injuries_changed.emit(_injuries)
 
+func parse_dice_result(dice_result: DiceRequestResult) -> void:
+	var new_breath_dice: Dictionary[DieType, int] = breath_dice.duplicate()
+	for breath_die: Die in dice_result.get_lost_breath_dice():
+		new_breath_dice[breath_die.die_type] = new_breath_dice[breath_die.die_type] - 1
+		assert(new_breath_dice[breath_die.die_type] >= 0)
+	breath_dice = new_breath_dice
+
 func suffer_injury(injury: Injury) -> void:
 	assert(injury.magnitude > 0)
 	_injuries.append(injury)

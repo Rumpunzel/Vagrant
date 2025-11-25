@@ -122,6 +122,7 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	_event_queue.queue_delay(_reveal_delay)
 	_event_queue.queue_callable(func() -> void: _story_book.display_dice_result(dice_result))
 	#_event_queue.queue_callable(func() -> void: _party.display_dice_result(dice_result))
+	_event_queue.queue_callable(func() -> void: dice_request.character.parse_dice_result(dice_result))
 	_event_queue.queue_callable(func() -> void: if dice_result.is_success(): _success_audio_player.play() else: _failure_audio_player.play())
 	_event_queue.queue_callable(func() -> void: _current_dice_request = null)
 	_event_queue.queue_delay(_reveal_delay)

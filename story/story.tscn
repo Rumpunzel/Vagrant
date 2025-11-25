@@ -43,9 +43,11 @@ metadata/_custom_type_script = "uid://bifbvpipvu330"
 
 [node name="Success" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamRandomizer_kyeoy")
+bus = &"SFX"
 
 [node name="Failure" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamRandomizer_ciwxw")
+bus = &"SFX"
 
 [node name="Party" type="Node" parent="." node_paths=PackedStringArray("_character_portraits")]
 script = ExtResource("5_kyeoy")

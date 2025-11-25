@@ -23,23 +23,22 @@ func deselect_all() -> void:
 	_all_button.set_pressed_no_signal(false)
 
 func update_results(dice_result: DiceRequestResult) -> void:
-	var breath_dice: Array[Die] = dice_result.get_breath_dice()
 	var index: int = 0
-	for breath_die: Die in breath_dice:
+	for breath_die: Die in dice_result.dice:
 		if breath_die.die_type != _die_type: continue
 		assert(index < _breath_dice_count)
 		var button: BreathDieSelectionButton = get_elements()[index]
-		button.update_result(breath_die)
+		button.update_result(breath_die.result)
 		index += 1
 
 func update_colors(dice_result: DiceRequestResult) -> void:
-	var breath_dice: Array[Die] = dice_result.get_breath_dice()
+	var breath_dice: Array[Die] = dice_result.dice
 	var index: int = 0
 	for breath_die: Die in breath_dice:
 		if breath_die.die_type != _die_type: continue
 		assert(index < _breath_dice_count)
 		var button: BreathDieSelectionButton = get_elements()[index]
-		button.set_font_colors(dice_result.get_die_color(breath_die))
+		button.update_state(dice_result, breath_die)
 		index += 1
 
 func deactivate() -> void:
