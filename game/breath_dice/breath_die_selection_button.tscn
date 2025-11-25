@@ -1,18 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://cfnlwcs3oai0c"]
+[gd_scene load_steps=5 format=3 uid="uid://cfnlwcs3oai0c"]
 
 [ext_resource type="Texture2D" uid="uid://sue7comyk6aq" path="res://dice/icons/d8.png" id="1_quin4"]
 [ext_resource type="Script" uid="uid://bwyauryle05v0" path="res://game/breath_dice/breath_die_selection_button.gd" id="2_4tkht"]
 [ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="3_o2vdy"]
 [ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="3_wp6oj"]
-[ext_resource type="AudioStream" uid="uid://ughesd3ncarr" path="res://assets/sfx/lost_breath/gasp-86051.mp3" id="5_nvndw"]
-[ext_resource type="AudioStream" uid="uid://cmsus5gbsn8so" path="res://assets/sfx/lost_breath/gasp-sfx-351568.mp3" id="6_8b745"]
-[ext_resource type="AudioStream" uid="uid://cq8t61pykrkbp" path="res://assets/sfx/lost_breath/woman-gasp-for-air-269717.mp3" id="7_hhadk"]
-
-[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_1nbe3"]
-streams_count = 3
-stream_0/stream = ExtResource("5_nvndw")
-stream_1/stream = ExtResource("6_8b745")
-stream_2/stream = ExtResource("7_hhadk")
 
 [node name="BreathDieSelectionButton" type="Button" node_paths=PackedStringArray("_update_delay_timer", "_lost_sounds")]
 offset_right = 64.0
@@ -29,7 +20,7 @@ icon_alignment = 1
 expand_icon = true
 script = ExtResource("2_4tkht")
 _update_delay_timer = NodePath("UpdateDelayTimer")
-_lost_sounds = NodePath("LostSounds")
+_lost_sounds = NodePath("")
 die_type = ExtResource("3_wp6oj")
 active = false
 _inactive_cursor = 16
@@ -39,9 +30,5 @@ metadata/_custom_type_script = "uid://bwyauryle05v0"
 one_shot = true
 script = ExtResource("3_o2vdy")
 metadata/_custom_type_script = "uid://losc8gq8exf0"
-
-[node name="LostSounds" type="AudioStreamPlayer" parent="."]
-stream = SubResource("AudioStreamRandomizer_1nbe3")
-bus = &"SFX"
 
 [connection signal="toggled" from="." to="." method="_on_toggled"]

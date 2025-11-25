@@ -1,6 +1,7 @@
 class_name Character
 extends Node
 
+signal lost_breath(lost_breath_dice: Array[Die])
 signal caught_breath(recovered_dice: Dictionary[Die, int])
 signal suffered_injury(injury: Injury)
 
@@ -39,11 +40,13 @@ var _injuries: Array[Injury] :
 		injuries_changed.emit(_injuries)
 
 func parse_dice_result(dice_result: DiceRequestResult) -> void:
+	var lost_breath_dice: Array[Die] = dice_result.get_lost_breath_dice()
 	var new_breath_dice: Dictionary[DieType, int] = breath_dice.duplicate()
-	for breath_die: Die in dice_result.get_lost_breath_dice():
+	for breath_die: Die in lost_breath_dice:
 		new_breath_dice[breath_die.die_type] = new_breath_dice[breath_die.die_type] - 1
 		assert(new_breath_dice[breath_die.die_type] >= 0)
 	breath_dice = new_breath_dice
+	lost_breath.emit(lost_breath_dice)
 
 func suffer_injury(injury: Injury) -> void:
 	assert(injury.magnitude > 0)

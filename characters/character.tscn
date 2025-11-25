@@ -1,12 +1,21 @@
-[gd_scene load_steps=11 format=3 uid="uid://bl0pdxri24fnh"]
+[gd_scene load_steps=15 format=3 uid="uid://bl0pdxri24fnh"]
 
 [ext_resource type="Script" uid="uid://cjf63c1i3e83r" path="res://characters/character.gd" id="1_pl6ax"]
 [ext_resource type="AudioStream" uid="uid://bs6urik77h7or" path="res://assets/sfx/catch_breath/breath-out-242642.mp3" id="2_mdkfl"]
+[ext_resource type="AudioStream" uid="uid://ughesd3ncarr" path="res://assets/sfx/lost_breath/gasp-86051.mp3" id="2_qulg7"]
+[ext_resource type="AudioStream" uid="uid://cmsus5gbsn8so" path="res://assets/sfx/lost_breath/gasp-sfx-351568.mp3" id="3_4kffy"]
 [ext_resource type="AudioStream" uid="uid://dbfjqkvcu6d7u" path="res://assets/sfx/catch_breath/breathe-in-breathe-out-101088.mp3" id="3_b1u1o"]
+[ext_resource type="AudioStream" uid="uid://cq8t61pykrkbp" path="res://assets/sfx/lost_breath/woman-gasp-for-air-269717.mp3" id="4_bnq0n"]
 [ext_resource type="AudioStream" uid="uid://biskqjy1s03q3" path="res://assets/sfx/catch_breath/sigh-100452.mp3" id="4_ke030"]
 [ext_resource type="AudioStream" uid="uid://dk7c8hutw47qy" path="res://assets/sfx/injury/male_hurt7-48124.mp3" id="5_b1u1o"]
 [ext_resource type="AudioStream" uid="uid://ch4ggshn3nkkw" path="res://assets/sfx/injury/rpg-sword-attack-combo-34-388950.mp3" id="6_jfi6v"]
 [ext_resource type="AudioStream" uid="uid://dsl5vlc41o07e" path="res://assets/sfx/injury/rpg-sword-attack-combo-39-388951.mp3" id="7_f0775"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_hgjqb"]
+streams_count = 3
+stream_0/stream = ExtResource("2_qulg7")
+stream_1/stream = ExtResource("3_4kffy")
+stream_2/stream = ExtResource("4_bnq0n")
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_jfi6v"]
 streams_count = 2
@@ -26,11 +35,15 @@ stream_1/stream = ExtResource("7_f0775")
 script = ExtResource("1_pl6ax")
 metadata/_custom_type_script = "uid://cjf63c1i3e83r"
 
-[node name="BreathSounds" type="AudioStreamPlayer" parent="."]
+[node name="LostBreathSounds" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_hgjqb")
+bus = &"SFX"
+
+[node name="CatchBreathSounds" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamRandomizer_jfi6v")
 bus = &"SFX"
 
-[node name="BreathChime" type="AudioStreamPlayer" parent="."]
+[node name="CatchBreathChime" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_mdkfl")
 pitch_scale = 0.8
 bus = &"SFX"
@@ -43,7 +56,8 @@ bus = &"SFX"
 stream = SubResource("AudioStreamRandomizer_vliyq")
 bus = &"SFX"
 
-[connection signal="caught_breath" from="." to="BreathSounds" method="play" unbinds=1]
-[connection signal="caught_breath" from="." to="BreathChime" method="play" unbinds=1]
+[connection signal="caught_breath" from="." to="CatchBreathSounds" method="play" unbinds=1]
+[connection signal="caught_breath" from="." to="CatchBreathChime" method="play" unbinds=1]
+[connection signal="lost_breath" from="." to="LostBreathSounds" method="play" unbinds=1]
 [connection signal="suffered_injury" from="." to="InjurySounds" method="play" unbinds=1]
 [connection signal="suffered_injury" from="." to="DamageSounds" method="play" unbinds=1]
