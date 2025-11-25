@@ -19,16 +19,16 @@ offset_bottom = 208.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
 script = ExtResource("1_0hjxh")
 _catch_breath_popup = NodePath("CatchBreathDialog")
-_catch_breaths = NodePath("CatchBreathDialog/CatchBreaths")
+_catch_breaths = NodePath("CatchBreathDialog/VBoxContainer/CatchBreaths")
 _catch_breath_button = NodePath("MarginContainer/VBoxContainer/CatchBreath")
 metadata/_custom_type_script = "uid://cgdirjbx82wdh"
 
 [node name="CatchBreathDialog" type="ConfirmationDialog" parent="."]
 transparent_bg = true
 oversampling_override = 1.0
-title = "Choose Exhaustion..."
+title = "Catch Breath"
 position = Vector2i(256, 256)
-size = Vector2i(236, 193)
+size = Vector2i(398, 158)
 unresizable = true
 transparent = true
 ok_button_text = "Catch Breath"
@@ -38,9 +38,33 @@ script = ExtResource("2_lbybe")
 trigger_window = NodePath("..")
 metadata/_custom_type_script = "uid://dcbtc7gltxkcb"
 
-[node name="CatchBreaths" parent="CatchBreathDialog" instance=ExtResource("1_x3l5n")]
-offset_right = 228.0
-offset_bottom = 144.0
+[node name="VBoxContainer" type="VBoxContainer" parent="CatchBreathDialog"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 390.0
+offset_bottom = 109.0
+
+[node name="MarginContainer" type="MarginContainer" parent="CatchBreathDialog/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_bottom = 16
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CatchBreathDialog/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/paragraph_separation = 4
+bbcode_enabled = true
+text = "Consume 1 Supply or gain 1 [color=#751A1F]Exhaustion.[/color]
+Regain all breath dice which are not [color=#751A1F]exhausted.[/color]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CatchBreaths" parent="CatchBreathDialog/VBoxContainer" instance=ExtResource("1_x3l5n")]
+layout_mode = 2
+size_flags_horizontal = 4
+margin_bottom = false
+fill = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -73,7 +97,6 @@ custom_minimum_size = Vector2(128, 32)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
-disabled = true
 text = "Make Camp"
 icon = ExtResource("4_0hjxh")
 flat = true
@@ -168,6 +191,6 @@ margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[connection signal="confirmed" from="CatchBreathDialog" to="CatchBreathDialog/CatchBreaths" method="_on_confirmed"]
-[connection signal="status_changed" from="CatchBreathDialog/CatchBreaths" to="." method="_on_catch_breaths_status_changed"]
+[connection signal="confirmed" from="CatchBreathDialog" to="CatchBreathDialog/VBoxContainer/CatchBreaths" method="_on_confirmed"]
+[connection signal="status_changed" from="CatchBreathDialog/VBoxContainer/CatchBreaths" to="." method="_on_catch_breaths_status_changed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/CatchBreath" to="CatchBreathDialog" method="popup_centered"]
