@@ -1,11 +1,12 @@
-[gd_scene load_steps=12 format=3 uid="uid://m2hkfwiqdk33"]
+[gd_scene load_steps=13 format=3 uid="uid://m2hkfwiqdk33"]
 
 [ext_resource type="Script" uid="uid://cgdirjbx82wdh" path="res://game/mechanics/mechanics.gd" id="1_0hjxh"]
-[ext_resource type="PackedScene" uid="uid://ccpu52v8m0ynd" path="res://game/breath_dice/catch_breath/catch_breaths.tscn" id="1_x3l5n"]
+[ext_resource type="PackedScene" uid="uid://ccpu52v8m0ynd" path="res://game/mechanics/catch_breath/catch_breaths.tscn" id="1_x3l5n"]
 [ext_resource type="Script" uid="uid://c7qjo0ilqtmp6" path="res://custom_nodes/control/fancy_hover_button.gd" id="2_bi4s4"]
 [ext_resource type="Script" uid="uid://dcbtc7gltxkcb" path="res://custom_nodes/window_blur_toggler.gd" id="2_lbybe"]
 [ext_resource type="Texture2D" uid="uid://cy6hlr6erdd3r" path="res://game/icons/magic-potion.svg" id="2_rd57s"]
 [ext_resource type="Texture2D" uid="uid://qbxnlgxl1qta" path="res://game/icons/campfire.svg" id="4_0hjxh"]
+[ext_resource type="Script" uid="uid://voqh7b0evc3u" path="res://game/mechanics/make_camp/make_camps.gd" id="4_pem0e"]
 [ext_resource type="Texture2D" uid="uid://bj76caxo53saa" path="res://game/icons/camping-tent.svg" id="5_lbybe"]
 [ext_resource type="Texture2D" uid="uid://c4nfw1eoy5wcn" path="res://assets/icons/chest.svg" id="6_pem0e"]
 [ext_resource type="Texture2D" uid="uid://bnwiiw0h5j0kx" path="res://game/icons/treasure-map.svg" id="7_01xi3"]
@@ -13,20 +14,22 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q7j6d"]
 
-[node name="Mechanics" type="PanelContainer" node_paths=PackedStringArray("_catch_breath_popup", "_catch_breaths", "_catch_breath_button")]
+[node name="Mechanics" type="PanelContainer" node_paths=PackedStringArray("_catch_breath_popup", "_catch_breaths", "_make_camp_popup", "_make_camps", "_catch_breath_button")]
 offset_right = 164.0
 offset_bottom = 208.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
 script = ExtResource("1_0hjxh")
 _catch_breath_popup = NodePath("CatchBreathDialog")
 _catch_breaths = NodePath("CatchBreathDialog/VBoxContainer/CatchBreaths")
+_make_camp_popup = NodePath("MakeCampDialog")
+_make_camps = NodePath("MakeCampDialog/VBoxContainer/MakeCamps")
 _catch_breath_button = NodePath("MarginContainer/VBoxContainer/CatchBreath")
 metadata/_custom_type_script = "uid://cgdirjbx82wdh"
 
 [node name="CatchBreathDialog" type="ConfirmationDialog" parent="."]
 transparent_bg = true
 oversampling_override = 1.0
-title = "Catch Breath"
+title = "Catch Breath..."
 position = Vector2i(256, 256)
 size = Vector2i(398, 158)
 unresizable = true
@@ -63,8 +66,48 @@ vertical_alignment = 1
 [node name="CatchBreaths" parent="CatchBreathDialog/VBoxContainer" instance=ExtResource("1_x3l5n")]
 layout_mode = 2
 size_flags_horizontal = 4
-margin_bottom = false
-fill = 0
+
+[node name="MakeCampDialog" type="ConfirmationDialog" parent="."]
+transparent_bg = true
+oversampling_override = 1.0
+title = "Make Camp..."
+position = Vector2i(256, 256)
+size = Vector2i(398, 158)
+unresizable = true
+transparent = true
+ok_button_text = "Make Camp"
+
+[node name="WindowBlurToggler" type="Node" parent="MakeCampDialog" node_paths=PackedStringArray("trigger_window")]
+script = ExtResource("2_lbybe")
+trigger_window = NodePath("..")
+metadata/_custom_type_script = "uid://dcbtc7gltxkcb"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MakeCampDialog"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 390.0
+offset_bottom = 109.0
+
+[node name="MarginContainer" type="MarginContainer" parent="MakeCampDialog/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_bottom = 16
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MakeCampDialog/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/paragraph_separation = 4
+bbcode_enabled = true
+text = "Consume 1 Supply or gain 1 [color=#751A1F]Exhaustion.[/color]
+Regain all breath dice which are not [color=#751A1F]exhausted.[/color]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MakeCamps" type="PanelContainer" parent="MakeCampDialog/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("4_pem0e")
+metadata/_custom_type_script = "uid://voqh7b0evc3u"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -193,4 +236,6 @@ metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
 [connection signal="confirmed" from="CatchBreathDialog" to="CatchBreathDialog/VBoxContainer/CatchBreaths" method="_on_confirmed"]
 [connection signal="status_changed" from="CatchBreathDialog/VBoxContainer/CatchBreaths" to="." method="_on_catch_breaths_status_changed"]
+[connection signal="confirmed" from="MakeCampDialog" to="MakeCampDialog/VBoxContainer/MakeCamps" method="_on_confirmed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/CatchBreath" to="CatchBreathDialog" method="popup_centered"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/MakeCamp" to="MakeCampDialog" method="popup_centered"]

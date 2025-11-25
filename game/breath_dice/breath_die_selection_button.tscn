@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://losc8gq8exf0" path="res://custom_nodes/skippable_timer.gd" id="3_o2vdy"]
 [ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="3_wp6oj"]
 
-[node name="BreathDieSelectionButton" type="Button" node_paths=PackedStringArray("_update_delay_timer", "_lost_sounds")]
+[node name="BreathDieSelectionButton" type="Button" node_paths=PackedStringArray("_update_delay_timer")]
 offset_right = 64.0
 offset_bottom = 64.0
 focus_mode = 0
@@ -20,7 +20,6 @@ icon_alignment = 1
 expand_icon = true
 script = ExtResource("2_4tkht")
 _update_delay_timer = NodePath("UpdateDelayTimer")
-_lost_sounds = NodePath("")
 die_type = ExtResource("3_wp6oj")
 active = false
 _inactive_cursor = 16

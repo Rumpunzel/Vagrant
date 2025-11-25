@@ -41,6 +41,7 @@ var _injuries: Array[Injury] :
 
 func parse_dice_result(dice_result: DiceRequestResult) -> void:
 	var lost_breath_dice: Array[Die] = dice_result.get_lost_breath_dice()
+	if lost_breath_dice.is_empty(): return
 	var new_breath_dice: Dictionary[DieType, int] = breath_dice.duplicate()
 	for breath_die: Die in lost_breath_dice:
 		new_breath_dice[breath_die.die_type] = new_breath_dice[breath_die.die_type] - 1

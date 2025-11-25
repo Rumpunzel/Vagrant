@@ -7,15 +7,20 @@ extends PanelContainer
 		assert(not _party)
 		_party = new_party
 		_catch_breaths.party = _party
+		_make_camps.party = _party
 
 @export_group("Configuration")
 @export var _catch_breath_popup: ConfirmationDialog
 @export var _catch_breaths: CatchBreaths
+@export var _make_camp_popup: ConfirmationDialog
+@export var _make_camps: MakeCamps
 @export var _catch_breath_button: Button
 
 func _ready() -> void:
 	_catch_breath_popup.get_ok_button().mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	_catch_breath_popup.get_cancel_button().mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_make_camp_popup.get_ok_button().mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_make_camp_popup.get_cancel_button().mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
 func _on_catch_breaths_status_changed(can_catch_breath: bool) -> void:
 	_catch_breath_popup.get_ok_button().disabled = not can_catch_breath

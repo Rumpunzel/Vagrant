@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://ccpu52v8m0ynd"]
 
-[ext_resource type="Script" uid="uid://bdkka8mnk20a1" path="res://game/breath_dice/catch_breath/catch_breaths.gd" id="1_sxsp0"]
-[ext_resource type="PackedScene" uid="uid://cmcakuu2jj3j1" path="res://game/breath_dice/catch_breath/catch_breath.tscn" id="3_b5g0c"]
+[ext_resource type="Script" uid="uid://bdkka8mnk20a1" path="res://game/mechanics/catch_breath/catch_breaths.gd" id="1_sxsp0"]
+[ext_resource type="PackedScene" uid="uid://cmcakuu2jj3j1" path="res://game/mechanics/catch_breath/catch_breath.tscn" id="3_b5g0c"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3elgv"]
 
