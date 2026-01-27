@@ -26,6 +26,8 @@ func is_success() -> bool: return get_outcome() == Outcome.SUCCESS
 func get_lost_breath_dice() -> Array[Die]:
 	var lost_breath_dice: Array[Die] = []
 	lost_breath_dice.assign(dice.filter(func(breath_die: Die) -> bool: return breath_die.result > dice_request.get_attribute_score().get_score()))
+	for origin: Origin in dice_request.character.character_profile.origins:
+		lost_breath_dice = origin.get_lost_breath_dice(lost_breath_dice)
 	return lost_breath_dice
 
 func get_highest_breath_dice() -> Array[Die]:

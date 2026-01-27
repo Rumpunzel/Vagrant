@@ -1,7 +1,7 @@
 When you mean to do violence to a foe and they are unaware of you or otherwise unable to defend themselves, you do. But if they are, you must first present a threat.
 To do so, roll as many of your breath dice as you choose as if making a **Guts** save. There is not difficulty, simply try to roll as high as you can. The highest result is the threat you present your foe.
 
-Your foe may try to escape your threat by making a **Blood** save. If they succeed, they get away, if they fail, you inflict an injury equal to the difference.
+Your foe may try to escape your threat by making a **Blood** save. If they succeed, they get away unharmed, if they fail, you inflict an injury equal to the difference. If they get away or only increase the distance, remains on the narrative situation.
 
 Or your foe may brawl with you by presenting their own threat. In that case, they save with **Guts** and will instead inflict an injury on you if they succeed.
 
@@ -20,11 +20,11 @@ Weapons make violence much more dangerous. Each weapon is represented by a weapo
 
 When you threaten a foe with a weapon, also roll your weapon die. If the weapon die exceeds your **Guts** score, you are unable to effectively wield the weapon. Mark the weapon by crossing out the face of the die, then discard the die. When you mark an already marked face again, the weapon is ruined and no longer usable.
 
-Otherwise, inflict an injury equal to your weapon die's result to your foe, not matter you rolled higher. If your threat exceeds your foe's and you threatened with **Guts,** increase the injury by the difference.
+Otherwise, inflict an injury equal to your weapon die's result to your foe, no matter who rolled higher. If your threat exceeds your foe's and you threatened with **Guts,** increase the injury by the difference.
 
 Alternatively, if you wield a weapon, you may threaten with **Blood.** When you do, and your threat exceeds your foe's, reduce the injury they inflict on you by the difference. When your foe is also armed, threatening with **Blood** is most often the sensible choice.
 
-Alternatively, if you wield a weapon, you may threaten with **Nerves.** When you do, and your threat exceeds your foe's, reduce reduce one of their attributes by the difference for this exchange. This can result in them dropping their weapon or tripping and spending more breath than they intended.
+Alternatively, if you wield a weapon, you may threaten with **Nerves.** When you do, and your threat exceeds your foe's, reduce one of their attributes by the difference for this exchange. This can result in them dropping their weapon or tripping and spending more breath than they intended.
 
 
 
@@ -64,12 +64,12 @@ You may throw a melee weapon. When you do, roll its weapon die, though you only 
 |----|--------------------------------------------------------------------|--------------------------------|
 | 1. | +1 weapon die                                                      | When attacking from above      |
 | 2. | +1 to all weapon dice                                              | When mounted against unmounted |
-| 3. | Discard a weapon die to force foe to discard all lower weapon dice | Against mounted                |
+| 3. | Discard a weapon die to discard a foe's weapon die with equal result | Against mounted                |
 | 4. | Ignore armour                                                      | In close quarters              |
 | 5. | Deals damage first                                                 | Against multiple foes          |
-| 6. |                                                                    | While grappling                |
+| 6. | Double vantage                                                                   | While grappling                |
 | 7. |                                                                    | While fighting as a group      |
-| 8. |                                                                    | While you have *vantage*       |
+| 8. |                                                                    | While you are in control       |
 |    |                                                                    |                                |
 
 

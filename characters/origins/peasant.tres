@@ -18,10 +18,7 @@ abilities = Array[String](["Lose at most your [b]1[/b] highest breath die.", "Wh
 10:  something lost
 11:  an omen
 12: 1 Supply\"][i]something[/i][/hint] based on the result."])
-modifiers = Array[ExtResource("2_dhy3k")]([])
-type = 0
+_ass = true
 name = "Peasant"
 icon = ExtResource("1_1fvhu")
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"
