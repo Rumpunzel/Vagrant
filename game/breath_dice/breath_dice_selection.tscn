@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bpqkh512g0nmb"]
+[gd_scene format=3 uid="uid://bpqkh512g0nmb"]
 
 [ext_resource type="Script" uid="uid://dfxwf0abq0203" path="res://game/breath_dice/breath_dice_selection.gd" id="1_6stf5"]
 [ext_resource type="PackedScene" uid="uid://bnmsu0sopc3eu" path="res://game/breath_dice/vignette.tscn" id="2_4r3qb"]
@@ -13,7 +13,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lcgf6"]
 
-[node name="BreathDiceSelection" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
+[node name="BreathDiceSelection" type="PanelContainer" unique_id=711374009 node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
 offset_right = 336.0
 offset_bottom = 185.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lcgf6")
@@ -29,33 +29,33 @@ _dice_log_dice_request_entry = NodePath("MarginContainer/VBoxContainer/DiceReque
 _dice_log_save_result_entry = NodePath("MarginContainer/VBoxContainer/SaveResultEntry")
 metadata/_custom_type_script = "uid://dfxwf0abq0203"
 
-[node name="Vignette" parent="." instance=ExtResource("2_4r3qb")]
+[node name="Vignette" parent="." unique_id=2027802388 instance=ExtResource("2_4r3qb")]
 self_modulate = Color(1, 1, 1, 0.6)
 layout_mode = 2
 
-[node name="Portrait" type="TextureRect" parent="Vignette"]
+[node name="Portrait" type="TextureRect" parent="Vignette" unique_id=1574930027]
 layout_mode = 2
 texture = ExtResource("2_87cfe")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2086922676]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=242407090]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1115153395]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer" unique_id=1053292322]
 layout_mode = 2
 
-[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
+[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer" unique_id=1074795489]
 layout_mode = 2
 bbcode_enabled = true
 text = "Description"
@@ -65,7 +65,7 @@ visible_characters_behavior = 1
 script = ExtResource("3_06obj")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer"]
+[node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1623645970]
 process_mode = 3
 editor_description = "
 			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
@@ -85,7 +85,7 @@ sizing_node = NodePath("StanceSelection")
 _preview_starts_opened = false
 metadata/_custom_type_script = "uid://btlh4wrv04rc3"
 
-[node name="StanceSelection" parent="MarginContainer/VBoxContainer/CollapsibleContainer" instance=ExtResource("3_m1dxb")]
+[node name="StanceSelection" parent="MarginContainer/VBoxContainer/CollapsibleContainer" unique_id=2049077727 instance=ExtResource("3_m1dxb")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -95,21 +95,21 @@ offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DiceRequestEntry" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_tj3a7")]
+[node name="DiceRequestEntry" parent="MarginContainer/VBoxContainer" unique_id=959955054 instance=ExtResource("4_tj3a7")]
 layout_mode = 2
 
-[node name="SaveResultEntry" parent="MarginContainer/VBoxContainer" instance=ExtResource("7_oei8s")]
+[node name="SaveResultEntry" parent="MarginContainer/VBoxContainer" unique_id=479816527 instance=ExtResource("7_oei8s")]
 visible = false
 layout_mode = 2
 
-[node name="BreathDiceSelectionButtons" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_gpl86")]
+[node name="BreathDiceSelectionButtons" parent="MarginContainer/VBoxContainer" unique_id=935332026 instance=ExtResource("3_gpl86")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=418618987]
 layout_mode = 2
 
-[node name="AllInButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="AllInButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=306815150]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
@@ -118,7 +118,7 @@ text = "ALL IN!"
 script = ExtResource("5_bhkt5")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
-[node name="OKButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="OKButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1818047687]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2

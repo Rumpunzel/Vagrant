@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="OriginCombination" load_steps=5 format=3 uid="uid://byj458aftnuo"]
+[gd_resource type="Resource" script_class="OriginCombination" format=3 uid="uid://byj458aftnuo"]
 
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_o2y1n"]
 [ext_resource type="Resource" uid="uid://bax71w1etiyel" path="res://characters/origins/noble.tres" id="2_iw7vr"]
@@ -9,6 +9,4 @@
 script = ExtResource("4_yo1uj")
 origins = Array[ExtResource("1_o2y1n")]([ExtResource("2_iw7vr"), ExtResource("3_o2y1n")])
 name = "Steward"
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"

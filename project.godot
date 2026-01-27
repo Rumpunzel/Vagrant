@@ -12,10 +12,14 @@ config_version=5
 
 config/name="Vagrant"
 run/main_scene="uid://b0wuigen3gx4"
-config/features=PackedStringArray("4.5", "Forward Plus")
-boot_splash/fullsize=false
+config/features=PackedStringArray("4.6", "Forward Plus")
+boot_splash/stretch_mode=0
 boot_splash/image="uid://b78ro47ht4nhq"
 config/icon="uid://b78ro47ht4nhq"
+
+[audio]
+
+buses/default_bus_layout="uid://bd36a6oymssfj"
 
 [autoload]
 

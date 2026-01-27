@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CharacterAttribute" load_steps=4 format=3 uid="uid://bu20awm3swywv"]
+[gd_resource type="Resource" script_class="CharacterAttribute" format=3 uid="uid://bu20awm3swywv"]
 
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_3pd1w"]
 [ext_resource type="Texture2D" uid="uid://41mggls0fc6" path="res://game/icons/crossed-sabres.svg" id="1_l82ob"]

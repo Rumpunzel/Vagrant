@@ -1,20 +1,27 @@
-[gd_scene load_steps=23 format=3 uid="uid://0mji1mdlk5op"]
+[gd_scene format=3 uid="uid://0mji1mdlk5op"]
 
 [ext_resource type="Script" uid="uid://dytsvtmv8gt68" path="res://game/characters/character_creation/origins_picker.gd" id="1_gr0sf"]
 [ext_resource type="PackedScene" uid="uid://bsirn3lij5psg" path="res://game/characters/character_creation/ability_label.tscn" id="2_110h8"]
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="2_biqa6"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="2_w58ic"]
+[ext_resource type="Script" uid="uid://dl1dakg5uysj3" path="res://characters/rolled_attribute_score.gd" id="3_tix2n"]
 [ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="3_x4kkx"]
 [ext_resource type="Resource" uid="uid://1n7f7ltq8e42" path="res://characters/origins/merchant.tres" id="3_xw2kr"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="4_6ki8v"]
 [ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="4_aeon6"]
 [ext_resource type="Texture2D" uid="uid://b1nrbvek1tou5" path="res://characters/origins/icons/executioner-hood.svg" id="4_gg73k"]
 [ext_resource type="Texture2D" uid="uid://cpio2dgd5kcva" path="res://characters/origins/icons/drama-masks.svg" id="5_3rtwe"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="5_emtnr"]
 [ext_resource type="Texture2D" uid="uid://yhiugls1lady" path="res://characters/origins/icons/anvil-impact.svg" id="5_ujcxx"]
 [ext_resource type="Texture2D" uid="uid://cdsc4strj6fui" path="res://characters/origins/icons/badger.svg" id="6_4t8ms"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="6_wx0pk"]
 [ext_resource type="Texture2D" uid="uid://c18vwojibiavq" path="res://characters/origins/icons/crossbow.svg" id="7_110h8"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="7_bxu85"]
 [ext_resource type="Texture2D" uid="uid://blcffdsjp6tdv" path="res://characters/origins/icons/hood.svg" id="7_hqqb3"]
 [ext_resource type="Texture2D" uid="uid://bebxh1esrq3yj" path="res://characters/origins/icons/old-wagon.svg" id="7_pqbml"]
 [ext_resource type="Texture2D" uid="uid://cf181o5jyh3vl" path="res://characters/origins/icons/graduate-cap.svg" id="7_x4kkx"]
 [ext_resource type="Texture2D" uid="uid://dk0uewf13jjsi" path="res://characters/origins/icons/caesar.svg" id="8_110h8"]
+[ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="8_xqdek"]
 [ext_resource type="Texture2D" uid="uid://d073jvxfp62ln" path="res://characters/origins/icons/barbute.svg" id="10_gg73k"]
 [ext_resource type="Texture2D" uid="uid://vo5h0q8e31bp" path="res://characters/origins/icons/sun-priest.svg" id="11_pqbml"]
 [ext_resource type="Texture2D" uid="uid://u83ycsrxsky0" path="res://characters/origins/icons/pointy-hat.svg" id="11_u031w"]
@@ -23,33 +30,37 @@
 [ext_resource type="Texture2D" uid="uid://o266jm48qawt" path="res://characters/origins/icons/spartan-helmet.svg" id="21_jodaj"]
 [ext_resource type="Resource" uid="uid://7uemslxbeu5b" path="res://characters/origins/artisan.tres" id="22_ujcxx"]
 
-[node name="OriginsPicker" type="VBoxContainer" node_paths=PackedStringArray("_origins_list", "_ability_labels")]
+[sub_resource type="Resource" id="Resource_w58ic"]
+script = ExtResource("8_xqdek")
+
+[node name="OriginsPicker" type="VBoxContainer" unique_id=1557581856 node_paths=PackedStringArray("_origins_list", "_ability_labels")]
 offset_right = 1241.0
 offset_bottom = 383.0
 theme_override_constants/separation = 8
 script = ExtResource("1_gr0sf")
+_character_profile = SubResource("Resource_w58ic")
 _origins_directory = "res://characters/origins"
 _origins_list = NodePath("HBoxContainer/Origins")
 _ability_labels = [NodePath("HBoxContainer/Kin"), NodePath("HBoxContainer/Ilk")]
 metadata/_custom_type_script = "uid://dytsvtmv8gt68"
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="." unique_id=1164066675]
 visible = false
 layout_mode = 2
 theme_type_variation = &"HeaderLarge"
 text = "Origin"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=762492908]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Kin" parent="HBoxContainer" instance=ExtResource("2_110h8")]
+[node name="Kin" parent="HBoxContainer" unique_id=1439946148 instance=ExtResource("2_110h8")]
 layout_mode = 2
 size_flags_horizontal = 3
 origin = ExtResource("3_xw2kr")
 
-[node name="Origins" type="ItemList" parent="HBoxContainer"]
+[node name="Origins" type="ItemList" parent="HBoxContainer" unique_id=601402265]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 select_mode = 2
@@ -63,25 +74,25 @@ icon_mode = 0
 fixed_icon_size = Vector2i(32, 32)
 item_0/text = "Adventurer"
 item_0/icon = ExtResource("2_biqa6")
-item_1/text = "Aristocrat"
-item_1/icon = ExtResource("12_5f0br")
-item_1/disabled = true
-item_2/text = "Artisan"
-item_2/icon = ExtResource("5_ujcxx")
-item_3/text = "Captain"
-item_3/icon = ExtResource("8_110h8")
-item_3/disabled = true
-item_4/text = "Grunt"
-item_4/icon = ExtResource("10_gg73k")
-item_5/text = "Healer?"
-item_5/icon = ExtResource("4_aeon6")
-item_5/disabled = true
-item_6/text = "Hunter"
-item_6/icon = ExtResource("7_110h8")
-item_7/text = "Merchant"
-item_7/icon = ExtResource("7_pqbml")
-item_8/text = "Minstrel"
-item_8/icon = ExtResource("5_3rtwe")
+item_1/text = "Artisan"
+item_1/icon = ExtResource("5_ujcxx")
+item_2/text = "Captain"
+item_2/icon = ExtResource("8_110h8")
+item_2/disabled = true
+item_3/text = "Grunt"
+item_3/icon = ExtResource("10_gg73k")
+item_4/text = "Healer?"
+item_4/icon = ExtResource("4_aeon6")
+item_4/disabled = true
+item_5/text = "Hunter"
+item_5/icon = ExtResource("7_110h8")
+item_6/text = "Merchant"
+item_6/icon = ExtResource("7_pqbml")
+item_7/text = "Minstrel"
+item_7/icon = ExtResource("5_3rtwe")
+item_8/text = "Noble"
+item_8/icon = ExtResource("12_5f0br")
+item_8/disabled = true
 item_9/text = "Outlaw"
 item_9/icon = ExtResource("4_gg73k")
 item_9/disabled = true
@@ -104,7 +115,7 @@ item_16/icon = ExtResource("6_4t8ms")
 item_17/text = "Veteran"
 item_17/icon = ExtResource("21_jodaj")
 
-[node name="Ilk" parent="HBoxContainer" instance=ExtResource("2_110h8")]
+[node name="Ilk" parent="HBoxContainer" unique_id=329356037 instance=ExtResource("2_110h8")]
 layout_mode = 2
 size_flags_horizontal = 3
 origin = ExtResource("22_ujcxx")

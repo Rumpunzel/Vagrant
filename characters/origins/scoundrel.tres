@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=4 format=3 uid="uid://bj6k6l430dyvn"]
+[gd_resource type="Resource" script_class="Origin" format=3 uid="uid://bj6k6l430dyvn"]
 
 [ext_resource type="Texture2D" uid="uid://blcffdsjp6tdv" path="res://characters/origins/icons/hood.svg" id="1_iqyjl"]
 [ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_6iwro"]
@@ -7,10 +7,6 @@
 [resource]
 script = ExtResource("3_5fmqg")
 abilities = Array[String](["[b]+1[/b] company infamy.", "Feats of thievery go unanswered."])
-modifiers = Array[ExtResource("2_6iwro")]([])
-type = 0
 name = "Scoundrel"
 icon = ExtResource("1_iqyjl")
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

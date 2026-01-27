@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=5 format=3 uid="uid://ciavtykggnu43"]
+[gd_resource type="Resource" script_class="Origin" format=3 uid="uid://ciavtykggnu43"]
 
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="1_khty3"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_vwydo"]
@@ -9,9 +9,6 @@
 script = ExtResource("1_vwydo")
 abilities = Array[String](["[b]+1[/b] to all attributes."])
 modifiers = Array[ExtResource("2_6f1iy")]([ExtResource("3_0eesl")])
-type = 0
 name = "Adventurer"
 icon = ExtResource("1_khty3")
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

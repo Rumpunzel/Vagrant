@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cy2ymcfk2tejn"]
+[gd_scene format=3 uid="uid://cy2ymcfk2tejn"]
 
 [ext_resource type="Script" uid="uid://7rp8e3m8fvuh" path="res://game/story_book/story_entry.gd" id="1_ywxnt"]
 [ext_resource type="PackedScene" uid="uid://d0ecexfpobl4m" path="res://game/story_book/dialog_button.tscn" id="2_ilo4x"]
@@ -23,7 +23,7 @@ shader_parameter/down_clip = 0.0
 shader_parameter/left_clip = 0.0
 shader_parameter/right_clip = 0.0
 
-[node name="StoryEntry" type="PanelContainer" node_paths=PackedStringArray("_title", "_description", "_choices", "_breath_dice_collapsible_container", "_breath_dice_selection", "_background", "_body_container")]
+[node name="StoryEntry" type="PanelContainer" unique_id=1209058153 node_paths=PackedStringArray("_title", "_description", "_choices", "_breath_dice_collapsible_container", "_breath_dice_selection", "_background", "_body_container")]
 offset_right = 473.0
 offset_bottom = 371.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_ywxnt")
@@ -38,7 +38,7 @@ _background = NodePath("Background")
 _body_container = NodePath("MarginContainer")
 metadata/_custom_type_script = "uid://7rp8e3m8fvuh"
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=2014298082]
 visible = false
 show_behind_parent = true
 material = SubResource("ShaderMaterial_hkhw8")
@@ -49,18 +49,18 @@ stretch_mode = 6
 script = ExtResource("4_h86xk")
 metadata/_custom_type_script = "uid://0inxk2dmireb"
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1769409495]
 layout_mode = 2
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 24
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1891664974]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=411338302]
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 2
@@ -78,7 +78,7 @@ visible_characters_behavior = 1
 script = ExtResource("5_g4vxc")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=633031264]
 layout_mode = 2
 focus_mode = 2
 bbcode_enabled = true
@@ -91,13 +91,13 @@ visible_characters_behavior = 1
 script = ExtResource("5_g4vxc")
 metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
-[node name="Choices" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
+[node name="Choices" type="MarginContainer" parent="MarginContainer/VBoxContainer" unique_id=1471077261]
 layout_mode = 2
 script = ExtResource("6_ilo4x")
 direction = 2
 metadata/_custom_type_script = "uid://dqkpaquatj11m"
 
-[node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer"]
+[node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1224229586]
 process_mode = 3
 editor_description = "
 			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
@@ -114,7 +114,7 @@ sizing_constraint = 1
 sizing_node = NodePath("BreathDiceSelection")
 metadata/_custom_type_script = "uid://btlh4wrv04rc3"
 
-[node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer/CollapsibleContainer" instance=ExtResource("7_sl3wq")]
+[node name="BreathDiceSelection" parent="MarginContainer/VBoxContainer/CollapsibleContainer" unique_id=1349339328 instance=ExtResource("7_sl3wq")]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0

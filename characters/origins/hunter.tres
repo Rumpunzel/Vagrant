@@ -1,14 +1,11 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=3 format=3 uid="uid://cskgqp6fm3x52"]
+[gd_resource type="Resource" script_class="Origin" format=3 uid="uid://cskgqp6fm3x52"]
 
 [ext_resource type="Texture2D" uid="uid://c18vwojibiavq" path="res://characters/origins/icons/crossbow.svg" id="1_27hth"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_2s25p"]
+[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_l183t"]
 
 [resource]
 script = ExtResource("2_2s25p")
 name = "Hunter"
 icon = ExtResource("1_27hth")
-type = 0
-color = Color(0, 0, 0, 1)
-details = ""
-ability = ""
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

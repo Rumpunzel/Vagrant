@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://btrr51xe6kwox"]
 
-[node name="AdventureEditor" type="GraphEdit"]
+[node name="AdventureEditor" type="GraphEdit" unique_id=836409515]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GraphFrame" type="GraphFrame" parent="."]
+[node name="GraphFrame" type="GraphFrame" parent="." unique_id=2074450009]
 layout_mode = 0
 offset_left = 357.0
 offset_top = 118.0
@@ -17,7 +17,7 @@ mouse_filter = 1
 position_offset = Vector2(357, 118)
 title = "Beach"
 
-[node name="GraphNode" type="GraphNode" parent="."]
+[node name="GraphNode" type="GraphNode" parent="." unique_id=1938318692]
 layout_mode = 0
 offset_left = 1093.0
 offset_top = 234.0

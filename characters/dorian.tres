@@ -1,13 +1,8 @@
-[gd_resource type="Resource" script_class="CharacterProfile" load_steps=29 format=3 uid="uid://73nsysikxf7j"]
+[gd_resource type="Resource" script_class="CharacterProfile" format=3 uid="uid://73nsysikxf7j"]
 
 [ext_resource type="Texture2D" uid="uid://cm66gscm7nqr4" path="res://assets/portraits/HE-MF-2H-M116/Medium.png" id="1_080vh"]
-[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="1_phsde"]
-[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/die_types/d4.tres" id="2_ru31n"]
 [ext_resource type="Texture2D" uid="uid://bolerkcu4rmi" path="res://assets/portraits/HE-MF-2H-M116/Small.png" id="2_ygwnf"]
 [ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="3_wa8fo"]
-[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="4_dmj07"]
-[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/die_types/d10.tres" id="5_73k2y"]
-[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/die_types/d12.tres" id="6_ws2or"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="7_26oka"]
 [ext_resource type="Script" uid="uid://dl1dakg5uysj3" path="res://characters/rolled_attribute_score.gd" id="8_ijf3i"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="9_1jxcb"]
@@ -78,10 +73,3 @@ ExtResource("11_38m1i"): SubResource("Resource_auy6q"),
 ExtResource("12_vsf3q"): SubResource("Resource_q8koy")
 })
 origins = Array[ExtResource("13_gam16")]([ExtResource("14_1atq2"), ExtResource("15_60rk6")])
-breath_die_types = Dictionary[ExtResource("1_phsde"), int]({
-ExtResource("2_ru31n"): 1,
-ExtResource("3_wa8fo"): 1,
-ExtResource("4_dmj07"): 1,
-ExtResource("5_73k2y"): 1,
-ExtResource("6_ws2or"): 1
-})

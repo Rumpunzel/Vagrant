@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bsirn3lij5psg"]
+[gd_scene format=3 uid="uid://bsirn3lij5psg"]
 
 [ext_resource type="Script" uid="uid://b1pn3swob1ayj" path="res://game/characters/character_creation/ability_label.gd" id="1_a44ll"]
 [ext_resource type="Texture2D" uid="uid://2wpg8cwcgfrt" path="res://characters/origins/icons/plague-doctor-profile.svg" id="2_rc6wx"]
 
-[node name="AbilityLabel" type="PanelContainer" node_paths=PackedStringArray("_icon", "_name", "_abilities")]
+[node name="AbilityLabel" type="PanelContainer" unique_id=179477265 node_paths=PackedStringArray("_icon", "_name", "_abilities")]
 offset_right = 310.0
 offset_bottom = 165.0
 script = ExtResource("1_a44ll")
@@ -12,28 +12,28 @@ _name = NodePath("MarginContainer/VBoxContainer/Name")
 _abilities = NodePath("MarginContainer/VBoxContainer/Abilities")
 metadata/_custom_type_script = "uid://b1pn3swob1ayj"
 
-[node name="Icon" type="TextureRect" parent="."]
+[node name="Icon" type="TextureRect" parent="." unique_id=648010855]
 modulate = Color(1, 1, 1, 0.1)
 layout_mode = 2
 texture = ExtResource("2_rc6wx")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=977403143]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=572483229]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer" unique_id=2082316596]
 layout_mode = 2
 theme_type_variation = &"HeaderSmall"
 text = "Origin"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Abilities" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="Abilities" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=330440703]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_constants/separation = 8

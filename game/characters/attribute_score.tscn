@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://1ps6colw5iqa"]
+[gd_scene format=3 uid="uid://1ps6colw5iqa"]
 
 [ext_resource type="Script" uid="uid://c071oa3mjavbs" path="res://game/characters/character_sheet_attribute_score.gd" id="1_2xwy7"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="2_8y3k4"]
@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bkw7nl4evlydc" path="res://characters/attributes/icons/cracked-helm.svg" id="4_8y3k4"]
 [ext_resource type="FontFile" uid="uid://bnf1wqd6fv5ro" path="res://assets/fonts/grenze_gotisch/static/GrenzeGotisch-Medium.ttf" id="6_0uvo1"]
 
-[node name="AttributeScore" type="PanelContainer" node_paths=PackedStringArray("_icon", "_tooltip_trigger", "_score")]
+[node name="AttributeScore" type="PanelContainer" unique_id=1058721944 node_paths=PackedStringArray("_icon", "_tooltip_trigger", "_score")]
 offset_right = 43.0
 offset_bottom = 52.0
 size_flags_horizontal = 3
@@ -19,25 +19,25 @@ _tooltip_trigger = NodePath("TooltipTrigger")
 _score = NodePath("MarginContainer/Score")
 metadata/_custom_type_script = "uid://c071oa3mjavbs"
 
-[node name="TooltipTrigger" type="Node" parent="." node_paths=PackedStringArray("trigger_node")]
+[node name="TooltipTrigger" type="Node" parent="." unique_id=1350876330 node_paths=PackedStringArray("trigger_node")]
 script = ExtResource("3_ktfhn")
 trigger_node = NodePath("..")
 origin = 3
 metadata/_custom_type_script = "uid://coqwnstoj346c"
 
-[node name="AttributeIcon" parent="." instance=ExtResource("2_ktfhn")]
+[node name="AttributeIcon" parent="." unique_id=254158419 instance=ExtResource("2_ktfhn")]
 modulate = Color(0.56078434, 0.5176471, 0.45490196, 0.35)
 layout_mode = 2
 texture = ExtResource("4_8y3k4")
 attribute = ExtResource("2_8y3k4")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=754110853]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_top = -32
 theme_override_constants/margin_bottom = -12
 
-[node name="Score" type="Label" parent="MarginContainer"]
+[node name="Score" type="Label" parent="MarginContainer" unique_id=78748906]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_0uvo1")
 theme_override_font_sizes/font_size = 96

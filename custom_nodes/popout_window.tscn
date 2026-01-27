@@ -1,10 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://d1kbbfs6j3ty6"]
+[gd_scene format=3 uid="uid://d1kbbfs6j3ty6"]
 
 [ext_resource type="Script" uid="uid://tu7x13cdaq1t" path="res://custom_nodes/popout_window.gd" id="1_ljqu5"]
 [ext_resource type="Texture2D" uid="uid://cfnly84ucfhkl" path="res://assets/editor_icons/hero_icons/arrow-top-right-on-square.svg" id="2_jtbav"]
 [ext_resource type="Texture2D" uid="uid://85u82srrqglx" path="res://assets/editor_icons/hero_icons/x-mark.svg" id="3_b07bu"]
 
-[node name="PopoutWindow" type="Window" node_paths=PackedStringArray("_popout_button", "_close_button")]
+[node name="PopoutWindow" type="Window" unique_id=710498184 node_paths=PackedStringArray("_popout_button", "_close_button")]
 transparent_bg = true
 oversampling_override = 1.0
 visible = false
@@ -19,7 +19,7 @@ _popout_button = NodePath("MarginContainer/PopOut")
 _close_button = NodePath("MarginContainer/Close")
 metadata/_custom_type_script = "uid://tu7x13cdaq1t"
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1448871851]
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 40.0
@@ -28,7 +28,7 @@ mouse_filter = 2
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="PopOut" type="Button" parent="MarginContainer"]
+[node name="PopOut" type="Button" parent="MarginContainer" unique_id=584281126]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
@@ -36,7 +36,7 @@ mouse_default_cursor_shape = 2
 theme_override_constants/icon_max_width = 16
 icon = ExtResource("2_jtbav")
 
-[node name="Close" type="Button" parent="MarginContainer"]
+[node name="Close" type="Button" parent="MarginContainer" unique_id=1434968548]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4

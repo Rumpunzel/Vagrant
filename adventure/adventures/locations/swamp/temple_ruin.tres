@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="AdventurePage" load_steps=9 format=3 uid="uid://cs40ge42lw0ry"]
+[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://cs40ge42lw0ry"]
 
 [ext_resource type="Resource" uid="uid://kfbf7v18dp6a" path="res://adventure/adventures/locations/swamp/swamp.tres" id="1_8bxsp"]
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_6pnwp"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_r3twy"]
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="3_6p547"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="3_34ol8"]
+[ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_hij0g"]
 [ext_resource type="Resource" uid="uid://bxwqtk0p80o4g" path="res://adventure/adventures/locations/swamp/events/lurker_ambush.tres" id="6_quuub"]
 
 [sub_resource type="Resource" id="Resource_vvpox"]

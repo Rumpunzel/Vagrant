@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bgdje6c0bdu1a"]
+[gd_scene format=3 uid="uid://bgdje6c0bdu1a"]
 
 [ext_resource type="Script" uid="uid://d1mob3njsrvd5" path="res://game/breath_dice/breath_dice_display_group.gd" id="1_eowpu"]
 [ext_resource type="PackedScene" uid="uid://c4kqwadk1w71t" path="res://game/breath_dice/breath_die_display.tscn" id="2_eevb6"]
 
-[node name="BreathDiceDisplayGroup" type="MarginContainer"]
+[node name="BreathDiceDisplayGroup" type="MarginContainer" unique_id=1418567494]
 offset_right = 16.0
 offset_bottom = 16.0
 mouse_default_cursor_shape = 16

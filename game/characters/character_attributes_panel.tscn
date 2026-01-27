@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dgk1ipqq2uypw"]
+[gd_scene format=3 uid="uid://dgk1ipqq2uypw"]
 
 [ext_resource type="Script" uid="uid://dre6xu01ov0dm" path="res://game/characters/character_attributes_panel.gd" id="1_3heis"]
 [ext_resource type="PackedScene" uid="uid://1ps6colw5iqa" path="res://game/characters/attribute_score.tscn" id="2_5c0rt"]
@@ -6,7 +6,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gi8qp"]
 
-[node name="CharacterAttributesPanel" type="PanelContainer" node_paths=PackedStringArray("_attributes")]
+[node name="CharacterAttributesPanel" type="PanelContainer" unique_id=1532304239 node_paths=PackedStringArray("_attributes")]
 offset_right = 287.0
 offset_bottom = 168.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_gi8qp")
@@ -15,7 +15,7 @@ _attributes = NodePath("Attributes")
 _attribute_score = ExtResource("2_5c0rt")
 metadata/_custom_type_script = "uid://dre6xu01ov0dm"
 
-[node name="Attributes" type="MarginContainer" parent="."]
+[node name="Attributes" type="MarginContainer" parent="." unique_id=266423383]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0

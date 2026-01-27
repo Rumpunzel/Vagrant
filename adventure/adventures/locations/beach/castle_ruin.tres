@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="AdventurePage" load_steps=9 format=3 uid="uid://dk3q4ia5u7q6m"]
+[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://dk3q4ia5u7q6m"]
 
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="1_ctu8i"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="2_k7v3r"]
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_s0jsn"]
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="3_gmk2e"]
+[ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_d00k1"]
 [ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://adventure/adventures/locations/beach/beach.tres" id="5_rumxx"]
 [ext_resource type="Resource" uid="uid://d3cv8d5e65vwh" path="res://adventure/adventures/locations/beach/events/meeting_eleanor.tres" id="6_ct28b"]
 

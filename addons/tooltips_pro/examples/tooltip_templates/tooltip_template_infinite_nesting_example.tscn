@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bmsqett4rjuty"]
+[gd_scene format=3 uid="uid://bmsqett4rjuty"]
 
 [ext_resource type="StyleBox" uid="uid://3lxjgekqranv" path="res://addons/tooltips_pro/examples/resources/styles/TooltipStyleBoxFlat.tres" id="1_iauw6"]
 [ext_resource type="Script" uid="uid://ixs2o0jr6jjg" path="res://addons/tooltips_pro/scripts/tooltip_template.gd" id="2_sk6ue"]
@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://coqwnstoj346c" path="res://addons/tooltips_pro/scripts/tooltip_trigger.gd" id="3_ssion"]
 [ext_resource type="StyleBox" uid="uid://c2a0e1tu4ajov" path="res://addons/tooltips_pro/examples/resources/styles/LockBorderStyleBoxFlat.tres" id="5_ssion"]
 
-[node name="TooltipTemplateInfiniteNestingExample" type="PanelContainer" node_paths=PackedStringArray("content_labels", "lock_elements", "timer_lock_progress_bar") groups=["tooltips"]]
+[node name="TooltipTemplateInfiniteNestingExample" type="PanelContainer" unique_id=1333688526 node_paths=PackedStringArray("content_labels", "lock_elements", "timer_lock_progress_bar") groups=["tooltips"]]
 z_index = 1
 offset_right = 130.0
 offset_bottom = 45.0
@@ -21,7 +21,7 @@ timer_lock_progress_bar = NodePath("TimerLockTextureProgressBar")
 use_tween_in = true
 use_tween_out = true
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1443100043]
 layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
@@ -30,12 +30,12 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=195068144]
 layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1531534124]
 clip_contents = false
 layout_mode = 2
 size_flags_horizontal = 3
@@ -45,7 +45,7 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="RichTextLabel2" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="RichTextLabel2" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=376380546]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_stretch_ratio = 20.0
@@ -62,7 +62,7 @@ tooltip_strings = Array[String](["This tooltip is infinitely recursive,
 so you can get an idea of how the 
 tooltip stack works.", "[color=9ec4e6][b][u]See next tooltip.[/u][/b][/color]"])
 
-[node name="TimerLockTextureProgressBar" type="TextureProgressBar" parent="."]
+[node name="TimerLockTextureProgressBar" type="TextureProgressBar" parent="." unique_id=988287136]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
@@ -72,7 +72,7 @@ step = 0.01
 fill_mode = 4
 texture_progress = ExtResource("3_sk6ue")
 
-[node name="LockBorderPanel" type="Panel" parent="."]
+[node name="LockBorderPanel" type="Panel" parent="." unique_id=12722367]
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = ExtResource("5_ssion")

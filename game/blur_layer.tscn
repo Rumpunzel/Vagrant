@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cnoimx5y7cbvh"]
+[gd_scene format=3 uid="uid://cnoimx5y7cbvh"]
 
 [ext_resource type="Script" uid="uid://n3dw1424xgy0" path="res://game/blur_layer.gd" id="1_nl565"]
 [ext_resource type="Shader" uid="uid://hoc02c8hbg0a" path="res://game/darkened_blur.gdshader" id="1_yqnd2"]
@@ -8,11 +8,11 @@ shader = ExtResource("1_yqnd2")
 shader_parameter/lod = 0.50000002375
 shader_parameter/mix_percentage = 0.3
 
-[node name="BlurLayer" type="CanvasLayer" node_paths=PackedStringArray("_blur")]
+[node name="BlurLayer" type="CanvasLayer" unique_id=96385708 node_paths=PackedStringArray("_blur")]
 script = ExtResource("1_nl565")
 _blur = NodePath("MarginContainer/Blur")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1320900519]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -23,7 +23,7 @@ theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 
-[node name="Blur" type="ColorRect" parent="MarginContainer"]
+[node name="Blur" type="ColorRect" parent="MarginContainer" unique_id=1917558227]
 material = SubResource("ShaderMaterial_ftmra")
 layout_mode = 2
 mouse_filter = 2

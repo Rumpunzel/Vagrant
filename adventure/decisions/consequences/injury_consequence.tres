@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="AdventureInjuryConsequence" load_steps=2 format=3 uid="uid://b2xdmgxkfx8tf"]
+[gd_resource type="Resource" script_class="AdventureInjuryConsequence" format=3 uid="uid://b2xdmgxkfx8tf"]
 
 [ext_resource type="Script" uid="uid://bv0yf4co40wsx" path="res://adventure/decisions/consequences/adventure_injury_consequence.gd" id="1_mxs54"]
 

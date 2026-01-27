@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="MonsterProfile" load_steps=8 format=3 uid="uid://d3ytncs0be7oo"]
+[gd_resource type="Resource" script_class="MonsterProfile" format=3 uid="uid://d3ytncs0be7oo"]
 
 [ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="1_ld57m"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="2_gd730"]

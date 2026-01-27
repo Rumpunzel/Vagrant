@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://s1r1hypfpjyj"]
+[gd_scene format=3 uid="uid://s1r1hypfpjyj"]
 
 [ext_resource type="Script" uid="uid://6047svwc56d8" path="res://dice/dice_log/dice_log_entry_group.gd" id="1_adlmw"]
 [ext_resource type="PackedScene" uid="uid://cqeuqu32m0rr8" path="res://dice/dice_log/dice_log_save_result_entry.tscn" id="2_gxiv1"]
 
-[node name="DiceLogEntryGroup" type="PanelContainer" node_paths=PackedStringArray("_portrait", "_entries")]
+[node name="DiceLogEntryGroup" type="PanelContainer" unique_id=2105806581 node_paths=PackedStringArray("_portrait", "_entries")]
 offset_right = 183.0
 offset_bottom = 101.0
 script = ExtResource("1_adlmw")
@@ -12,11 +12,11 @@ _entries = NodePath("Entries")
 _dice_log_save_result_entry = ExtResource("2_gxiv1")
 metadata/_custom_type_script = "uid://6047svwc56d8"
 
-[node name="Portrait" type="TextureRect" parent="."]
+[node name="Portrait" type="TextureRect" parent="." unique_id=1914888519]
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Entries" type="VBoxContainer" parent="."]
+[node name="Entries" type="VBoxContainer" parent="." unique_id=748026464]
 layout_mode = 2
 theme_override_constants/separation = 0

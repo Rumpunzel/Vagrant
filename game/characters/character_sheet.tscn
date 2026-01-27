@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://14h1hukjjol7"]
+[gd_scene format=3 uid="uid://14h1hukjjol7"]
 
 [ext_resource type="Script" uid="uid://dkwi26f6nf1xj" path="res://game/characters/character_sheet.gd" id="1_uqhlh"]
 [ext_resource type="PackedScene" uid="uid://bnmsu0sopc3eu" path="res://game/breath_dice/vignette.tscn" id="2_cajq1"]
@@ -11,7 +11,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c5c64"]
 
-[node name="CharacterSheet" type="PanelContainer" node_paths=PackedStringArray("_name", "_title", "_attributes", "_breath_dice", "_ability_labels", "_portrait")]
+[node name="CharacterSheet" type="PanelContainer" unique_id=700185680 node_paths=PackedStringArray("_name", "_title", "_attributes", "_breath_dice", "_ability_labels", "_portrait")]
 offset_right = 336.0
 offset_bottom = 294.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_c5c64")
@@ -25,17 +25,17 @@ _name_suffix = "Character Sheet"
 _portrait = NodePath("Vignette/Portrait")
 metadata/_custom_type_script = "uid://dkwi26f6nf1xj"
 
-[node name="Vignette" parent="." instance=ExtResource("2_cajq1")]
+[node name="Vignette" parent="." unique_id=888649931 instance=ExtResource("2_cajq1")]
 layout_mode = 2
 
-[node name="Portrait" type="TextureRect" parent="Vignette"]
+[node name="Portrait" type="TextureRect" parent="Vignette" unique_id=374719702]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("2_sp54v")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1810176032]
 layout_mode = 2
 mouse_filter = 2
 mouse_behavior_recursive = 1
@@ -44,24 +44,24 @@ theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1396692257]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=478173847]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer" unique_id=749386532]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer" unique_id=133749752]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer" unique_id=261569593]
 layout_mode = 2
 
-[node name="Name" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Name" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1841113612]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"HeaderMedium"
@@ -72,10 +72,10 @@ scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=763382678]
 layout_mode = 2
 
-[node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Title" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1275679644]
 layout_mode = 2
 bbcode_enabled = true
 text = "Title"
@@ -84,39 +84,39 @@ scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer" unique_id=980298005]
 layout_mode = 2
 
-[node name="CharacterAttributesPanel" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_mkqqw")]
-layout_mode = 2
-mouse_behavior_recursive = 2
-
-[node name="BreathDiceSelectionButtons" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer" instance=ExtResource("4_gaha4")]
+[node name="CharacterAttributesPanel" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=224297012 instance=ExtResource("4_mkqqw")]
 layout_mode = 2
 mouse_behavior_recursive = 2
 
-[node name="AbilityLabels" parent="MarginContainer/VBoxContainer/VBoxContainer" instance=ExtResource("5_davb4")]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="BreathDiceSelectionButtons" parent="MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=1193468685 instance=ExtResource("4_gaha4")]
 layout_mode = 2
 mouse_behavior_recursive = 2
 
-[node name="Save" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="AbilityLabels" parent="MarginContainer/VBoxContainer/VBoxContainer" unique_id=1324638432 instance=ExtResource("5_davb4")]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1667062991]
+layout_mode = 2
+mouse_behavior_recursive = 2
+
+[node name="Save" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1194066379]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Save Character"
 icon = ExtResource("6_i22xi")
 expand_icon = true
 
-[node name="Load" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Load" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=955415697]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Load Profile"
 icon = ExtResource("7_mkqqw")
 expand_icon = true
 
-[node name="SaveDialog" type="FileDialog" parent="."]
+[node name="SaveDialog" type="FileDialog" parent="." unique_id=1893013195]
 oversampling_override = 1.0
 title = "Save Character"
 initial_position = 4
@@ -125,7 +125,7 @@ mode_overrides_title = false
 access = 2
 filters = PackedStringArray("*.tres")
 
-[node name="LoadDialog" type="FileDialog" parent="."]
+[node name="LoadDialog" type="FileDialog" parent="." unique_id=600550936]
 oversampling_override = 1.0
 title = "Load Profile"
 initial_position = 4

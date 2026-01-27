@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://rwckanbyj46r"]
+[gd_scene format=3 uid="uid://rwckanbyj46r"]
 
 [ext_resource type="Script" uid="uid://bm6ynbpjcexj1" path="res://dice/dice_log/dice_log_die_entry.gd" id="1_udt85"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="2_u5y0w"]
 
-[node name="DiceLogDieEntry" type="PanelContainer" node_paths=PackedStringArray("_entry")]
+[node name="DiceLogDieEntry" type="PanelContainer" unique_id=1532185867 node_paths=PackedStringArray("_entry")]
 offset_left = 16.0
 offset_top = 4.0
 offset_right = 130.0
@@ -12,10 +12,10 @@ script = ExtResource("1_udt85")
 _entry = NodePath("MarginContainer/Entry")
 metadata/_custom_type_script = "uid://bm6ynbpjcexj1"
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=590360820]
 layout_mode = 2
 
-[node name="Entry" type="RichTextLabel" parent="MarginContainer"]
+[node name="Entry" type="RichTextLabel" parent="MarginContainer" unique_id=1577602975]
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true

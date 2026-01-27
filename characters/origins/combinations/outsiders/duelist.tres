@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="OriginCombination" load_steps=5 format=3 uid="uid://y0viwldq2ev2"]
+[gd_resource type="Resource" script_class="OriginCombination" format=3 uid="uid://y0viwldq2ev2"]
 
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_hte6u"]
 [ext_resource type="Resource" uid="uid://de62kh1q4mybj" path="res://characters/origins/minstrel.tres" id="2_1f5gy"]
@@ -9,6 +9,4 @@
 script = ExtResource("4_b8fb4")
 origins = Array[ExtResource("1_hte6u")]([ExtResource("2_1f5gy"), ExtResource("3_so5m3")])
 name = "Duelist"
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"

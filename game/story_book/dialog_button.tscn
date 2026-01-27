@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://d0ecexfpobl4m"]
+[gd_scene format=3 uid="uid://d0ecexfpobl4m"]
 
 [ext_resource type="Script" uid="uid://1rnnvyy1byjt" path="res://game/story_book/dialog_button.gd" id="1_smxr3"]
 [ext_resource type="AudioStream" uid="uid://1j01m4qmcdw4" path="res://assets/sfx/match-lighting-candle.mp3" id="2_rbcg6"]
@@ -90,7 +90,7 @@ random_volume_offset_db = 2.0
 streams_count = 1
 stream_0/stream = ExtResource("2_rbcg6")
 
-[node name="DialogButton" type="Button"]
+[node name="DialogButton" type="Button" unique_id=259836815]
 custom_minimum_size = Vector2(208, 32)
 offset_right = 371.0
 offset_bottom = 75.0

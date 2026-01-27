@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="DieType" load_steps=7 format=3 uid="uid://cq2oc01qwwaei"]
+[gd_resource type="Resource" script_class="DieType" format=3 uid="uid://cq2oc01qwwaei"]
 
 [ext_resource type="Texture2D" uid="uid://1xs2utdeunqg" path="res://dice/icons/d12_blank.png" id="1_dcmtw"]
 [ext_resource type="Texture2D" uid="uid://87t1400wcx4g" path="res://dice/icons/d12.png" id="1_mm7ts"]

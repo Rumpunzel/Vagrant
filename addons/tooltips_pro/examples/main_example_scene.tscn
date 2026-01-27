@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://hqukdxyemyvu"]
+[gd_scene format=3 uid="uid://hqukdxyemyvu"]
 
 [ext_resource type="Script" uid="uid://c7aqh1k1lpowr" path="res://addons/tooltips_pro/examples/scripts/example_collision_object_3d.gd" id="1_0dv7n"]
 [ext_resource type="Script" uid="uid://coqwnstoj346c" path="res://addons/tooltips_pro/scripts/tooltip_trigger.gd" id="1_253dj"]
@@ -59,12 +59,12 @@ corner_detail = 5
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mbkqn"]
 size = Vector2(128, 128)
 
-[node name="MainExampleScene" type="Node"]
+[node name="MainExampleScene" type="Node" unique_id=1051111438]
 
-[node name="3DCanvasLayer" type="CanvasLayer" parent="."]
+[node name="3DCanvasLayer" type="CanvasLayer" parent="." unique_id=434992039]
 layer = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="3DCanvasLayer"]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="3DCanvasLayer" unique_id=1122570831]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -78,32 +78,32 @@ grow_horizontal = 0
 grow_vertical = 0
 scale = Vector2(0.875, 0.875)
 
-[node name="SubViewport" type="SubViewport" parent="3DCanvasLayer/SubViewportContainer"]
+[node name="SubViewport" type="SubViewport" parent="3DCanvasLayer/SubViewportContainer" unique_id=249363124]
 transparent_bg = true
 handle_input_locally = false
 physics_object_picking = true
 size = Vector2i(256, 384)
 render_target_update_mode = 4
 
-[node name="CollisionObject3DExample" type="Node3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport" node_paths=PackedStringArray("selection_object", "prism_mesh_instance", "cube_mesh_instance", "prism_tooltip_trigger")]
+[node name="CollisionObject3DExample" type="Node3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport" unique_id=1805499875 node_paths=PackedStringArray("selection_object", "prism_mesh_instance", "cube_mesh_instance", "prism_tooltip_trigger")]
 script = ExtResource("1_0dv7n")
 selection_object = NodePath("StaticBody3D_Prism")
 prism_mesh_instance = NodePath("StaticBody3D_Prism/MeshInstance3D")
 cube_mesh_instance = NodePath("StaticBody3D_Cube/MeshInstance3D")
 prism_tooltip_trigger = NodePath("StaticBody3D_Prism")
 
-[node name="Camera3D" type="Camera3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample"]
+[node name="Camera3D" type="Camera3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample" unique_id=1422728550]
 transform = Transform3D(1, 0, 0, 0, 0.734536, 0.67857, 0, -0.67857, 0.734536, -4.96528, 5.99816, 5.1706)
 h_offset = 5.0
 projection = 1
 current = true
 size = 3.669
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample"]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample" unique_id=1466967663]
 transform = Transform3D(0.888569, 0.350153, -0.296374, -0.159837, 0.841887, 0.51544, 0.429996, -0.410632, 0.804043, 0, 1.13309, 3.95647)
 light_energy = 0.719
 
-[node name="StaticBody3D_Cube" type="StaticBody3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample"]
+[node name="StaticBody3D_Cube" type="StaticBody3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample" unique_id=302970046]
 process_priority = 10
 transform = Transform3D(0.751276, 0, -0.659989, 0, 1, 0, 0.659989, 0, 0.751276, 0, 2.3446, 0)
 script = ExtResource("1_253dj")
@@ -116,14 +116,14 @@ tooltip_settings_override = ExtResource("11_4nisf")
 tooltip_strings = Array[String](["[color=c6e3fd]mouse_over[/color] on cube"])
 metadata/_edit_group_ = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Cube"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Cube" unique_id=1292101120]
 mesh = SubResource("BoxMesh_wycvy")
 skeleton = NodePath("../../../../../..")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Cube"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Cube" unique_id=1503021616]
 shape = SubResource("BoxShape3D_dafuq")
 
-[node name="StaticBody3D_Prism" type="StaticBody3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample"]
+[node name="StaticBody3D_Prism" type="StaticBody3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample" unique_id=1940857881]
 process_priority = 10
 transform = Transform3D(0.751276, 0, -0.659988, 0, 1, 0, 0.659988, 0, 0.751276, 0, 0, 0)
 script = ExtResource("1_253dj")
@@ -136,29 +136,29 @@ tooltip_settings_override = ExtResource("11_4nisf")
 tooltip_strings = Array[String](["[color=c6e3fd]InputEvent.pressed[/color] on prism"])
 metadata/_edit_group_ = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Prism"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Prism" unique_id=15209565]
 mesh = SubResource("PrismMesh_mbkqn")
 
-[node name="Label3D" type="Label3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Prism"]
+[node name="Label3D" type="Label3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Prism" unique_id=460270328]
 transform = Transform3D(-4.37114e-08, 0.5, -0.866026, 0, 0.866025, 0.5, 1, 2.18557e-08, -3.78552e-08, -0.237193, 0.0426782, 0.00416423)
 double_sided = false
 render_priority = 1
 text = "Click Me"
 font_size = 40
 
-[node name="Label3D2" type="Label3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Prism"]
+[node name="Label3D2" type="Label3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Prism" unique_id=1718556696]
 transform = Transform3D(-4.37114e-08, -0.5, 0.866026, 0, 0.866025, 0.5, -1, 2.18557e-08, -3.78552e-08, 0.256403, 0.0226106, 0.00416426)
 double_sided = false
 render_priority = 1
 text = "Click Me"
 font_size = 40
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Prism"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Prism" unique_id=1285641237]
 shape = SubResource("BoxShape3D_wycvy")
 
-[node name="UICanvasLayer" type="CanvasLayer" parent="."]
+[node name="UICanvasLayer" type="CanvasLayer" parent="." unique_id=1568827018]
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer" unique_id=2048376700]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -167,12 +167,12 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainerLeft" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer"]
+[node name="VBoxContainerLeft" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer" unique_id=1599130723]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="AlignmentExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft"]
+[node name="AlignmentExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft" unique_id=1868410286]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/margin_left = 16
@@ -181,15 +181,15 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 metadata/_edit_group_ = true
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample" unique_id=965171158]
 layout_mode = 2
 mouse_filter = 1
 theme_override_styles/panel = ExtResource("6_iigk5")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample" unique_id=1241646888]
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer" unique_id=95952443]
 custom_minimum_size = Vector2(384, 128)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -207,17 +207,17 @@ The [color=9ec4e6]TooltipTrigger[/color]'s [b]Alignment[/b] is set relative to i
 When the [color=9ec4e6]TooltipTrigger[/color]'s [b]Origin[/b] is set to [bgcolor=15181e][color=e8a3a5][code]Remote Element[/code][/color][/bgcolor], you must assign a node that inherits from [color=9ec4e6]Control[/color] to [b]Remote Element Node[/b]. The example tooltip uses a node in the scene named [b]RemoteTriggerControl[/b], which is positioned in the bottom left of the example inset panel."
 fit_content = true
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer" unique_id=75450833]
 custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
 theme_override_styles/panel = ExtResource("13_eb75w")
 
-[node name="RemoteTriggerControl" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel"]
+[node name="RemoteTriggerControl" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel" unique_id=1494322119]
 anchors_preset = 0
 offset_top = 325.0
 offset_bottom = 325.0
 
-[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel" unique_id=99106554]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -229,27 +229,27 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer" unique_id=1950545533]
 layout_mode = 2
 
-[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer"]
+[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer" unique_id=816720651]
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer" unique_id=470268295]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_constants/separation = 12
 
-[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=772154132]
 layout_mode = 2
 bbcode_enabled = true
 text = "[b]Origin:[/b]"
 fit_content = true
 horizontal_alignment = 1
 
-[node name="Button" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Button" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1858575707]
 layout_mode = 2
 focus_neighbor_right = NodePath("../../../../../../../../VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/LockModeContainer/LockModeOptionButton")
 focus_neighbor_bottom = NodePath("../Button4")
@@ -259,7 +259,7 @@ script = ExtResource("1_253dj")
 tooltip_alignment = 1
 tooltip_strings = Array[String](["Alignment: Top Center"])
 
-[node name="Button4" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("remote_element_node")]
+[node name="Button4" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1671133053 node_paths=PackedStringArray("remote_element_node")]
 layout_mode = 2
 focus_neighbor_top = NodePath("../Button")
 focus_neighbor_right = NodePath("../../../../../../../../VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/LockModeContainer/LockModeOptionButton")
@@ -274,7 +274,7 @@ remote_element_node = NodePath("../../../../RemoteTriggerControl")
 offset = Vector2(8, 8)
 tooltip_strings = Array[String](["Alignment: Top Right"])
 
-[node name="Button2" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Button2" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=2030040510]
 layout_mode = 2
 focus_neighbor_top = NodePath("../Button4")
 focus_neighbor_right = NodePath("../../../../../../../../VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/LockModeContainer/LockModeOptionButton")
@@ -286,7 +286,7 @@ script = ExtResource("1_253dj")
 origin = 2
 tooltip_strings = Array[String](["Alignment: Top Left"])
 
-[node name="Button3" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Button3" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=276737666]
 layout_mode = 2
 focus_neighbor_top = NodePath("../Button2")
 focus_neighbor_right = NodePath("../../../../../../../../VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/LockModeContainer/LockModeOptionButton")
@@ -299,11 +299,11 @@ tooltip_alignment = 2
 origin = 3
 tooltip_strings = Array[String](["Alignment: Top Right"])
 
-[node name="Spacer2" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer"]
+[node name="Spacer2" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer" unique_id=44352231]
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 
-[node name="OverflowExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft"]
+[node name="OverflowExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft" unique_id=1943985188]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/margin_left = 16
@@ -312,20 +312,20 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 metadata/_edit_group_ = true
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample" unique_id=676445061]
 layout_mode = 2
 mouse_filter = 1
 theme_override_styles/panel = ExtResource("6_iigk5")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample" unique_id=1853109210]
 layout_mode = 2
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer" unique_id=1608931154]
 custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
 theme_override_styles/panel = ExtResource("13_eb75w")
 
-[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel" unique_id=402689859]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -337,27 +337,27 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer" unique_id=1834736518]
 layout_mode = 2
 
-[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer"]
+[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer" unique_id=1886965448]
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer" unique_id=1895583167]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_constants/separation = 12
 
-[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1202575355]
 layout_mode = 2
 bbcode_enabled = true
 text = "[b]Overflow Mode:[/b]"
 fit_content = true
 horizontal_alignment = 1
 
-[node name="Button" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Button" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=940833696]
 layout_mode = 2
 focus_neighbor_top = NodePath("../../../../../../../AlignmentExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer/Button3")
 focus_neighbor_bottom = NodePath("../Button2")
@@ -369,7 +369,7 @@ origin = 3
 tooltip_strings = Array[String](["Alignment: Top Left, but will flip 
 to Top Right on overflow."])
 
-[node name="Button2" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Button2" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=682920064]
 layout_mode = 2
 focus_neighbor_top = NodePath("../Button")
 focus_neighbor_bottom = NodePath("../Button3")
@@ -382,7 +382,7 @@ overflow_mode = 1
 tooltip_strings = Array[String](["The tooltip is clamped to the edge of the overflow bounds 
 (the screen size, by default)."])
 
-[node name="Button3" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Button3" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=398231489]
 layout_mode = 2
 focus_neighbor_top = NodePath("../Button2")
 focus_neighbor_bottom = NodePath("../Button4")
@@ -395,18 +395,18 @@ overflow_mode = 2
 tooltip_strings = Array[String](["The tooltip is allowed to overflow 
 the designated bounds."])
 
-[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=2134419282]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
-[node name="RichTextLabel2" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="RichTextLabel2" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1615539392]
 layout_mode = 2
 bbcode_enabled = true
 text = "[b]Overflow Bounds:[/b]"
 fit_content = true
 horizontal_alignment = 1
 
-[node name="Button4" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("overflow_element_node")]
+[node name="Button4" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1753466513 node_paths=PackedStringArray("overflow_element_node")]
 layout_mode = 2
 focus_neighbor_top = NodePath("../Button3")
 focus_neighbor_bottom = NodePath("../../../../../../../LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer/Button2")
@@ -424,11 +424,11 @@ the MarginContainer of this
 example panel, not the 
 screen size."])
 
-[node name="Spacer2" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer"]
+[node name="Spacer2" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer" unique_id=2057482860]
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/OverflowExample/HBoxContainer" unique_id=285881502]
 custom_minimum_size = Vector2(384, 128)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -449,7 +449,7 @@ When the [color=9ec4e6]TooltipTrigger[/color]'s [b]Overflow Bounds[/b] is set to
 In the examples on the left, move the tooltips to see how they behave when exceeding the designated [b]Overflow Bounds[/b]."
 fit_content = true
 
-[node name="LockingExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft"]
+[node name="LockingExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft" unique_id=1665659637]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/margin_left = 16
@@ -458,15 +458,15 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 metadata/_edit_group_ = true
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample" unique_id=1621140597]
 layout_mode = 2
 mouse_filter = 1
 theme_override_styles/panel = ExtResource("6_iigk5")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample" unique_id=1533117557]
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer" unique_id=1489553776]
 custom_minimum_size = Vector2(384, 128)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -486,17 +486,17 @@ Locking a tooltip locks it in position if [b]Origin[/b] is set to [bgcolor=15181
 [ul]By opening nested tooltips, you will create a [i]tooltip stack[/i]. If you move the mouse over a tooltip further back in the stack, the stack will collapse to that tooltip. The stack will fully collapse if the mouse is no longer over a tooltip."
 fit_content = true
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer" unique_id=1299106974]
 custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
 theme_override_styles/panel = ExtResource("13_eb75w")
 
-[node name="RemoteTriggerControl" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel"]
+[node name="RemoteTriggerControl" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel" unique_id=2128496813]
 anchors_preset = 0
 offset_top = 325.0
 offset_bottom = 325.0
 
-[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel" unique_id=1138629780]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -508,20 +508,20 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer" unique_id=1904497923]
 layout_mode = 2
 
-[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer"]
+[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer" unique_id=1888309762]
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer" unique_id=813981343]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_constants/separation = 12
 
-[node name="Button2" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Button2" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1866742710]
 layout_mode = 2
 focus_neighbor_top = NodePath("../../../../../../../OverflowExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer/Button4")
 focus_neighbor_bottom = NodePath("../Button")
@@ -534,7 +534,7 @@ tooltip_alignment = 2
 origin = 3
 tooltip_strings = Array[String](["When this tooltip is locked, try opening", "[color=9ec4e6][b][u]this tooltip[/u][/b][/color]"])
 
-[node name="Button" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Button" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer/VBoxContainer" unique_id=726980031]
 layout_mode = 2
 focus_neighbor_top = NodePath("../Button2")
 focus_previous = NodePath("../Button2")
@@ -547,16 +547,16 @@ tooltip_strings = Array[String](["This tooltip is infinitely recursive,
 so you can get an idea of how the 
 tooltip stack works.", "[color=9ec4e6][b][u]See next tooltip.[/u][/b][/color]"])
 
-[node name="Spacer2" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer"]
+[node name="Spacer2" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerLeft/LockingExample/HBoxContainer/Panel/MarginContainer/HBoxContainer" unique_id=794972117]
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 
-[node name="VBoxContainerRight" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer"]
+[node name="VBoxContainerRight" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer" unique_id=261001737]
 custom_minimum_size = Vector2(768, 0)
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="MarginContainerSettings" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight"]
+[node name="MarginContainerSettings" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight" unique_id=711049327]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_left = 16
@@ -564,39 +564,39 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings" unique_id=535659388]
 layout_mode = 2
 theme_override_styles/panel = ExtResource("6_iigk5")
 
-[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings"]
+[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings" unique_id=379317473]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer" unique_id=1305343452]
 layout_mode = 2
 theme_override_constants/separation = 24
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer" unique_id=1134596472]
 layout_mode = 2
 
-[node name="TooltipPanel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="TooltipPanel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer" unique_id=241125890]
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.45
 theme_override_styles/panel = SubResource("StyleBoxFlat_xs4m1")
 
-[node name="TooltipPanel2" type="PanelContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="TooltipPanel2" type="PanelContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer" unique_id=212197570]
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.45
 theme_override_styles/panel = ExtResource("13_eb75w")
 
-[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2"]
+[node name="MarginContainer" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2" unique_id=1999509470]
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -606,18 +606,18 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer" unique_id=1275032331]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="Label" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer" unique_id=1199193258]
 layout_mode = 2
 text = "SETTINGS"
 horizontal_alignment = 1
 
-[node name="SettingsContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer" node_paths=PackedStringArray("lock_mode_option_button", "open_delay_slider", "open_delay_value", "timer_lock_delay_slider", "timer_lock_delay_value", "unlock_delay_slider", "unlock_delay_value")]
+[node name="SettingsContainer" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer" unique_id=1031843242 node_paths=PackedStringArray("lock_mode_option_button", "open_delay_slider", "open_delay_value", "timer_lock_delay_slider", "timer_lock_delay_value", "unlock_delay_slider", "unlock_delay_value")]
 layout_mode = 2
 theme_override_constants/separation = 8
 script = ExtResource("4_wecet")
@@ -629,18 +629,18 @@ timer_lock_delay_value = NodePath("TimerLockDelayContainer/ValueLabel")
 unlock_delay_slider = NodePath("UnlockDelayContainer/UnlockDelayHSlider")
 unlock_delay_value = NodePath("UnlockDelayContainer/ValueLabel")
 
-[node name="LockModeContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer"]
+[node name="LockModeContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer" unique_id=1366538047]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="NameLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/LockModeContainer"]
+[node name="NameLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/LockModeContainer" unique_id=818597692]
 custom_minimum_size = Vector2(133, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Lock Mode"
 horizontal_alignment = 2
 
-[node name="LockModeOptionButton" type="OptionButton" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/LockModeContainer" node_paths=PackedStringArray("remote_element_node")]
+[node name="LockModeOptionButton" type="OptionButton" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/LockModeContainer" unique_id=467395702 node_paths=PackedStringArray("remote_element_node")]
 process_priority = 10
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
@@ -669,18 +669,18 @@ tooltip_strings = Array[String](["[b]Timer Lock[/b]: Tooltip will lock after a d
 
 [b]Auto Lock[/b]: Tooltip will open locked."])
 
-[node name="OpenDelayContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer"]
+[node name="OpenDelayContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer" unique_id=723784246]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="NameLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/OpenDelayContainer"]
+[node name="NameLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/OpenDelayContainer" unique_id=1344864452]
 custom_minimum_size = Vector2(133, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Open Delay"
 horizontal_alignment = 2
 
-[node name="OpenDelayHSlider" type="HSlider" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/OpenDelayContainer" node_paths=PackedStringArray("remote_element_node")]
+[node name="OpenDelayHSlider" type="HSlider" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/OpenDelayContainer" unique_id=2011345508 node_paths=PackedStringArray("remote_element_node")]
 process_priority = 10
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
@@ -702,24 +702,24 @@ overflow_mode = 1
 tooltip_settings_override = ExtResource("11_4nisf")
 tooltip_strings = Array[String](["[b]Open Delay[/b]: The time in seconds before a tooltip opens on [color=c6e3fd][code]mouse_entered[/code][/color] or [color=c6e3fd][code]focus_entered[/code][/color] signals."])
 
-[node name="ValueLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/OpenDelayContainer"]
+[node name="ValueLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/OpenDelayContainer" unique_id=2055206628]
 custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "0.0s"
 
-[node name="TimerLockDelayContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer"]
+[node name="TimerLockDelayContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer" unique_id=1251003949]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="NameLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/TimerLockDelayContainer"]
+[node name="NameLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/TimerLockDelayContainer" unique_id=653828527]
 custom_minimum_size = Vector2(133, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Timer Lock Delay"
 horizontal_alignment = 2
 
-[node name="TimerLockDelayHSlider" type="HSlider" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/TimerLockDelayContainer" node_paths=PackedStringArray("remote_element_node")]
+[node name="TimerLockDelayHSlider" type="HSlider" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/TimerLockDelayContainer" unique_id=829716389 node_paths=PackedStringArray("remote_element_node")]
 process_priority = 10
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
@@ -741,24 +741,24 @@ overflow_mode = 1
 tooltip_settings_override = ExtResource("11_4nisf")
 tooltip_strings = Array[String](["[b]Timer Lock Delay[/b]: The time in seconds before a tooltip locks when the [b]Lock Mode[/b] is set to [bgcolor=21262e][color=e8a3a5][code]Timer Lock[/code][/color][/bgcolor]."])
 
-[node name="ValueLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/TimerLockDelayContainer"]
+[node name="ValueLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/TimerLockDelayContainer" unique_id=312417952]
 custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "0.0s"
 
-[node name="UnlockDelayContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer"]
+[node name="UnlockDelayContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer" unique_id=573591468]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="NameLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/UnlockDelayContainer"]
+[node name="NameLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/UnlockDelayContainer" unique_id=1615787449]
 custom_minimum_size = Vector2(133, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Unlock Delay"
 horizontal_alignment = 2
 
-[node name="UnlockDelayHSlider" type="HSlider" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/UnlockDelayContainer" node_paths=PackedStringArray("remote_element_node")]
+[node name="UnlockDelayHSlider" type="HSlider" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/UnlockDelayContainer" unique_id=83025365 node_paths=PackedStringArray("remote_element_node")]
 process_priority = 10
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
@@ -780,17 +780,17 @@ overflow_mode = 1
 tooltip_settings_override = ExtResource("11_4nisf")
 tooltip_strings = Array[String](["[b]Unlock Delay[/b]: The time in seconds before a locked tooltip closes on [color=c6e3fd][code]mouse_exited[/code][/color]."])
 
-[node name="ValueLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/UnlockDelayContainer"]
+[node name="ValueLabel" type="Label" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer/UnlockDelayContainer" unique_id=1898126984]
 custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "0.0s"
 
-[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer"]
+[node name="Spacer" type="Control" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer" unique_id=1048552648]
 custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
-[node name="ResetToDefaultButton" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer"]
+[node name="ResetToDefaultButton" type="Button" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer/TooltipPanel2/MarginContainer/VBoxContainer/SettingsContainer" unique_id=2035190718]
 process_priority = 10
 layout_mode = 2
 size_flags_horizontal = 4
@@ -799,11 +799,11 @@ focus_neighbor_top = NodePath("../UnlockDelayContainer/UnlockDelayHSlider")
 focus_previous = NodePath("../UnlockDelayContainer/UnlockDelayHSlider")
 text = "Reset to Default"
 
-[node name="HBoxContainer2" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer2" type="VBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer" unique_id=2049425793]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/MarginContainerSettings/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=2097348436]
 custom_minimum_size = Vector2(384, 128)
 layout_mode = 2
 mouse_filter = 2
@@ -820,7 +820,7 @@ Tooltips can appear on [color=c6e3fd][code]focus_entered[/code][/color] rather t
 Tooltips can be instantiated relative to any [color=9ec4e6]Control[/color] node (ie. for Settings descriptions in a fixed position). Set the [color=9ec4e6]TooltipTrigger[/color]'s [b]Origin[/b] to [bgcolor=15181e][color=e8a3a5][code]Remote Element[/code][/color][/bgcolor]."
 fit_content = true
 
-[node name="2DTriggerExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight"]
+[node name="2DTriggerExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight" unique_id=1444781614]
 custom_minimum_size = Vector2(512, 256)
 layout_mode = 2
 theme_override_constants/margin_left = 16
@@ -828,21 +828,21 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample" unique_id=974794521]
 layout_mode = 2
 mouse_filter = 1
 theme_override_styles/panel = ExtResource("6_iigk5")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample" unique_id=1798340238]
 layout_mode = 2
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer" unique_id=1118530751]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 1
 theme_override_styles/panel = ExtResource("13_eb75w")
 
-[node name="StaticBody2D_A" type="StaticBody2D" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer/Panel"]
+[node name="StaticBody2D_A" type="StaticBody2D" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer/Panel" unique_id=1052128769]
 position = Vector2(112, 112)
 input_pickable = true
 script = ExtResource("1_253dj")
@@ -853,13 +853,13 @@ offset = Vector2(0, 68)
 overflow_mode = 1
 tooltip_strings = Array[String](["I'm a Sprite2D!"])
 
-[node name="Sprite2D" type="Sprite2D" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer/Panel/StaticBody2D_A"]
+[node name="Sprite2D" type="Sprite2D" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer/Panel/StaticBody2D_A" unique_id=388389092]
 texture = ExtResource("3_mbkqn")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer/Panel/StaticBody2D_A"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer/Panel/StaticBody2D_A" unique_id=1410557238]
 shape = SubResource("RectangleShape2D_mbkqn")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/2DTriggerExample/HBoxContainer" unique_id=1924893243]
 clip_contents = false
 custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
@@ -876,7 +876,7 @@ text = "[b]2D Trigger Example[/b]
 fit_content = true
 scroll_active = false
 
-[node name="3DTriggerExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight"]
+[node name="3DTriggerExample" type="MarginContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight" unique_id=655114163]
 custom_minimum_size = Vector2(512, 256)
 layout_mode = 2
 size_flags_vertical = 3
@@ -885,17 +885,17 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/3DTriggerExample"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/3DTriggerExample" unique_id=741179344]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 1
 theme_override_styles/panel = ExtResource("6_iigk5")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/3DTriggerExample"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/3DTriggerExample" unique_id=1825420160]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/3DTriggerExample/HBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/3DTriggerExample/HBoxContainer" unique_id=15967616]
 custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -914,12 +914,12 @@ When using a [color=9ec4e6]SubViewport[/color] to display 3D objects in the UI, 
 fit_content = true
 scroll_active = false
 
-[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/3DTriggerExample/HBoxContainer"]
+[node name="Panel" type="Panel" parent="UICanvasLayer/HBoxContainer/VBoxContainerRight/3DTriggerExample/HBoxContainer" unique_id=1381368671]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("13_eb75w")
 
-[node name="InputManager" type="Node" parent="."]
+[node name="InputManager" type="Node" parent="." unique_id=725306365]
 script = ExtResource("10_iigk5")
 
 [connection signal="mouse_entered" from="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample/StaticBody3D_Cube" to="3DCanvasLayer/SubViewportContainer/SubViewport/CollisionObject3DExample" method="_on_3d_mouse_entered"]

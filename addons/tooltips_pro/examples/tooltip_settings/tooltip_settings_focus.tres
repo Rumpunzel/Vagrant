@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://colo1bdg23i7a"]
+[gd_resource type="Resource" format=3 uid="uid://colo1bdg23i7a"]
 
 [ext_resource type="Script" uid="uid://lcf8uedn57am" path="res://addons/tooltips_pro/scripts/tooltip_settings.gd" id="1_8qqiy"]
 
@@ -9,6 +9,4 @@ lock_mode = 3
 open_delay = 0.0
 timer_lock_delay = 0.0
 unlock_delay = 0.0
-darken_step_count = 3
-darken_step_value = 0.25
 step_limit_color = Color(0.25, 0.25, 0.25, 0.15)

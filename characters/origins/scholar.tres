@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=4 format=3 uid="uid://bpesh0vj6mbdm"]
+[gd_resource type="Resource" script_class="Origin" format=3 uid="uid://bpesh0vj6mbdm"]
 
 [ext_resource type="Texture2D" uid="uid://cf181o5jyh3vl" path="res://characters/origins/icons/graduate-cap.svg" id="1_vh0is"]
 [ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_adaqc"]
@@ -7,10 +7,6 @@
 [resource]
 script = ExtResource("2_medmp")
 abilities = Array[String](["No question limit for one subject.", "[b]+1[/b] to all other expertises."])
-modifiers = Array[ExtResource("2_adaqc")]([])
-type = 0
 name = "Scholar"
 icon = ExtResource("1_vh0is")
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

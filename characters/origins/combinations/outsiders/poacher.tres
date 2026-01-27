@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="OriginCombination" load_steps=5 format=3 uid="uid://b1olw1c12nq08"]
+[gd_resource type="Resource" script_class="OriginCombination" format=3 uid="uid://b1olw1c12nq08"]
 
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_hc2n3"]
 [ext_resource type="Resource" uid="uid://binkm27w771kw" path="res://characters/origins/outlaw.tres" id="2_flidn"]
@@ -9,6 +9,4 @@
 script = ExtResource("4_0gmxd")
 origins = Array[ExtResource("1_hc2n3")]([ExtResource("2_flidn"), ExtResource("3_hc2n3")])
 name = "Poacher"
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"

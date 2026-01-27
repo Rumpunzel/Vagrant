@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b0wuigen3gx4"]
+[gd_scene format=3 uid="uid://b0wuigen3gx4"]
 
 [ext_resource type="Script" uid="uid://r3vwl1b18g4l" path="res://game/game.gd" id="1_80nbo"]
 [ext_resource type="Resource" uid="uid://dw1vkutmmhnao" path="res://adventure/adventures/test_adventure.tres" id="2_e2o6t"]
 
-[node name="Game" type="Node"]
+[node name="Game" type="Node" unique_id=2141540061]
 script = ExtResource("1_80nbo")
 default_adventure = ExtResource("2_e2o6t")
 metadata/_custom_type_script = "uid://r3vwl1b18g4l"

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="MonsterProfile" load_steps=8 format=3 uid="uid://bgt5q8uo31yh0"]
+[gd_resource type="Resource" script_class="MonsterProfile" format=3 uid="uid://bgt5q8uo31yh0"]
 
 [ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="1_tycht"]
 [ext_resource type="Texture2D" uid="uid://u2y0fgfdhbaw" path="res://assets/monster_portraits/goblin.jpg" id="2_aqmhw"]
@@ -12,11 +12,4 @@
 script = ExtResource("8_5aed7")
 name = "Goblin"
 portrait = ExtResource("2_aqmhw")
-attribute_scores = Dictionary[ExtResource("2_mrpg6"), int]({
-ExtResource("3_tycht"): 7,
-ExtResource("4_87jrq"): 7,
-ExtResource("5_fa74d"): 7
-})
-_breath_dice_size = ExtResource("1_tycht")
-_breath_dice_amount = 3
 metadata/_custom_type_script = "uid://1342yb3eb2bh"

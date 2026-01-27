@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cf1n1fetmgy8"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://cf1n1fetmgy8"]
 
 [ext_resource type="Shader" uid="uid://bdoejkde1ixlx" path="res://game/characters/ellipse_vignette.gdshader" id="1_6aya2"]
 

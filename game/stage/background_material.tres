@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cuyjjufrw85md"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://cuyjjufrw85md"]
 
 [ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://game/characters/fade_vignette.gdshader" id="1_o8bkf"]
 

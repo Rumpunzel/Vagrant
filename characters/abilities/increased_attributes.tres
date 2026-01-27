@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="AttributeScoreModifier" load_steps=6 format=3 uid="uid://fryeuxhsirvn"]
+[gd_resource type="Resource" script_class="AttributeScoreModifier" format=3 uid="uid://fryeuxhsirvn"]
 
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_2jrsn"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="2_qx2uw"]
@@ -9,9 +9,4 @@
 [resource]
 script = ExtResource("5_f500k")
 description = "+1 to all attributes."
-score_modifiers = Dictionary[ExtResource("1_2jrsn"), int]({
-ExtResource("2_qx2uw"): 1,
-ExtResource("3_r0q6n"): 1,
-ExtResource("4_5bjtw"): 1
-})
 metadata/_custom_type_script = "uid://dsrjqjh4js5i5"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://c5uet8sda2yqw"]
+[gd_scene format=3 uid="uid://c5uet8sda2yqw"]
 
 [ext_resource type="Script" uid="uid://cg0o8nr4etsys" path="res://game/characters/character_creation/attribute_score_roller.gd" id="1_ugieg"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="2_v4414"]
@@ -19,7 +19,7 @@ corner_detail = 5
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lgbe1"]
 
-[node name="AttributeScoreRoller" type="PanelContainer" node_paths=PackedStringArray("_attribute_score", "_button", "_descriptor", "_details", "_score")]
+[node name="AttributeScoreRoller" type="PanelContainer" unique_id=1350436356 node_paths=PackedStringArray("_attribute_score", "_button", "_descriptor", "_details", "_score")]
 offset_right = 485.0
 offset_bottom = 458.0
 size_flags_horizontal = 3
@@ -35,7 +35,7 @@ _details = NodePath("MarginContainer/VBoxContainer/VBoxContainer/Details")
 _score = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/Score")
 metadata/_custom_type_script = "uid://cg0o8nr4etsys"
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="." unique_id=291275707]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_constants/icon_max_width = 128
@@ -44,23 +44,23 @@ expand_icon = true
 script = ExtResource("3_ep8mo")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=911046981]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1215002739]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 0
 
-[node name="Descriptor" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Descriptor" type="Label" parent="MarginContainer/VBoxContainer" unique_id=646597901]
 layout_mode = 2
 theme_type_variation = &"HeaderLarge"
 text = "Guts"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer" unique_id=547499189]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
@@ -69,17 +69,17 @@ theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = -8
 theme_override_constants/margin_bottom = 0
 
-[node name="AttributeScore" parent="MarginContainer/VBoxContainer/MarginContainer" instance=ExtResource("6_v4414")]
+[node name="AttributeScore" parent="MarginContainer/VBoxContainer/MarginContainer" unique_id=436481822 instance=ExtResource("6_v4414")]
 layout_mode = 2
 mouse_filter = 2
 mouse_behavior_recursive = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lgbe1")
 font_size = 256
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=19544720]
 layout_mode = 2
 
-[node name="Details" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="Details" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer" unique_id=536263916]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 mouse_filter = 2
@@ -90,15 +90,15 @@ scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/VBoxContainer" unique_id=1158683261]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer" unique_id=2007731360]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Score" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer"]
+[node name="Score" type="RichTextLabel" parent="MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer" unique_id=699365378]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 mouse_filter = 2

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://deodwapi67ltg"]
+[gd_scene format=3 uid="uid://deodwapi67ltg"]
 
 [ext_resource type="Script" uid="uid://7mksap2q7pd0" path="res://game/breath_dice/breath_dice_selection_buttons.gd" id="1_0p7wt"]
 [ext_resource type="PackedScene" uid="uid://ceb3oeu71v6e1" path="res://game/breath_dice/breath_dice_selection_button_group.tscn" id="2_3dl60"]
@@ -6,7 +6,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_35nxq"]
 
-[node name="BreathDiceSelectionButtons" type="PanelContainer" node_paths=PackedStringArray("_die_types")]
+[node name="BreathDiceSelectionButtons" type="PanelContainer" unique_id=1261937785 node_paths=PackedStringArray("_die_types")]
 offset_right = 238.0
 offset_bottom = 89.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_35nxq")
@@ -15,7 +15,7 @@ _die_types = NodePath("DieTypes")
 _breath_dice_group = ExtResource("2_3dl60")
 metadata/_custom_type_script = "uid://7mksap2q7pd0"
 
-[node name="DieTypes" type="MarginContainer" parent="."]
+[node name="DieTypes" type="MarginContainer" parent="." unique_id=455409126]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0

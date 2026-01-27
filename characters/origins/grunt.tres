@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=4 format=3 uid="uid://cawcb1f8r3nb8"]
+[gd_resource type="Resource" script_class="Origin" format=3 uid="uid://cawcb1f8r3nb8"]
 
 [ext_resource type="Texture2D" uid="uid://d073jvxfp62ln" path="res://characters/origins/icons/barbute.svg" id="1_l3qjt"]
 [ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_7ebxt"]
@@ -7,10 +7,6 @@
 [resource]
 script = ExtResource("2_j0cvg")
 abilities = Array[String](["Feats of strength go unanswered.", "When you pass a [b]Guts[/b] save, regain [b]1[/b] breath die."])
-modifiers = Array[ExtResource("2_7ebxt")]([])
-type = 0
 name = "Grunt"
 icon = ExtResource("1_l3qjt")
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

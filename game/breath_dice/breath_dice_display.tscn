@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://cgl4tskvsu25d"]
+[gd_scene format=3 uid="uid://cgl4tskvsu25d"]
 
 [ext_resource type="Script" uid="uid://xxm306h18glv" path="res://game/breath_dice/breath_dice.gd" id="1_3iahj"]
 [ext_resource type="PackedScene" uid="uid://bgdje6c0bdu1a" path="res://game/breath_dice/breath_dice_display_group.tscn" id="2_2rtqm"]
@@ -11,7 +11,7 @@ _limits = [-0.25, 0.25, 0.0, 4.0]
 _data = [Vector2(0, -0.05), 0.0, -0.17, 0, 0, Vector2(2, -0.2), 0.0, 0.0, 0, 0, Vector2(4, -0.05), 0.17, 0.0, 0, 0]
 point_count = 3
 
-[node name="BreathDiceDisplay" type="PanelContainer" node_paths=PackedStringArray("_die_types")]
+[node name="BreathDiceDisplay" type="PanelContainer" unique_id=305443869 node_paths=PackedStringArray("_die_types")]
 offset_right = 416.0
 offset_bottom = 125.0
 mouse_filter = 2
@@ -21,7 +21,7 @@ _die_types = NodePath("DieTypes")
 _breath_dice_group = ExtResource("2_2rtqm")
 metadata/_custom_type_script = "uid://xxm306h18glv"
 
-[node name="DieTypes" type="MarginContainer" parent="."]
+[node name="DieTypes" type="MarginContainer" parent="." unique_id=1639435061]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 0

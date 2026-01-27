@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=4 format=3 uid="uid://d21lprrjx41il"]
+[gd_resource type="Resource" script_class="Origin" format=3 uid="uid://d21lprrjx41il"]
 
 [ext_resource type="Texture2D" uid="uid://dk0uewf13jjsi" path="res://characters/origins/icons/caesar.svg" id="1_dvmqh"]
 [ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_ea0dt"]
@@ -6,11 +6,8 @@
 
 [resource]
 script = ExtResource("3_t243y")
+abilities = Array[String](["Your other ability becomes a company ability."])
+type = 1
 name = "Captain"
 icon = ExtResource("1_dvmqh")
-type = 1
-color = Color(0, 0, 0, 1)
-details = ""
-abilities = Array[String](["Your other ability becomes a company ability."])
-modifiers = Array[ExtResource("2_ea0dt")]([])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

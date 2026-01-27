@@ -1,10 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://c07vtb4ob281a"]
+[gd_scene format=3 uid="uid://c07vtb4ob281a"]
 
 [ext_resource type="Script" uid="uid://bns33lugkmi4j" path="res://game/stance_selection/stance_selection.gd" id="1_11rov"]
 [ext_resource type="PackedScene" uid="uid://mt5mbq7b5lu0" path="res://game/stance_selection/stance_panel.tscn" id="2_oo80h"]
 [ext_resource type="PackedScene" uid="uid://bio0tn8287gj" path="res://game/stance_selection/carousel_button.tscn" id="3_vnpj5"]
 
-[node name="StanceSelection" type="MarginContainer"]
+[node name="StanceSelection" type="MarginContainer" unique_id=2001672047]
 offset_right = 389.0
 offset_bottom = 55.0
 mouse_filter = 0

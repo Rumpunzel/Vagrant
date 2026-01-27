@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://b11javrif3o0h"]
+[gd_scene format=3 uid="uid://b11javrif3o0h"]
 
 [ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://game/characters/fade_vignette.gdshader" id="1_01wwo"]
 [ext_resource type="Texture2D" uid="uid://cletjeivtwegt" path="res://assets/landscapes/ruin.jpg" id="2_jufi2"]
@@ -16,7 +16,7 @@ shader_parameter/down_clip = 0.0
 shader_parameter/left_clip = 0.0
 shader_parameter/right_clip = 0.0
 
-[node name="BackgroundRect" type="TextureRect"]
+[node name="BackgroundRect" type="TextureRect" unique_id=1940860048]
 material = SubResource("ShaderMaterial_b6pc2")
 anchors_preset = 15
 anchor_right = 1.0

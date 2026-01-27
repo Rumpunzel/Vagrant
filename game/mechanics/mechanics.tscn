@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://m2hkfwiqdk33"]
+[gd_scene format=3 uid="uid://m2hkfwiqdk33"]
 
 [ext_resource type="Script" uid="uid://cgdirjbx82wdh" path="res://game/mechanics/mechanics.gd" id="1_0hjxh"]
 [ext_resource type="PackedScene" uid="uid://ccpu52v8m0ynd" path="res://game/mechanics/catch_breath/catch_breaths.tscn" id="1_x3l5n"]
@@ -14,7 +14,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q7j6d"]
 
-[node name="Mechanics" type="PanelContainer" node_paths=PackedStringArray("_catch_breath_popup", "_catch_breaths", "_make_camp_popup", "_make_camps", "_catch_breath_button")]
+[node name="Mechanics" type="PanelContainer" unique_id=2090182573 node_paths=PackedStringArray("_catch_breath_popup", "_catch_breaths", "_make_camp_popup", "_make_camps", "_catch_breath_button")]
 offset_right = 164.0
 offset_bottom = 208.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
@@ -26,7 +26,7 @@ _make_camps = NodePath("MakeCampDialog/VBoxContainer/MakeCamps")
 _catch_breath_button = NodePath("MarginContainer/VBoxContainer/CatchBreath")
 metadata/_custom_type_script = "uid://cgdirjbx82wdh"
 
-[node name="CatchBreathDialog" type="ConfirmationDialog" parent="."]
+[node name="CatchBreathDialog" type="ConfirmationDialog" parent="." unique_id=1318358961]
 transparent_bg = true
 oversampling_override = 1.0
 title = "Catch Breath..."
@@ -36,22 +36,22 @@ unresizable = true
 transparent = true
 ok_button_text = "Catch Breath"
 
-[node name="WindowBlurToggler" type="Node" parent="CatchBreathDialog" node_paths=PackedStringArray("trigger_window")]
+[node name="WindowBlurToggler" type="Node" parent="CatchBreathDialog" unique_id=1548440348 node_paths=PackedStringArray("trigger_window")]
 script = ExtResource("2_lbybe")
 trigger_window = NodePath("..")
 metadata/_custom_type_script = "uid://dcbtc7gltxkcb"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CatchBreathDialog"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CatchBreathDialog" unique_id=253286804]
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 390.0
 offset_bottom = 109.0
 
-[node name="MarginContainer" type="MarginContainer" parent="CatchBreathDialog/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="CatchBreathDialog/VBoxContainer" unique_id=309464384]
 layout_mode = 2
 theme_override_constants/margin_bottom = 16
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CatchBreathDialog/VBoxContainer/MarginContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="CatchBreathDialog/VBoxContainer/MarginContainer" unique_id=160006588]
 layout_mode = 2
 theme_override_constants/paragraph_separation = 4
 bbcode_enabled = true
@@ -63,11 +63,11 @@ autowrap_mode = 0
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CatchBreaths" parent="CatchBreathDialog/VBoxContainer" instance=ExtResource("1_x3l5n")]
+[node name="CatchBreaths" parent="CatchBreathDialog/VBoxContainer" unique_id=677304049 instance=ExtResource("1_x3l5n")]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="MakeCampDialog" type="ConfirmationDialog" parent="."]
+[node name="MakeCampDialog" type="ConfirmationDialog" parent="." unique_id=813270640]
 transparent_bg = true
 oversampling_override = 1.0
 title = "Make Camp..."
@@ -77,22 +77,22 @@ unresizable = true
 transparent = true
 ok_button_text = "Make Camp"
 
-[node name="WindowBlurToggler" type="Node" parent="MakeCampDialog" node_paths=PackedStringArray("trigger_window")]
+[node name="WindowBlurToggler" type="Node" parent="MakeCampDialog" unique_id=1138168727 node_paths=PackedStringArray("trigger_window")]
 script = ExtResource("2_lbybe")
 trigger_window = NodePath("..")
 metadata/_custom_type_script = "uid://dcbtc7gltxkcb"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MakeCampDialog"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MakeCampDialog" unique_id=1362843179]
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 390.0
 offset_bottom = 109.0
 
-[node name="MarginContainer" type="MarginContainer" parent="MakeCampDialog/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MakeCampDialog/VBoxContainer" unique_id=1931805493]
 layout_mode = 2
 theme_override_constants/margin_bottom = 16
 
-[node name="RichTextLabel" type="RichTextLabel" parent="MakeCampDialog/VBoxContainer/MarginContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="MakeCampDialog/VBoxContainer/MarginContainer" unique_id=2123663714]
 layout_mode = 2
 theme_override_constants/paragraph_separation = 4
 bbcode_enabled = true
@@ -104,19 +104,19 @@ autowrap_mode = 0
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MakeCamps" type="PanelContainer" parent="MakeCampDialog/VBoxContainer"]
+[node name="MakeCamps" type="PanelContainer" parent="MakeCampDialog/VBoxContainer" unique_id=1885548557]
 layout_mode = 2
 script = ExtResource("4_pem0e")
 metadata/_custom_type_script = "uid://voqh7b0evc3u"
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1078628536]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1180082860]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="CatchBreath" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+[node name="CatchBreath" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1557283689 node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(137, 32)
 layout_mode = 2
 size_flags_vertical = 3
@@ -135,7 +135,7 @@ margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="MakeCamp" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+[node name="MakeCamp" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1515088850 node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(128, 32)
 layout_mode = 2
 size_flags_vertical = 3
@@ -154,7 +154,7 @@ margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="RestBones" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+[node name="RestBones" type="Button" parent="MarginContainer/VBoxContainer" unique_id=2023585711 node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(122, 32)
 layout_mode = 2
 size_flags_vertical = 3
@@ -174,7 +174,7 @@ margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="AdmireLoot" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+[node name="AdmireLoot" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1413387088 node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(132, 32)
 layout_mode = 2
 size_flags_vertical = 3
@@ -194,7 +194,7 @@ margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="PonderMap" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+[node name="PonderMap" type="Button" parent="MarginContainer/VBoxContainer" unique_id=436307305 node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(131, 32)
 layout_mode = 2
 size_flags_vertical = 3
@@ -214,7 +214,7 @@ margin_bottom = 0
 flex_alignment = 1
 metadata/_custom_type_script = "uid://c7qjo0ilqtmp6"
 
-[node name="AssessVenture" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("hover_neighbors")]
+[node name="AssessVenture" type="Button" parent="MarginContainer/VBoxContainer" unique_id=155900411 node_paths=PackedStringArray("hover_neighbors")]
 custom_minimum_size = Vector2(154, 32)
 layout_mode = 2
 size_flags_vertical = 3

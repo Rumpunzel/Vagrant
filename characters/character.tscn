@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bl0pdxri24fnh"]
+[gd_scene format=3 uid="uid://bl0pdxri24fnh"]
 
 [ext_resource type="Script" uid="uid://cjf63c1i3e83r" path="res://characters/character.gd" id="1_pl6ax"]
 [ext_resource type="AudioStream" uid="uid://bs6urik77h7or" path="res://assets/sfx/catch_breath/breath-out-242642.mp3" id="2_mdkfl"]
@@ -31,28 +31,28 @@ streams_count = 2
 stream_0/stream = ExtResource("6_jfi6v")
 stream_1/stream = ExtResource("7_f0775")
 
-[node name="Character" type="Node" groups=["Characters"]]
+[node name="Character" type="Node" unique_id=94203715 groups=["Characters"]]
 script = ExtResource("1_pl6ax")
 metadata/_custom_type_script = "uid://cjf63c1i3e83r"
 
-[node name="LostBreathSounds" type="AudioStreamPlayer" parent="."]
+[node name="LostBreathSounds" type="AudioStreamPlayer" parent="." unique_id=1564060788]
 stream = SubResource("AudioStreamRandomizer_hgjqb")
 bus = &"SFX"
 
-[node name="CatchBreathSounds" type="AudioStreamPlayer" parent="."]
+[node name="CatchBreathSounds" type="AudioStreamPlayer" parent="." unique_id=593481999]
 stream = SubResource("AudioStreamRandomizer_jfi6v")
 bus = &"SFX"
 
-[node name="CatchBreathChime" type="AudioStreamPlayer" parent="."]
+[node name="CatchBreathChime" type="AudioStreamPlayer" parent="." unique_id=1594556068]
 stream = ExtResource("2_mdkfl")
 pitch_scale = 0.8
 bus = &"SFX"
 
-[node name="InjurySounds" type="AudioStreamPlayer" parent="."]
+[node name="InjurySounds" type="AudioStreamPlayer" parent="." unique_id=1914662638]
 stream = SubResource("AudioStreamRandomizer_mdkfl")
 bus = &"SFX"
 
-[node name="DamageSounds" type="AudioStreamPlayer" parent="."]
+[node name="DamageSounds" type="AudioStreamPlayer" parent="." unique_id=1143087603]
 stream = SubResource("AudioStreamRandomizer_vliyq")
 bus = &"SFX"
 

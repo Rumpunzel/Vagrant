@@ -8,6 +8,7 @@ signal origins_picked(origins: Array[Origin])
 	set(new_character_profile):
 		assert(new_character_profile)
 		_character_profile = new_character_profile
+		if not is_node_ready(): await ready
 		_update_origins()
 
 @export_dir var _origins_directory: String

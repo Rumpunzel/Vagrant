@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="AdventurePage" load_steps=17 format=3 uid="uid://bxwqtk0p80o4g"]
+[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://bxwqtk0p80o4g"]
 
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="1_6v84y"]
 [ext_resource type="Texture2D" uid="uid://bc6smekfx7nam" path="res://assets/monster_portraits/lurker.jpg" id="1_74683"]

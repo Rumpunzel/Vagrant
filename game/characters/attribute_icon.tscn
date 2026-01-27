@@ -1,15 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://dv8we3eyi0bus"]
+[gd_scene format=3 uid="uid://dv8we3eyi0bus"]
 
-[ext_resource type="Texture2D" uid="uid://c43gvqhtlsdfp" path="res://characters/attributes/icons/heart-organ.svg" id="1_kycwy"]
+[ext_resource type="Texture2D" uid="uid://cdri43vl0xt70" path="res://characters/attributes/icons/hand-bandage.svg" id="1_n5g7c"]
 [ext_resource type="Script" uid="uid://0hjyyutps0d7" path="res://game/characters/attribute_icon.gd" id="2_kycwy"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="3_85nh7"]
 
-[node name="AttributeIcon" type="TextureRect"]
-modulate = Color(0.62352943, 0.14117648, 0.16078432, 0.5)
+[node name="AttributeIcon" type="TextureRect" unique_id=1861633596]
+modulate = Color(0.62352943, 0.14117648, 0.16078432, 0.35)
 offset_right = 110.0
 offset_bottom = 93.0
 mouse_filter = 2
-texture = ExtResource("1_kycwy")
+texture = ExtResource("1_n5g7c")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("2_kycwy")

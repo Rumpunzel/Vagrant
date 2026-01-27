@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://rhjhk5tcywjv"]
+[gd_scene format=3 uid="uid://rhjhk5tcywjv"]
 
 [ext_resource type="PackedScene" uid="uid://c5uet8sda2yqw" path="res://game/characters/character_creation/attribute_score_roller.tscn" id="1_d1ydc"]
 [ext_resource type="Script" uid="uid://by22kdnwqjkef" path="res://game/characters/character_creation/attributes_roller.gd" id="1_ql5hc"]
 
-[node name="AttributesRoller" type="MarginContainer" node_paths=PackedStringArray("container_root")]
+[node name="AttributesRoller" type="MarginContainer" unique_id=1729284904 node_paths=PackedStringArray("container_root")]
 offset_right = 1047.0
 offset_bottom = 578.0
 theme_override_constants/margin_left = 0
@@ -15,11 +15,11 @@ _attribute_score_roller = ExtResource("1_d1ydc")
 container_root = NodePath("Rollers")
 metadata/_custom_type_script = "uid://by22kdnwqjkef"
 
-[node name="Rollers" type="VBoxContainer" parent="."]
+[node name="Rollers" type="VBoxContainer" parent="." unique_id=1226258274]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="Title" type="Label" parent="Rollers"]
+[node name="Title" type="Label" parent="Rollers" unique_id=74143328]
 visible = false
 layout_mode = 2
 theme_type_variation = &"HeaderLarge"

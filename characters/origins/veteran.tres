@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=4 format=3 uid="uid://45sbhcfyenlm"]
+[gd_resource type="Resource" script_class="Origin" format=3 uid="uid://45sbhcfyenlm"]
 
 [ext_resource type="Texture2D" uid="uid://o266jm48qawt" path="res://characters/origins/icons/spartan-helmet.svg" id="1_nyu4n"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_6jk6b"]
@@ -7,10 +7,6 @@
 [resource]
 script = ExtResource("2_6jk6b")
 abilities = Array[String](["[b]+1[/b] weapon die.", "Double vantage against foes."])
-modifiers = Array[ExtResource("2_53ue5")]([])
-type = 0
 name = "Veteran"
 icon = ExtResource("1_nyu4n")
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

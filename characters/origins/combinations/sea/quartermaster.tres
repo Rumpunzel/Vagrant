@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="OriginCombination" load_steps=5 format=3 uid="uid://bflqm158vqa0m"]
+[gd_resource type="Resource" script_class="OriginCombination" format=3 uid="uid://bflqm158vqa0m"]
 
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_j2qyx"]
 [ext_resource type="Resource" uid="uid://cy17lbnstbpf2" path="res://characters/origins/sailor.tres" id="2_osyed"]
@@ -9,6 +9,4 @@
 script = ExtResource("4_0cnvx")
 origins = Array[ExtResource("1_j2qyx")]([ExtResource("2_osyed"), ExtResource("3_j2qyx")])
 name = "Quartermaster"
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"

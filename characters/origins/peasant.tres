@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=4 format=3 uid="uid://c7j5c7ekitgl3"]
+[gd_resource type="Resource" script_class="Origin" format=3 uid="uid://c7j5c7ekitgl3"]
 
 [ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="1_1fvhu"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_1xadg"]

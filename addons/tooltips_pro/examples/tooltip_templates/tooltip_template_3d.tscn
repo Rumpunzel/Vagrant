@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://c456xky6op3fe"]
+[gd_scene format=3 uid="uid://c456xky6op3fe"]
 
 [ext_resource type="StyleBox" uid="uid://3lxjgekqranv" path="res://addons/tooltips_pro/examples/resources/styles/TooltipStyleBoxFlat.tres" id="1_55kgy"]
 [ext_resource type="Script" uid="uid://ixs2o0jr6jjg" path="res://addons/tooltips_pro/scripts/tooltip_template.gd" id="1_uw7af"]
 
-[node name="TooltipTemplate3D" type="PanelContainer" node_paths=PackedStringArray("content_labels") groups=["tooltips"]]
+[node name="TooltipTemplate3D" type="PanelContainer" unique_id=1015618626 node_paths=PackedStringArray("content_labels") groups=["tooltips"]]
 z_index = 1
 custom_minimum_size = Vector2(180, 0)
 offset_right = 180.0
@@ -14,7 +14,7 @@ script = ExtResource("1_uw7af")
 content_labels = [NodePath("MarginContainer/RichTextLabel")]
 use_tween_in = true
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=176645569]
 layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
@@ -23,7 +23,7 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer" unique_id=2020691251]
 layout_mode = 2
 mouse_filter = 2
 bbcode_enabled = true

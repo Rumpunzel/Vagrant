@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://djjmsn1ujgubu"]
+[gd_scene format=3 uid="uid://djjmsn1ujgubu"]
 
 [ext_resource type="Script" uid="uid://ce156jxbb2grx" path="res://game/characters/character_creation/character_confirmation.gd" id="1_4or8n"]
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="2_ju15t"]
 
-[node name="CharacterConfirmation" type="ConfirmationDialog" node_paths=PackedStringArray("_name")]
+[node name="CharacterConfirmation" type="ConfirmationDialog" unique_id=625945160 node_paths=PackedStringArray("_name")]
 auto_translate_mode = 1
 transparent_bg = true
 oversampling_override = 1.0
@@ -19,7 +19,7 @@ script = ExtResource("1_4or8n")
 _name = NodePath("Name")
 metadata/_custom_type_script = "uid://ce156jxbb2grx"
 
-[node name="Name" type="LineEdit" parent="."]
+[node name="Name" type="LineEdit" parent="." unique_id=1429361841]
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 504.0

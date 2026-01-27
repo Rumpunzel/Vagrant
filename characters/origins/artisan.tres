@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Origin" load_steps=4 format=3 uid="uid://7uemslxbeu5b"]
+[gd_resource type="Resource" script_class="Origin" format=3 uid="uid://7uemslxbeu5b"]
 
 [ext_resource type="Texture2D" uid="uid://yhiugls1lady" path="res://characters/origins/icons/anvil-impact.svg" id="1_8gose"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_8gose"]
@@ -8,9 +8,4 @@
 script = ExtResource("2_8gose")
 name = "Artisan"
 icon = ExtResource("1_8gose")
-type = 0
-color = Color(0, 0, 0, 1)
-details = ""
-abilities = Array[String]([])
-modifiers = Array[ExtResource("2_iaw8r")]([])
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

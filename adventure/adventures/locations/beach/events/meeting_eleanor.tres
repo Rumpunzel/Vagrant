@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="AdventurePage" load_steps=13 format=3 uid="uid://d3cv8d5e65vwh"]
+[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://d3cv8d5e65vwh"]
 
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="1_k8kem"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="1_npy2t"]

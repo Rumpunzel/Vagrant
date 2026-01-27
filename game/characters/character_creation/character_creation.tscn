@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://cc3qx1qt3ie00"]
+[gd_scene format=3 uid="uid://cc3qx1qt3ie00"]
 
 [ext_resource type="Script" uid="uid://lb6h1lmdmt18" path="res://game/characters/character_creation/character_creation.gd" id="1_x4txh"]
 [ext_resource type="PackedScene" uid="uid://rhjhk5tcywjv" path="res://game/characters/character_creation/attributes_roller.tscn" id="2_dbv81"]
@@ -9,36 +9,18 @@
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="7_6xssx"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="8_jukr5"]
 [ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="9_ee4h7"]
-[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="10_hukh5"]
-[ext_resource type="Resource" uid="uid://damgavu0n4rho" path="res://dice/die_types/d4.tres" id="11_17b3i"]
-[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="12_aw34e"]
-[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="13_rkh3b"]
-[ext_resource type="Resource" uid="uid://dtfdogfd6ebga" path="res://dice/die_types/d10.tres" id="14_r3wai"]
 [ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://game/characters/inventory/inventory.tscn" id="15_b7plt"]
 [ext_resource type="PackedScene" uid="uid://p4lx6exsethc" path="res://game/characters/character_creation/bio_editor.tscn" id="15_gqnl0"]
-[ext_resource type="Resource" uid="uid://cq2oc01qwwaei" path="res://dice/die_types/d12.tres" id="15_soikm"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="16_gqdoy"]
 [ext_resource type="PackedScene" uid="uid://djjmsn1ujgubu" path="res://game/characters/character_creation/character_confirmation.tscn" id="17_fixuy"]
 [ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="19_vjv61"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hvcdy"]
 
-[sub_resource type="Resource" id="Resource_u4mj7"]
+[sub_resource type="Resource" id="Resource_e326q"]
 script = ExtResource("19_vjv61")
-attribute_scores = Dictionary[ExtResource("5_nflbs"), ExtResource("6_jseid")]({
-ExtResource("7_6xssx"): null,
-ExtResource("8_jukr5"): null,
-ExtResource("9_ee4h7"): null
-})
-breath_die_types = Dictionary[ExtResource("10_hukh5"), int]({
-ExtResource("11_17b3i"): 1,
-ExtResource("12_aw34e"): 1,
-ExtResource("13_rkh3b"): 1,
-ExtResource("14_r3wai"): 1,
-ExtResource("15_soikm"): 1
-})
 
-[node name="CharacterCreation" type="Node" node_paths=PackedStringArray("_attributes_roller", "_origins_picker", "_inventory", "_bio_editor", "_continue", "_character_confirmation")]
+[node name="CharacterCreation" type="Node" unique_id=1431569364 node_paths=PackedStringArray("_attributes_roller", "_origins_picker", "_inventory", "_bio_editor", "_continue", "_character_confirmation")]
 script = ExtResource("1_x4txh")
 _attributes_roller = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller")
 _origins_picker = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker")
@@ -48,15 +30,15 @@ _continue = NodePath("PanelContainer/MarginContainer/VBoxContainer/Continue")
 _character_confirmation = NodePath("CharacterConfirmation")
 metadata/_custom_type_script = "uid://lb6h1lmdmt18"
 
-[node name="CharacterConfirmation" parent="." instance=ExtResource("17_fixuy")]
+[node name="CharacterConfirmation" parent="." unique_id=935768539 instance=ExtResource("17_fixuy")]
 visible = false
 
-[node name="WindowBlurToggler" type="Node" parent="CharacterConfirmation" node_paths=PackedStringArray("trigger_window")]
+[node name="WindowBlurToggler" type="Node" parent="CharacterConfirmation" unique_id=742136669 node_paths=PackedStringArray("trigger_window")]
 script = ExtResource("3_1ougn")
 trigger_window = NodePath("..")
 metadata/_custom_type_script = "uid://dcbtc7gltxkcb"
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=330773262]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -64,46 +46,46 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_hvcdy")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1201246800]
 layout_mode = 2
 theme_override_constants/margin_left = 128
 theme_override_constants/margin_top = 96
 theme_override_constants/margin_right = 128
 theme_override_constants/margin_bottom = 96
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=706957050]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=630884449]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="Stats" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Stats" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=983306785]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 16
 
-[node name="AttributesRoller" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("2_dbv81")]
+[node name="AttributesRoller" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" unique_id=1335106071 instance=ExtResource("2_dbv81")]
 layout_mode = 2
 size_flags_vertical = 3
 fill = true
 
-[node name="OriginsPicker" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("5_s0bgh")]
+[node name="OriginsPicker" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" unique_id=1810828075 instance=ExtResource("5_s0bgh")]
 layout_mode = 2
-_character_profile = SubResource("Resource_u4mj7")
+_character_profile = SubResource("Resource_e326q")
 
-[node name="Inventory" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" instance=ExtResource("15_b7plt")]
+[node name="Inventory" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" unique_id=755618890 instance=ExtResource("15_b7plt")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BioEditor" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("15_gqnl0")]
+[node name="BioEditor" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1629898557 instance=ExtResource("15_gqnl0")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Continue" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Continue" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=372746578]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 text = "Continue"

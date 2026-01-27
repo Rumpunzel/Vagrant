@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="OriginCombination" load_steps=6 format=3 uid="uid://dof1h1qqd8xqp"]
+[gd_resource type="Resource" script_class="OriginCombination" format=3 uid="uid://dof1h1qqd8xqp"]
 
 [ext_resource type="Texture2D" uid="uid://cciklu4j70sjt" path="res://characters/origins/icons/closed-barbute.svg" id="1_aauyi"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_rt5lx"]
@@ -11,6 +11,4 @@ script = ExtResource("4_pbo55")
 origins = Array[ExtResource("1_rt5lx")]([ExtResource("3_kslg0"), ExtResource("4_n8q1g")])
 name = "Soldier"
 icon = ExtResource("1_aauyi")
-color = Color(0, 0, 0, 1)
-details = ""
 metadata/_custom_type_script = "uid://dfd1xm8wp1i2n"

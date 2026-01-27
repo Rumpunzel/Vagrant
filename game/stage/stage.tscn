@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://l8n866i755ja"]
+[gd_scene format=3 uid="uid://l8n866i755ja"]
 
 [ext_resource type="Script" uid="uid://bysk8fr0ekhsg" path="res://game/stage/stage.gd" id="1_gw8ty"]
 [ext_resource type="PackedScene" uid="uid://b11javrif3o0h" path="res://game/stage/background_rect.tscn" id="3_8h6qk"]
@@ -41,7 +41,7 @@ fill_from = Vector2(0.5, 1)
 fill_to = Vector2(0.6, 0.4)
 metadata/_snap_enabled = true
 
-[node name="Stage" type="CanvasLayer" node_paths=PackedStringArray("_ambience", "_music", "_area_backgrounds", "_event_backgrounds")]
+[node name="Stage" type="CanvasLayer" unique_id=776217068 node_paths=PackedStringArray("_ambience", "_music", "_area_backgrounds", "_event_backgrounds")]
 layer = -100
 script = ExtResource("1_gw8ty")
 _ambience = NodePath("Ambience")
@@ -51,16 +51,16 @@ _event_backgrounds = NodePath("PanelContainer/MarginContainer/EventBackgrounds")
 _background = ExtResource("3_8h6qk")
 metadata/_custom_type_script = "uid://bysk8fr0ekhsg"
 
-[node name="Ambience" type="AudioStreamPlayer" parent="."]
+[node name="Ambience" type="AudioStreamPlayer" parent="." unique_id=2093072608]
 volume_db = -80.0
 autoplay = true
 bus = &"SFX"
 
-[node name="Music" type="AudioStreamPlayer" parent="."]
+[node name="Music" type="AudioStreamPlayer" parent="." unique_id=1744369488]
 autoplay = true
 bus = &"Music"
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=664128814]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -68,21 +68,21 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_h1mbo")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=941956198]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 
-[node name="Table" type="TextureRect" parent="PanelContainer/MarginContainer"]
+[node name="Table" type="TextureRect" parent="PanelContainer/MarginContainer" unique_id=1070257052]
 modulate = Color(0.2, 0.2, 0.2, 1)
 layout_mode = 2
 texture = ExtResource("3_h1mbo")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Candle" type="TextureRect" parent="PanelContainer/MarginContainer"]
+[node name="Candle" type="TextureRect" parent="PanelContainer/MarginContainer" unique_id=1880435211]
 modulate = Color(1, 1, 1, 0.8)
 layout_mode = 2
 texture = SubResource("GradientTexture2D_oqyx5")
@@ -91,27 +91,27 @@ script = ExtResource("4_oqyx5")
 _candle_noise = SubResource("FastNoiseLite_oqyx5")
 metadata/_custom_type_script = "uid://8x7jso8c44ri"
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="PanelContainer/MarginContainer/Candle"]
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="PanelContainer/MarginContainer/Candle" unique_id=1462232623]
 stream = ExtResource("5_h1mbo")
 autoplay = true
 bus = &"RoomAmbience"
 parameters/looping = true
 
-[node name="AreaBackgrounds" type="MarginContainer" parent="PanelContainer/MarginContainer"]
+[node name="AreaBackgrounds" type="MarginContainer" parent="PanelContainer/MarginContainer" unique_id=1090729581]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 
-[node name="Blur" type="ColorRect" parent="PanelContainer/MarginContainer"]
+[node name="Blur" type="ColorRect" parent="PanelContainer/MarginContainer" unique_id=633395532]
 visible = false
 material = SubResource("ShaderMaterial_515v2")
 layout_mode = 2
 
-[node name="Gradient" type="TextureRect" parent="PanelContainer/MarginContainer"]
+[node name="Gradient" type="TextureRect" parent="PanelContainer/MarginContainer" unique_id=987482562]
 layout_mode = 2
 texture = SubResource("GradientTexture2D_2xsor")
 
-[node name="EventBackgrounds" type="MarginContainer" parent="PanelContainer/MarginContainer"]
+[node name="EventBackgrounds" type="MarginContainer" parent="PanelContainer/MarginContainer" unique_id=577745366]
 layout_mode = 2
