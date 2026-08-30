@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://be2c5murx8xba" path="res://game/characters/character_creation/bio_editor.gd" id="1_furgd"]
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="2_gdvnu"]
-[ext_resource type="Texture2D" uid="uid://cp642yk18khgp" path="res://assets/editor_icons/male.svg" id="3_dekt0"]
 [ext_resource type="Material" uid="uid://cq38j4iccgxe4" path="res://game/characters/big_portrait_vignette.tres" id="3_gdvnu"]
 [ext_resource type="Texture2D" uid="uid://cxtqc6li0hcbj" path="res://assets/portraits/HE-DR-FS-F102/Fulllength.png" id="4_gdvnu"]
 [ext_resource type="Texture2D" uid="uid://dkot0xb7ohews" path="res://assets/editor_icons/chevron-left-large.svg" id="4_puilj"]
 [ext_resource type="Texture2D" uid="uid://k8k7mhb6md3e" path="res://assets/editor_icons/card-random.svg" id="6_c7qpy"]
 [ext_resource type="Script" uid="uid://bvnsiwp3j8rtw" path="res://custom_nodes/control/hover_button.gd" id="6_gdvnu"]
+[ext_resource type="Texture2D" uid="uid://f8vbxu7etd2o" path="res://assets/editor_icons/infinity.svg" id="8_0dwgf"]
 [ext_resource type="Texture2D" uid="uid://di721a0116neh" path="res://assets/editor_icons/chevron-right-large.svg" id="8_gdvnu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3p0bc"]
@@ -167,7 +167,7 @@ size_flags_vertical = 3
 tooltip_text = "Filter Sex
 107 Portraits"
 mouse_default_cursor_shape = 2
-icon = ExtResource("3_dekt0")
+icon = ExtResource("8_0dwgf")
 flat = true
 icon_alignment = 1
 expand_icon = true
