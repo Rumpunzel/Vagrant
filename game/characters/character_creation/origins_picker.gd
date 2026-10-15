@@ -31,7 +31,6 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed("debug_random"):
 		_character_profile.origins = [null, null]
 		setup(_character_profile)
-		get_viewport().set_input_as_handled()
 
 func setup(character_profile: CharacterProfile) -> void:
 	_origins_list.clear()

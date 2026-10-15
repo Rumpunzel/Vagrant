@@ -78,6 +78,10 @@ func _ready() -> void:
 	_load_portraits()
 	randomize_portrait()
 
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event.is_action_pressed("debug_random"):
+		randomize_portrait()
+
 func setup(character_profile: CharacterProfile) -> void:
 	_character_profile = character_profile
 
