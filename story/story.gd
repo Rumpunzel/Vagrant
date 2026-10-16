@@ -12,6 +12,7 @@ signal dice_requested(dice_request: DiceRequest)
 @export var _success_audio_player: AudioStreamPlayer
 @export var _failure_audio_player: AudioStreamPlayer
 @export var _party: Party
+@export var _monsters: Monsters
 @export var _title: TypingLabel
 @export var _story_book: StoryBook
 

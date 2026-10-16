@@ -92,7 +92,7 @@ func get_events(story: Story) -> Array[AdventurePage]:
 	return events
 
 func exclude_base() -> bool:
-	return _exclusivity & Exclusivity.EXCLUDE_BELOW
+	return _exclusivity & Exclusivity.EXCLUDE_BASE
 
 func exclude_below() -> bool:
 	return _exclusivity & Exclusivity.EXCLUDE_BELOW

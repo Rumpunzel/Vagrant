@@ -6,6 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://d2jboxmthybun" path="res://assets/sfx/sample_error_fail01_kofi_by_miraclei-360129.mp3" id="3_8y4gm"]
 [ext_resource type="Script" uid="uid://ff8rnwb5cmjw" path="res://characters/characters.gd" id="3_kidyl"]
 [ext_resource type="Script" uid="uid://cwsal1toei3e3" path="res://characters/party.gd" id="5_kyeoy"]
+[ext_resource type="Script" uid="uid://bbparhu7dev5k" path="res://characters/monsters/monsters.gd" id="5_mnstrs"]
 [ext_resource type="PackedScene" uid="uid://d1kbbfs6j3ty6" path="res://custom_nodes/popout_window.tscn" id="6_ciwxw"]
 [ext_resource type="FontFile" uid="uid://dhul84ic8fo8d" path="res://assets/fonts/BreeSerif-Regular.ttf" id="6_lxldy"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="7_dg13j"]
@@ -25,13 +26,14 @@ stream_0/stream = ExtResource("3_8y4gm")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_22632"]
 
-[node name="Story" type="Node" unique_id=1521906306 node_paths=PackedStringArray("_event_queue", "_success_audio_player", "_failure_audio_player", "_party", "_title", "_story_book")]
+[node name="Story" type="Node" unique_id=1521906306 node_paths=PackedStringArray("_event_queue", "_success_audio_player", "_failure_audio_player", "_party", "_monsters", "_title", "_story_book")]
 physics_interpolation_mode = 2
 script = ExtResource("1_yob3j")
 _event_queue = NodePath("EventQueue")
 _success_audio_player = NodePath("Success")
 _failure_audio_player = NodePath("Failure")
 _party = NodePath("Party")
+_monsters = NodePath("Monsters")
 _title = NodePath("PanelContainer/MarginContainer/Title")
 _story_book = NodePath("PanelContainer/MarginContainer/HSplitContainer/StoryBook")
 metadata/_custom_type_script = "uid://dccrmadulf3fx"
@@ -59,6 +61,10 @@ metadata/_custom_type_script = "uid://cwsal1toei3e3"
 [node name="NPCs" type="Node" parent="." unique_id=1929287611]
 script = ExtResource("3_kidyl")
 metadata/_custom_type_script = "uid://ff8rnwb5cmjw"
+
+[node name="Monsters" type="Node" parent="." unique_id=1943096250]
+script = ExtResource("5_mnstrs")
+metadata/_custom_type_script = "uid://bbparhu7dev5k"
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=821793297]
 anchors_preset = 15
