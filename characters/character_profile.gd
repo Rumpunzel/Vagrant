@@ -56,6 +56,9 @@ signal origins_changed(origins: Array[Origin])
 		origins = new_origins
 		origins_changed.emit(origins)
 
+## Stand-in until inventory exists; [] = unarmed
+@export var weapon_dice: Array[DieType] = []
+
 @export_group("Configuration")
 @export var _portrait_file_name: String = "Fulllength.png"
 @export var _additional_portrait_file_names: Array[String] = ["Medium.png", "Small.png"]

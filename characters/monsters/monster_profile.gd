@@ -10,6 +10,11 @@ extends Resource
 	Rules.INTELLIGENCE: 7,
 }
 
+## [] = unarmed
+@export var weapon_dice: Array[DieType] = []
+## Nerves is not supported for monsters yet
+@export var nature: CharacterAttribute = Rules.STRENGTH
+
 @export var _breath_dice_size: DieType = Rules.d8
 @export var _breath_dice_amount: int = 3
 

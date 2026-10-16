@@ -9,6 +9,7 @@
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="7_6xssx"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="8_jukr5"]
 [ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="9_ee4h7"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="13_35pvw"]
 [ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://game/characters/inventory/inventory.tscn" id="15_b7plt"]
 [ext_resource type="PackedScene" uid="uid://p4lx6exsethc" path="res://game/characters/character_creation/bio_editor.tscn" id="15_gqnl0"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="16_gqdoy"]
@@ -17,7 +18,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hvcdy"]
 
-[sub_resource type="Resource" id="Resource_e326q"]
+[sub_resource type="Resource" id="Resource_htqj5"]
 script = ExtResource("19_vjv61")
 
 [node name="CharacterCreation" type="Node" unique_id=1431569364 node_paths=PackedStringArray("_attributes_roller", "_origins_picker", "_inventory", "_bio_editor", "_continue", "_character_confirmation")]
@@ -74,7 +75,7 @@ fill = true
 
 [node name="OriginsPicker" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" unique_id=1810828075 instance=ExtResource("5_s0bgh")]
 layout_mode = 2
-_character_profile = SubResource("Resource_e326q")
+_character_profile = SubResource("Resource_htqj5")
 
 [node name="Inventory" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" unique_id=755618890 instance=ExtResource("15_b7plt")]
 visible = false
