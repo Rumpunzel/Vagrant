@@ -40,6 +40,5 @@ transition = SubResource("Resource_b3ed1")
 script = ExtResource("3_t43k6")
 _title = "The Mysterious Woman"
 _description = "A young woman knocks her mace against the heavy gate of the ruined keep."
-_one_time_only = true
 _decisions = Array[ExtResource("1_npy2t")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])
 _exclusivity = 7

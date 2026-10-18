@@ -8,7 +8,8 @@ extends Resource
 @export var _icon: Texture2D
 @export var _color: Color = Color.WHITE
 
-static func get_continue() -> AdventureDecision:
+## Offered on pages without decisions; it has no transition, so it leads back to the previous page
+static func get_turn_back() -> AdventureDecision:
 	return load("uid://b4qjxus6rghvc")
 
 func get_icon() -> Texture2D: return _icon

@@ -49,7 +49,6 @@ var _current_story_page: StoryPage:
 		if not _current_story_page.is_fight_exchange():
 			var page_log: Array[StoryPage] = _page_log.get_or_add(_current_story_page.adventure_page, [] as Array[StoryPage])
 			page_log.append(_current_story_page)
-		#for event: AdventurePage in current_story_page.get_events(self): _page_log[event] = get_how_often_page_has_been_entered(event) + 1
 		for choice: StoryChoice in _current_story_page.choices:
 			choice.chosen.connect(_on_choice_made.bind(choice))
 			choice.dice_requested.connect(_on_dice_requested.bind(choice))
@@ -110,7 +109,8 @@ func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 
 ## Choices that must be taken right away (fights lost on arrival) are also added to [param forced_choices]
 func _create_story_choices(adventure_page: AdventurePage, decisions: Array[AdventureDecision], forced_choices: Array[StoryChoice]) -> Array[StoryChoice]:
-	if decisions.is_empty(): decisions.append(AdventureDecision.get_continue())
+	# Dead ends: without a transition, the only way on is back to the previous page
+	if decisions.is_empty(): decisions.append(AdventureDecision.get_turn_back())
 	var story_choices: Array[StoryChoice] = []
 	for decision: AdventureDecision in decisions:
 		if decision is AdventureFightDecision:
@@ -161,7 +161,7 @@ func _create_fight_exchange_page(fight: Fight) -> StoryPage:
 func _on_choice_made(story_choice: StoryChoice) -> void:
 	assert(story_choice)
 	var story_decision: AdventureDecision = story_choice.get_adventure_decision()
-	if story_decision != AdventureDecision.get_continue():
+	if story_decision != AdventureDecision.get_turn_back():
 		var decision_log: Array[StoryChoice] = _decision_log.get_or_add(story_decision, [] as Array[StoryChoice])
 		decision_log.append(story_choice)
 	var consequences: Array[StoryConsequence] = story_choice.get_consequences()
