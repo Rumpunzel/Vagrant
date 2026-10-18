@@ -25,7 +25,8 @@ func _start(weapon_dice: Array[DieType]) -> void:
 	_story._reveal_delay = 0.01
 	add_child(_story)
 	var profile: CharacterProfile = (load(DORIAN) as CharacterProfile).duplicate(true)
-	profile.weapon_dice = weapon_dice
+	for die: DieType in weapon_dice:
+		profile.weapons.append(WeaponProfile.create("Sword", die))
 	_story.start_adventure(adventure, profile)
 
 ## Collapsible tweens and page fades; let them finish so gdUnit does not report them as orphans
@@ -140,6 +141,35 @@ func test_dice_log_shows_save_result() -> void:
 	assert_str(text).contains("→")
 
 ## TypingLabel may still be typing; its target text is what will be shown
+func test_weapon_selection_offers_unarmed_and_weapons() -> void:
+	_start([Rules.d10, Rules.d6] as Array[DieType])
+	var request: FightRequest = await _choose(0)
+	var selection: BreathDiceSelection = _selection()
+	var weapons: WeaponSelection = selection._weapon_selection
+	assert_bool(weapons.visible).is_true()
+	assert_int(weapons.get_option_count()).is_equal(3)
+	assert_object(request.selected_weapon).is_same(_story._protagonist.weapons[0])
+	# Picking "Unarmed" removes the stance choice
+	weapons.press(0)
+	assert_object(request.selected_weapon).is_null()
+	assert_bool(request.has_stance_choice()).is_false()
+	assert_bool(selection._stance_selection.attribute_selected.is_connected(request.set_attribute)).is_false()
+	weapons.press(2)
+	assert_object(request.selected_weapon).is_same(_story._protagonist.weapons[1])
+	assert_bool(selection._stance_selection.attribute_selected.is_connected(request.set_attribute)).is_true()
+
+func test_weapon_selection_shows_marks_and_ruin() -> void:
+	_start([Rules.d6, Rules.d8] as Array[DieType])
+	_story._protagonist.weapons[0].marked_faces = [2, 5] as Array[int]
+	_story._protagonist.weapons[1].ruined = true
+	await _choose(0)
+	var weapons: WeaponSelection = _selection()._weapon_selection
+	weapons.setup(_story._current_story_page.choices[0].get_dice_request())
+	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]2[/s]")
+	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]5[/s]")
+	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[1])).contains("ruined")
+	assert_bool(weapons._buttons[2].disabled).is_true()
+
 func _final_text(label: TypingLabel) -> String:
 	return label._text_to_type if not label._text_to_type.is_empty() else label.text
 

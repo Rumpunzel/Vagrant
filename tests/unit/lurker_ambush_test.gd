@@ -16,7 +16,10 @@ const OUTCOME_PAGES: Dictionary[Fight.Outcome, String] = {
 func test_lurker_profile() -> void:
 	var lurker: MonsterProfile = load(LURKER)
 	assert_int(lurker.attribute_scores[Rules.STRENGTH]).is_equal(5)
-	assert_array(lurker.weapon_dice).is_equal([Rules.d8])
+	assert_int(lurker.weapons.size()).is_equal(1)
+	assert_str(lurker.weapons[0].name).is_equal("Knife")
+	assert_object(lurker.weapons[0].die).is_same(Rules.d8)
+	assert_array(lurker.weapon_modifiers).is_empty()
 	assert_object(lurker.nature).is_same(Rules.STRENGTH)
 
 func test_ambush_decision() -> void:

@@ -42,10 +42,18 @@ func _get_margin(side: FightSide) -> int:
 func _check_dice(side: FightSide) -> void:
 	var stance_score: int = side.get_score(side.stance)
 	side.lost_breath_dice.assign(side.breath_dice.filter(func(die: Die) -> bool: return die.result > stance_score))
-	# Weapons are always wielded with Guts for now
-	var guts_score: int = side.get_score(Rules.STRENGTH)
-	side.usable_weapon_dice.assign(side.weapon_dice.filter(func(die: Die) -> bool: return die.result <= guts_score))
-	side.weapon_damage = _get_highest_result(side.usable_weapon_dice)
+	if side.has_natural_weapons:
+		# Natural weapons always hit, even with dice the side loses
+		side.usable_weapon_dice.assign(side.weapon_dice)
+		side.weapon_damage = _get_highest_result(side.usable_weapon_dice)
+		return
+	var wield_score: int = side.get_score(side.wield_attribute if side.wield_attribute else Rules.STRENGTH)
+	side.usable_weapon_dice.assign(side.weapon_dice.filter(func(die: Die) -> bool: return die.result <= wield_score))
+	side.failed_weapon_dice.assign(side.weapon_dice.filter(func(die: Die) -> bool: return die.result > wield_score))
+	# Marked faces are crossed out and deal no damage
+	var damaging_dice: Array[Die] = []
+	damaging_dice.assign(side.usable_weapon_dice.filter(func(die: Die) -> bool: return not side.marked_faces.has(die.result)))
+	side.weapon_damage = _get_highest_result(damaging_dice)
 
 func _get_damage(side: FightSide, foe: FightSide) -> int:
 	var damage: int = side.weapon_damage

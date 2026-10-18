@@ -45,18 +45,31 @@ func test_injuries_persist_but_breath_recovers() -> void:
 	assert_int(again.get_breath_dice_count()).is_equal(3)
 	assert_int(again.get_score(Rules.STRENGTH)).is_equal(guts - 2)
 
-func test_weapon_dice_come_from_profile() -> void:
+func test_weapons_come_from_profile() -> void:
 	var lurker: Monster = _monsters.get_monster(_page, load(LURKER))
-	var weapons: Array[WeaponDie] = lurker.get_weapon_dice()
-	assert_int(weapons.size()).is_equal(lurker.monster_profile.weapon_dice.size())
-	for weapon: WeaponDie in weapons: assert_bool(weapon.is_alive()).is_true()
+	assert_int(lurker.weapons.size()).is_equal(lurker.monster_profile.weapons.size())
+	assert_bool(lurker.has_natural_weapons()).is_false()
+	assert_object(lurker.get_weapon()).is_same(lurker.weapons[0])
+	# Marks stay with this monster
+	lurker.weapons[0].mark(3)
+	assert_bool(_monsters.get_monster(_page, load(LURKER)).weapons[0].is_marked(3)).is_true()
+	assert_bool(_monsters.get_monster(_page, load(LURKER), 1).weapons[0].is_marked(3)).is_false()
 
-func test_weapon_die_exhausts_above_score() -> void:
-	var weapon: WeaponDie = WeaponDie.new(Rules.d8)
-	var result: int = weapon.roll_damage(0, false)
-	assert_int(result).is_between(1, 8)
-	assert_int(weapon.state).is_equal(WeaponDie.State.EXHAUSTED)
-	assert_bool(weapon.is_alive()).is_false()
-	weapon = WeaponDie.new(Rules.d8)
-	weapon.roll_damage(8, false)
-	assert_bool(weapon.is_alive()).is_true()
+func test_goblin_carries_a_battered_club() -> void:
+	var goblin: Monster = _monsters.get_monster(_page, load(GOBLIN))
+	assert_bool(goblin.has_natural_weapons()).is_false()
+	var club: Weapon = goblin.get_weapon()
+	assert_str(club.get_weapon_name()).is_equal("Club")
+	assert_object(club.get_die_type()).is_same(Rules.d6)
+	assert_int(club.marked_faces.size()).is_equal(2)
+	# Every goblin gets its own club and marks
+	var other_club: Weapon = _monsters.get_monster(_page, load(GOBLIN), 1).get_weapon()
+	assert_object(other_club).is_not_same(club)
+	assert_int(other_club.marked_faces.size()).is_equal(2)
+
+func test_monster_without_weapons_has_natural_weapons() -> void:
+	var bear_profile: MonsterProfile = MonsterProfile.new()
+	bear_profile.name = "Bear"
+	var bear: Monster = _monsters.get_monster(_page, bear_profile)
+	assert_bool(bear.has_natural_weapons()).is_true()
+	assert_object(bear.get_weapon()).is_null()

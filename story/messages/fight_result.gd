@@ -4,6 +4,8 @@ extends DiceRequestResult
 
 ## The resolved exchange: [member FightExchange.first] is the player, [member FightExchange.second] the opponent
 var exchange: FightExchange
+## Weapon the opponent fought with this exchange (null if natural or unarmed)
+var opponent_weapon: Weapon
 
 func _init(for_dice_request: FightRequest) -> void:
 	super(for_dice_request)
@@ -40,20 +42,31 @@ func get_die_color(die: Die) -> Color:
 
 func _create_player_side() -> FightSide:
 	var fight_request: FightRequest = get_dice_request()
-	var weapon_dice: Array[Die] = []
-	for weapon_die: WeaponDie in fight_request.selected_weapon_dice:
-		weapon_die.roll()
-		weapon_dice.append(weapon_die)
 	var scores: Dictionary[CharacterAttribute, int] = {}
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: scores[attribute] = fight_request.character.get_attribute_score(attribute).get_score()
-	return FightSide.new(fight_request.attribute, dice, scores, weapon_dice, fight_request.fleeing, fight_request.nerves_target)
+	var side: FightSide = FightSide.new(fight_request.attribute, dice, scores, [], fight_request.fleeing, fight_request.nerves_target)
+	_arm(side, fight_request.selected_weapon)
+	return side
 
 func _create_opponent_side() -> FightSide:
 	var opponent: Monster = get_dice_request().opponent
 	var breath_dice: Array[Die] = DiceRoller.roll_dice(opponent.get_breath_dice_pool())
-	var weapon_dice: Array[Die] = []
-	weapon_dice.assign(opponent.get_weapon_dice())
-	DiceRoller.roll_dice(weapon_dice)
 	var scores: Dictionary[CharacterAttribute, int] = {}
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: scores[attribute] = opponent.get_score(attribute)
-	return FightSide.new(opponent.get_nature(), breath_dice, scores, weapon_dice)
+	var side: FightSide = FightSide.new(opponent.get_nature(), breath_dice, scores)
+	if opponent.has_natural_weapons():
+		side.weapon_dice = breath_dice
+		side.has_natural_weapons = true
+	else:
+		opponent_weapon = opponent.get_weapon()
+		_arm(side, opponent_weapon)
+	return side
+
+## Rolls [param weapon]'s die for [param side]; no weapon = unarmed
+func _arm(side: FightSide, weapon: Weapon) -> void:
+	if not weapon: return
+	var weapon_die: Die = weapon.get_die_type().get_die()
+	DiceRoller.roll_die(weapon_die)
+	side.weapon_dice = [weapon_die] as Array[Die]
+	side.wield_attribute = weapon.get_wield_attribute()
+	side.marked_faces = weapon.marked_faces.duplicate()

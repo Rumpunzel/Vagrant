@@ -15,6 +15,8 @@
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="16_gqdoy"]
 [ext_resource type="PackedScene" uid="uid://djjmsn1ujgubu" path="res://game/characters/character_creation/character_confirmation.tscn" id="17_fixuy"]
 [ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="19_vjv61"]
+[ext_resource type="Script" uid="uid://ctyfdlvouya4j" path="res://characters/weapons/weapon_profile.gd" id="20_weapon"]
+[ext_resource type="Resource" uid="uid://bect44b53knlo" path="res://characters/weapons/sword.tres" id="21_sword"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hvcdy"]
 
@@ -23,6 +25,7 @@ script = ExtResource("19_vjv61")
 
 [node name="CharacterCreation" type="Node" unique_id=1431569364 node_paths=PackedStringArray("_attributes_roller", "_origins_picker", "_inventory", "_bio_editor", "_continue", "_character_confirmation")]
 script = ExtResource("1_x4txh")
+_starting_weapons = Array[ExtResource("20_weapon")]([ExtResource("21_sword")])
 _attributes_roller = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller")
 _origins_picker = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker")
 _inventory = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/Inventory")

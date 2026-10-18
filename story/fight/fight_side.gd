@@ -10,6 +10,12 @@ var stance: CharacterAttribute
 var fleeing: bool
 var breath_dice: Array[Die]
 var weapon_dice: Array[Die]
+## Attribute the weapon is wielded with; null = Guts
+var wield_attribute: CharacterAttribute
+## Faces of the weapon die that are marked and deal no damage
+var marked_faces: Array[int] = []
+## Claws, fangs and the like: the breath dice are the weapon dice and need no wield check
+var has_natural_weapons: bool = false
 ## Effective attribute scores at the start of the exchange (injuries already applied)
 var scores: Dictionary[CharacterAttribute, int]
 ## Foe attribute to impair when threatening with Nerves
@@ -21,6 +27,8 @@ var threat: int = 0
 var impairments: Dictionary[CharacterAttribute, int] = {}
 var lost_breath_dice: Array[Die] = []
 var usable_weapon_dice: Array[Die] = []
+## Weapon dice rolled above the wield score: the weapon could not be wielded, and these faces get marked
+var failed_weapon_dice: Array[Die] = []
 var weapon_damage: int = 0
 var injury_taken: int = 0
 

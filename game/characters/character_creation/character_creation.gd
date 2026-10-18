@@ -20,6 +20,9 @@ enum CreationStage {
 		if is_node_ready(): _setup()
 		character_profile.name_changed.connect(_on_name_changed)
 
+## Stand-in until origins hand out starting gear: every created character gets these
+@export var _starting_weapons: Array[WeaponProfile] = []
+
 @export_group("Configuration")
 @export var _attributes_roller: AttributesRoller
 @export var _origins_picker: OriginsPicker
@@ -87,5 +90,6 @@ func _on_continue_pressed() -> void:
 
 func _on_character_confirmed(character_name: String) -> void:
 	character_profile.name = character_name
+	character_profile.weapons.append_array(_starting_weapons)
 	assert(character_profile.is_valid())
 	character_created.emit(character_profile)

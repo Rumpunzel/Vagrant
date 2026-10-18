@@ -117,6 +117,70 @@ func test_nerves() -> void:
 	assert_int(lurker.injury_taken).is_equal(3)
 	assert_int(player.injury_taken).is_equal(0)
 
+func test_natural_weapons_always_hit() -> void:
+	# Unarmed example 1 against an unarmed monster: its highest breath die is its weapon damage
+	var player: FightSide = FightSide.new(GUTS, _player_dice([1, 1, 2, 2, 7]), _scores(7))
+	var bear: FightSide = _natural(GUTS, [3, 4, 5], _scores(5))
+	FightExchange.new(player, bear)
+	assert_int(bear.injury_taken).is_equal(2)
+	assert_int(player.injury_taken).is_equal(5)
+
+func test_natural_weapons_add_guts_margin() -> void:
+	var player: FightSide = FightSide.new(GUTS, _player_dice([1, 1, 2, 2, 3]), _scores(7))
+	var bear: FightSide = _natural(GUTS, [2, 4, 5], _scores(7))
+	FightExchange.new(player, bear)
+	assert_int(player.injury_taken).is_equal(5 + 2)
+	assert_int(bear.injury_taken).is_equal(0)
+
+func test_blood_reduces_natural_weapon_damage() -> void:
+	var player: FightSide = FightSide.new(BLOOD, _player_dice([1, 1, 2, 2, 7]), _scores(7), _weapon(Rules.d10, 3))
+	var bear: FightSide = _natural(GUTS, [3, 4, 5], _scores(5))
+	FightExchange.new(player, bear)
+	assert_int(player.injury_taken).is_equal(5 - 2)
+	assert_int(bear.injury_taken).is_equal(3)
+
+func test_natural_weapons_count_even_when_lost() -> void:
+	# Guts 3: the 4 and 5 are lost, but the 5 still hits
+	var player: FightSide = FightSide.new(GUTS, _player_dice([1, 1, 2, 2, 9]), _scores(9))
+	var bear: FightSide = _natural(GUTS, [3, 4, 5], _scores(3))
+	FightExchange.new(player, bear)
+	assert_array(_results(bear.lost_breath_dice)).is_equal([4, 5])
+	assert_array(_results(bear.usable_weapon_dice)).is_equal([3, 4, 5])
+	assert_int(player.injury_taken).is_equal(5)
+
+func test_weapon_wielded_with_its_attribute() -> void:
+	# A Nerves weapon: 6 is fine with Nerves 6 even though Guts is only 3
+	var player: FightSide = FightSide.new(GUTS, _player_dice([1, 1, 2, 2, 3]), _scores(3, 3, 6), _weapon(Rules.d8, 6))
+	player.wield_attribute = NERVES
+	var lurker: FightSide = FightSide.new(GUTS, _lurker_dice([1, 1, 1]), _scores(5))
+	FightExchange.new(player, lurker)
+	assert_array(_results(player.failed_weapon_dice)).is_empty()
+	assert_int(player.weapon_damage).is_equal(6)
+
+func test_failed_weapon_die_is_reported() -> void:
+	var player: FightSide = FightSide.new(GUTS, _player_dice([1, 1, 2, 2, 3]), _scores(5), _weapon(Rules.d10, 8))
+	var lurker: FightSide = FightSide.new(GUTS, _lurker_dice([1, 1, 1]), _scores(5))
+	FightExchange.new(player, lurker)
+	assert_array(_results(player.failed_weapon_dice)).is_equal([8])
+	assert_int(player.weapon_damage).is_equal(0)
+
+func test_marked_face_deals_no_damage() -> void:
+	var player: FightSide = FightSide.new(GUTS, _player_dice([1, 1, 1, 1, 1]), _scores(7), _weapon(Rules.d8, 4))
+	player.marked_faces = [4] as Array[int]
+	# The Lurker wins the threat, so the player has no Guts bonus that could hide the missing weapon damage
+	var lurker: FightSide = FightSide.new(GUTS, _lurker_dice([2, 2, 2]), _scores(5))
+	FightExchange.new(player, lurker)
+	# Usable (4 <= Guts 7), but crossed out: no weapon damage, and nothing new to mark
+	assert_array(_results(player.failed_weapon_dice)).is_empty()
+	assert_int(player.weapon_damage).is_equal(0)
+	assert_int(lurker.injury_taken).is_equal(0)
+
+func _natural(stance: CharacterAttribute, results: Array[int], scores: Dictionary[CharacterAttribute, int]) -> FightSide:
+	var breath_dice: Array[Die] = _lurker_dice(results)
+	var side: FightSide = FightSide.new(stance, breath_dice, scores, breath_dice)
+	side.has_natural_weapons = true
+	return side
+
 func _scores(guts: int, blood: int = guts, nerves: int = guts) -> Dictionary[CharacterAttribute, int]:
 	return {GUTS: guts, BLOOD: blood, NERVES: nerves}
 

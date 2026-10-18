@@ -10,8 +10,10 @@ extends Resource
 	Rules.INTELLIGENCE: 7,
 }
 
-## [] = unarmed
-@export var weapon_dice: Array[DieType] = []
+## [] = natural weapons: the breath dice also count as weapon dice. Monsters always fight with the first usable one
+@export var weapons: Array[WeaponProfile] = []
+## Applied to every weapon above when it is handed out, e.g. "battered"
+@export var weapon_modifiers: Array[WeaponModifier] = []
 ## Nerves is not supported for monsters yet
 @export var nature: CharacterAttribute = Rules.STRENGTH
 

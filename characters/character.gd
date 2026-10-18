@@ -14,6 +14,7 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 	set(new_character_profile):
 		if new_character_profile == character_profile: return
 		character_profile = new_character_profile
+		weapons = Weapon.carry(character_profile.weapons, character_profile.weapon_modifiers)
 		_recover_breath_dice()
 		character_profile_changed.emit(character_profile)
 
@@ -31,6 +32,8 @@ var breath_dice: Dictionary[DieType, int] :
 		breath_dice_changed.emit(breath_dice)
 
 var most_recently_chosen_attribute: CharacterAttribute
+## Marks and ruin persist across fights
+var weapons: Array[Weapon] = []
 
 # TODO: if you roll under an injury, increase magnitude by 1
 var _injuries: Array[Injury] :

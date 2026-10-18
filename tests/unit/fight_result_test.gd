@@ -9,13 +9,13 @@ var _monster: Monster
 
 func before_test() -> void:
 	var profile: CharacterProfile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
-	profile.weapon_dice = [Rules.d10] as Array[DieType]
+	profile.weapons = [WeaponProfile.create("Sword", Rules.d10)] as Array[WeaponProfile]
 	_character = auto_free(load("uid://bl0pdxri24fnh").instantiate())  # character.tscn
 	add_child(_character)
 	_character.character_profile = profile
 	_monster = auto_free(load("uid://kmifqq0ejuri").instantiate())  # monster.tscn
 	var lurker: MonsterProfile = (load("uid://d3ytncs0be7oo") as MonsterProfile).duplicate(true)  # lurker.tres
-	lurker.weapon_dice = [Rules.d8] as Array[DieType]
+	lurker.weapons = [WeaponProfile.create("Knife", Rules.d8), WeaponProfile.create("Club", Rules.d6)] as Array[WeaponProfile]
 	add_child(_monster)
 	_monster.monster_profile = lurker
 
@@ -64,6 +64,22 @@ func test_character_loses_breath_dice() -> void:
 	_character.parse_dice_result(result)
 	assert_int(_total(_character.breath_dice)).is_equal(before - result.get_lost_breath_dice().size())
 
+func test_unarmed_monster_fights_with_its_breath_dice() -> void:
+	_monster.monster_profile.weapons = [] as Array[WeaponProfile]
+	assert_bool(_monster.has_natural_weapons()).is_true()
+	for _roll: int in ROLLS:
+		var opponent: FightSide = _create_request().roll().get_opponent_side()
+		assert_bool(opponent.has_natural_weapons).is_true()
+		assert_array(opponent.weapon_dice).is_equal(opponent.breath_dice)
+		assert_int(opponent.weapon_damage).is_equal(opponent.threat)
+
+func test_armed_monster_uses_its_weapon() -> void:
+	assert_bool(_monster.has_natural_weapons()).is_false()
+	var opponent: FightSide = _create_request().roll().get_opponent_side()
+	assert_bool(opponent.has_natural_weapons).is_false()
+	assert_int(opponent.weapon_dice.size()).is_equal(1)
+	assert_object(opponent.weapon_dice[0].die_type).is_same(Rules.d8)
+
 func test_stance_descriptions_come_from_fight_stances() -> void:
 	var request: FightRequest = _create_request()
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
@@ -72,6 +88,45 @@ func test_stance_descriptions_come_from_fight_stances() -> void:
 	# A fight decision can word a stance its own way
 	request.get_source().stance_descriptions[Rules.AGILITY] = "Dodge the knife!"
 	assert_str(request.get_stance_description(Rules.AGILITY)).is_equal("Dodge the knife!")
+
+func test_request_picks_first_usable_weapon() -> void:
+	var sword: Weapon = _character.weapons[0]
+	assert_object(_create_request().selected_weapon).is_same(sword)
+	sword.ruined = true
+	assert_object(_create_request().selected_weapon).is_null()
+
+func test_fighting_unarmed_by_choice() -> void:
+	var request: FightRequest = _create_request()
+	request.attribute = Rules.AGILITY
+	request.selected_weapon = null
+	assert_bool(request.has_stance_choice()).is_false()
+	assert_object(request.attribute).is_same(Rules.STRENGTH)
+	var player: FightSide = request.roll().get_player_side()
+	assert_bool(player.is_armed()).is_false()
+	assert_object(player.stance).is_same(Rules.STRENGTH)
+
+func test_player_side_uses_picked_weapon() -> void:
+	var sword: Weapon = _character.weapons[0]
+	sword.marked_faces = [3] as Array[int]
+	var player: FightSide = _create_request().roll().get_player_side()
+	assert_int(player.weapon_dice.size()).is_equal(1)
+	assert_object(player.weapon_dice[0].die_type).is_same(Rules.d10)
+	assert_object(player.wield_attribute).is_same(Rules.STRENGTH)
+	assert_array(player.marked_faces).is_equal([3])
+
+func test_armed_monster_uses_first_usable_weapon() -> void:
+	var result: FightResult = _create_request().roll()
+	assert_object(result.opponent_weapon).is_same(_monster.weapons[0])
+	_monster.weapons[0].ruined = true
+	result = _create_request().roll()
+	assert_object(result.opponent_weapon).is_same(_monster.weapons[1])
+	assert_object(result.get_opponent_side().weapon_dice[0].die_type).is_same(Rules.d6)
+	# With every weapon ruined it fights unarmed, not with natural weapons
+	_monster.weapons[1].ruined = true
+	result = _create_request().roll()
+	assert_object(result.opponent_weapon).is_null()
+	assert_bool(result.get_opponent_side().is_armed()).is_false()
+	assert_bool(result.get_opponent_side().has_natural_weapons).is_false()
 
 func _create_request() -> FightRequest:
 	var request: FightRequest = FightRequest.new(_character, AdventureFightDecision.new())

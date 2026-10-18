@@ -7,7 +7,8 @@
 [ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="5_sk1ac"]
 [ext_resource type="Texture2D" uid="uid://bc6smekfx7nam" path="res://assets/monster_portraits/lurker.jpg" id="6_ld57m"]
 [ext_resource type="Script" uid="uid://1342yb3eb2bh" path="res://characters/monsters/monster_profile.gd" id="7_lh5ix"]
-[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="8_gd730"]
+[ext_resource type="Script" uid="uid://ctyfdlvouya4j" path="res://characters/weapons/weapon_profile.gd" id="8_weapon"]
+[ext_resource type="Resource" uid="uid://dekvqsgavj6iv" path="res://characters/weapons/knife.tres" id="9_knife"]
 
 [resource]
 script = ExtResource("7_lh5ix")
@@ -18,5 +19,5 @@ ExtResource("3_rob4c"): 5,
 ExtResource("4_o77w5"): 7,
 ExtResource("5_sk1ac"): 7
 })
-weapon_dice = Array[ExtResource("8_gd730")]([ExtResource("1_ld57m")])
+weapons = Array[ExtResource("8_weapon")]([ExtResource("9_knife")])
 metadata/_custom_type_script = "uid://1342yb3eb2bh"

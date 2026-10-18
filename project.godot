@@ -68,6 +68,12 @@ folder_colors={
 "res://story/": "blue"
 }
 
+[gdunit4]
+
+hooks/session_hooks=Dictionary[String, bool]({
+"res://tests/mute_audio_hook.gd": true
+})
+
 [gui]
 
 theme/custom="res://vagrant_theme.tres"

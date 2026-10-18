@@ -1,12 +1,10 @@
 class_name FightRequest
 extends DiceRequest
 
-signal selected_weapon_dice_changed(weapon_dice: Array[WeaponDie])
+signal selected_weapon_changed(weapon: Weapon)
 
-var selected_weapon_dice: Array[WeaponDie] :
-	set(new_selected_weapon_dice):
-		selected_weapon_dice = new_selected_weapon_dice
-		selected_weapon_dice_changed.emit(selected_weapon_dice)
+## Weapon picked for this exchange; null = fighting unarmed
+var selected_weapon: Weapon : set = set_selected_weapon
 
 ## The monster this exchange is fought against
 var opponent: Monster
@@ -14,11 +12,9 @@ var fleeing: bool = false
 ## Foe attribute to impair when threatening with Nerves
 var nerves_target: CharacterAttribute
 
-func _init(for_character: Character, source: AdventureFightDecision, new_selected_weapon_dice: Array[WeaponDie] = []) -> void:
+func _init(for_character: Character, source: AdventureFightDecision) -> void:
 	super(for_character, for_character.get_favored_attribute(), source)
-	if new_selected_weapon_dice.is_empty():
-		for die_type: DieType in for_character.character_profile.weapon_dice: new_selected_weapon_dice.append(WeaponDie.new(die_type))
-	selected_weapon_dice = new_selected_weapon_dice
+	selected_weapon = Weapon.get_first_usable(for_character.weapons)
 
 func get_source() -> AdventureFightDecision: return _source
 
@@ -29,7 +25,14 @@ func get_description() -> String:
 	return "The %s threatens you with %s." % [opponent.get_monster_name(), Fight.describe_attribute(opponent.get_nature())]
 
 ## Only fighting back with a weapon offers a stance choice
-func has_stance_choice() -> bool: return not fleeing and not selected_weapon_dice.is_empty()
+func has_stance_choice() -> bool: return not fleeing and selected_weapon != null
+
+func set_selected_weapon(weapon: Weapon) -> void:
+	assert(not weapon or (weapon.is_usable() and character.weapons.has(weapon)))
+	selected_weapon = weapon
+	# Without a weapon there is no stance choice: unarmed violence is always Guts
+	if not selected_weapon and not fleeing and attribute != Rules.STRENGTH: attribute = Rules.STRENGTH
+	selected_weapon_changed.emit(selected_weapon)
 func set_nerves_target(character_attribute: CharacterAttribute) -> void: nerves_target = character_attribute
 
 func get_stance_description(for_attribute: CharacterAttribute) -> String:

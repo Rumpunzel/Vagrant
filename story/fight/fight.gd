@@ -18,6 +18,8 @@ var monster: Monster
 var outcome: Outcome = Outcome.ONGOING
 var exchanges: Array[FightExchange] = []
 
+var _last_weapon_marks: Array[String] = []
+
 func _init(for_decision: AdventureFightDecision, for_protagonist: Character, against_monster: Monster) -> void:
 	assert(for_decision and for_protagonist and against_monster)
 	decision = for_decision
@@ -35,17 +37,18 @@ func create_request(fleeing: bool = false) -> FightRequest:
 	request.fleeing = fleeing
 	# No stance choice when fleeing or unarmed; matches what the resolver enforces
 	if fleeing: request.attribute = Rules.AGILITY
-	elif request.selected_weapon_dice.is_empty(): request.attribute = Rules.STRENGTH
+	elif not request.selected_weapon: request.attribute = Rules.STRENGTH
 	# Default Nerves target: the attribute the monster threatens with
 	request.nerves_target = monster.get_nature()
 	return request
 
 func resolve(result: FightResult) -> void:
 	assert(result.get_dice_request().opponent == monster)
-	apply_exchange(result.exchange, result.get_lost_breath_dice())
+	apply_exchange(result.exchange, result.get_lost_breath_dice(), result.get_dice_request().selected_weapon, result.opponent_weapon)
 
-## [param player_lost_breath_dice] may differ from the exchange's raw losses (origins)
-func apply_exchange(exchange: FightExchange, player_lost_breath_dice: Array[Die]) -> void:
+## [param player_lost_breath_dice] may differ from the exchange's raw losses (origins).
+## The weapons are the ones the sides fought with; failing to wield them marks them.
+func apply_exchange(exchange: FightExchange, player_lost_breath_dice: Array[Die], player_weapon: Weapon = null, opponent_weapon: Weapon = null) -> void:
 	assert(is_ongoing())
 	exchanges.append(exchange)
 	var player: FightSide = exchange.first
@@ -54,7 +57,18 @@ func apply_exchange(exchange: FightExchange, player_lost_breath_dice: Array[Die]
 	monster.lose_breath_dice(opponent.lost_breath_dice)
 	if player.injury_taken > 0: protagonist.suffer_injury(Injury.new(player.injury_taken))
 	if opponent.injury_taken > 0: monster.suffer_injury(Injury.new(opponent.injury_taken))
+	_last_weapon_marks.clear()
+	_mark(player, player_weapon, "your")
+	_mark(opponent, opponent_weapon, "the %s's" % monster.get_monster_name())
 	outcome = _evaluate_outcome(player.fleeing)
+
+func _mark(side: FightSide, weapon: Weapon, owner: String) -> void:
+	if not weapon: return
+	for failed_die: Die in side.failed_weapon_dice:
+		match weapon.mark(failed_die.result):
+			Weapon.Mark.MARKED: _last_weapon_marks.append("A %d is marked on %s %s." % [failed_die.result, owner, weapon.get_weapon_name()])
+			Weapon.Mark.RUINED: _last_weapon_marks.append("%s %s is ruined." % [owner.capitalize(), weapon.get_weapon_name()])
+		if weapon.ruined: return
 
 func is_ongoing() -> bool: return outcome == Outcome.ONGOING
 func get_exchange_count() -> int: return exchanges.size()
@@ -123,8 +137,9 @@ func _describe_last_exchange() -> String:
 		"flee" if player.fleeing else "threaten", describe_attribute(player.stance), player.threat,
 		monster_name, describe_attribute(opponent.stance), opponent.threat,
 	])
-	if player.is_armed() and player.usable_weapon_dice.is_empty(): lines.append("You fail to wield your weapon.")
-	if opponent.is_armed() and opponent.usable_weapon_dice.is_empty(): lines.append("The %s fails to wield its weapon." % monster_name)
+	if not player.failed_weapon_dice.is_empty(): lines.append("You fail to wield your weapon.")
+	if not opponent.failed_weapon_dice.is_empty(): lines.append("The %s fails to wield its weapon." % monster_name)
+	lines.append_array(_last_weapon_marks)
 	if not player.lost_breath_dice.is_empty(): lines.append("You lose %d breath %s." % [player.lost_breath_dice.size(), "die" if player.lost_breath_dice.size() == 1 else "dice"])
 	if not opponent.lost_breath_dice.is_empty(): lines.append("The %s loses %d breath %s." % [monster_name, opponent.lost_breath_dice.size(), "die" if opponent.lost_breath_dice.size() == 1 else "dice"])
 	if player.injury_taken == 0 and opponent.injury_taken == 0: lines.append("Neither of you is hurt.")

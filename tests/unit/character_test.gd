@@ -70,6 +70,15 @@ func test_auto_selected_breath_dice_fit_the_score() -> void:
 		for die_type: DieType in Rules.BREATH_DICE:
 			assert_bool(selected.has(die_type)).is_equal(die_type.faces <= score)
 
+func test_weapon_modifiers_shape_carried_weapons() -> void:
+	var profile: CharacterProfile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	var battered: MarkRandomFacesModifier = MarkRandomFacesModifier.new()
+	profile.weapons = [WeaponProfile.create("Club", Rules.d6), WeaponProfile.create("Knife", Rules.d8)] as Array[WeaponProfile]
+	profile.weapon_modifiers = [battered] as Array[WeaponModifier]
+	_character.character_profile = profile
+	assert_int(_character.weapons.size()).is_equal(2)
+	for weapon: Weapon in _character.weapons: assert_int(weapon.marked_faces.size()).is_equal(2)
+
 func test_favored_attribute() -> void:
 	assert_object(_character.get_favored_attribute()).is_same(_character.get_highest_attribute())
 	_character.most_recently_chosen_attribute = Rules.INTELLIGENCE

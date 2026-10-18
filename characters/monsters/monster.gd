@@ -8,11 +8,14 @@ signal suffered_injury(injury: Injury)
 	set(new_monster_profile):
 		assert(new_monster_profile)
 		monster_profile = new_monster_profile
+		weapons = Weapon.carry(monster_profile.weapons, monster_profile.weapon_modifiers)
 		recover_breath()
 
 @export var spawned_from: AdventurePage
 
 var breath_dice: Dictionary[DieType, int]
+## Marks and ruin persist across fights
+var weapons: Array[Weapon] = []
 
 var _injuries: Array[Injury] = []
 
@@ -59,7 +62,8 @@ func get_score(attribute: CharacterAttribute) -> int:
 func get_breath_dice_pool() -> Array[Die]:
 	return DiceRoller.generate_dice_pool(breath_dice)
 
-func get_weapon_dice() -> Array[WeaponDie]:
-	var weapon_dice: Array[WeaponDie] = []
-	for die_type: DieType in monster_profile.weapon_dice: weapon_dice.append(WeaponDie.new(die_type))
-	return weapon_dice
+## Monsters without a weapon fight with what nature gave them: their breath dice count as weapon dice
+func has_natural_weapons() -> bool: return monster_profile.weapons.is_empty()
+
+## Monsters always fight with their first usable weapon; null once all are ruined
+func get_weapon() -> Weapon: return Weapon.get_first_usable(weapons)

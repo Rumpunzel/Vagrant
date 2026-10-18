@@ -12,6 +12,7 @@ signal confirmed
 @export var _stance_selection_collapsible_container: CollapsibleContainer
 @export var _stance_selection: StanceSelection
 @export var _nerves_target_selection: StanceSelection
+@export var _weapon_selection: WeaponSelection
 @export var _breath_dice_selection_buttons: BreathDiceSelectionButtons
 @export var _all_in_button: DisplayButton
 @export var _ok_button: DisplayButton
@@ -55,15 +56,24 @@ func request_save(save_request: SaveRequest) -> void:
 func request_fight(fight_request: FightRequest) -> void:
 	# Switching between Fight and Flee on the same page replaces the previous request
 	if _dice_request is FightRequest: _disconnect_fight_request(_dice_request as FightRequest)
-	if not fight_request or not fight_request.has_stance_choice():
-		_stance_selection_collapsible_container.close_tween()
-		_nerves_target_selection.visible = false
-		if not fight_request: return
+	_weapon_selection.visible = fight_request != null
+	if not fight_request:
+		_hide_stance_choice()
+		return
 	var opened_before: bool = _dice_request != null
 	_dice_request = fight_request
 	fight_request.rolled.connect(_on_fight_rolled)
-	if not fight_request.has_stance_choice(): return
-	if not opened_before: _stance_selection_collapsible_container.open()
+	fight_request.selected_weapon_changed.connect(_on_selected_weapon_changed)
+	_weapon_selection.setup(fight_request)
+	_update_stance_choice(fight_request, not opened_before)
+
+## The stance choice only exists while fighting back with a weapon, so it follows the picked weapon
+func _update_stance_choice(fight_request: FightRequest, open_instantly: bool = false) -> void:
+	_disconnect_stance_choice(fight_request)
+	if not fight_request.has_stance_choice():
+		_hide_stance_choice()
+		return
+	if open_instantly: _stance_selection_collapsible_container.open()
 	_stance_selection.setup_for_fight(fight_request)
 	_stance_selection.attribute_selected.connect(fight_request.set_attribute)
 	fight_request.attribute_changed.connect(_stance_selection.set_selected_attribute)
@@ -73,8 +83,19 @@ func request_fight(fight_request: FightRequest) -> void:
 	fight_request.attribute_changed.connect(_update_nerves_target_selection)
 	_update_nerves_target_selection(fight_request.attribute)
 
+func _hide_stance_choice() -> void:
+	_stance_selection_collapsible_container.close_tween()
+	_nerves_target_selection.visible = false
+
+func _on_selected_weapon_changed(_weapon: Weapon) -> void:
+	_update_stance_choice(_dice_request as FightRequest)
+
 func _disconnect_fight_request(fight_request: FightRequest) -> void:
 	if fight_request.rolled.is_connected(_on_fight_rolled): fight_request.rolled.disconnect(_on_fight_rolled)
+	if fight_request.selected_weapon_changed.is_connected(_on_selected_weapon_changed): fight_request.selected_weapon_changed.disconnect(_on_selected_weapon_changed)
+	_disconnect_stance_choice(fight_request)
+
+func _disconnect_stance_choice(fight_request: FightRequest) -> void:
 	if _stance_selection.attribute_selected.is_connected(fight_request.set_attribute): _stance_selection.attribute_selected.disconnect(fight_request.set_attribute)
 	if fight_request.attribute_changed.is_connected(_stance_selection.set_selected_attribute): fight_request.attribute_changed.disconnect(_stance_selection.set_selected_attribute)
 	if _nerves_target_selection.attribute_selected.is_connected(fight_request.set_nerves_target): _nerves_target_selection.attribute_selected.disconnect(fight_request.set_nerves_target)

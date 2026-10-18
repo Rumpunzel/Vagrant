@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="MarkRandomFacesModifier" format=3 uid="uid://cjt8mg5iiet5k"]
+
+[ext_resource type="Script" uid="uid://cjqqowb2b7sb8" path="res://characters/weapons/modifiers/mark_random_faces_modifier.gd" id="1_mark"]
+
+[resource]
+script = ExtResource("1_mark")
+count = 2
+metadata/_custom_type_script = "uid://cjqqowb2b7sb8"
