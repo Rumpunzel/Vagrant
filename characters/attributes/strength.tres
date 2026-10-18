@@ -7,6 +7,7 @@
 
 [sub_resource type="Resource" id="Resource_stance"]
 script = ExtResource("9_stance")
+description = "Charge with might and ferocity!"
 
 [resource]
 script = ExtResource("1_27sg8")
@@ -15,6 +16,5 @@ icon = ExtResource("1_ga1e2")
 fight_icon = ExtResource("1_8xoo1")
 color = Color(0.56078434, 0.5176471, 0.45490196, 1)
 details = "Strength, endurance, and grit."
-stance_description = "Charge with might and ferocity!"
 abilities = Array[String](["Increase the damage you deal by your margin of success."])
 fight_stance = SubResource("Resource_stance")

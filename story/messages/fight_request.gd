@@ -33,7 +33,7 @@ func has_stance_choice() -> bool: return not fleeing and not selected_weapon_dic
 func set_nerves_target(character_attribute: CharacterAttribute) -> void: nerves_target = character_attribute
 
 func get_stance_description(for_attribute: CharacterAttribute) -> String:
-	return get_source().stance_descriptions.get(for_attribute, for_attribute.stance_description)
+	return get_source().stance_descriptions.get(for_attribute, for_attribute.fight_stance.description)
 
 func _create_result() -> FightResult:
 	assert(character)

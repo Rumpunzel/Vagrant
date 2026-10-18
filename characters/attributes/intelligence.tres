@@ -7,6 +7,7 @@
 
 [sub_resource type="Resource" id="Resource_stance"]
 script = ExtResource("9_stance")
+description = "Feint and trick with guile and precision!"
 
 [resource]
 script = ExtResource("1_wgpsi")
@@ -15,6 +16,5 @@ icon = ExtResource("1_rkmxj")
 fight_icon = ExtResource("1_wtrd3")
 color = Color(0.39215687, 0.53333336, 0.6117647, 1)
 details = "Precision, composure, and stealth."
-stance_description = "Feint and trick with guile and precision!"
 abilities = Array[String](["Decrease a foe's attribute of your choice by your margin of success for this exchange."])
 fight_stance = SubResource("Resource_stance")

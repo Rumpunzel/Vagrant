@@ -64,6 +64,15 @@ func test_character_loses_breath_dice() -> void:
 	_character.parse_dice_result(result)
 	assert_int(_total(_character.breath_dice)).is_equal(before - result.get_lost_breath_dice().size())
 
+func test_stance_descriptions_come_from_fight_stances() -> void:
+	var request: FightRequest = _create_request()
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
+		assert_str(attribute.fight_stance.description).is_not_empty()
+		assert_str(request.get_stance_description(attribute)).is_equal(attribute.fight_stance.description)
+	# A fight decision can word a stance its own way
+	request.get_source().stance_descriptions[Rules.AGILITY] = "Dodge the knife!"
+	assert_str(request.get_stance_description(Rules.AGILITY)).is_equal("Dodge the knife!")
+
 func _create_request() -> FightRequest:
 	var request: FightRequest = FightRequest.new(_character, AdventureFightDecision.new())
 	request.opponent = _monster

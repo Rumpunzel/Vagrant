@@ -6,7 +6,6 @@ extends Resource
 @export var fight_icon: Texture2D
 @export var color: Color
 @export_multiline var details: String
-@export_multiline var stance_description: String
 @export_multiline var abilities: Array[String]
 ## What threatening a foe with this attribute does
 @export var fight_stance: FightStance
