@@ -2,21 +2,21 @@ extends GdUnitTestSuite
 
 ## Content check: the Lurker ambush in the swamp temple ruin is a real fight.
 
-const TEMPLE_RUIN: String = "res://adventure/adventures/locations/swamp/temple_ruin.tres"
-const LURKER_AMBUSH: String = "res://adventure/adventures/locations/swamp/events/lurker_ambush.tres"
-const ROCKY_SHORE: String = "res://adventure/adventures/locations/beach/rocky_shore.tres"
+const TEMPLE_RUIN: String = "uid://cs40ge42lw0ry"  # temple_ruin.tres
+const LURKER_AMBUSH: String = "uid://bxwqtk0p80o4g"  # lurker_ambush.tres
+const ROCKY_SHORE: String = "uid://ycd6xhx346l6"  # rocky_shore.tres
 const OUTCOME_PAGES: Dictionary[Fight.Outcome, String] = {
-	Fight.Outcome.WON: "res://adventure/adventures/locations/swamp/events/lurker_ambush_won.tres",
-	Fight.Outcome.LOST: "res://adventure/adventures/locations/swamp/events/lurker_ambush_lost.tres",
-	Fight.Outcome.DRAW: "res://adventure/adventures/locations/swamp/events/lurker_ambush_draw.tres",
-	Fight.Outcome.FLED: "res://adventure/adventures/locations/swamp/events/lurker_ambush_fled.tres",
+	Fight.Outcome.WON: "uid://m4wl5ad8o0i7",  # lurker_ambush_won.tres
+	Fight.Outcome.LOST: "uid://dgfjjbm210jot",  # lurker_ambush_lost.tres
+	Fight.Outcome.DRAW: "uid://dsfrbfoig3deo",  # lurker_ambush_draw.tres
+	Fight.Outcome.FLED: "uid://qcl0jfm16ys8",  # lurker_ambush_fled.tres
 }
 
 func after_test() -> void:
 	await await_millis(500)
 
 func test_lurker_profile() -> void:
-	var lurker: MonsterProfile = load("res://characters/monsters/lurker.tres")
+	var lurker: MonsterProfile = load("uid://d3ytncs0be7oo")  # lurker.tres
 	assert_int(lurker.attribute_scores[Rules.STRENGTH]).is_equal(5)
 	assert_array(lurker.weapon_dice).is_equal([Rules.d8])
 	assert_object(lurker.nature).is_same(Rules.STRENGTH)
@@ -26,7 +26,7 @@ func test_ambush_decision() -> void:
 	assert_int(ambush._decisions.size()).is_equal(1)
 	var decision: AdventureFightDecision = ambush._decisions[0]
 	assert_str(decision.flee_description).is_equal("Wun away!")
-	assert_object(decision.enemies[0]).is_same(load("res://characters/monsters/lurker.tres"))
+	assert_object(decision.enemies[0]).is_same(load("uid://d3ytncs0be7oo"))  # lurker.tres
 	var references: Dictionary[Fight.Outcome, AdventurePageReference] = {
 		Fight.Outcome.WON: decision.transition,
 		Fight.Outcome.LOST: decision.failure_transition,
@@ -44,10 +44,10 @@ func test_flee_from_ambush_in_story() -> void:
 	# Ends on the ambush's flee page
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = load(TEMPLE_RUIN)
-	var story: Story = auto_free(load("res://story/story.tscn").instantiate())
+	var story: Story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
 	story._reveal_delay = 0.01
 	add_child(story)
-	story.start_adventure(adventure, (load("res://characters/dorian.tres") as CharacterProfile).duplicate(true))
+	story.start_adventure(adventure, (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true))  # dorian.tres
 	var fight_choices: Array[StoryFightDecision] = []
 	for choice: StoryChoice in story._current_story_page.choices:
 		if choice is StoryFightDecision: fight_choices.append(choice)

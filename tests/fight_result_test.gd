@@ -8,13 +8,13 @@ var _character: Character
 var _monster: Monster
 
 func before_test() -> void:
-	var profile: CharacterProfile = (load("res://characters/dorian.tres") as CharacterProfile).duplicate(true)
+	var profile: CharacterProfile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
 	profile.weapon_dice = [Rules.d10] as Array[DieType]
-	_character = auto_free(load("res://characters/character.tscn").instantiate())
+	_character = auto_free(load("uid://bl0pdxri24fnh").instantiate())  # character.tscn
 	add_child(_character)
 	_character.character_profile = profile
-	_monster = auto_free(load("res://characters/monsters/monster.tscn").instantiate())
-	var lurker: MonsterProfile = (load("res://characters/monsters/lurker.tres") as MonsterProfile).duplicate(true)
+	_monster = auto_free(load("uid://kmifqq0ejuri").instantiate())  # monster.tscn
+	var lurker: MonsterProfile = (load("uid://d3ytncs0be7oo") as MonsterProfile).duplicate(true)  # lurker.tres
 	lurker.weapon_dice = [Rules.d8] as Array[DieType]
 	add_child(_monster)
 	_monster.monster_profile = lurker

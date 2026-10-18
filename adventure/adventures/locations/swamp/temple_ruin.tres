@@ -10,7 +10,7 @@
 
 [sub_resource type="Resource" id="Resource_vvpox"]
 script = ExtResource("3_34ol8")
-_leads_to = "res://adventure/adventures/locations/beach/rocky_shore.tres"
+_leads_to = "uid://ycd6xhx346l6"
 
 [sub_resource type="Resource" id="Resource_e22nq"]
 script = ExtResource("2_r3twy")

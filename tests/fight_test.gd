@@ -14,12 +14,12 @@ var _draw: AdventurePage
 var _fled: AdventurePage
 
 func before_test() -> void:
-	_character = auto_free(load("res://characters/character.tscn").instantiate())
+	_character = auto_free(load("uid://bl0pdxri24fnh").instantiate())  # character.tscn
 	add_child(_character)
-	_character.character_profile = (load("res://characters/dorian.tres") as CharacterProfile).duplicate(true)
-	_monster = auto_free(load("res://characters/monsters/monster.tscn").instantiate())
+	_character.character_profile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
+	_monster = auto_free(load("uid://kmifqq0ejuri").instantiate())  # monster.tscn
 	add_child(_monster)
-	_monster.monster_profile = load("res://characters/monsters/lurker.tres")
+	_monster.monster_profile = load("uid://d3ytncs0be7oo")  # lurker.tres
 	_won = AdventurePage.new()
 	_lost = AdventurePage.new()
 	_draw = AdventurePage.new()
@@ -133,8 +133,8 @@ func test_summary_ends_with_outcome() -> void:
 	assert_str(fight.get_exchange_summary()).contains("You get away from the Lurker.")
 
 func test_find_decision_owner_in_events() -> void:
-	var base: AdventurePage = load("res://adventure/adventures/locations/swamp/temple_ruin.tres")
-	var ambush: AdventurePage = load("res://adventure/adventures/locations/swamp/events/lurker_ambush.tres")
+	var base: AdventurePage = load("uid://cs40ge42lw0ry")  # temple_ruin.tres
+	var ambush: AdventurePage = load("uid://bxwqtk0p80o4g")  # lurker_ambush.tres
 	for ambush_decision: AdventureDecision in ambush._decisions:
 		assert_object(base.find_decision_owner(ambush_decision)).is_same(ambush)
 	assert_object(base.find_decision_owner(AdventureDecision.new())).is_null()

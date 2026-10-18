@@ -13,22 +13,22 @@
 
 [sub_resource type="Resource" id="Resource_to_draw"]
 script = ExtResource("7_3hvfw")
-_leads_to = "res://adventure/adventures/locations/swamp/events/lurker_ambush_draw.tres"
+_leads_to = "uid://dsfrbfoig3deo"
 metadata/_custom_type_script = "uid://buhl8mbur0qma"
 
 [sub_resource type="Resource" id="Resource_to_lost"]
 script = ExtResource("7_3hvfw")
-_leads_to = "res://adventure/adventures/locations/swamp/events/lurker_ambush_lost.tres"
+_leads_to = "uid://dgfjjbm210jot"
 metadata/_custom_type_script = "uid://buhl8mbur0qma"
 
 [sub_resource type="Resource" id="Resource_to_fled"]
 script = ExtResource("7_3hvfw")
-_leads_to = "res://adventure/adventures/locations/swamp/events/lurker_ambush_fled.tres"
+_leads_to = "uid://qcl0jfm16ys8"
 metadata/_custom_type_script = "uid://buhl8mbur0qma"
 
 [sub_resource type="Resource" id="Resource_to_won"]
 script = ExtResource("7_3hvfw")
-_leads_to = "res://adventure/adventures/locations/swamp/events/lurker_ambush_won.tres"
+_leads_to = "uid://m4wl5ad8o0i7"
 metadata/_custom_type_script = "uid://buhl8mbur0qma"
 
 [sub_resource type="Resource" id="Resource_2rcic"]

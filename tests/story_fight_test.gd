@@ -12,7 +12,7 @@ func before_test() -> void:
 	var decision: AdventureFightDecision = AdventureFightDecision.new()
 	decision.description = "Fight!"
 	decision.flee_description = "Wun away!"
-	decision.enemies = [load("res://characters/monsters/lurker.tres")] as Array[MonsterProfile]
+	decision.enemies = [load("uid://d3ytncs0be7oo")] as Array[MonsterProfile]  # lurker.tres
 	_outcome_pages = {}
 	for outcome: Fight.Outcome in [Fight.Outcome.WON, Fight.Outcome.LOST, Fight.Outcome.DRAW, Fight.Outcome.FLED]:
 		var page: AdventurePage = AdventurePage.new()
@@ -28,10 +28,10 @@ func before_test() -> void:
 	var adventure: Adventure = Adventure.new()
 	adventure.title = "Test"
 	adventure.starting_page = _fight_page
-	_story = auto_free(load("res://story/story.tscn").instantiate())
+	_story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
 	_story._reveal_delay = 0.01
 	add_child(_story)
-	var profile: CharacterProfile = (load("res://characters/dorian.tres") as CharacterProfile).duplicate(true)
+	var profile: CharacterProfile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
 	assert_bool(profile.is_valid()).is_true()
 	_story.start_adventure(adventure, profile)
 

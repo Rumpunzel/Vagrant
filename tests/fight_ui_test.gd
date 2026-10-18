@@ -7,7 +7,7 @@ var _story: Story
 func _start(weapon_dice: Array[DieType]) -> void:
 	var decision: AdventureFightDecision = AdventureFightDecision.new()
 	decision.description = "Fight!"
-	decision.enemies = [load("res://characters/monsters/lurker.tres")] as Array[MonsterProfile]
+	decision.enemies = [load("uid://d3ytncs0be7oo")] as Array[MonsterProfile]  # lurker.tres
 	var end_page: AdventurePage = AdventurePage.new()
 	end_page._title = "End"
 	decision.transition = end_page
@@ -18,10 +18,10 @@ func _start(weapon_dice: Array[DieType]) -> void:
 	page._decisions = [decision] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = page
-	_story = auto_free(load("res://story/story.tscn").instantiate())
+	_story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
 	_story._reveal_delay = 0.01
 	add_child(_story)
-	var profile: CharacterProfile = (load("res://characters/dorian.tres") as CharacterProfile).duplicate(true)
+	var profile: CharacterProfile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
 	profile.weapon_dice = weapon_dice
 	_story.start_adventure(adventure, profile)
 
@@ -122,10 +122,10 @@ func test_dice_log_shows_save_result() -> void:
 	page._decisions = [decision] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = page
-	_story = auto_free(load("res://story/story.tscn").instantiate())
+	_story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
 	_story._reveal_delay = 0.01
 	add_child(_story)
-	_story.start_adventure(adventure, (load("res://characters/dorian.tres") as CharacterProfile).duplicate(true))
+	_story.start_adventure(adventure, (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true))  # dorian.tres
 	var choice: StoryChoice = _story._current_story_page.choices[0]
 	choice.chose()
 	await await_millis(50)

@@ -5,7 +5,7 @@
 [ext_resource type="Shader" uid="uid://cnx8ikjjp7qj5" path="res://game/characters/fade_vignette.gdshader" id="3_hn353"]
 [ext_resource type="Script" uid="uid://0inxk2dmireb" path="res://game/stage/background_rect.gd" id="4_h86xk"]
 [ext_resource type="Script" uid="uid://rbc1te7wgcy0" path="res://custom_nodes/control/typing_label.gd" id="5_g4vxc"]
-[ext_resource type="PackedScene" path="res://game/story_book/injury_display.tscn" id="9_injury"]
+[ext_resource type="PackedScene" uid="uid://eusoh8easays" path="res://game/story_book/injury_display.tscn" id="9_injury"]
 [ext_resource type="Script" uid="uid://dqkpaquatj11m" path="res://custom_nodes/control/flex_container.gd" id="6_ilo4x"]
 [ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="6_ywxnt"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://game/breath_dice/breath_dice_selection.tscn" id="7_sl3wq"]

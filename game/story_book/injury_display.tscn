@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://eusoh8easays"]
 
-[ext_resource type="Script" path="res://game/story_book/injury_display.gd" id="1_injury"]
+[ext_resource type="Script" uid="uid://bkf0km5r4n5oq" path="res://game/story_book/injury_display.gd" id="1_injury"]
 [ext_resource type="Texture2D" uid="uid://v3pkbe7jeme1" path="res://game/icons/ragged-wound.svg" id="2_wound"]
 
 [node name="InjuryDisplay" type="HBoxContainer" node_paths=PackedStringArray("_icon", "_magnitude", "_target")]
