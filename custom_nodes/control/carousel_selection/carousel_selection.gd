@@ -4,6 +4,11 @@ extends FlexContainer
 
 signal item_selected(item_index: int)
 
+const _ARROW_LEFT: Texture2D = preload("uid://buvbksy3o46rm")
+const _ARROW_RIGHT: Texture2D = preload("uid://ctxdc156sk6t4")
+const _ARROW_UP: Texture2D = preload("uid://dbgcpwpmvj4vx")
+const _ARROW_DOWN: Texture2D = preload("uid://vsrb4darihes")
+
 @export var selected: int = -1 : set = _set_selected
 @export var items: Array[String] = []:
 	set(new_items):
@@ -64,10 +69,10 @@ func _setup() -> void:
 	else:
 		_previous = DisplayButton.new()
 		match direction:
-			Direction.LEFT_TO_RIGHT: _previous.icon = preload("uid://buvbksy3o46rm")
-			Direction.RIGHT_TO_LEFT: _previous.icon = preload("uid://ctxdc156sk6t4")
-			Direction.TOP_TO_BOTTOM: _previous.icon = preload("uid://dbgcpwpmvj4vx")
-			Direction.BOTTOM_TO_TOP: _previous.icon = preload("uid://vsrb4darihes")
+			Direction.LEFT_TO_RIGHT: _previous.icon = _ARROW_LEFT
+			Direction.RIGHT_TO_LEFT: _previous.icon = _ARROW_RIGHT
+			Direction.TOP_TO_BOTTOM: _previous.icon = _ARROW_UP
+			Direction.BOTTOM_TO_TOP: _previous.icon = _ARROW_DOWN
 			_: assert(false, "Does not exist")
 		_previous.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_previous.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -91,10 +96,10 @@ func _setup() -> void:
 	else:
 		_next = DisplayButton.new()
 		match direction:
-			Direction.LEFT_TO_RIGHT: _next.icon = preload("uid://ctxdc156sk6t4")
-			Direction.RIGHT_TO_LEFT: _next.icon = preload("uid://buvbksy3o46rm")
-			Direction.TOP_TO_BOTTOM: _next.icon = preload("uid://vsrb4darihes")
-			Direction.BOTTOM_TO_TOP: _next.icon = preload("uid://dbgcpwpmvj4vx")
+			Direction.LEFT_TO_RIGHT: _next.icon = _ARROW_RIGHT
+			Direction.RIGHT_TO_LEFT: _next.icon = _ARROW_LEFT
+			Direction.TOP_TO_BOTTOM: _next.icon = _ARROW_DOWN
+			Direction.BOTTOM_TO_TOP: _next.icon = _ARROW_UP
 			_: assert(false, "Does not exist")
 		_next.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_next.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND

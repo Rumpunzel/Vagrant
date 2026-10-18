@@ -1,9 +1,9 @@
 class_name Injury
 extends RefCounted
 
-var magnitude: int
-
 const ICON: Texture2D = preload("uid://v3pkbe7jeme1")
+
+var magnitude: int
 
 var _injury_icon: Texture2D = ICON
 

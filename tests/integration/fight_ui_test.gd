@@ -2,6 +2,9 @@ extends GdUnitTestSuite
 
 ## Fight input UI (BreathDiceSelection) inside the real Story scene.
 
+const STORY: String = "uid://db6oui711vqep"  # story.tscn
+const DORIAN: String = "uid://73nsysikxf7j"  # dorian.tres
+
 var _story: Story
 
 func _start(weapon_dice: Array[DieType]) -> void:
@@ -18,10 +21,10 @@ func _start(weapon_dice: Array[DieType]) -> void:
 	page._decisions = [decision] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = page
-	_story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
+	_story = auto_free(load(STORY).instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
-	var profile: CharacterProfile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
+	var profile: CharacterProfile = (load(DORIAN) as CharacterProfile).duplicate(true)
 	profile.weapon_dice = weapon_dice
 	_story.start_adventure(adventure, profile)
 
@@ -122,10 +125,10 @@ func test_dice_log_shows_save_result() -> void:
 	page._decisions = [decision] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = page
-	_story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
+	_story = auto_free(load(STORY).instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
-	_story.start_adventure(adventure, (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true))  # dorian.tres
+	_story.start_adventure(adventure, (load(DORIAN) as CharacterProfile).duplicate(true))
 	var choice: StoryChoice = _story._current_story_page.choices[0]
 	choice.chose()
 	await await_millis(50)

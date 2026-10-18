@@ -35,9 +35,6 @@ var _current_story_page: StoryPage:
 		if story_page == null:
 			var last_adventure_page: AdventurePage = _page_stack.pop_back()
 			story_page = _create_story_page(last_adventure_page)
-		#elif current_page == story_page:
-			#print_debug("Already on page: <%s>!" % current_page)
-			#return
 		if _current_story_page:
 			if not _current_story_page.is_fight_exchange(): _page_stack.push_back(_current_story_page.adventure_page)
 			for choice: StoryChoice in _current_story_page.choices:
@@ -184,9 +181,8 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	if story_choice is StoryFightDecision:
 		_resolve_fight(dice_result as FightResult, story_choice as StoryFightDecision)
 		return
-	#_event_queue.queue_callable(func() -> void: _party.display_dice_result(dice_result))
 	_event_queue.queue_callable(func() -> void: dice_request.character.parse_dice_result(dice_result))
-	_event_queue.queue_callable(func() -> void: if dice_result.is_success(): _success_audio_player.play() else: _failure_audio_player.play())
+	_event_queue.queue_callable(_play_outcome_sound.bind(dice_result))
 	_event_queue.queue_callable(func() -> void: _current_dice_request = null)
 	_event_queue.queue_delay(_reveal_delay)
 	var consequences: Array[StoryConsequence] = story_choice.get_consequences()
@@ -205,7 +201,7 @@ func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision)
 		if exchange.first.injury_taken > 0: _story_book.show_injury("You", exchange.first.injury_taken)
 		if exchange.second.injury_taken > 0: _story_book.show_injury(fight.monster.get_monster_name(), exchange.second.injury_taken)
 	)
-	_event_queue.queue_callable(func() -> void: if fight_result.is_success(): _success_audio_player.play() else: _failure_audio_player.play())
+	_event_queue.queue_callable(_play_outcome_sound.bind(fight_result))
 	_event_queue.queue_callable(func() -> void: _current_dice_request = null)
 	_event_queue.queue_delay(_reveal_delay)
 	_event_queue.queue_callable(func() -> void: await _story_book.show_outcome(fight.get_exchange_summary()))
@@ -217,6 +213,10 @@ func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision)
 		for consequence: StoryConsequence in story_choice.get_consequences(): consequence.resolve(_protagonist, fight_result.get_margin())
 		enter_page(story_choice.get_transition())
 	)
+
+func _play_outcome_sound(dice_result: DiceRequestResult) -> void:
+	if dice_result.is_success(): _success_audio_player.play()
+	else: _failure_audio_player.play()
 
 func _on_party_character_selected(character: Character) -> void:
 	_protagonist = character

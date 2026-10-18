@@ -4,8 +4,8 @@ extends DiceRequest
 signal selected_weapon_dice_changed(weapon_dice: Array[WeaponDie])
 
 var selected_weapon_dice: Array[WeaponDie] :
-	set(new_sselected_weapon_dice):
-		selected_weapon_dice = new_sselected_weapon_dice
+	set(new_selected_weapon_dice):
+		selected_weapon_dice = new_selected_weapon_dice
 		selected_weapon_dice_changed.emit(selected_weapon_dice)
 
 ## The monster this exchange is fought against

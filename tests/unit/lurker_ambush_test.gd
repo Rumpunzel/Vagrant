@@ -3,6 +3,7 @@ extends GdUnitTestSuite
 ## Content check: the Lurker ambush in the swamp temple ruin is a real fight.
 ## Playing it through the Story scene: integration/lurker_ambush_story_test.gd
 
+const LURKER: String = "uid://d3ytncs0be7oo"  # lurker.tres
 const LURKER_AMBUSH: String = "uid://bxwqtk0p80o4g"  # lurker_ambush.tres
 const ROCKY_SHORE: String = "uid://ycd6xhx346l6"  # rocky_shore.tres
 const OUTCOME_PAGES: Dictionary[Fight.Outcome, String] = {
@@ -13,7 +14,7 @@ const OUTCOME_PAGES: Dictionary[Fight.Outcome, String] = {
 }
 
 func test_lurker_profile() -> void:
-	var lurker: MonsterProfile = load("uid://d3ytncs0be7oo")  # lurker.tres
+	var lurker: MonsterProfile = load(LURKER)
 	assert_int(lurker.attribute_scores[Rules.STRENGTH]).is_equal(5)
 	assert_array(lurker.weapon_dice).is_equal([Rules.d8])
 	assert_object(lurker.nature).is_same(Rules.STRENGTH)
@@ -23,7 +24,7 @@ func test_ambush_decision() -> void:
 	assert_int(ambush._decisions.size()).is_equal(1)
 	var decision: AdventureFightDecision = ambush._decisions[0]
 	assert_str(decision.flee_description).is_equal("Wun away!")
-	assert_object(decision.enemies[0]).is_same(load("uid://d3ytncs0be7oo"))  # lurker.tres
+	assert_object(decision.enemies[0]).is_same(load(LURKER))
 	var references: Dictionary[Fight.Outcome, AdventurePageReference] = {
 		Fight.Outcome.WON: decision.transition,
 		Fight.Outcome.LOST: decision.failure_transition,

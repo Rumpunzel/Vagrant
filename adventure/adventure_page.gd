@@ -47,8 +47,6 @@ func get_background(story: Story) -> Texture2D:
 		if event.are_all_prerequisites_fullfilled(story):
 			var event_background: Texture2D = event.get_background(story)
 			if event_background: return event_background
-	#var area_background: Texture2D = _area.background if _area else null
-	#return _background if _background else area_background
 	return _background
 
 func get_area_background() -> Texture2D:

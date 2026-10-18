@@ -35,10 +35,10 @@ func _create_delay_event(delay: float) -> Event:
 
 class Event extends RefCounted:
 	var _callable: Callable
-	
+
 	func _init(callable: Callable) -> void:
 		assert(callable)
 		_callable = callable
-	
+
 	func execute() -> Variant:
 		return await _callable.call()

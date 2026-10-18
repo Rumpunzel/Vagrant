@@ -13,4 +13,4 @@ func get_consequences() -> Array[StoryConsequence]:
 
 func get_transition() -> AdventurePage:
 	if get_dice_result().is_success(): return get_adventure_decision().transition.get_adventure_page()
-	else: return get_adventure_decision().failure_transition.get_adventure_page()
+	return get_adventure_decision().failure_transition.get_adventure_page()
