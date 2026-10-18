@@ -2,9 +2,9 @@ name: Unit tests
 
 # Fast checks on every push. Waiting / UI tests live in integration_tests.yml
 
+# Pushes cover the commits of pull requests too, so there is no separate pull_request trigger
 on:
   push:
-  pull_request:
   workflow_dispatch:
 
 # A newer push to the same branch cancels the run still in progress
@@ -14,9 +14,8 @@ concurrency:
 
 permissions:
   contents: read
-  # The test report is published as a check run (and as a comment on pull requests)
+  # The test report is published as a check run
   checks: write
-  pull-requests: write
 
 jobs:
   gdunit:
@@ -24,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: godot-gdunit-labs/gdUnit4-action@v1
         with:
@@ -34,3 +33,5 @@ jobs:
           # Use the gdUnit4 copy in addons/ instead of downloading another version
           version: 'installed'
           timeout: 10
+          # Unique per workflow, or the reports overwrite each other's check run
+          report-name: 'unit-tests.xml'

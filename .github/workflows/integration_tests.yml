@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: godot-gdunit-labs/gdUnit4-action@v1
         with:
@@ -35,3 +35,5 @@ jobs:
           timeout: 20
           # Shared runners can be slower than the fixed waits assume
           retries: 1
+          # Unique per workflow, or the reports overwrite each other's check run
+          report-name: 'integration-tests.xml'
