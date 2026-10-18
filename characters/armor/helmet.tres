@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ArmorProfile" format=3 uid="uid://d0vokcalj7e4j"]
+
+[ext_resource type="Script" uid="uid://cswsthfyt60l6" path="res://characters/armor/armor_profile.gd" id="1_armor"]
+
+[resource]
+script = ExtResource("1_armor")
+name = "Helmet"
+blocked_results = Array[int]([5, 10])
+damage_reduction = 0
+metadata/_custom_type_script = "uid://cswsthfyt60l6"

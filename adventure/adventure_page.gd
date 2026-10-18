@@ -20,7 +20,6 @@ enum Exclusivity {
 var _exclusivity: int = 0
 @export var _events: Array[AdventurePage]
 
-## Something that should happen only once needs a condition (e.g. on a flag set when it happens)
 func are_all_prerequisites_fullfilled(_story: Story) -> bool:
 	for condition: AdventureCondition in _conditions:
 		if not condition.is_true(): return false

@@ -59,7 +59,7 @@ func test_goblin_carries_a_battered_club() -> void:
 	var goblin: Monster = _monsters.get_monster(_page, load(GOBLIN))
 	assert_bool(goblin.has_natural_weapons()).is_false()
 	var club: Weapon = goblin.get_weapon()
-	assert_str(club.get_weapon_name()).is_equal("Club")
+	assert_str(club.get_equipment_name()).is_equal("Club")
 	assert_object(club.get_die_type()).is_same(Rules.d6)
 	assert_int(club.marked_faces.size()).is_equal(2)
 	# Every goblin gets its own club and marks

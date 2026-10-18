@@ -139,30 +139,6 @@ func test_find_decision_owner_in_events() -> void:
 		assert_object(base.find_decision_owner(ambush_decision)).is_same(ambush)
 	assert_object(base.find_decision_owner(AdventureDecision.new())).is_null()
 
-func test_failing_to_wield_marks_then_ruins() -> void:
-	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10))
-	var fight: Fight = Fight.new(_decision, _character, _monster)
-	_apply_armed(fight, sword, 9)
-	assert_bool(sword.is_marked(9)).is_true()
-	assert_bool(sword.ruined).is_false()
-	assert_str(fight.get_exchange_summary()).contains("A 9 is marked on your Sword.")
-	_apply_armed(fight, sword, 9)
-	assert_bool(sword.ruined).is_true()
-	assert_str(fight.get_exchange_summary()).contains("Your Sword is ruined.")
-
-func test_wielded_weapon_is_not_marked() -> void:
-	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10))
-	var fight: Fight = Fight.new(_decision, _character, _monster)
-	_apply_armed(fight, sword, 4)
-	assert_array(sword.marked_faces).is_empty()
-
-## One exchange where the player swings [param sword] (Guts 7) and rolls [param result]
-func _apply_armed(fight: Fight, sword: Weapon, result: int) -> void:
-	var player: FightSide = FightSide.new(GUTS, _dice([Rules.d4], [1]), _scores(7), _dice([sword.get_die_type()], [result]))
-	player.marked_faces = sword.marked_faces.duplicate()
-	var opponent: FightSide = FightSide.new(GUTS, _dice([Rules.d8, Rules.d8], [1, 1]), _scores(5))
-	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, sword)
-
 func _apply(
 	fight: Fight,
 	player_results: Array[int], player_guts: int,

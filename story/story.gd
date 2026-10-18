@@ -107,7 +107,6 @@ func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 
 ## Choices that must be taken right away (fights lost on arrival) are also added to [param forced_choices]
 func _create_story_choices(adventure_page: AdventurePage, decisions: Array[AdventureDecision], forced_choices: Array[StoryChoice]) -> Array[StoryChoice]:
-	# Dead ends: without a transition, the only way on is back to the previous page
 	if decisions.is_empty(): decisions.append(AdventureDecision.get_turn_back())
 	var story_choices: Array[StoryChoice] = []
 	for decision: AdventureDecision in decisions:
@@ -146,7 +145,6 @@ func _create_fight_exchange_page(fight: Fight) -> StoryPage:
 	var story_page: StoryPage = StoryPage.new(
 		from_page.adventure_page,
 		fight.get_title(),
-		# What happened is shown below the previous roll; the monster's threat in the dice selection
 		fight.get_condition_description(),
 		from_page.background,
 		from_page.ambience,
@@ -192,7 +190,6 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	if not consequences.is_empty(): _event_queue.queue_delay(_reveal_delay)
 	_event_queue.queue_callable(func() -> void: enter_page(story_choice.get_transition()))
 
-## Applies the exchange to both sides, then shows the next exchange or leaves the fight
 func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision) -> void:
 	var fight: Fight = story_choice.fight
 	# Injuries appear together with their sounds, which play when they are suffered

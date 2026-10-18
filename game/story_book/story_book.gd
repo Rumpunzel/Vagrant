@@ -29,7 +29,6 @@ func display_dice_result(dice_result: DiceRequestResult) -> void:
 	assert(_current_page_entry)
 	_current_page_entry.display_dice_result(dice_result)
 
-## Below the current page's roll, e.g. who got hurt in a fight exchange
 func show_injury(target_name: String, magnitude: int) -> void:
 	assert(_current_page_entry is StoryEntry)
 	(_current_page_entry as StoryEntry).show_injury(target_name, magnitude)

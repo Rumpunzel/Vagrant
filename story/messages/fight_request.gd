@@ -24,13 +24,11 @@ func get_description() -> String:
 	if fleeing: return "You look for a way to escape the %s." % opponent.get_monster_name()
 	return "The %s threatens you with %s." % [opponent.get_monster_name(), Fight.describe_attribute(opponent.get_nature())]
 
-## Only fighting back with a weapon offers a stance choice
 func has_stance_choice() -> bool: return not fleeing and selected_weapon != null
 
 func set_selected_weapon(weapon: Weapon) -> void:
 	assert(not weapon or (weapon.is_usable() and character.weapons.has(weapon)))
 	selected_weapon = weapon
-	# Without a weapon there is no stance choice: unarmed violence is always Guts
 	if not selected_weapon and not fleeing and attribute != Rules.STRENGTH: attribute = Rules.STRENGTH
 	selected_weapon_changed.emit(selected_weapon)
 func set_nerves_target(character_attribute: CharacterAttribute) -> void: nerves_target = character_attribute

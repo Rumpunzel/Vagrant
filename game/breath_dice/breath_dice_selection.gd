@@ -67,7 +67,6 @@ func request_fight(fight_request: FightRequest) -> void:
 	_weapon_selection.setup(fight_request)
 	_update_stance_choice(fight_request, not opened_before)
 
-## The stance choice only exists while fighting back with a weapon, so it follows the picked weapon
 func _update_stance_choice(fight_request: FightRequest, open_instantly: bool = false) -> void:
 	_disconnect_stance_choice(fight_request)
 	if not fight_request.has_stance_choice():

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ShieldProfile" format=3 uid="uid://dmudbdpyppc8x"]
+
+[ext_resource type="Script" uid="uid://d3lp14tetx78i" path="res://characters/shields/shield_profile.gd" id="1_shield"]
+[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="2_die"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="3_guts"]
+
+[resource]
+script = ExtResource("1_shield")
+name = "Round Shield"
+die = ExtResource("2_die")
+wield_attribute = ExtResource("3_guts")
+metadata/_custom_type_script = "uid://d3lp14tetx78i"

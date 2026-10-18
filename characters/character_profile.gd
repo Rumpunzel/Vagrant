@@ -56,10 +56,17 @@ signal origins_changed(origins: Array[Origin])
 		origins = new_origins
 		origins_changed.emit(origins)
 
-## Stand-in until inventory exists; [] = unarmed
+## [] = unarmed
 @export var weapons: Array[WeaponProfile] = []
 ## Applied to every weapon above when it is handed out, e.g. "battered"
-@export var weapon_modifiers: Array[WeaponModifier] = []
+@export var weapon_modifiers: Array[EquipmentModifier] = []
+@export var armor: Array[ArmorProfile] = []
+## Applied to every piece of armour above when it is handed out
+@export var armor_modifiers: Array[EquipmentModifier] = []
+## Only the first usable one is raised
+@export var shields: Array[ShieldProfile] = []
+## Applied to every shield above when it is handed out
+@export var shield_modifiers: Array[EquipmentModifier] = []
 
 @export_group("Configuration")
 @export var _portrait_file_name: String = "Fulllength.png"

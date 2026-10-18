@@ -6,6 +6,8 @@ extends DiceRequestResult
 var exchange: FightExchange
 ## Weapon the opponent fought with this exchange (null if natural or unarmed)
 var opponent_weapon: Weapon
+var player_shield: Shield
+var opponent_shield: Shield
 
 func _init(for_dice_request: FightRequest) -> void:
 	super(for_dice_request)
@@ -16,7 +18,6 @@ func get_dice_request() -> FightRequest: return dice_request
 func get_player_side() -> FightSide: return exchange.first
 func get_opponent_side() -> FightSide: return exchange.second
 
-## Compares threats; on a tie both sides get their full threat as margin
 func get_outcome() -> Outcome:
 	var difference: int = get_player_side().threat - get_opponent_side().threat
 	if difference > 0: return Outcome.SUCCESS
@@ -46,6 +47,9 @@ func _create_player_side() -> FightSide:
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: scores[attribute] = fight_request.character.get_attribute_score(attribute).get_score()
 	var side: FightSide = FightSide.new(fight_request.attribute, dice, scores, [], fight_request.fleeing, fight_request.nerves_target)
 	_arm(side, fight_request.selected_weapon)
+	_armor(side, fight_request.character.armor)
+	player_shield = Shield.get_first_usable(fight_request.character.shields)
+	_raise(side, player_shield)
 	return side
 
 func _create_opponent_side() -> FightSide:
@@ -60,9 +64,23 @@ func _create_opponent_side() -> FightSide:
 	else:
 		opponent_weapon = opponent.get_weapon()
 		_arm(side, opponent_weapon)
+	_armor(side, opponent.armor)
+	opponent_shield = Shield.get_first_usable(opponent.shields)
+	_raise(side, opponent_shield)
 	return side
 
-## Rolls [param weapon]'s die for [param side]; no weapon = unarmed
+func _raise(side: FightSide, shield: Shield) -> void:
+	if not shield: return
+	var shield_die: Die = shield.get_die_type().get_die()
+	DiceRoller.roll_die(shield_die)
+	side.shield_dice = [shield_die] as Array[Die]
+	side.shield_wield_attribute = shield.get_wield_attribute()
+	side.shield_marked_faces = shield.marked_faces.duplicate()
+
+func _armor(side: FightSide, armor: Array[Armor]) -> void:
+	side.armor_blocks = Armor.get_blocked_results(armor)
+	side.damage_reduction = Armor.get_total_damage_reduction(armor)
+
 func _arm(side: FightSide, weapon: Weapon) -> void:
 	if not weapon: return
 	var weapon_die: Die = weapon.get_die_type().get_die()

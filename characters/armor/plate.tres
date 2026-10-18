@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ArmorProfile" format=3 uid="uid://c2rpbx77luhym"]
+
+[ext_resource type="Script" uid="uid://cswsthfyt60l6" path="res://characters/armor/armor_profile.gd" id="1_armor"]
+
+[resource]
+script = ExtResource("1_armor")
+name = "Plate"
+blocked_results = Array[int]([2, 4, 6, 8, 10, 12])
+damage_reduction = 0
+metadata/_custom_type_script = "uid://cswsthfyt60l6"

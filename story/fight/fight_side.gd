@@ -16,6 +16,15 @@ var wield_attribute: CharacterAttribute
 var marked_faces: Array[int] = []
 ## Claws, fangs and the like: the breath dice are the weapon dice and need no wield check
 var has_natural_weapons: bool = false
+## Shield die rolled this exchange (none without a shield)
+var shield_dice: Array[Die] = []
+## Attribute the shield is raised with; null = Guts
+var shield_wield_attribute: CharacterAttribute
+var shield_marked_faces: Array[int] = []
+## Weapon die results this side's armour blocks
+var armor_blocks: Array[int] = []
+## Subtracted from all damage this side takes
+var damage_reduction: int = 0
 ## Effective attribute scores at the start of the exchange (injuries already applied)
 var scores: Dictionary[CharacterAttribute, int]
 ## Foe attribute to impair when threatening with Nerves
@@ -29,6 +38,15 @@ var lost_breath_dice: Array[Die] = []
 var usable_weapon_dice: Array[Die] = []
 ## Weapon dice rolled above the wield score: the weapon could not be wielded, and these faces get marked
 var failed_weapon_dice: Array[Die] = []
+## Wielded weapon dice the foe's armour blocked: they deal no damage
+var blocked_weapon_dice: Array[Die] = []
+## Shield dice rolled above the wield score: the shield could not be raised, and these faces get marked
+var failed_shield_dice: Array[Die] = []
+## The foe die this side's shield lowered, and by how much
+var shield_target: Die
+var shield_value: int = 0
+## Rolled results the foe's shield lowered: Die -> result used for threat and damage
+var reduced_results: Dictionary[Die, int] = {}
 var weapon_damage: int = 0
 var injury_taken: int = 0
 
@@ -51,6 +69,9 @@ func get_fight_stance() -> FightStance:
 	var fight_stance: FightStance = stance.fight_stance
 	assert(fight_stance, "%s has no FightStance" % stance)
 	return fight_stance
+
+## The result a die counts with: lowered by the foe's shield, otherwise as rolled
+func get_result(die: Die) -> int: return reduced_results.get(die, die.result)
 
 func get_score(attribute: CharacterAttribute) -> int:
 	return scores[attribute] - impairments.get(attribute, 0)

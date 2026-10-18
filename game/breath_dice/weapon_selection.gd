@@ -1,9 +1,7 @@
 class_name WeaponSelection
 extends VBoxContainer
 
-## Lets the player pick the weapon for a fight exchange (or none) and shows every face of each
-## weapon die: marked faces are struck through, ruined weapons can't be picked.
-## Deliberately plain; meant to be reworked by hand.
+## Lets the player pick the weapon for a fight exchange (or none) and shows every face of each weapon die.
 
 var _fight_request: FightRequest
 var _buttons: Array[Button] = []
@@ -29,7 +27,7 @@ func _add_option(weapon: Weapon, button_group: ButtonGroup) -> void:
 	var button: Button = Button.new()
 	button.toggle_mode = true
 	button.button_group = button_group
-	button.text = "Unarmed" if not weapon else "%s (%s)" % [weapon.get_weapon_name(), weapon.get_die_type()]
+	button.text = "Unarmed" if not weapon else "%s (%s)" % [weapon.get_equipment_name(), weapon.get_die_type()]
 	button.disabled = weapon != null and not weapon.is_usable()
 	button.button_pressed = weapon == _fight_request.selected_weapon
 	button.toggled.connect(_on_option_toggled.bind(weapon))

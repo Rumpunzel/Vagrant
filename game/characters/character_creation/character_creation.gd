@@ -22,6 +22,7 @@ enum CreationStage {
 
 ## Stand-in until origins hand out starting gear: every created character gets these
 @export var _starting_weapons: Array[WeaponProfile] = []
+@export var _starting_armor: Array[ArmorProfile] = []
 
 @export_group("Configuration")
 @export var _attributes_roller: AttributesRoller
@@ -91,5 +92,6 @@ func _on_continue_pressed() -> void:
 func _on_character_confirmed(character_name: String) -> void:
 	character_profile.name = character_name
 	character_profile.weapons.append_array(_starting_weapons)
+	character_profile.armor.append_array(_starting_armor)
 	assert(character_profile.is_valid())
 	character_created.emit(character_profile)

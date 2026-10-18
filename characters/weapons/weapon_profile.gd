@@ -1,8 +1,6 @@
 class_name WeaponProfile
 extends Resource
 
-## An authored weapon. Its state as carried (marked faces, ruin) lives in [Weapon].
-
 @export_placeholder("Name") var name: String
 @export var die: DieType
 ## Rolling above this attribute's score means the weapon cannot be wielded in that exchange

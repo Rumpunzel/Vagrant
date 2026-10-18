@@ -9,13 +9,16 @@ signal suffered_injury(injury: Injury)
 		assert(new_monster_profile)
 		monster_profile = new_monster_profile
 		weapons = Weapon.carry(monster_profile.weapons, monster_profile.weapon_modifiers)
+		armor = Armor.carry(monster_profile.armor, monster_profile.armor_modifiers)
+		shields = Shield.carry(monster_profile.shields, monster_profile.shield_modifiers)
 		recover_breath()
 
 @export var spawned_from: AdventurePage
 
 var breath_dice: Dictionary[DieType, int]
-## Marks and ruin persist across fights
 var weapons: Array[Weapon] = []
+var armor: Array[Armor] = []
+var shields: Array[Shield] = []
 
 var _injuries: Array[Injury] = []
 
@@ -26,7 +29,6 @@ func lose_breath_dice(lost_breath_dice: Array[Die]) -> void:
 		assert(breath_dice[breath_die.die_type] >= 0)
 	lost_breath.emit(lost_breath_dice)
 
-## For now monsters fully recover their breath between fights
 func recover_breath() -> void:
 	breath_dice = monster_profile.get_breath_dice()
 
@@ -52,18 +54,14 @@ func is_out_of_breath() -> bool:
 func get_monster_name() -> String: return monster_profile.name
 func get_nature() -> CharacterAttribute: return monster_profile.nature
 
-## Injuries reduce all attributes by their total magnitude
 func get_score(attribute: CharacterAttribute) -> int:
 	var score: int = monster_profile.attribute_scores[attribute]
 	for injury: Injury in _injuries: score -= injury.magnitude
 	return score
 
-## Fixed rule: monsters always roll all of their breath dice
 func get_breath_dice_pool() -> Array[Die]:
 	return DiceRoller.generate_dice_pool(breath_dice)
 
-## Monsters without a weapon fight with what nature gave them: their breath dice count as weapon dice
 func has_natural_weapons() -> bool: return monster_profile.weapons.is_empty()
 
-## Monsters always fight with their first usable weapon; null once all are ruined
 func get_weapon() -> Weapon: return Weapon.get_first_usable(weapons)

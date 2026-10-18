@@ -33,7 +33,6 @@ func show_fight_result(fight_result: FightResult) -> void:
 		FightResult.Outcome.FAILURE: color = Main.FAILURE
 	var threats: String = "[color=#%s]%d[/color] vs %d" % [color.to_html(), player.threat, opponent.threat]
 	var message: String = "%s → %s" % [_get_dice_results(fight_result), threats]
-	# Only who actually got hurt
 	var injuries: Array[String] = []
 	if opponent.injury_taken > 0: injuries.append("%s %s" % [opponent_name, Injury.to_bbcode(opponent.injury_taken)])
 	if player.injury_taken > 0: injuries.append("you %s" % Injury.to_bbcode(player.injury_taken))

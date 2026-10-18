@@ -34,15 +34,15 @@ func test_sword_and_club() -> void:
 
 func test_marking_a_new_face() -> void:
 	var knife: Weapon = Weapon.create(load(KNIFE))
-	assert_int(knife.mark(5)).is_equal(Weapon.Mark.MARKED)
-	assert_int(knife.mark(2)).is_equal(Weapon.Mark.MARKED)
+	assert_int(knife.mark(5)).is_equal(Equipment.Mark.MARKED)
+	assert_int(knife.mark(2)).is_equal(Equipment.Mark.MARKED)
 	assert_array(knife.marked_faces).is_equal([2, 5])
 	assert_bool(knife.is_usable()).is_true()
 
 func test_marking_a_marked_face_ruins() -> void:
 	var knife: Weapon = Weapon.create(load(KNIFE))
 	knife.mark(5)
-	assert_int(knife.mark(5)).is_equal(Weapon.Mark.RUINED)
+	assert_int(knife.mark(5)).is_equal(Equipment.Mark.RUINED)
 	assert_bool(knife.is_usable()).is_false()
 	# Still carried and visible, just unusable
 	assert_array(knife.marked_faces).is_equal([5])
@@ -71,13 +71,13 @@ func test_weapon_keeps_its_state_as_a_resource() -> void:
 	assert_object(loaded.weapon_profile).is_same(load(KNIFE))
 	assert_array(loaded.marked_faces).is_equal([2, 7])
 	assert_bool(loaded.ruined).is_false()
-	assert_int(loaded.mark(7)).is_equal(Weapon.Mark.RUINED)
+	assert_int(loaded.mark(7)).is_equal(Equipment.Mark.RUINED)
 
 func test_battered_marks_two_different_faces() -> void:
 	var battered: MarkRandomFacesModifier = load(BATTERED)
 	assert_int(battered.count).is_equal(2)
 	for _repeat: int in 50:
-		var club: Weapon = Weapon.carry([load(CLUB)] as Array[WeaponProfile], [battered] as Array[WeaponModifier])[0]
+		var club: Weapon = Weapon.carry([load(CLUB)] as Array[WeaponProfile], [battered] as Array[EquipmentModifier])[0]
 		assert_int(club.marked_faces.size()).is_equal(2)
 		assert_int(club.marked_faces[0]).is_not_equal(club.marked_faces[1])
 		for face: int in club.marked_faces: assert_int(face).is_between(1, 6)
@@ -86,17 +86,17 @@ func test_battered_marks_two_different_faces() -> void:
 func test_marking_more_faces_than_the_die_has_never_ruins() -> void:
 	var modifier: MarkRandomFacesModifier = MarkRandomFacesModifier.new()
 	modifier.count = 12
-	var club: Weapon = Weapon.carry([load(CLUB)] as Array[WeaponProfile], [modifier] as Array[WeaponModifier])[0]
+	var club: Weapon = Weapon.carry([load(CLUB)] as Array[WeaponProfile], [modifier] as Array[EquipmentModifier])[0]
 	assert_array(club.marked_faces).is_equal([1, 2, 3, 4, 5, 6])
 	assert_bool(club.is_usable()).is_true()
 
 func test_modifiers_apply_to_every_weapon_and_stack() -> void:
 	var battered: MarkRandomFacesModifier = load(BATTERED)
-	var weapons: Array[Weapon] = Weapon.carry([load(CLUB), load(KNIFE)] as Array[WeaponProfile], [battered, battered] as Array[WeaponModifier])
+	var weapons: Array[Weapon] = Weapon.carry([load(CLUB), load(KNIFE)] as Array[WeaponProfile], [battered, battered] as Array[EquipmentModifier])
 	for weapon: Weapon in weapons: assert_int(weapon.marked_faces.size()).is_equal(4)
 
 func test_weapon_profiles_stay_untouched() -> void:
-	var club: Weapon = Weapon.carry([load(CLUB)] as Array[WeaponProfile], [load(BATTERED)] as Array[WeaponModifier])[0]
+	var club: Weapon = Weapon.carry([load(CLUB)] as Array[WeaponProfile], [load(BATTERED)] as Array[EquipmentModifier])[0]
 	club.mark(club.marked_faces[0])
 	assert_bool(club.ruined).is_true()
 	assert_array(Weapon.carry([load(CLUB)] as Array[WeaponProfile])[0].marked_faces).is_empty()
