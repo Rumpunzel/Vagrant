@@ -17,6 +17,7 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 		weapons = Weapon.carry(character_profile.weapons, character_profile.weapon_modifiers)
 		armor = Armor.carry(character_profile.armor, character_profile.armor_modifiers)
 		shields = Shield.carry(character_profile.shields, character_profile.shield_modifiers)
+		items = character_profile.items.duplicate()
 		_recover_breath_dice()
 		character_profile_changed.emit(character_profile)
 
@@ -37,6 +38,8 @@ var most_recently_chosen_attribute: CharacterAttribute
 var weapons: Array[Weapon] = []
 var armor: Array[Armor] = []
 var shields: Array[Shield] = []
+## Item -> how many are carried
+var items: Dictionary[ItemProfile, int] = {}
 
 # TODO: if you roll under an injury, increase magnitude by 1
 var _injuries: Array[Injury] :

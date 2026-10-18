@@ -67,6 +67,8 @@ signal origins_changed(origins: Array[Origin])
 @export var shields: Array[ShieldProfile] = []
 ## Applied to every shield above when it is handed out
 @export var shield_modifiers: Array[EquipmentModifier] = []
+## Item -> how many are carried
+@export var items: Dictionary[ItemProfile, int] = {}
 
 @export_group("Configuration")
 @export var _portrait_file_name: String = "Fulllength.png"

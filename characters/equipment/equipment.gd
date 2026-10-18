@@ -21,9 +21,11 @@ func mark(face: int) -> Mark:
 	assert(get_markable_faces().has(face))
 	if marked_faces.has(face):
 		ruined = true
+		emit_changed()
 		return Mark.RUINED
 	marked_faces.append(face)
 	marked_faces.sort()
+	emit_changed()
 	return Mark.MARKED
 
 func is_usable() -> bool: return not ruined

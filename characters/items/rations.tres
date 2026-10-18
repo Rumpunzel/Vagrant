@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ItemProfile" format=3 uid="uid://b2g8kvymsuwvd"]
+
+[ext_resource type="Script" uid="uid://b48qg7emmfqry" path="res://characters/items/item_profile.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+name = "Rations"
+description = "A day's worth of food."
+metadata/_custom_type_script = "uid://b48qg7emmfqry"

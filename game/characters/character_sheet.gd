@@ -8,12 +8,14 @@ extends CharacterPanel
 @export var _attributes: CharacterAttributesPanel
 @export var _breath_dice: BreathDiceSelectionButtons
 @export var _ability_labels: AbilityLabels
+@export var _inventory: Inventory
 
 func profile_update() -> void:
 	super.profile_update()
 	_name.text = _character_profile.name
 	_title.text = _character_profile.get_formatted_title()
 	_ability_labels.update_abilities(_character_profile.origins)
+	if character: _inventory.show_character(character)
 
 func update_dice_request(dice_request: DiceRequest) -> void:
 	_breath_dice.update_dice_request(dice_request)
@@ -28,6 +30,7 @@ func _set_character(new_character: Character) -> void:
 	if new_character == character: return
 	super._set_character(new_character)
 	_attributes.character = character
+	_inventory.show_character(character)
 
 func _on_save_dialog_file_selected(path: String) -> void:
 	ResourceSaver.save(character.character_profile, path, ResourceSaver.FLAG_CHANGE_PATH)

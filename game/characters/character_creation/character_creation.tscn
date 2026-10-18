@@ -20,6 +20,11 @@
 [ext_resource type="Script" uid="uid://cswsthfyt60l6" path="res://characters/armor/armor_profile.gd" id="22_armor"]
 [ext_resource type="Resource" uid="uid://cgbwu4wq14rtm" path="res://characters/armor/gambeson.tres" id="23_gambeson"]
 [ext_resource type="Resource" uid="uid://d0vokcalj7e4j" path="res://characters/armor/helmet.tres" id="24_helmet"]
+[ext_resource type="Script" uid="uid://d3lp14tetx78i" path="res://characters/shields/shield_profile.gd" id="25_shield"]
+[ext_resource type="Resource" uid="uid://drsjitqot54x4" path="res://characters/shields/buckler.tres" id="26_buckler"]
+[ext_resource type="Script" uid="uid://b48qg7emmfqry" path="res://characters/items/item_profile.gd" id="27_item"]
+[ext_resource type="Resource" uid="uid://b2g8kvymsuwvd" path="res://characters/items/rations.tres" id="28_rations"]
+[ext_resource type="Resource" uid="uid://mawuoxnjayca" path="res://characters/items/waterskin.tres" id="29_waterskin"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hvcdy"]
 
@@ -30,6 +35,11 @@ script = ExtResource("19_vjv61")
 script = ExtResource("1_x4txh")
 _starting_weapons = Array[ExtResource("20_weapon")]([ExtResource("21_sword")])
 _starting_armor = Array[ExtResource("22_armor")]([ExtResource("23_gambeson"), ExtResource("24_helmet")])
+_starting_shields = Array[ExtResource("25_shield")]([ExtResource("26_buckler")])
+_starting_items = Dictionary[ExtResource("27_item"), int]({
+ExtResource("28_rations"): 3,
+ExtResource("29_waterskin"): 1
+})
 _attributes_roller = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller")
 _origins_picker = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker")
 _inventory = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/Inventory")

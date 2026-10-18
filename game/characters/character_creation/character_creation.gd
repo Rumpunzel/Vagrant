@@ -23,6 +23,9 @@ enum CreationStage {
 ## Stand-in until origins hand out starting gear: every created character gets these
 @export var _starting_weapons: Array[WeaponProfile] = []
 @export var _starting_armor: Array[ArmorProfile] = []
+@export var _starting_shields: Array[ShieldProfile] = []
+## Item -> how many
+@export var _starting_items: Dictionary[ItemProfile, int] = {}
 
 @export_group("Configuration")
 @export var _attributes_roller: AttributesRoller
@@ -32,6 +35,7 @@ enum CreationStage {
 @export var _continue: Button
 @export var _character_confirmation: CharacterConfirmation
 
+var _starting_gear_handed_out: bool = false
 var _creation_stage: CreationStage = CreationStage.ATTRIBUTES :
 	set(new_creation_stage):
 		_creation_stage = new_creation_stage
@@ -40,7 +44,9 @@ var _creation_stage: CreationStage = CreationStage.ATTRIBUTES :
 			CreationStage.ORIGINS:
 				_origins_picker.setup(character_profile)
 				_origins_picker.show()
-				#_inventory.show()
+				_hand_out_starting_gear()
+				_inventory.setup(character_profile)
+				_inventory.show()
 				_bio_editor.setup(character_profile)
 				_bio_editor.show()
 			CreationStage.DONE: _character_confirmation.confirm()
@@ -91,7 +97,14 @@ func _on_continue_pressed() -> void:
 
 func _on_character_confirmed(character_name: String) -> void:
 	character_profile.name = character_name
-	character_profile.weapons.append_array(_starting_weapons)
-	character_profile.armor.append_array(_starting_armor)
+	_hand_out_starting_gear()
 	assert(character_profile.is_valid())
 	character_created.emit(character_profile)
+
+func _hand_out_starting_gear() -> void:
+	if _starting_gear_handed_out: return
+	_starting_gear_handed_out = true
+	character_profile.weapons.append_array(_starting_weapons)
+	character_profile.armor.append_array(_starting_armor)
+	character_profile.shields.append_array(_starting_shields)
+	for item: ItemProfile in _starting_items: character_profile.items[item] = character_profile.items.get(item, 0) + _starting_items[item]
