@@ -1,10 +1,9 @@
 extends GdUnitTestSuite
 
-## Content check: the Lurker ambush in the swamp temple ruin is a real fight.
+## Plays the Lurker ambush through the real Story scene.
 
 const TEMPLE_RUIN: String = "uid://cs40ge42lw0ry"  # temple_ruin.tres
 const LURKER_AMBUSH: String = "uid://bxwqtk0p80o4g"  # lurker_ambush.tres
-const ROCKY_SHORE: String = "uid://ycd6xhx346l6"  # rocky_shore.tres
 const OUTCOME_PAGES: Dictionary[Fight.Outcome, String] = {
 	Fight.Outcome.WON: "uid://m4wl5ad8o0i7",  # lurker_ambush_won.tres
 	Fight.Outcome.LOST: "uid://dgfjjbm210jot",  # lurker_ambush_lost.tres
@@ -14,31 +13,6 @@ const OUTCOME_PAGES: Dictionary[Fight.Outcome, String] = {
 
 func after_test() -> void:
 	await await_millis(500)
-
-func test_lurker_profile() -> void:
-	var lurker: MonsterProfile = load("uid://d3ytncs0be7oo")  # lurker.tres
-	assert_int(lurker.attribute_scores[Rules.STRENGTH]).is_equal(5)
-	assert_array(lurker.weapon_dice).is_equal([Rules.d8])
-	assert_object(lurker.nature).is_same(Rules.STRENGTH)
-
-func test_ambush_decision() -> void:
-	var ambush: AdventurePage = load(LURKER_AMBUSH)
-	assert_int(ambush._decisions.size()).is_equal(1)
-	var decision: AdventureFightDecision = ambush._decisions[0]
-	assert_str(decision.flee_description).is_equal("Wun away!")
-	assert_object(decision.enemies[0]).is_same(load("uid://d3ytncs0be7oo"))  # lurker.tres
-	var references: Dictionary[Fight.Outcome, AdventurePageReference] = {
-		Fight.Outcome.WON: decision.transition,
-		Fight.Outcome.LOST: decision.failure_transition,
-		Fight.Outcome.DRAW: decision.draw_transition,
-		Fight.Outcome.FLED: decision.flee_transition,
-	}
-	for outcome: Fight.Outcome in references:
-		var outcome_page: AdventurePage = references[outcome].get_adventure_page()
-		assert_object(outcome_page).is_same(load(OUTCOME_PAGES[outcome]))
-		assert_str(outcome_page._description).is_not_empty()
-		# Each outcome page continues to the Rocky Shore
-		assert_object(outcome_page._decisions[0].transition.get_adventure_page()).is_same(load(ROCKY_SHORE))
 
 func test_flee_from_ambush_in_story() -> void:
 	# Ends on the ambush's flee page

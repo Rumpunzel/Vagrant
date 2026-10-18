@@ -1,0 +1,37 @@
+name: Integration tests
+
+# Slower tests that wait for timers, typing and fades, or run the real Story scene and UI.
+# Not run on push to keep the pipeline lean: only on pull requests into main, or started by hand.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# A newer push to the same pull request cancels the run still in progress
+concurrency:
+  group: integration-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  # The test report is published as a check run and as a comment on the pull request
+  checks: write
+  pull-requests: write
+
+jobs:
+  gdunit:
+    name: gdUnit4 (integration)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: godot-gdunit-labs/gdUnit4-action@v1
+        with:
+          # Keep in sync with config/features in project.godot
+          godot-version: '4.6'
+          paths: 'res://tests/integration'
+          version: 'installed'
+          timeout: 20
+          # Shared runners can be slower than the fixed waits assume
+          retries: 1

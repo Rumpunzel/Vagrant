@@ -1,0 +1,36 @@
+name: Unit tests
+
+# Fast checks on every push. Waiting / UI tests live in integration_tests.yml
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# A newer push to the same branch cancels the run still in progress
+concurrency:
+  group: unit-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  # The test report is published as a check run (and as a comment on pull requests)
+  checks: write
+  pull-requests: write
+
+jobs:
+  gdunit:
+    name: gdUnit4 (unit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: godot-gdunit-labs/gdUnit4-action@v1
+        with:
+          # Keep in sync with config/features in project.godot
+          godot-version: '4.6'
+          paths: 'res://tests/unit'
+          # Use the gdUnit4 copy in addons/ instead of downloading another version
+          version: 'installed'
+          timeout: 10
