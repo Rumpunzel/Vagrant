@@ -86,7 +86,8 @@ func get_how_often_decision_has_been_made(story_decision: AdventureDecision) -> 
 	return _decision_log[story_decision].size()
 
 func get_how_often_page_has_been_entered(adventure_page: AdventurePage) -> int:
-	return _page_log.get(adventure_page, [] as Array[StoryPage]).size()
+	var visited_story_pages: Array[StoryPage] = _page_log.get(adventure_page, [] as Array[StoryPage])
+	return visited_story_pages.size()
 
 func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	assert(_protagonist)
@@ -111,7 +112,7 @@ func _create_story_choices(adventure_page: AdventurePage, decisions: Array[Adven
 	var story_choices: Array[StoryChoice] = []
 	for decision: AdventureDecision in decisions:
 		if decision is AdventureFightDecision:
-			var fight: Fight = _create_fight(adventure_page, decision)
+			var fight: Fight = _create_fight(adventure_page, decision as AdventureFightDecision)
 			if fight.is_ongoing(): story_choices.append_array(_create_fight_choices(fight))
 			else:
 				var lost_choice: StoryChoice = StoryChoice.from_adventure_decision(_create_lost_fight_decision(fight), _protagonist)

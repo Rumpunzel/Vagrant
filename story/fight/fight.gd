@@ -61,14 +61,14 @@ func get_exchange_count() -> int: return exchanges.size()
 func get_last_exchange() -> FightExchange: return exchanges.back() if not exchanges.is_empty() else null
 
 func get_transition() -> AdventurePage:
-	var reference: AdventurePageReference = null
+	var page_reference: AdventurePageReference = null
 	match outcome:
-		Outcome.WON: reference = decision.transition
-		Outcome.LOST: reference = decision.failure_transition
-		Outcome.DRAW: reference = decision.draw_transition
-		Outcome.FLED: reference = decision.flee_transition
+		Outcome.WON: page_reference = decision.transition
+		Outcome.LOST: page_reference = decision.failure_transition
+		Outcome.DRAW: page_reference = decision.draw_transition
+		Outcome.FLED: page_reference = decision.flee_transition
 		_: assert(false, "Fight is still ongoing")
-	return reference.get_adventure_page() if reference else null
+	return page_reference.get_adventure_page() if page_reference else null
 
 func get_consequences() -> Array[AdventureConsequence]:
 	match outcome:

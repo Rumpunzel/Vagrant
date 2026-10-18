@@ -30,7 +30,7 @@ func get_description() -> String:
 
 ## Only fighting back with a weapon offers a stance choice
 func has_stance_choice() -> bool: return not fleeing and not selected_weapon_dice.is_empty()
-func set_nerves_target(attribute: CharacterAttribute) -> void: nerves_target = attribute
+func set_nerves_target(character_attribute: CharacterAttribute) -> void: nerves_target = character_attribute
 
 func get_stance_description(for_attribute: CharacterAttribute) -> String:
 	return get_source().stance_descriptions.get(for_attribute, for_attribute.stance_description)
