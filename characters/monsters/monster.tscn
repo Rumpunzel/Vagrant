@@ -20,5 +20,5 @@ bus = &"SFX"
 stream = SubResource("AudioStreamRandomizer_dmg")
 bus = &"SFX"
 
-[connection signal="suffered_injury" from="." to="DamageSounds" method="play" unbinds=1]
 [connection signal="suffered_injury" from="." to="InjurySounds" method="play" unbinds=1]
+[connection signal="suffered_injury" from="." to="DamageSounds" method="play" unbinds=1]

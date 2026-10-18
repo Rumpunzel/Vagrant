@@ -40,7 +40,9 @@ var _injuries: Array[Injury] :
 		injuries_changed.emit(_injuries)
 
 func parse_dice_result(dice_result: DiceRequestResult) -> void:
-	var lost_breath_dice: Array[Die] = dice_result.get_lost_breath_dice()
+	lose_breath_dice(dice_result.get_lost_breath_dice())
+
+func lose_breath_dice(lost_breath_dice: Array[Die]) -> void:
 	if lost_breath_dice.is_empty(): return
 	var new_breath_dice: Dictionary[DieType, int] = breath_dice.duplicate()
 	for breath_die: Die in lost_breath_dice:

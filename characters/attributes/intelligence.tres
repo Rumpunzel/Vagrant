@@ -3,6 +3,10 @@
 [ext_resource type="Texture2D" uid="uid://wqwykjabmg6s" path="res://characters/attributes/icons/skull-crack.svg" id="1_rkmxj"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="1_wgpsi"]
 [ext_resource type="Texture2D" uid="uid://c18vwojibiavq" path="res://characters/origins/icons/crossbow.svg" id="1_wtrd3"]
+[ext_resource type="Script" uid="uid://ef05bmh0pxom" path="res://story/fight/stances/nerves_stance.gd" id="9_stance"]
+
+[sub_resource type="Resource" id="Resource_stance"]
+script = ExtResource("9_stance")
 
 [resource]
 script = ExtResource("1_wgpsi")
@@ -13,3 +17,4 @@ color = Color(0.39215687, 0.53333336, 0.6117647, 1)
 details = "Precision, composure, and stealth."
 stance_description = "Feint and trick with guile and precision!"
 abilities = Array[String](["Decrease a foe's attribute of your choice by your margin of success for this exchange."])
+fight_stance = SubResource("Resource_stance")

@@ -8,6 +8,8 @@ extends Resource
 @export_multiline var details: String
 @export_multiline var stance_description: String
 @export_multiline var abilities: Array[String]
+## What threatening a foe with this attribute does
+@export var fight_stance: FightStance
 
 func to_bbcode(icon_size: int = 24) -> String:
 	return "[img color=\"%s\" width=\"%d\" height=\"%d\" align=\"center\" valign=\"center\"]%s[/img]" % [color.to_html(), icon_size, icon_size, icon.resource_path]

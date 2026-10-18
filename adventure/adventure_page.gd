@@ -100,5 +100,13 @@ func exclude_below() -> bool:
 func exclude_above() -> bool:
 	return _exclusivity & Exclusivity.EXCLUDE_ABOVE
 
+## The page (this one or a nested event) that defines [param decision], since [method get_decisions] flattens events
+func find_decision_owner(decision: AdventureDecision) -> AdventurePage:
+	if _decisions.has(decision): return self
+	for event: AdventurePage in _events:
+		var owner: AdventurePage = event.find_decision_owner(decision)
+		if owner: return owner
+	return null
+
 func get_adventure_page() -> AdventurePage:
 	return self

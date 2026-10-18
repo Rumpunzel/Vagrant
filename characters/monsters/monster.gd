@@ -10,6 +10,8 @@ signal suffered_injury(injury: Injury)
 		monster_profile = new_monster_profile
 		recover_breath()
 
+@export var spawned_from: AdventurePage
+
 var breath_dice: Dictionary[DieType, int]
 
 var _injuries: Array[Injury] = []
@@ -29,6 +31,16 @@ func suffer_injury(injury: Injury) -> void:
 	assert(injury.magnitude > 0)
 	_injuries.append(injury)
 	suffered_injury.emit(injury)
+
+func get_injury_total() -> int:
+	var total: int = 0
+	for injury: Injury in _injuries: total += injury.magnitude
+	return total
+
+func get_breath_dice_count() -> int:
+	var count: int = 0
+	for amount: int in breath_dice.values(): count += amount
+	return count
 
 func is_out_of_breath() -> bool:
 	for amount: int in breath_dice.values(): if amount > 0: return false

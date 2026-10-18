@@ -13,7 +13,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lcgf6"]
 
-[node name="BreathDiceSelection" type="PanelContainer" unique_id=711374009 node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
+[node name="BreathDiceSelection" type="PanelContainer" unique_id=711374009 node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection", "_nerves_target_selection", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
 offset_right = 336.0
 offset_bottom = 185.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lcgf6")
@@ -22,6 +22,7 @@ _portrait = NodePath("Vignette/Portrait")
 _description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Description")
 _stance_selection_collapsible_container = NodePath("MarginContainer/VBoxContainer/CollapsibleContainer")
 _stance_selection = NodePath("MarginContainer/VBoxContainer/CollapsibleContainer/StanceSelection")
+_nerves_target_selection = NodePath("MarginContainer/VBoxContainer/NervesTargetSelection")
 _breath_dice_selection_buttons = NodePath("MarginContainer/VBoxContainer/BreathDiceSelectionButtons")
 _all_in_button = NodePath("MarginContainer/VBoxContainer/HBoxContainer/AllInButton")
 _ok_button = NodePath("MarginContainer/VBoxContainer/HBoxContainer/OKButton")
@@ -94,6 +95,10 @@ offset_right = 0.0
 offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="NervesTargetSelection" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_m1dxb")]
+visible = false
+layout_mode = 2
 
 [node name="DiceRequestEntry" parent="MarginContainer/VBoxContainer" unique_id=959955054 instance=ExtResource("4_tj3a7")]
 layout_mode = 2

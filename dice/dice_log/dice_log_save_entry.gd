@@ -2,6 +2,7 @@ class_name DiceLogSaveEntry
 extends DiceLogEntry
 
 func initialize_dice_request(dice_request: DiceRequest) -> void:
+	if dice_request.attribute_changed.is_connected(_on_attribute_changed.bind(dice_request.character)): dice_request.attribute_changed.disconnect(_on_attribute_changed.bind(dice_request.character))
 	var prefix: String = _get_prefix(dice_request.character, dice_request.attribute)
 	_entry.type_text("%s: Choose Breath Dice…" % prefix)
 	dice_request.attribute_changed.connect(_on_attribute_changed.bind(dice_request.character))

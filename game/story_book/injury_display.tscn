@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://game/story_book/injury_display.gd" id="1_injury"]
+[ext_resource type="Texture2D" uid="uid://v3pkbe7jeme1" path="res://game/icons/ragged-wound.svg" id="2_wound"]
+
+[node name="InjuryDisplay" type="HBoxContainer" node_paths=PackedStringArray("_icon", "_magnitude", "_target")]
+theme_override_constants/separation = 6
+script = ExtResource("1_injury")
+_icon = NodePath("Icon")
+_magnitude = NodePath("Magnitude")
+_target = NodePath("Target")
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+texture = ExtResource("2_wound")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Magnitude" type="Label" parent="."]
+layout_mode = 2
+text = "2"
+
+[node name="Target" type="Label" parent="."]
+layout_mode = 2
+text = "Lurker"

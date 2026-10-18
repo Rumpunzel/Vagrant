@@ -11,6 +11,9 @@ extends PageEntry
 @export var _choices: FlexContainer
 @export var _breath_dice_collapsible_container: CollapsibleContainer
 @export var _breath_dice_selection: BreathDiceSelection
+@export var _injuries: Container
+@export var _outcome: TypingLabel
+@export var _injury_display: PackedScene
 @export var _dialog_button: PackedScene
 
 var story_page: StoryPage : set = set_story_page
@@ -30,6 +33,19 @@ func request_dice(dice_request: DiceRequest) -> void:
 	_breath_dice_selection.request_dice(dice_request)
 	await get_tree().process_frame
 	_breath_dice_collapsible_container.open_tween()
+
+func show_injury(target_name: String, magnitude: int) -> void:
+	var injury_display: InjuryDisplay = _injury_display.instantiate()
+	_injuries.add_child(injury_display)
+	injury_display.setup(target_name, magnitude)
+	_injuries.visible = true
+
+## Returns once the text is fully typed out
+func show_outcome(outcome: String) -> void:
+	if outcome.is_empty(): return
+	_outcome.visible = true
+	_outcome.type_text(outcome)
+	if _outcome.visible_ratio < 1.0: await _outcome.finished_typing
 
 func display_dice_result(dice_result: DiceRequestResult) -> void:
 	_breath_dice_selection.display_dice_result(dice_result)
