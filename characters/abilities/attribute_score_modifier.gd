@@ -1,8 +1,8 @@
 @tool
 class_name AttributeScoreModifier
-extends Resource
+extends Ability
 
-@export_multiline var description: String
+## Also used for injuries, which are not granted by an origin
 @export var score_modifiers: Dictionary[CharacterAttribute, int] = {
 	Rules.STRENGTH: 1,
 	Rules.AGILITY: 1,

@@ -4,6 +4,8 @@ extends GdUnitTestSuite
 
 const PEASANT: String = "uid://c7j5c7ekitgl3"  # peasant.tres
 const BLACKSMITH: String = "uid://bm2bwleksmsqv"  # blacksmith.tres
+const VETERAN: String = "uid://45sbhcfyenlm"  # veteran.tres
+const ADVENTURER: String = "uid://ciavtykggnu43"  # adventurer.tres
 
 func test_complete_profile_is_valid() -> void:
 	assert_bool(TestCharacters.adventurer().is_valid()).is_true()
@@ -38,8 +40,9 @@ func test_attribute_modifiers_come_from_origins() -> void:
 	var profile: CharacterProfile = TestCharacters.adventurer()
 	var modifier: AttributeScoreModifier = AttributeScoreModifier.new()
 	modifier.score_modifiers = {Rules.STRENGTH: 1, Rules.AGILITY: 0, Rules.INTELLIGENCE: -1} as Dictionary[CharacterAttribute, int]
-	profile.origins[0].modifiers = [modifier] as Array[AttributeScoreModifier]
-	profile.origins[1].modifiers = [modifier, modifier] as Array[AttributeScoreModifier]
+	# Only abilities that modify scores count
+	profile.origins[0].abilities = [modifier, Ability.new()] as Array[Ability]
+	profile.origins[1].abilities = [modifier, modifier] as Array[Ability]
 	assert_int(profile.get_attribute_modifiers().size()).is_equal(3)
 
 func test_origin_without_ass_keeps_losses() -> void:
@@ -71,3 +74,25 @@ func test_concatenate_without_combination() -> void:
 
 func _rolled(first: int, second: int) -> RolledAttributeScore:
 	return RolledAttributeScore.new([Die.new(Rules.d6, first), Die.new(Rules.d6, second)] as Array[Die])
+
+func test_veteran_abilities() -> void:
+	var veteran: Origin = load(VETERAN)
+	assert_int(veteran.abilities.size()).is_equal(2)
+	assert_object(veteran.abilities[0]).is_instanceof(ExtraWeaponDiceAbility)
+	assert_int((veteran.abilities[0] as ExtraWeaponDiceAbility).count).is_equal(1)
+	assert_object(veteran.abilities[1]).is_instanceof(VantageMultiplierAbility)
+	assert_int((veteran.abilities[1] as VantageMultiplierAbility).multiplier).is_equal(2)
+	for ability: Ability in veteran.abilities: assert_str(ability.description).is_not_empty()
+
+func test_adventurer_ability_raises_all_attributes() -> void:
+	var adventurer: Origin = load(ADVENTURER)
+	assert_object(adventurer.abilities[0]).is_instanceof(AttributeScoreModifier)
+	assert_int(adventurer.get_attribute_score_modifiers().size()).is_equal(1)
+
+func test_abilities_come_from_both_origins() -> void:
+	var profile: CharacterProfile = TestCharacters.adventurer()
+	var first: Ability = Ability.new()
+	var second: Ability = Ability.new()
+	profile.origins[0].abilities = [first] as Array[Ability]
+	profile.origins[1].abilities = [second] as Array[Ability]
+	assert_array(profile.get_abilities()).contains_same_exactly(first, second)

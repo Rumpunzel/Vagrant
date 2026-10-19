@@ -117,6 +117,11 @@ func get_available_doubles() -> int:
 		if attribute_score and attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
 	return doubles_rolled
 
+func get_abilities() -> Array[Ability]:
+	var abilities: Array[Ability] = []
+	for origin: Origin in origins: if origin: abilities.append_array(origin.abilities)
+	return abilities
+
 func get_attribute_modifiers() -> Array[AttributeScore.Modifier]:
 	var modifiers: Array[AttributeScore.Modifier] = []
 	for origin: Origin in origins:

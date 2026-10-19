@@ -92,6 +92,14 @@ func test_summary_without_shields_has_no_shield_paragraph() -> void:
 	assert_str(fight.get_exchange_summary()).not_contains("shield")
 	assert_str(fight.get_exchange_summary()).not_contains("Now you")
 
+func test_summary_lists_every_weapon_die() -> void:
+	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10))
+	var fight: Fight = Fight.new(_decision, _character, _monster)
+	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [4]), FightTestDice.scores(7), FightTestDice.dice([Rules.d10, Rules.d10], [3, 6]))
+	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [2]), FightTestDice.scores(5))
+	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, sword)
+	assert_str(fight.get_exchange_summary()).contains("and your Sword (3, 6)")
+
 ## One exchange where the player swings [param sword] and rolls [param result]
 func _apply_armed(fight: Fight, sword: Weapon, result: int, opponent_armor_blocks: Array[int] = [], guts: int = 7) -> void:
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(guts), FightTestDice.dice([sword.get_die_type()], [result]))

@@ -45,7 +45,10 @@ func _create_player_side() -> FightSide:
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: scores[attribute] = fight_request.character.get_attribute_score(attribute).get_score()
 	# Shields are carried but not raised until they get a mechanic that fits the order of an exchange
 	var side: FightSide = FightSide.new(fight_request.attribute, dice, scores, [], fight_request.fleeing, fight_request.nerves_target)
-	_arm(side, fight_request.selected_weapon)
+	side.abilities = fight_request.character.character_profile.get_abilities()
+	var extra_weapon_dice: int = 0
+	for ability: Ability in side.abilities: extra_weapon_dice += ability.get_extra_weapon_dice()
+	_arm(side, fight_request.selected_weapon, extra_weapon_dice)
 	_armor(side, fight_request.character.armor)
 	return side
 
@@ -68,10 +71,14 @@ func _armor(side: FightSide, armor: Array[Armor]) -> void:
 	side.armor_blocks = Armor.get_blocked_results(armor)
 	side.damage_reduction = Armor.get_total_damage_reduction(armor)
 
-func _arm(side: FightSide, weapon: Weapon) -> void:
+## Rolls the weapon's die, plus [param extra_dice] more of the same kind
+func _arm(side: FightSide, weapon: Weapon, extra_dice: int = 0) -> void:
 	if not weapon: return
-	var weapon_die: Die = weapon.get_die_type().get_die()
-	DiceRoller.roll_die(weapon_die)
-	side.weapon_dice = [weapon_die] as Array[Die]
+	var weapon_dice: Array[Die] = []
+	for _index: int in 1 + extra_dice:
+		var weapon_die: Die = weapon.get_die_type().get_die()
+		DiceRoller.roll_die(weapon_die)
+		weapon_dice.append(weapon_die)
+	side.weapon_dice = weapon_dice
 	side.wield_attribute = weapon.get_wield_attribute()
 	side.marked_faces = weapon.marked_faces.duplicate()

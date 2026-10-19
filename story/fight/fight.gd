@@ -212,7 +212,10 @@ func _describe_dice(player: FightSide, opponent: FightSide) -> String:
 
 func _describe_side_dice(side: FightSide, weapon: Weapon, owner: String) -> String:
 	var text: String = "%s (%d)" % [describe_attribute(side.stance), side.threat]
-	if weapon and not side.weapon_dice.is_empty(): text += " and %s %s (%d)" % [owner, weapon.get_equipment_name(), FightExchange.get_highest_result(side.weapon_dice)]
+	if weapon and not side.weapon_dice.is_empty():
+		var results: Array[String] = []
+		for die: Die in side.weapon_dice: results.append(str(die.result))
+		text += " and %s %s (%s)" % [owner, weapon.get_equipment_name(), ", ".join(results)]
 	return text
 
 static func _describe_impairments(impairments: Dictionary[CharacterAttribute, int]) -> String:

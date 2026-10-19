@@ -2,11 +2,21 @@
 
 [ext_resource type="Texture2D" uid="uid://o266jm48qawt" path="res://characters/origins/icons/spartan-helmet.svg" id="1_nyu4n"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_6jk6b"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_53ue5"]
+[ext_resource type="Script" uid="uid://yfcblst84p4j" path="res://characters/abilities/ability.gd" id="ab_1"]
+[ext_resource type="Script" uid="uid://bikveyr2lyxws" path="res://characters/abilities/extra_weapon_dice_ability.gd" id="ab_2"]
+[ext_resource type="Script" uid="uid://b0c424p8oav0c" path="res://characters/abilities/vantage_multiplier_ability.gd" id="ab_3"]
+
+[sub_resource type="Resource" id="Ability_veteran_0"]
+script = ExtResource("ab_2")
+description = "[b]+1[/b] weapon die."
+
+[sub_resource type="Resource" id="Ability_veteran_1"]
+script = ExtResource("ab_3")
+description = "Double vantage against foes."
 
 [resource]
 script = ExtResource("2_6jk6b")
-abilities = Array[String](["[b]+1[/b] weapon die.", "Double vantage against foes."])
+abilities = Array[ExtResource("ab_1")]([SubResource("Ability_veteran_0"), SubResource("Ability_veteran_1")])
 name = "Veteran"
 icon = ExtResource("1_nyu4n")
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

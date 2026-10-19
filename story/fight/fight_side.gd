@@ -29,6 +29,8 @@ var damage_reduction: int = 0
 var scores: Dictionary[CharacterAttribute, int]
 ## Foe attribute to impair when threatening with Nerves
 var nerves_target: CharacterAttribute
+## The fighter's abilities (monsters have none yet)
+var abilities: Array[Ability] = []
 
 # Result
 var threat: int = 0
@@ -36,6 +38,8 @@ var threat: int = 0
 var impairments: Dictionary[CharacterAttribute, int] = {}
 var lost_breath_dice: Array[Die] = []
 var usable_weapon_dice: Array[Die] = []
+## Extra weapon dice that were rolled but not chosen: they count for nothing and mark nothing
+var spare_weapon_dice: Array[Die] = []
 ## Weapon dice rolled above the wield score: the weapon could not be wielded, and these faces get marked
 var failed_weapon_dice: Array[Die] = []
 ## Wielded weapon dice the foe's armour blocked: they deal no damage

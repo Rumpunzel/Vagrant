@@ -1,12 +1,11 @@
 [gd_resource type="Resource" script_class="WeaponProfile" format=3 uid="uid://dekvqsgavj6iv"]
 
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="1_fgqjb"]
 [ext_resource type="Script" uid="uid://ctyfdlvouya4j" path="res://characters/weapons/weapon_profile.gd" id="1_weapon"]
-[ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="2_d8"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="3_guts"]
 
 [resource]
 script = ExtResource("1_weapon")
 name = "Knife"
-die = ExtResource("2_d8")
-wield_attribute = ExtResource("3_guts")
+die = ExtResource("1_fgqjb")
 metadata/_custom_type_script = "uid://ctyfdlvouya4j"

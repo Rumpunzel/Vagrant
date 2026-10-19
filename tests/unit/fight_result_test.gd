@@ -41,6 +41,18 @@ func test_nerves_attack_reaches_the_opponent_side() -> void:
 	assert_object(opponent.stance).is_same(Rules.INTELLIGENCE)
 	assert_object(opponent.nerves_target).is_same(Rules.AGILITY)
 
+func test_extra_weapon_dice_ability_rolls_more_of_the_weapon() -> void:
+	var extra: ExtraWeaponDiceAbility = ExtraWeaponDiceAbility.new()
+	_character.character_profile.origins[0].abilities = [extra] as Array[Ability]
+	var player: FightSide = _create_request().roll().get_player_side()
+	assert_array(player.abilities).contains_same_exactly(extra)
+	assert_int(player.weapon_dice.size()).is_equal(2)
+	for die: Die in player.weapon_dice: assert_object(die.die_type).is_same(Rules.d10)
+	# Unarmed there is no weapon to roll more of
+	var request: FightRequest = _create_request()
+	request.selected_weapon = null
+	assert_array(request.roll().get_player_side().weapon_dice).is_empty()
+
 func test_outcome_and_margin_follow_threat() -> void:
 	for _roll: int in ROLLS:
 		var result: FightResult = _create_request().roll()

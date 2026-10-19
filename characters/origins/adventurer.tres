@@ -2,13 +2,12 @@
 
 [ext_resource type="Texture2D" uid="uid://j1nbfswx1qpn" path="res://characters/origins/icons/dwarf-face.svg" id="1_khty3"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="1_vwydo"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_6f1iy"]
 [ext_resource type="Resource" uid="uid://fryeuxhsirvn" path="res://characters/abilities/increased_attributes.tres" id="3_0eesl"]
+[ext_resource type="Script" uid="uid://yfcblst84p4j" path="res://characters/abilities/ability.gd" id="ab_1"]
 
 [resource]
 script = ExtResource("1_vwydo")
-abilities = Array[String](["[b]+1[/b] to all attributes."])
-modifiers = Array[ExtResource("2_6f1iy")]([ExtResource("3_0eesl")])
+abilities = Array[ExtResource("ab_1")]([ExtResource("3_0eesl")])
 name = "Adventurer"
 icon = ExtResource("1_khty3")
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"
