@@ -14,7 +14,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q7j6d"]
 
-[node name="Mechanics" type="PanelContainer" unique_id=2090182573 node_paths=PackedStringArray("_catch_breath_popup", "_catch_breaths", "_make_camp_popup", "_make_camps", "_catch_breath_button")]
+[node name="Mechanics" type="PanelContainer" unique_id=2090182573 node_paths=PackedStringArray("_catch_breath_popup", "_catch_breaths", "_make_camp_popup", "_make_camps", "_catch_breath_button", "_make_camp_button")]
 offset_right = 164.0
 offset_bottom = 208.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q7j6d")
@@ -24,6 +24,7 @@ _catch_breaths = NodePath("CatchBreathDialog/VBoxContainer/CatchBreaths")
 _make_camp_popup = NodePath("MakeCampDialog")
 _make_camps = NodePath("MakeCampDialog/VBoxContainer/MakeCamps")
 _catch_breath_button = NodePath("MarginContainer/VBoxContainer/CatchBreath")
+_make_camp_button = NodePath("MarginContainer/VBoxContainer/MakeCamp")
 metadata/_custom_type_script = "uid://cgdirjbx82wdh"
 
 [node name="CatchBreathDialog" type="ConfirmationDialog" parent="." unique_id=1318358961]

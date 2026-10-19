@@ -35,6 +35,8 @@ func _init(
 	events = from_events
 
 func is_fight_exchange() -> bool: return fight != null
+## The first page of a fight offers it, every following exchange belongs to it
+func is_fighting() -> bool: return is_fight_exchange() or choices.any(func(choice: StoryChoice) -> bool: return choice is StoryFightDecision)
 
 func create_story_entry() -> StoryEntry:
 	var story_entry_scene: PackedScene = load("uid://cy2ymcfk2tejn")

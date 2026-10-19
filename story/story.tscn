@@ -143,6 +143,7 @@ layout_mode = 2
 layout_mode = 2
 
 [connection signal="dice_requested" from="." to="Party" method="_on_dice_requested"]
+[connection signal="story_page_entered" from="." to="PanelContainer/MarginContainer/HSplitContainer/HBoxContainer/Mechanics" method="_on_story_page_entered"]
 [connection signal="character_added" from="Party" to="Party" method="_on_character_added"]
 [connection signal="character_selected" from="Party" to="." method="_on_party_character_selected"]
 [connection signal="character_selected" from="PanelContainer/MarginContainer/HSplitContainer/HBoxContainer/CharacterPortraits" to="Party" method="_on_character_portraits_character_selected"]

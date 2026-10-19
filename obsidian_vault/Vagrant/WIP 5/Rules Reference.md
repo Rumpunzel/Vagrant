@@ -17,7 +17,7 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 ## Fight exchange
 - Both sides roll at once. **Threat** = highest breath die.
 - Player picks: fight or flee, a weapon (or unarmed), a stance (armed only), breath dice (≥ 1).
-- Monster: rolls all breath dice, first usable weapon. Its **attack** sets the stance: Guts (default), or Nerves aimed at a fixed player attribute (Lurker: Guts). Without a usable weapon (natural weapons always count) it threatens with Guts.
+- Monster: rolls all breath dice, first usable weapon. Its **attack** sets the stance: Guts (default), or Nerves aimed at a fixed player attribute (Lurker: Blood). Without a usable weapon (natural weapons always count) it threatens with Guts.
 - **Vantage**: winner = threat difference; loser and tie = 0. Abilities may change it (Veteran: ×2).
 - **Stances** work with the vantage; on a tie, each side's stance works with its own full threat instead (not changed by abilities). Only when > 0:
   - **Guts**: damage dealt + vantage.

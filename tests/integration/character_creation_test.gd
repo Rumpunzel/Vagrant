@@ -36,7 +36,10 @@ func test_created_character_gets_starting_gear() -> void:
 func test_gear_is_handed_out_once_and_shown() -> void:
 	# A valid profile goes straight to the origins stage, where the inventory appears
 	assert_bool(_creation._inventory.visible).is_true()
-	assert_array(_creation._inventory.get_entries()).contains(["Sword (d10)", "Buckler (d6)", "Rations ×3", "Waterskin"])
+	# Worded from the gear itself, so rebalancing a die does not break this
+	var sword: WeaponProfile = load(SWORD)
+	var buckler: ShieldProfile = load(BUCKLER)
+	assert_array(_creation._inventory.get_entries()).contains(["%s (%s)" % [sword.name, sword.die], "%s (%s)" % [buckler.name, buckler.die], "Rations ×3", "Waterskin"])
 	_creation._on_character_confirmed("Tester")
 	_assert_starting_gear()
 

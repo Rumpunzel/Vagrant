@@ -17,11 +17,11 @@ func test_lurker_profile() -> void:
 	var lurker: MonsterProfile = load(LURKER)
 	assert_int(lurker.attribute_scores[Rules.STRENGTH]).is_equal(5)
 	assert_int(lurker.weapons.size()).is_equal(1)
-	assert_str(lurker.weapons[0].name).is_equal("Knife")
-	assert_object(lurker.weapons[0].die).is_same(Rules.d8)
+	# The knife's own stats are checked in weapon_test.gd
+	assert_object(lurker.weapons[0]).is_same(load("uid://dekvqsgavj6iv"))  # knife.tres
 	assert_array(lurker.equipment_modifiers).is_empty()
 	assert_object(lurker.attack).is_instanceof(NervesAttack)
-	assert_object((lurker.attack as NervesAttack).target).is_same(Rules.STRENGTH)
+	assert_object((lurker.attack as NervesAttack).target).is_same(Rules.AGILITY)
 
 func test_ambush_decision() -> void:
 	var ambush: AdventurePage = load(LURKER_AMBUSH)

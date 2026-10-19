@@ -21,13 +21,13 @@ func test_create_ruined() -> void:
 func test_knife() -> void:
 	var knife: WeaponProfile = load(KNIFE)
 	assert_str(knife.name).is_equal("Knife")
-	assert_object(knife.die).is_same(Rules.d8)
+	assert_object(knife.die).is_same(Rules.d6)
 	assert_object(knife.wield_attribute).is_same(Rules.STRENGTH)
 
 func test_sword_and_club() -> void:
 	var sword: WeaponProfile = load(SWORD)
 	assert_str(sword.name).is_equal("Sword")
-	assert_object(sword.die).is_same(Rules.d10)
+	assert_object(sword.die).is_same(Rules.d8)
 	var club: WeaponProfile = load(CLUB)
 	assert_str(club.name).is_equal("Club")
 	assert_object(club.die).is_same(Rules.d6)
@@ -61,17 +61,17 @@ func test_carrying_gives_each_its_own_state() -> void:
 	assert_bool(weapons[1].is_marked(3)).is_false()
 
 func test_weapon_keeps_its_state_as_a_resource() -> void:
-	# Authored in a given state: already marked
-	var knife: Weapon = Weapon.create(load(KNIFE), [7, 2] as Array[int])
-	assert_array(knife.marked_faces).is_equal([2, 7])
+	# Authored in a given state: already marked (low faces, so rebalancing the knife to d6 or more does not matter)
+	var knife: Weapon = Weapon.create(load(KNIFE), [5, 2] as Array[int])
+	assert_array(knife.marked_faces).is_equal([2, 5])
 	var path: String = "user://weapon_test_knife.tres"
 	assert_int(ResourceSaver.save(knife, path)).is_equal(OK)
 	var loaded: Weapon = ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	assert_object(loaded.weapon_profile).is_same(load(KNIFE))
-	assert_array(loaded.marked_faces).is_equal([2, 7])
+	assert_array(loaded.marked_faces).is_equal([2, 5])
 	assert_bool(loaded.ruined).is_false()
-	assert_int(loaded.mark(7)).is_equal(Equipment.Mark.RUINED)
+	assert_int(loaded.mark(5)).is_equal(Equipment.Mark.RUINED)
 
 func test_battered_marks_two_different_faces() -> void:
 	var battered: MarkRandomFacesModifier = load(BATTERED)

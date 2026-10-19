@@ -76,6 +76,16 @@ func test_fleeing_leaves_after_one_exchange() -> void:
 	assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(Fight.Outcome.FLED))
 	assert_int(choice.fight.outcome).is_equal(Fight.Outcome.FLED)
 
+func test_resting_is_disabled_while_fighting() -> void:
+	var mechanics: Mechanics = _story.get_node("PanelContainer/MarginContainer/HSplitContainer/HBoxContainer/Mechanics")
+	assert_bool(mechanics._catch_breath_button.disabled).is_true()
+	assert_bool(mechanics._make_camp_button.disabled).is_true()
+	# Fleeing ends the fight: the outcome page lets the party rest again
+	await _pick(_story._current_story_page.choices[1] as StoryFightDecision)
+	assert_bool(_story._current_story_page.is_fighting()).is_false()
+	assert_bool(mechanics._make_camp_button.disabled).is_false()
+	assert_bool(mechanics._catch_breath_button.disabled).is_equal(not mechanics._party.characters.values().any(func(character: Character) -> bool: return character.can_catch_breath(null)) and not mechanics._can_catch_breath)
+
 func test_monster_lives_in_story() -> void:
 	var choice: StoryFightDecision = _story._current_story_page.choices[0]
 	assert_object(choice.fight.monster.get_parent()).is_same(_story._monsters)
