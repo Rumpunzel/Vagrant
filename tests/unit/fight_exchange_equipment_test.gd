@@ -14,7 +14,7 @@ func test_natural_weapons_always_hit() -> void:
 	assert_int(bear.injury_taken).is_equal(2)
 	assert_int(player.injury_taken).is_equal(5)
 
-func test_natural_weapons_add_guts_margin() -> void:
+func test_natural_weapons_add_guts_vantage() -> void:
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.player_dice([1, 1, 2, 2, 3]), FightTestDice.scores(7))
 	var bear: FightSide = FightTestDice.natural(GUTS, [2, 4, 5], FightTestDice.scores(7))
 	FightExchange.new(player, bear)
@@ -65,7 +65,7 @@ func test_marked_face_deals_no_damage() -> void:
 	assert_int(lurker.injury_taken).is_equal(0)
 
 func test_armor_blocks_weapon_damage() -> void:
-	# Sword 10 against a helmet: blocked, so only the Guts margin hits
+	# Sword 10 against a helmet: blocked, so only the Guts vantage hits
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.player_dice([1, 1, 2, 2, 7]), FightTestDice.scores(12), FightTestDice.weapon(Rules.d10, 10))
 	var lurker: FightSide = FightSide.new(GUTS, FightTestDice.lurker_dice([3, 4, 5]), FightTestDice.scores(5))
 	lurker.armor_blocks = [5, 10] as Array[int]
@@ -94,7 +94,7 @@ func test_armor_blocks_natural_weapons_but_not_their_threat() -> void:
 	assert_int(bear.weapon_damage).is_equal(5)
 
 func test_damage_reduction_comes_last() -> void:
-	# Lurker weapon 4 + Guts margin 2, player Blood loses: 6, gambeson -1
+	# Lurker weapon 4 + Guts vantage 2, player Blood loses: 6, gambeson -1
 	var player: FightSide = FightSide.new(BLOOD, FightTestDice.player_dice([1, 1, 1, 1, 3]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))
 	player.damage_reduction = 1
 	var lurker: FightSide = FightSide.new(GUTS, FightTestDice.lurker_dice([1, 2, 5]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d8, 4))

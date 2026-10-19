@@ -6,7 +6,6 @@ signal selected_weapon_changed(weapon: Weapon)
 ## Weapon picked for this exchange; null = fighting unarmed
 var selected_weapon: Weapon : set = set_selected_weapon
 
-## The monster this exchange is fought against
 var opponent: Monster
 var fleeing: bool = false
 ## Foe attribute to impair when threatening with Nerves

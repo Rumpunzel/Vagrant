@@ -1,8 +1,6 @@
 class_name Weapon
 extends Equipment
 
-## A weapon as carried by a character or monster.
-
 @export var weapon_profile: WeaponProfile
 
 static func create(new_weapon_profile: WeaponProfile, new_marked_faces: Array[int] = [], new_ruined: bool = false) -> Weapon:
@@ -25,7 +23,6 @@ static func get_first_usable(weapons: Array[Weapon]) -> Weapon:
 	for weapon: Weapon in weapons: if weapon.is_usable(): return weapon
 	return null
 
-## Fresh weapons for a character or monster carrying [param weapon_profiles], each shaped by [param modifiers]
 static func carry(weapon_profiles: Array[WeaponProfile], modifiers: Array[EquipmentModifier] = []) -> Array[Weapon]:
 	var weapons: Array[Weapon] = []
 	for weapon_profile_to_carry: WeaponProfile in weapon_profiles:

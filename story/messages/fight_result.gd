@@ -71,7 +71,6 @@ func _armor(side: FightSide, armor: Array[Armor]) -> void:
 	side.armor_blocks = Armor.get_blocked_results(armor)
 	side.damage_reduction = Armor.get_total_damage_reduction(armor)
 
-## Rolls the weapon's die, plus [param extra_dice] more of the same kind
 func _arm(side: FightSide, weapon: Weapon, extra_dice: int = 0) -> void:
 	if not weapon: return
 	var weapon_dice: Array[Die] = []

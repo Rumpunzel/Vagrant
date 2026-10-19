@@ -1,7 +1,7 @@
 class_name Armor
 extends Equipment
 
-## A piece of armour as worn by a character or monster. Marked results still block.
+## Marked results still block.
 
 @export var armor_profile: ArmorProfile
 
@@ -30,7 +30,6 @@ static func get_total_damage_reduction(armor: Array[Armor]) -> int:
 	for piece: Armor in armor: total += piece.get_damage_reduction()
 	return total
 
-## Fresh armour for a character or monster wearing [param armor_profiles], each shaped by [param modifiers]
 static func carry(armor_profiles: Array[ArmorProfile], modifiers: Array[EquipmentModifier] = []) -> Array[Armor]:
 	var armor: Array[Armor] = []
 	for armor_profile_to_wear: ArmorProfile in armor_profiles:

@@ -139,7 +139,7 @@ func test_steps_apply_the_exchange_in_order() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
 	var guts_before: int = _character.get_attribute_score(GUTS).get_score()
 	var player_dice: Array[Die] = _dice([Rules.d4, Rules.d6, Rules.d8, Rules.d10, Rules.d12], [1, 1, 2, 2, 9])
-	# 9 vs 8: the player's 9 is lost (Guts 7), the monster's 8 and 7 too (Guts 5); unarmed, only the winner's margin of 1 hurts
+	# 9 vs 8: the player's 9 is lost (Guts 7), the monster's 8 and 7 too (Guts 5); unarmed, only the winner's vantage of 1 hurts
 	var player: FightSide = FightSide.new(GUTS, player_dice, _scores(7))
 	var opponent: FightSide = FightSide.new(GUTS, _dice([Rules.d8, Rules.d8, Rules.d8], [8, 7, 1]), _scores(5))
 	fight.start_exchange(FightExchange.new(player, opponent), player.lost_breath_dice)

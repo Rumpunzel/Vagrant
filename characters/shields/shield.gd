@@ -1,8 +1,6 @@
 class_name Shield
 extends Equipment
 
-## A shield as carried by a character or monster.
-
 @export var shield_profile: ShieldProfile
 
 static func create(new_shield_profile: ShieldProfile, new_marked_faces: Array[int] = [], new_ruined: bool = false) -> Shield:
@@ -25,7 +23,6 @@ static func get_first_usable(shields: Array[Shield]) -> Shield:
 	for shield: Shield in shields: if shield.is_usable(): return shield
 	return null
 
-## Fresh shields for a character or monster carrying [param shield_profiles], each shaped by [param modifiers]
 static func carry(shield_profiles: Array[ShieldProfile], modifiers: Array[EquipmentModifier] = []) -> Array[Shield]:
 	var shields: Array[Shield] = []
 	for shield_profile_to_carry: ShieldProfile in shield_profiles:

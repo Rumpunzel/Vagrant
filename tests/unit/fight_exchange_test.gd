@@ -46,7 +46,7 @@ func test_armed_exchange_2() -> void:
 	assert_int(lurker.injury_taken).is_equal(0)
 
 func test_tie_guts_vs_guts() -> void:
-	# On a tie each side's margin is its full threat: both deal 5
+	# On a tie each side's stance works with its full threat: both deal 5
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.player_dice([1, 1, 2, 2, 5]), FightTestDice.scores(7))
 	var lurker: FightSide = FightSide.new(GUTS, FightTestDice.lurker_dice([3, 4, 5]), FightTestDice.scores(5))
 	FightExchange.new(player, lurker)
@@ -98,7 +98,7 @@ func test_failed_flee() -> void:
 	assert_array(FightTestDice.results(player.lost_breath_dice)).is_equal([3])
 
 func test_armed_flee() -> void:
-	# Successful flee still takes the foe's weapon, reduced by the Blood margin; deals own weapon, no bonus
+	# Successful flee still takes the foe's weapon, reduced by the Blood vantage; deals own weapon, no bonus
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4, Rules.d6, Rules.d8], [1, 2, 7]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 3), true)
 	var lurker: FightSide = FightSide.new(GUTS, FightTestDice.lurker_dice([3, 4, 5]), FightTestDice.scores(5), FightTestDice.weapon(Rules.d8, 4))
 	FightExchange.new(player, lurker)
@@ -106,7 +106,7 @@ func test_armed_flee() -> void:
 	assert_int(lurker.injury_taken).is_equal(3)
 
 func test_nerves() -> void:
-	# Nerves margin 5 on the Lurker's Guts (5 -> 0): it loses all breath dice and its weapon
+	# Nerves vantage 5 on the Lurker's Guts (5 -> 0): it loses all breath dice and its weapon
 	var player: FightSide = FightSide.new(NERVES, FightTestDice.player_dice([1, 2, 4, 7, 9]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 3), false, GUTS)
 	var lurker: FightSide = FightSide.new(GUTS, FightTestDice.lurker_dice([3, 4, 4]), FightTestDice.scores(5), FightTestDice.weapon(Rules.d8, 2))
 	FightExchange.new(player, lurker)

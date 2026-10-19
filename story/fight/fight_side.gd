@@ -16,14 +16,11 @@ var wield_attribute: CharacterAttribute
 var marked_faces: Array[int] = []
 ## Claws, fangs and the like: the breath dice are the weapon dice and need no wield check
 var has_natural_weapons: bool = false
-## Shield die rolled this exchange (none without a shield)
 var shield_dice: Array[Die] = []
 ## Attribute the shield is raised with; null = Guts
 var shield_wield_attribute: CharacterAttribute
 var shield_marked_faces: Array[int] = []
-## Weapon die results this side's armour blocks
 var armor_blocks: Array[int] = []
-## Subtracted from all damage this side takes
 var damage_reduction: int = 0
 ## Effective attribute scores at the start of the exchange (injuries already applied)
 var scores: Dictionary[CharacterAttribute, int]

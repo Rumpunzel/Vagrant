@@ -18,7 +18,6 @@ extends PanelContainer
 @export var _make_camp_button: Button
 
 var _can_catch_breath: bool = false
-## Resting is not possible while a fight goes on
 var _is_fighting: bool = false
 
 func _ready() -> void:
