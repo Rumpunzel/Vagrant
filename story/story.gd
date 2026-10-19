@@ -192,18 +192,12 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 
 func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision) -> void:
 	var fight: Fight = story_choice.fight
-	# Injuries appear together with their sounds, which play when they are suffered
 	_event_queue.queue_callable(func() -> void:
-		fight.resolve(fight_result)
-		var exchange: FightExchange = fight.get_last_exchange()
-		if exchange.first.injury_taken > 0: _story_book.show_injury("You", exchange.first.injury_taken)
-		if exchange.second.injury_taken > 0: _story_book.show_injury(fight.monster.get_monster_name(), exchange.second.injury_taken)
+		fight.start_exchange_from(fight_result)
+		_current_dice_request = null
 	)
-	_event_queue.queue_callable(_play_outcome_sound.bind(fight_result))
-	_event_queue.queue_callable(func() -> void: _current_dice_request = null)
 	_event_queue.queue_delay(_reveal_delay)
-	_event_queue.queue_callable(func() -> void: await _story_book.show_outcome(fight.get_exchange_summary()))
-	_event_queue.queue_delay(_reveal_delay)
+	for step: int in Fight.Step.values(): _event_queue.queue_callable(func() -> void: await _show_fight_step(fight, step as Fight.Step, fight_result))
 	_event_queue.queue_callable(func() -> void:
 		if fight.is_ongoing():
 			_current_story_page = _create_fight_exchange_page(fight)
@@ -211,6 +205,27 @@ func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision)
 		for consequence: StoryConsequence in story_choice.get_consequences(): consequence.resolve(_protagonist, fight_result.get_margin())
 		enter_page(story_choice.get_transition())
 	)
+
+## Applies one step of the exchange, shows it once typed out, then pauses; steps with nothing to show pass silently
+func _show_fight_step(fight: Fight, step: Fight.Step, fight_result: FightResult) -> void:
+	var paragraph: String = fight.apply_step(step)
+	var exchange: FightExchange = fight.get_last_exchange()
+	var shown: bool = not paragraph.is_empty()
+	match step:
+		Fight.Step.CONSEQUENCES:
+			_play_outcome_sound(fight_result)
+			shown = true
+		# Injury sounds play when they are suffered
+		Fight.Step.PLAYER_INJURY:
+			if exchange.first.injury_taken > 0:
+				_story_book.show_injury("You", exchange.first.injury_taken)
+				shown = true
+		Fight.Step.MONSTER_INJURY:
+			if exchange.second.injury_taken > 0:
+				_story_book.show_injury(fight.monster.get_monster_name(), exchange.second.injury_taken)
+				shown = true
+	if not paragraph.is_empty(): await _story_book.show_outcome(fight.get_exchange_summary())
+	if shown: await _event_queue.wait(_reveal_delay)
 
 func _play_outcome_sound(dice_result: DiceRequestResult) -> void:
 	if dice_result.is_success(): _success_audio_player.play()

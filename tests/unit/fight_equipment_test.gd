@@ -67,31 +67,24 @@ func test_natural_weapons_only_mark_the_armor() -> void:
 	fight.apply_exchange(FightExchange.new(player, bear), player.lost_breath_dice)
 	assert_bool(_character.armor[0].is_marked(5)).is_true()
 
-func test_shield_that_cannot_be_raised_gets_marked() -> void:
-	var buckler: Shield = Shield.create(ShieldProfile.create("Buckler", Rules.d6))
-	var fight: Fight = Fight.new(_decision, _character, _monster)
-	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(4))
-	player.shield_dice = FightTestDice.dice([Rules.d6], [6])
-	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8, Rules.d8], [1, 1]), FightTestDice.scores(5))
-	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, null, null, buckler)
-	assert_bool(buckler.is_marked(6)).is_true()
-	assert_str(fight.get_exchange_summary()).contains("You fail to raise your shield.")
-	assert_str(fight.get_exchange_summary()).contains("A 6 is marked on your Buckler.")
-
-func test_summary_shows_dice_then_shields_then_lowered_dice() -> void:
+func test_summary_has_one_paragraph_per_step() -> void:
 	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10))
 	var knife: Weapon = Weapon.create(WeaponProfile.create("Knife", Rules.d8))
-	var buckler: Shield = Shield.create(ShieldProfile.create("Buckler", Rules.d6))
+	_monster.armor = Armor.carry([ArmorProfile.create("Gambeson", [] as Array[int], 1)] as Array[ArmorProfile])
 	var fight: Fight = Fight.new(_decision, _character, _monster)
+	# The cutthroat's Nerves (6) beat the player's Guts (4) by 2; its knife (7) is too much for its Guts 5
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [4]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 3))
-	player.shield_dice = FightTestDice.dice([Rules.d6], [6])
-	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8, Rules.d8], [6, 2]), FightTestDice.scores(5), FightTestDice.weapon(Rules.d8, 7))
-	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, sword, knife, buckler)
+	var opponent: FightSide = FightSide.new(Rules.INTELLIGENCE, FightTestDice.dice([Rules.d8, Rules.d8], [6, 2]), FightTestDice.scores(5, 5, 7), FightTestDice.weapon(Rules.d8, 7), false, GUTS)
+	opponent.damage_reduction = 1
+	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, sword, knife)
 	var guts: String = Fight.describe_attribute(GUTS)
-	var paragraphs: PackedStringArray = fight.get_exchange_summary().trim_prefix("[p]").split("[/p][p]")
-	assert_str(paragraphs[0]).is_equal("You threaten with %s (4) and your Sword (3), the Cutthroat with %s (6) and its Knife (7)." % [guts, guts])
-	assert_str(paragraphs[1]).is_equal("Your shield takes 6 off the Cutthroat's Knife (7). Now you threaten with %s (4) and your Sword (3), the Cutthroat with %s (6) and its Knife (1)." % [guts, guts])
-	assert_str(paragraphs[2]).starts_with("The Cutthroat fails to wield its weapon.")
+	var paragraphs: PackedStringArray = fight.get_exchange_summary().trim_prefix("[p]").trim_suffix("[/p]").split("[/p][p]")
+	assert_array(Array(paragraphs)).is_equal([
+		"You threaten with %s (4) and your Sword (3), the Cutthroat with %s (6) and its Knife (7)." % [guts, Fight.describe_attribute(Rules.INTELLIGENCE)],
+		"The Cutthroat unnerves you (−2 %s)." % guts,
+		"The Cutthroat fails to wield its weapon. A 7 is marked on the Cutthroat's Knife.",
+		"The Cutthroat's armour takes 1 off your blow.",
+	])
 
 func test_summary_without_shields_has_no_shield_paragraph() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)

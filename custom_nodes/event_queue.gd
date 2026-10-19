@@ -15,6 +15,11 @@ func queue_delay(delay: float) -> void:
 func queue_callable(callable: Callable) -> void:
 	_queue_event(_create_event(callable))
 
+## For events that decide while running whether to pause afterwards
+func wait(delay: float) -> void:
+	start(delay)
+	await timeout
+
 func _queue_event(event: Event) -> void:
 	_queue.push_back(event)
 	if not _is_executing: _execute_next_event()
@@ -31,7 +36,7 @@ func _create_event(callable: Callable) -> Event:
 	return Event.new(callable)
 
 func _create_delay_event(delay: float) -> Event:
-	return Event.new(func() -> void: start(delay); await timeout)
+	return Event.new(func() -> void: await wait(delay))
 
 class Event extends RefCounted:
 	var _callable: Callable

@@ -73,9 +73,14 @@ func test_dice_log_shows_fight_result() -> void:
 	await _choose(0)
 	var selection: BreathDiceSelection = _selection()
 	var entry: StoryEntry = _story._story_book._current_page_entry
-	var choice: StoryFightDecision = _story._current_story_page.choices[0]
+	var page: StoryPage = _story._current_story_page
+	var choice: StoryFightDecision = page.choices[0]
 	choice.roll()
-	await await_millis(1000)
+	# Every step of the exchange is typed out and paused on before the next exchange
+	var waited: int = 0
+	while _story._current_story_page == page and waited < 20000:
+		await await_millis(20)
+		waited += 20
 	var result: FightResult = choice.get_dice_result()
 	var text: String = _final_text(selection._dice_log_save_result_entry._entry)
 	assert_str(text).contains("%d[/color] vs %d" % [result.get_player_side().threat, result.get_opponent_side().threat])
@@ -91,6 +96,30 @@ func test_dice_log_shows_fight_result() -> void:
 	assert_bool(entry._outcome.visible).is_true()
 	assert_str(_final_text(entry._outcome)).contains("You threaten with")
 
+func test_exchange_is_applied_step_by_step() -> void:
+	_start([Rules.d10] as Array[DieType])
+	var request: FightRequest = await _choose(0)
+	var page: StoryPage = _story._current_story_page
+	var entry: StoryEntry = _story._story_book._current_page_entry
+	var character: Character = request.character
+	# Guts 1 and all dice rolled: some are lost unless all five come up 1
+	character.suffer_injury(Injury.new(6))
+	request.selected_breath_dice = character.breath_dice.duplicate()
+	var breath_before: Dictionary[DieType, int] = character.breath_dice.duplicate()
+	(page.choices[0] as StoryFightDecision).roll()
+	var seen_dice_only: bool = false
+	var waited: int = 0
+	while _story._current_story_page == page and waited < 20000:
+		# Until the consequences are told, nothing is lost and nobody is hurt
+		if entry._outcome.text.count("[p]") <= 1:
+			seen_dice_only = seen_dice_only or entry._outcome.visible
+			assert_dict(character.breath_dice).is_equal(breath_before)
+			assert_int(entry._injuries.get_child_count()).is_equal(0)
+		await await_millis(5)
+		waited += 5
+	assert_bool(seen_dice_only).is_true()
+	assert_dict(character.breath_dice).is_not_equal(breath_before)
+
 func test_next_exchange_waits_for_summary_typing() -> void:
 	_start([Rules.d10] as Array[DieType])
 	await _choose(0)
@@ -98,7 +127,7 @@ func test_next_exchange_waits_for_summary_typing() -> void:
 	var entry: StoryEntry = _story._story_book._current_page_entry
 	(page.choices[0] as StoryFightDecision).roll()
 	var waited: int = 0
-	while _story._current_story_page == page and waited < 10000:
+	while _story._current_story_page == page and waited < 20000:
 		# While the summary is still being typed, the next page must not appear
 		if entry._outcome.visible and entry._outcome.visible_ratio < 1.0: assert_object(_story._current_story_page).is_same(page)
 		await await_millis(5)

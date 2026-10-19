@@ -95,15 +95,12 @@ func test_armor_reaches_both_sides() -> void:
 	assert_array(result.get_opponent_side().armor_blocks).is_equal([2, 4])
 	assert_int(result.get_opponent_side().damage_reduction).is_equal(0)
 
-func test_shields_reach_both_sides() -> void:
-	_character.shields = Shield.carry([ShieldProfile.create("Buckler", Rules.d6), ShieldProfile.create("Pavise", Rules.d12)] as Array[ShieldProfile])
-	_character.shields[0].ruined = true
+func test_shields_are_not_raised() -> void:
+	_character.shields = Shield.carry([ShieldProfile.create("Buckler", Rules.d6)] as Array[ShieldProfile])
 	_monster.shields = Shield.carry([ShieldProfile.create("Round Shield", Rules.d8)] as Array[ShieldProfile])
 	var result: FightResult = _create_request().roll()
-	assert_object(result.player_shield).is_same(_character.shields[1])
-	assert_object(result.get_player_side().shield_dice[0].die_type).is_same(Rules.d12)
-	assert_object(result.opponent_shield).is_same(_monster.shields[0])
-	assert_object(result.get_opponent_side().shield_dice[0].die_type).is_same(Rules.d8)
+	assert_array(result.get_player_side().shield_dice).is_empty()
+	assert_array(result.get_opponent_side().shield_dice).is_empty()
 
 func test_stance_descriptions_come_from_fight_stances() -> void:
 	var request: FightRequest = _create_request()

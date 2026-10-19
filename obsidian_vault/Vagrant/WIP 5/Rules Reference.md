@@ -24,7 +24,7 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
   - **Blood**: damage taken − margin.
   - **Nerves**: chosen foe attribute − margin for this exchange (before dice are checked).
 - **Unarmed** = Guts, weapon damage 0. **Flee** = Blood, always escapes after damage.
-- **Order:** shields lower dice → threat → Nerves → losses, wield checks, armour → damage.
+- **Order** (each step is told and applied in turn): rolled dice / threat → Nerves → losses and wield checks → (shields, disabled) → armour → injuries → outcome.
 - **Damage** = highest usable weapon die → stance → armour reduction, at least 0.
 - Injuries and losses apply after the exchange.
 - **End:** player flees → fled; otherwise 0 breath dice → that side is out (both = draw). Entering a fight with 0 breath = lost.
@@ -42,6 +42,7 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 - Gambeson: damage taken −1, applied last.
 
 ## Shields
+- **Disabled for now**: carried, but not raised. Rule H below is kept in the resolver until a mechanic is found that fits after the wield checks.
 - Shield die d6 (Buckler), d8 (Round Shield), d10 (Kite Shield), d12 (Pavise). Only the first usable shield is raised.
 - Wield check first: shield die > Guts → not raised, that face is marked. Marked face = no effect. Marking a marked face → ruined.
 - Raised: subtract the shield result from the foe's **highest die** (breath or weapon; tie → weapon), at least 0.

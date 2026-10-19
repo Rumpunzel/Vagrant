@@ -49,6 +49,8 @@ var shield_value: int = 0
 var reduced_results: Dictionary[Die, int] = {}
 var weapon_damage: int = 0
 var injury_taken: int = 0
+## How much of the foe's blow this side's armour took off
+var damage_prevented: int = 0
 
 func _init(
 	with_stance: CharacterAttribute,

@@ -78,7 +78,9 @@ func _get_damage(side: FightSide, foe: FightSide) -> int:
 	if margin > 0: damage = side.get_fight_stance().modify_damage_dealt(damage, margin)
 	var foe_margin: int = _get_margin(foe)
 	if foe_margin > 0: damage = foe.get_fight_stance().modify_damage_taken(damage, foe_margin)
-	return maxi(damage - foe.damage_reduction, 0)
+	var injury: int = maxi(damage - foe.damage_reduction, 0)
+	foe.damage_prevented = maxi(damage, 0) - injury
+	return injury
 
 ## Highest result among [param dice], counting the foe's shield if [param side] is given
 static func get_highest_result(dice: Array[Die], side: FightSide = null) -> int:
