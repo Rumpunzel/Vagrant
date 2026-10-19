@@ -21,7 +21,7 @@ func test_flee_from_ambush_in_story() -> void:
 	var story: Story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
 	story._reveal_delay = 0.01
 	add_child(story)
-	story.start_adventure(adventure, (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true))  # dorian.tres
+	story.start_adventure(adventure, TestCharacters.adventurer())
 	var fight_choices: Array[StoryFightDecision] = []
 	for choice: StoryChoice in story._current_story_page.choices:
 		if choice is StoryFightDecision: fight_choices.append(choice)

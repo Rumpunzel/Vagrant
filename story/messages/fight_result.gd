@@ -57,7 +57,7 @@ func _create_opponent_side() -> FightSide:
 	var breath_dice: Array[Die] = DiceRoller.roll_dice(opponent.get_breath_dice_pool())
 	var scores: Dictionary[CharacterAttribute, int] = {}
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: scores[attribute] = opponent.get_score(attribute)
-	var side: FightSide = FightSide.new(opponent.get_nature(), breath_dice, scores)
+	var side: FightSide = FightSide.new(opponent.get_attack().get_stance(), breath_dice, scores, [], false, opponent.get_attack().get_nerves_target())
 	if opponent.has_natural_weapons():
 		side.weapon_dice = breath_dice
 		side.has_natural_weapons = true

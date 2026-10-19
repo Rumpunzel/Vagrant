@@ -4,7 +4,6 @@ extends GdUnitTestSuite
 
 const INVENTORY: String = "uid://im1nhm5y1kim"  # inventory.tscn
 const CHARACTER: String = "uid://bl0pdxri24fnh"  # character.tscn
-const DORIAN: String = "uid://73nsysikxf7j"  # dorian.tres
 
 var _inventory: Inventory
 var _profile: CharacterProfile
@@ -12,7 +11,7 @@ var _profile: CharacterProfile
 func before_test() -> void:
 	_inventory = auto_free(load(INVENTORY).instantiate())
 	add_child(_inventory)
-	_profile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	_profile = TestCharacters.adventurer()
 	_profile.weapons = [WeaponProfile.create("Sword", Rules.d10)] as Array[WeaponProfile]
 	_profile.armor = [ArmorProfile.create("Gambeson", [] as Array[int], 1), ArmorProfile.create("Helmet", [5, 10] as Array[int])] as Array[ArmorProfile]
 	_profile.shields = [ShieldProfile.create("Buckler", Rules.d6)] as Array[ShieldProfile]

@@ -8,16 +8,16 @@ var _character: Character
 var _monster: Monster
 
 func before_test() -> void:
-	var profile: CharacterProfile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
+	var profile: CharacterProfile = TestCharacters.adventurer()
 	profile.weapons = [WeaponProfile.create("Sword", Rules.d10)] as Array[WeaponProfile]
 	_character = auto_free(load("uid://bl0pdxri24fnh").instantiate())  # character.tscn
 	add_child(_character)
 	_character.character_profile = profile
 	_monster = auto_free(load("uid://kmifqq0ejuri").instantiate())  # monster.tscn
-	var lurker: MonsterProfile = (load("uid://d3ytncs0be7oo") as MonsterProfile).duplicate(true)  # lurker.tres
-	lurker.weapons = [WeaponProfile.create("Knife", Rules.d8), WeaponProfile.create("Club", Rules.d6)] as Array[WeaponProfile]
+	var cutthroat: MonsterProfile = TestMonsters.cutthroat()
+	cutthroat.weapons = [WeaponProfile.create("Knife", Rules.d8), WeaponProfile.create("Club", Rules.d6)] as Array[WeaponProfile]
 	add_child(_monster)
-	_monster.monster_profile = lurker
+	_monster.monster_profile = cutthroat
 
 func test_builds_both_sides() -> void:
 	for _roll: int in ROLLS:
@@ -30,10 +30,16 @@ func test_builds_both_sides() -> void:
 		assert_int(player.weapon_dice.size()).is_equal(1)
 		assert_int(opponent.breath_dice.size()).is_equal(3)
 		assert_int(opponent.weapon_dice.size()).is_equal(1)
-		assert_object(opponent.stance).is_same(_monster.get_nature())
+		assert_object(opponent.stance).is_same(Rules.STRENGTH)
 		for attribute: CharacterAttribute in Rules.ATTRIBUTES:
 			assert_int(player.scores[attribute]).is_equal(_character.get_attribute_score(attribute).get_score())
 			assert_int(opponent.scores[attribute]).is_equal(_monster.get_score(attribute))
+
+func test_nerves_attack_reaches_the_opponent_side() -> void:
+	_monster.monster_profile = TestMonsters.unnerver(Rules.AGILITY)
+	var opponent: FightSide = _create_request().roll().get_opponent_side()
+	assert_object(opponent.stance).is_same(Rules.INTELLIGENCE)
+	assert_object(opponent.nerves_target).is_same(Rules.AGILITY)
 
 func test_outcome_and_margin_follow_threat() -> void:
 	for _roll: int in ROLLS:

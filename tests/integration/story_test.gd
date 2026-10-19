@@ -2,7 +2,6 @@ extends GdUnitTestSuite
 
 ## Story bookkeeping with plain decisions: transitions, going back, visit and decision logs.
 
-const DORIAN: String = "uid://73nsysikxf7j"  # dorian.tres
 const STORY: String = "uid://db6oui711vqep"  # story.tscn
 
 var _story: Story
@@ -25,7 +24,7 @@ func before_test() -> void:
 	_story = auto_free(load(STORY).instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
-	_story.start_adventure(adventure, (load(DORIAN) as CharacterProfile).duplicate(true))
+	_story.start_adventure(adventure, TestCharacters.adventurer())
 
 func after_test() -> void:
 	await await_millis(500)

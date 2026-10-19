@@ -3,7 +3,6 @@ extends GdUnitTestSuite
 ## Character creation hands out its starting gear once and shows it in the inventory.
 
 const CHARACTER_CREATION: String = "uid://cc3qx1qt3ie00"  # character_creation.tscn
-const DORIAN: String = "uid://73nsysikxf7j"  # dorian.tres
 const SWORD: String = "uid://bect44b53knlo"  # sword.tres
 const GAMBESON: String = "uid://cgbwu4wq14rtm"  # gambeson.tres
 const HELMET: String = "uid://d0vokcalj7e4j"  # helmet.tres
@@ -16,7 +15,7 @@ var _profile: CharacterProfile
 
 func before_test() -> void:
 	_creation = auto_free(load(CHARACTER_CREATION).instantiate())
-	_profile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	_profile = TestCharacters.adventurer()
 	_profile.weapons = [] as Array[WeaponProfile]
 	_profile.armor = [] as Array[ArmorProfile]
 	_profile.shields = [] as Array[ShieldProfile]

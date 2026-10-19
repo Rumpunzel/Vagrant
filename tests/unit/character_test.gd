@@ -2,7 +2,6 @@ extends GdUnitTestSuite
 
 ## Runtime characters: breath dice, catching breath, exhaustion, injuries.
 
-const DORIAN: String = "uid://73nsysikxf7j"  # dorian.tres
 const CHARACTER: String = "uid://bl0pdxri24fnh"  # character.tscn
 
 var _character: Character
@@ -10,7 +9,7 @@ var _character: Character
 func before_test() -> void:
 	_character = auto_free(load(CHARACTER).instantiate())
 	add_child(_character)
-	_character.character_profile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	_character.character_profile = TestCharacters.adventurer()
 
 func test_starts_with_all_breath_dice() -> void:
 	assert_dict(_character.breath_dice).is_equal(Rules.BREATH_DICE)
@@ -71,7 +70,7 @@ func test_auto_selected_breath_dice_fit_the_score() -> void:
 			assert_bool(selected.has(die_type)).is_equal(die_type.faces <= score)
 
 func test_weapon_modifiers_shape_carried_weapons() -> void:
-	var profile: CharacterProfile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	var profile: CharacterProfile = TestCharacters.adventurer()
 	var battered: MarkRandomFacesModifier = MarkRandomFacesModifier.new()
 	profile.weapons = [WeaponProfile.create("Club", Rules.d6), WeaponProfile.create("Knife", Rules.d8)] as Array[WeaponProfile]
 	profile.weapon_modifiers = [battered] as Array[EquipmentModifier]

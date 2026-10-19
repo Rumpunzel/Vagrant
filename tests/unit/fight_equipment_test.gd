@@ -11,10 +11,10 @@ var _decision: AdventureFightDecision
 func before_test() -> void:
 	_character = auto_free(load("uid://bl0pdxri24fnh").instantiate())  # character.tscn
 	add_child(_character)
-	_character.character_profile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
+	_character.character_profile = TestCharacters.adventurer()
 	_monster = auto_free(load("uid://kmifqq0ejuri").instantiate())  # monster.tscn
 	add_child(_monster)
-	_monster.monster_profile = load("uid://d3ytncs0be7oo")  # lurker.tres
+	_monster.monster_profile = TestMonsters.cutthroat()
 	_decision = AdventureFightDecision.new()
 
 func test_failing_to_wield_marks_then_ruins() -> void:
@@ -54,7 +54,7 @@ func test_blocking_a_marked_result_ruins_the_armor() -> void:
 	_apply_armed(fight, sword, 5, [5, 10] as Array[int], 12)
 	assert_bool(_monster.armor[0].ruined).is_true()
 	assert_bool(sword.ruined).is_true()
-	assert_str(fight.get_exchange_summary()).contains("The Lurker's Helmet is ruined.")
+	assert_str(fight.get_exchange_summary()).contains("The Cutthroat's Helmet is ruined.")
 
 func test_natural_weapons_only_mark_the_armor() -> void:
 	_character.armor = Armor.carry([ArmorProfile.create("Helmet", [5, 10] as Array[int])] as Array[ArmorProfile])
@@ -77,6 +77,27 @@ func test_shield_that_cannot_be_raised_gets_marked() -> void:
 	assert_bool(buckler.is_marked(6)).is_true()
 	assert_str(fight.get_exchange_summary()).contains("You fail to raise your shield.")
 	assert_str(fight.get_exchange_summary()).contains("A 6 is marked on your Buckler.")
+
+func test_summary_shows_dice_then_shields_then_lowered_dice() -> void:
+	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10))
+	var knife: Weapon = Weapon.create(WeaponProfile.create("Knife", Rules.d8))
+	var buckler: Shield = Shield.create(ShieldProfile.create("Buckler", Rules.d6))
+	var fight: Fight = Fight.new(_decision, _character, _monster)
+	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [4]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 3))
+	player.shield_dice = FightTestDice.dice([Rules.d6], [6])
+	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8, Rules.d8], [6, 2]), FightTestDice.scores(5), FightTestDice.weapon(Rules.d8, 7))
+	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, sword, knife, buckler)
+	var guts: String = Fight.describe_attribute(GUTS)
+	var paragraphs: PackedStringArray = fight.get_exchange_summary().trim_prefix("[p]").split("[/p][p]")
+	assert_str(paragraphs[0]).is_equal("You threaten with %s (4) and your Sword (3), the Cutthroat with %s (6) and its Knife (7)." % [guts, guts])
+	assert_str(paragraphs[1]).is_equal("Your shield takes 6 off the Cutthroat's Knife (7). Now you threaten with %s (4) and your Sword (3), the Cutthroat with %s (6) and its Knife (1)." % [guts, guts])
+	assert_str(paragraphs[2]).starts_with("The Cutthroat fails to wield its weapon.")
+
+func test_summary_without_shields_has_no_shield_paragraph() -> void:
+	var fight: Fight = Fight.new(_decision, _character, _monster)
+	_apply_armed(fight, Weapon.create(WeaponProfile.create("Sword", Rules.d10)), 4)
+	assert_str(fight.get_exchange_summary()).not_contains("shield")
+	assert_str(fight.get_exchange_summary()).not_contains("Now you")
 
 ## One exchange where the player swings [param sword] and rolls [param result]
 func _apply_armed(fight: Fight, sword: Weapon, result: int, opponent_armor_blocks: Array[int] = [], guts: int = 7) -> void:

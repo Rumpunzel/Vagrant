@@ -4,22 +4,21 @@ extends GdUnitTestSuite
 
 const PEASANT: String = "uid://c7j5c7ekitgl3"  # peasant.tres
 const BLACKSMITH: String = "uid://bm2bwleksmsqv"  # blacksmith.tres
-const DORIAN: String = "uid://73nsysikxf7j"  # dorian.tres
 
-func test_authored_profile_is_valid() -> void:
-	assert_bool((load(DORIAN) as CharacterProfile).is_valid()).is_true()
+func test_complete_profile_is_valid() -> void:
+	assert_bool(TestCharacters.adventurer().is_valid()).is_true()
 
 func test_validity_parts() -> void:
-	var profile: CharacterProfile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	var profile: CharacterProfile = TestCharacters.adventurer()
 	profile.name = ""
 	assert_bool(profile.has_valid_bio()).is_false()
 	assert_bool(profile.is_valid()).is_false()
-	profile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	profile = TestCharacters.adventurer()
 	profile.origins = [profile.origins[0], null] as Array[Origin]
 	assert_bool(profile.has_valid_origins()).is_false()
 	profile.origins = [profile.origins[0]] as Array[Origin]
 	assert_bool(profile.has_valid_origins()).is_false()
-	profile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	profile = TestCharacters.adventurer()
 	profile.attribute_scores[Rules.AGILITY] = null
 	assert_bool(profile.has_valid_attributes()).is_false()
 
@@ -36,10 +35,12 @@ func test_available_doubles() -> void:
 	assert_int(profile.get_available_doubles()).is_equal(2)
 
 func test_attribute_modifiers_come_from_origins() -> void:
-	var profile: CharacterProfile = load(DORIAN)
-	var expected: int = 0
-	for origin: Origin in profile.origins: expected += origin.modifiers.size()
-	assert_int(profile.get_attribute_modifiers().size()).is_equal(expected)
+	var profile: CharacterProfile = TestCharacters.adventurer()
+	var modifier: AttributeScoreModifier = AttributeScoreModifier.new()
+	modifier.score_modifiers = {Rules.STRENGTH: 1, Rules.AGILITY: 0, Rules.INTELLIGENCE: -1} as Dictionary[CharacterAttribute, int]
+	profile.origins[0].modifiers = [modifier] as Array[AttributeScoreModifier]
+	profile.origins[1].modifiers = [modifier, modifier] as Array[AttributeScoreModifier]
+	assert_int(profile.get_attribute_modifiers().size()).is_equal(3)
 
 func test_origin_without_ass_keeps_losses() -> void:
 	var origin: Origin = Origin.new()

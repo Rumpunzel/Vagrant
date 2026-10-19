@@ -19,8 +19,9 @@ func test_lurker_profile() -> void:
 	assert_int(lurker.weapons.size()).is_equal(1)
 	assert_str(lurker.weapons[0].name).is_equal("Knife")
 	assert_object(lurker.weapons[0].die).is_same(Rules.d8)
-	assert_array(lurker.weapon_modifiers).is_empty()
-	assert_object(lurker.nature).is_same(Rules.STRENGTH)
+	assert_array(lurker.equipment_modifiers).is_empty()
+	assert_object(lurker.attack).is_instanceof(NervesAttack)
+	assert_object((lurker.attack as NervesAttack).target).is_same(Rules.STRENGTH)
 
 func test_ambush_decision() -> void:
 	var ambush: AdventurePage = load(LURKER_AMBUSH)

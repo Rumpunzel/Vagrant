@@ -22,7 +22,10 @@ func get_source() -> AdventureFightDecision: return _source
 func get_description() -> String:
 	if not opponent: return super()
 	if fleeing: return "You look for a way to escape the %s." % opponent.get_monster_name()
-	return "The %s threatens you with %s." % [opponent.get_monster_name(), Fight.describe_attribute(opponent.get_nature())]
+	var attack: MonsterAttack = opponent.get_attack()
+	var threat: String = "The %s threatens you with %s" % [opponent.get_monster_name(), Fight.describe_attribute(attack.get_stance())]
+	if attack.get_nerves_target(): threat += ", aiming at your %s" % Fight.describe_attribute(attack.get_nerves_target())
+	return threat + "."
 
 func has_stance_choice() -> bool: return not fleeing and selected_weapon != null
 

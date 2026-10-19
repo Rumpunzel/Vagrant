@@ -22,7 +22,7 @@ func _resolve() -> void:
 		if side.fleeing: side.stance = Rules.AGILITY
 		elif not side.is_armed(): side.stance = Rules.STRENGTH
 	for side: FightSide in [first, second]: _raise_shield(side, get_foe(side))
-	for side: FightSide in [first, second]: side.threat = _get_highest_result(side.breath_dice, side)
+	for side: FightSide in [first, second]: side.threat = get_highest_result(side.breath_dice, side)
 	for side: FightSide in [first, second]:
 		var margin: int = _get_margin(side)
 		if margin > 0: _impair(get_foe(side), side.get_fight_stance().get_impairments(side.nerves_target, margin))
@@ -69,7 +69,7 @@ func _check_dice(side: FightSide, foe: FightSide) -> void:
 	side.blocked_weapon_dice.assign(side.usable_weapon_dice.filter(func(die: Die) -> bool: return foe.armor_blocks.has(die.result)))
 	var damaging_dice: Array[Die] = []
 	damaging_dice.assign(side.usable_weapon_dice.filter(func(die: Die) -> bool: return not side.blocked_weapon_dice.has(die) and not side.marked_faces.has(die.result)))
-	side.weapon_damage = _get_highest_result(damaging_dice, side)
+	side.weapon_damage = get_highest_result(damaging_dice, side)
 
 func _get_damage(side: FightSide, foe: FightSide) -> int:
 	var damage: int = side.weapon_damage
@@ -81,7 +81,7 @@ func _get_damage(side: FightSide, foe: FightSide) -> int:
 	return maxi(damage - foe.damage_reduction, 0)
 
 ## Highest result among [param dice], counting the foe's shield if [param side] is given
-static func _get_highest_result(dice: Array[Die], side: FightSide = null) -> int:
+static func get_highest_result(dice: Array[Die], side: FightSide = null) -> int:
 	var highest_result: int = 0
 	for die: Die in dice: highest_result = maxi(highest_result, side.get_result(die) if side else die.result)
 	return highest_result

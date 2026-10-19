@@ -16,10 +16,10 @@ var _fled: AdventurePage
 func before_test() -> void:
 	_character = auto_free(load("uid://bl0pdxri24fnh").instantiate())  # character.tscn
 	add_child(_character)
-	_character.character_profile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
+	_character.character_profile = TestCharacters.adventurer()
 	_monster = auto_free(load("uid://kmifqq0ejuri").instantiate())  # monster.tscn
 	add_child(_monster)
-	_monster.monster_profile = load("uid://d3ytncs0be7oo")  # lurker.tres
+	_monster.monster_profile = TestMonsters.cutthroat()
 	_won = AdventurePage.new()
 	_lost = AdventurePage.new()
 	_draw = AdventurePage.new()
@@ -36,21 +36,21 @@ func test_start_recovers_monster_breath_but_keeps_injuries() -> void:
 	assert_bool(_monster.is_out_of_breath()).is_true()
 	Fight.new(_decision, _character, _monster)
 	assert_bool(_monster.is_out_of_breath()).is_false()
-	assert_int(_monster.get_score(GUTS)).is_equal(_lurker_guts() - 2)
+	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 2)
 
 func test_unarmed_example_until_won() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
-	# Exchange 1: 7 vs 5 -> Lurker injury 2
+	# Exchange 1: 7 vs 5 -> Cutthroat injury 2
 	_apply(fight, [1, 1, 2, 2, 7], 7, [3, 4, 5], 5)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.ONGOING)
-	assert_int(_monster.get_score(GUTS)).is_equal(_lurker_guts() - 2)
-	# Exchange 2: player loses the 9 (d12), Lurker its two 4s and an injury of 5
+	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 2)
+	# Exchange 2: player loses the 9 (d12), Cutthroat its two 4s and an injury of 5
 	_apply(fight, [2, 2, 4, 7, 9], 7, [3, 4, 4], 3)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.ONGOING)
 	assert_int(_character.get_breath_dice_count(Rules.d12)).is_equal(0)
 	assert_int(_monster.breath_dice[Rules.d8]).is_equal(1)
-	assert_int(_monster.get_score(GUTS)).is_equal(_lurker_guts() - 7)
-	# Exchange 3: Lurker's last die is lost -> won
+	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 7)
+	# Exchange 3: Cutthroat's last die is lost -> won
 	_apply(fight, [1, 1, 2, 2], 7, [1], 0, [Rules.d4, Rules.d6, Rules.d8, Rules.d10], [Rules.d8])
 	assert_int(fight.outcome).is_equal(Fight.Outcome.WON)
 	assert_object(fight.get_transition()).is_same(_won)
@@ -100,37 +100,51 @@ func test_injuries_and_losses_reach_both_sides() -> void:
 	# 2 vs 5 -> player takes 3
 	_apply(fight, [1, 1, 1, 1, 2], 7, [3, 4, 5], 7)
 	assert_int(_character.get_attribute_score(GUTS).get_score()).is_equal(guts_before - 3)
-	assert_int(_monster.get_score(GUTS)).is_equal(_lurker_guts())
+	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts())
 
 func test_texts() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
-	assert_str(fight.create_request().get_description()).contains("The Lurker threatens you with")
-	assert_str(fight.get_title()).is_equal("Lurker — Exchange 1")
+	assert_str(fight.create_request().get_description()).contains("The Cutthroat threatens you with")
+	assert_str(fight.get_title()).is_equal("Cutthroat — Exchange 1")
 	assert_str(fight.get_exchange_summary()).is_empty()
 	_apply(fight, [1, 1, 2, 2, 7], 7, [3, 4, 5], 5)
 	var summary: String = fight.get_exchange_summary()
 	assert_str(summary).contains("You threaten with")
 	# Injuries have their own display, they are not repeated in the text
 	assert_str(summary).not_contains("suffer")
-	assert_str(fight.get_title()).is_equal("Lurker — Exchange 2")
+	assert_str(fight.get_title()).is_equal("Cutthroat — Exchange 2")
 
 func test_condition_description() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
-	assert_str(fight.get_condition_description()).is_equal("The Lurker is unhurt and breathes steadily.")
-	# Lurker loses both 4s (Guts 3 after the first injury) and takes 5 more
+	assert_str(fight.get_condition_description()).is_equal("The Cutthroat is unhurt and breathes steadily.")
+	# Cutthroat loses both 4s (Guts 3 after the first injury) and takes 5 more
 	_apply(fight, [1, 1, 2, 2, 7], 7, [3, 4, 5], 5)
-	assert_str(fight.get_condition_description()).is_equal("The Lurker is bleeding and breathes steadily.")
+	assert_str(fight.get_condition_description()).is_equal("The Cutthroat is bleeding and breathes steadily.")
 	_apply(fight, [2, 2, 4, 7, 9], 7, [3, 4, 4], 3)
-	assert_str(fight.get_condition_description()).is_equal("The Lurker is grievously wounded and gasps for its last breath.")
+	assert_str(fight.get_condition_description()).is_equal("The Cutthroat is grievously wounded and gasps for its last breath.")
 
 func test_flee_request_has_its_own_line() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
-	assert_str(fight.create_request(true).get_description()).is_equal("You look for a way to escape the Lurker.")
+	assert_str(fight.create_request(true).get_description()).is_equal("You look for a way to escape the Cutthroat.")
 
 func test_summary_ends_with_outcome() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
 	_apply(fight, [1, 1, 2, 2, 7], 7, [3, 4, 5], 5, [Rules.d4, Rules.d6, Rules.d8, Rules.d10, Rules.d12], [Rules.d8, Rules.d8, Rules.d8], true)
-	assert_str(fight.get_exchange_summary()).contains("You get away from the Lurker.")
+	assert_str(fight.get_exchange_summary()).contains("You get away from the Cutthroat.")
+
+func test_nerves_attack_is_announced() -> void:
+	_monster.monster_profile = TestMonsters.unnerver(BLOOD)
+	var request: FightRequest = Fight.new(_decision, _character, _monster).create_request()
+	assert_str(request.get_description()).is_equal("The Unnerver threatens you with %s, aiming at your %s." % [Fight.describe_attribute(Rules.INTELLIGENCE), Fight.describe_attribute(BLOOD)])
+
+func test_summary_tells_who_was_unnerved() -> void:
+	var fight: Fight = Fight.new(_decision, _character, _monster)
+	# 2 vs 5: the monster's Nerves win by 3 and impair the player's Guts
+	var player: FightSide = FightSide.new(GUTS, _dice([Rules.d4, Rules.d4], [1, 2]), _scores(7))
+	var opponent: FightSide = FightSide.new(Rules.INTELLIGENCE, _dice([Rules.d8, Rules.d8], [3, 5]), _scores(7), FightTestDice.weapon(Rules.d8, 1), false, GUTS)
+	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice)
+	assert_str(fight.get_exchange_summary()).contains("The Cutthroat unnerves you (−3 %s)." % Fight.describe_attribute(GUTS))
+	assert_str(fight.get_exchange_summary()).not_contains("You unnerve")
 
 func test_find_decision_owner_in_events() -> void:
 	var base: AdventurePage = load("uid://cs40ge42lw0ry")  # temple_ruin.tres
@@ -152,8 +166,8 @@ func _apply(
 	var exchange: FightExchange = FightExchange.new(player, opponent)
 	fight.apply_exchange(exchange, player.lost_breath_dice)
 
-## Injuries are relative to the Lurker's authored Guts
-func _lurker_guts() -> int:
+## Injuries are relative to the monster's authored Guts
+func _monster_guts() -> int:
 	return _monster.monster_profile.attribute_scores[GUTS]
 
 func _scores(score: int) -> Dictionary[CharacterAttribute, int]:

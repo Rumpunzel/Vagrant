@@ -12,17 +12,13 @@ extends Resource
 
 ## [] = natural weapons: the breath dice also count as weapon dice. Monsters always fight with the first usable one
 @export var weapons: Array[WeaponProfile] = []
-## Applied to every weapon above when it is handed out, e.g. "battered"
-@export var weapon_modifiers: Array[EquipmentModifier] = []
 @export var armor: Array[ArmorProfile] = []
-## Applied to every piece of armour above when it is handed out
-@export var armor_modifiers: Array[EquipmentModifier] = []
 ## Only the first usable one is raised
 @export var shields: Array[ShieldProfile] = []
-## Applied to every shield above when it is handed out
-@export var shield_modifiers: Array[EquipmentModifier] = []
-## Nerves is not supported for monsters yet
-@export var nature: CharacterAttribute = Rules.STRENGTH
+## Applied to every weapon, piece of armour and shield above when it is handed out, e.g. "battered"
+@export var equipment_modifiers: Array[EquipmentModifier] = []
+## Used while the monster has a usable weapon (natural weapons always are)
+@export var attack: MonsterAttack = preload("uid://c4a0yss3o6pxw")  # guts_attack.tres
 
 @export var _breath_dice_size: DieType = Rules.d8
 @export var _breath_dice_amount: int = 3

@@ -12,7 +12,7 @@ func before_test() -> void:
 	var decision: AdventureFightDecision = AdventureFightDecision.new()
 	decision.description = "Fight!"
 	decision.flee_description = "Wun away!"
-	decision.enemies = [load("uid://d3ytncs0be7oo")] as Array[MonsterProfile]  # lurker.tres
+	decision.enemies = [TestMonsters.cutthroat()] as Array[MonsterProfile]
 	_outcome_pages = {}
 	for outcome: Fight.Outcome in [Fight.Outcome.WON, Fight.Outcome.LOST, Fight.Outcome.DRAW, Fight.Outcome.FLED]:
 		var page: AdventurePage = AdventurePage.new()
@@ -31,7 +31,7 @@ func before_test() -> void:
 	_story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
 	_story._reveal_delay = 0.01
 	add_child(_story)
-	var profile: CharacterProfile = (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true)  # dorian.tres
+	var profile: CharacterProfile = TestCharacters.adventurer()
 	assert_bool(profile.is_valid()).is_true()
 	_story.start_adventure(adventure, profile)
 

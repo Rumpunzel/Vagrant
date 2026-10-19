@@ -18,6 +18,8 @@ var outcome: Outcome = Outcome.ONGOING
 var exchanges: Array[FightExchange] = []
 
 var _last_equipment_marks: Array[String] = []
+var _last_player_weapon: Weapon
+var _last_opponent_weapon: Weapon
 
 func _init(for_decision: AdventureFightDecision, for_protagonist: Character, against_monster: Monster) -> void:
 	assert(for_decision and for_protagonist and against_monster)
@@ -35,7 +37,7 @@ func create_request(fleeing: bool = false) -> FightRequest:
 	# Same as the resolver enforces
 	if fleeing: request.attribute = Rules.AGILITY
 	elif not request.selected_weapon: request.attribute = Rules.STRENGTH
-	request.nerves_target = monster.get_nature()
+	request.nerves_target = monster.get_attack().get_stance()
 	return request
 
 func resolve(result: FightResult) -> void:
@@ -53,6 +55,8 @@ func apply_exchange(exchange: FightExchange, player_lost_breath_dice: Array[Die]
 	if player.injury_taken > 0: protagonist.suffer_injury(Injury.new(player.injury_taken))
 	if opponent.injury_taken > 0: monster.suffer_injury(Injury.new(opponent.injury_taken))
 	_last_equipment_marks.clear()
+	_last_player_weapon = player_weapon
+	_last_opponent_weapon = opponent_weapon
 	var monster_owner: String = "the %s's" % monster.get_monster_name()
 	for failed_die: Die in player.failed_weapon_dice: _mark(player_weapon, failed_die.result, "your")
 	for failed_die: Die in opponent.failed_weapon_dice: _mark(opponent_weapon, failed_die.result, monster_owner)
@@ -104,7 +108,7 @@ func get_title() -> String:
 
 func get_condition_description() -> String:
 	var wounds: String = "unhurt"
-	if monster.get_score(monster.get_nature()) <= 0: wounds = "grievously wounded"
+	if monster.get_score(monster.get_attack().get_stance()) <= 0: wounds = "grievously wounded"
 	elif monster.get_injury_total() > 0: wounds = "bleeding"
 	var breath_left: int = monster.get_breath_dice_count()
 	var breath: String = "breathes steadily"
@@ -132,28 +136,60 @@ func _evaluate_outcome(player_fled: bool) -> Outcome:
 	if monster_out: return Outcome.WON
 	return Outcome.ONGOING
 
+## One paragraph each: the dice as rolled; what shields did and the dice after them; what came of it
 func _describe_last_exchange() -> String:
 	var exchange: FightExchange = get_last_exchange()
 	if not exchange: return ""
 	var player: FightSide = exchange.first
 	var opponent: FightSide = exchange.second
 	var monster_name: String = monster.get_monster_name()
+	var paragraphs: Array[String] = [_describe_dice(player, opponent, false)]
+
+	var shields: Array[String] = []
+	if not player.failed_shield_dice.is_empty(): shields.append("You fail to raise your shield.")
+	if not opponent.failed_shield_dice.is_empty(): shields.append("The %s fails to raise its shield." % monster_name)
+	if player.shield_target: shields.append("Your shield takes %d off the %s's %s." % [player.shield_value, monster_name, _describe_die(opponent, player.shield_target, _last_opponent_weapon)])
+	if opponent.shield_target: shields.append("The %s's shield takes %d off your %s." % [monster_name, opponent.shield_value, _describe_die(player, opponent.shield_target, _last_player_weapon)])
+	if player.shield_target or opponent.shield_target: shields.append(_describe_dice(player, opponent, true, "Now you"))
+	if not shields.is_empty(): paragraphs.append(" ".join(shields))
+
 	var lines: Array[String] = []
-	lines.append("You %s with %s (%d), the %s with %s (%d)." % [
-		"flee" if player.fleeing else "threaten", describe_attribute(player.stance), player.threat,
-		monster_name, describe_attribute(opponent.stance), opponent.threat,
-	])
 	if not player.failed_weapon_dice.is_empty(): lines.append("You fail to wield your weapon.")
 	if not opponent.failed_weapon_dice.is_empty(): lines.append("The %s fails to wield its weapon." % monster_name)
-	if not player.failed_shield_dice.is_empty(): lines.append("You fail to raise your shield.")
-	if not opponent.failed_shield_dice.is_empty(): lines.append("The %s fails to raise its shield." % monster_name)
-	if player.shield_target: lines.append("Your shield takes %d off the %s's %d." % [player.shield_value, monster_name, player.shield_target.result])
-	if opponent.shield_target: lines.append("The %s's shield takes %d off your %d." % [monster_name, opponent.shield_value, opponent.shield_target.result])
+	if not player.impairments.is_empty(): lines.append("The %s unnerves you (%s)." % [monster_name, _describe_impairments(player.impairments)])
+	if not opponent.impairments.is_empty(): lines.append("You unnerve the %s (%s)." % [monster_name, _describe_impairments(opponent.impairments)])
 	lines.append_array(_last_equipment_marks)
 	if not player.lost_breath_dice.is_empty(): lines.append("You lose %d breath %s." % [player.lost_breath_dice.size(), "die" if player.lost_breath_dice.size() == 1 else "dice"])
 	if not opponent.lost_breath_dice.is_empty(): lines.append("The %s loses %d breath %s." % [monster_name, opponent.lost_breath_dice.size(), "die" if opponent.lost_breath_dice.size() == 1 else "dice"])
 	if player.injury_taken == 0 and opponent.injury_taken == 0: lines.append("Neither of you is hurt.")
-	return "[p]%s[/p]" % " ".join(lines)
+	if not lines.is_empty(): paragraphs.append(" ".join(lines))
+	var summary: String = ""
+	for paragraph: String in paragraphs: summary += "[p]%s[/p]" % paragraph
+	return summary
+
+## "You threaten with Guts (4) and your Sword (3), the Lurker with Nerves (6) and its Knife (7)."
+## [param lowered]: with the results shields left, otherwise as rolled
+func _describe_dice(player: FightSide, opponent: FightSide, lowered: bool, subject: String = "You") -> String:
+	return "%s %s with %s, the %s with %s." % [
+		subject, "flee" if player.fleeing else "threaten", _describe_side_dice(player, _last_player_weapon, "your", lowered),
+		monster.get_monster_name(), _describe_side_dice(opponent, _last_opponent_weapon, "its", lowered),
+	]
+
+func _describe_side_dice(side: FightSide, weapon: Weapon, owner: String, lowered: bool) -> String:
+	var shield_side: FightSide = side if lowered else null
+	var text: String = "%s (%d)" % [describe_attribute(side.stance), FightExchange.get_highest_result(side.breath_dice, shield_side)]
+	if weapon and not side.weapon_dice.is_empty(): text += " and %s %s (%d)" % [owner, weapon.get_equipment_name(), FightExchange.get_highest_result(side.weapon_dice, shield_side)]
+	return text
+
+## "Knife (7)" or "breath die (7)"
+func _describe_die(side: FightSide, die: Die, weapon: Weapon) -> String:
+	var die_name: String = weapon.get_equipment_name() if weapon and side.weapon_dice.has(die) and not side.has_natural_weapons else "breath die"
+	return "%s (%d)" % [die_name, die.result]
+
+static func _describe_impairments(impairments: Dictionary[CharacterAttribute, int]) -> String:
+	var parts: Array[String] = []
+	for attribute: CharacterAttribute in impairments: parts.append("−%d %s" % [impairments[attribute], describe_attribute(attribute)])
+	return ", ".join(parts)
 
 static func describe_attribute(attribute: CharacterAttribute) -> String:
 	return "[color=%s]%s[/color]" % [attribute.color.to_html(), attribute.descriptor]

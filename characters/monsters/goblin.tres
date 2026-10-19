@@ -17,5 +17,5 @@ script = ExtResource("8_5aed7")
 name = "Goblin"
 portrait = ExtResource("2_aqmhw")
 weapons = Array[ExtResource("9_weapon")]([ExtResource("10_club")])
-weapon_modifiers = Array[ExtResource("11_modifier")]([ExtResource("12_battered")])
+equipment_modifiers = Array[ExtResource("11_modifier")]([ExtResource("12_battered")])
 metadata/_custom_type_script = "uid://1342yb3eb2bh"

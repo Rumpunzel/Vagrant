@@ -17,7 +17,7 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 ## Fight exchange
 - Both sides roll at once. **Threat** = highest breath die.
 - Player picks: fight or flee, a weapon (or unarmed), a stance (armed only), breath dice (≥ 1).
-- Monster: rolls all breath dice, stance = its nature, first usable weapon.
+- Monster: rolls all breath dice, first usable weapon. Its **attack** sets the stance: Guts (default), or Nerves aimed at a fixed player attribute (Lurker: Guts). Without a usable weapon (natural weapons always count) it threatens with Guts.
 - **Margin**: winner = threat difference; on a tie, each side = own full threat; loser = 0.
 - **Stances** (only with margin > 0):
   - **Guts**: damage dealt + margin.
@@ -49,4 +49,4 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 - Losses, wield checks and armour still use the **rolled** face.
 
 ## Modifiers
-- Profiles list equipment plus modifiers applied when handed out, e.g. **battered** = 2 random faces marked (never ruins).
+- Profiles list equipment plus modifiers applied when handed out, e.g. **battered** = 2 random faces marked (never ruins). Characters: one list per kind; monsters: one list for all their equipment.

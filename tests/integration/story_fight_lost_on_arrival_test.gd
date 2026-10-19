@@ -10,7 +10,7 @@ func test_fight_without_breath_is_lost_on_arrival() -> void:
 	lost_page._title = "Lost"
 	var fight_decision: AdventureFightDecision = AdventureFightDecision.new()
 	fight_decision.description = "Fight!"
-	fight_decision.enemies = [load("uid://d3ytncs0be7oo")] as Array[MonsterProfile]  # lurker.tres
+	fight_decision.enemies = [TestMonsters.cutthroat()] as Array[MonsterProfile]
 	fight_decision.failure_transition = lost_page
 	# Margin 0 must not crash the injury consequence
 	fight_decision.failure_consequences = [load("uid://b2xdmgxkfx8tf")] as Array[AdventureConsequence]  # injury_consequence.tres
@@ -28,7 +28,7 @@ func test_fight_without_breath_is_lost_on_arrival() -> void:
 	var story: Story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
 	story._reveal_delay = 0.01
 	add_child(story)
-	story.start_adventure(adventure, (load("uid://73nsysikxf7j") as CharacterProfile).duplicate(true))  # dorian.tres
+	story.start_adventure(adventure, TestCharacters.adventurer())
 	story._protagonist.lose_breath_dice(story._protagonist.get_breath_dice_pool())
 	var shown_pages: Array[AdventurePage] = []
 	story.story_page_entered.connect(func(story_page: StoryPage) -> void: shown_pages.append(story_page.adventure_page))

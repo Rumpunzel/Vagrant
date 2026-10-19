@@ -2,7 +2,6 @@ extends GdUnitTestSuite
 
 ## Saves: SaveRequest -> SaveResult, and how StorySaveDecision picks its transition and consequences.
 
-const DORIAN: String = "uid://73nsysikxf7j"  # dorian.tres
 const CHARACTER: String = "uid://bl0pdxri24fnh"  # character.tscn
 
 var _character: Character
@@ -15,7 +14,7 @@ var _failure_consequence: AdventureConsequence
 func before_test() -> void:
 	_character = auto_free(load(CHARACTER).instantiate())
 	add_child(_character)
-	_character.character_profile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	_character.character_profile = TestCharacters.adventurer()
 	_success_page = AdventurePage.new()
 	_failure_page = AdventurePage.new()
 	_consequence = AdventureInjuryConsequence.new()

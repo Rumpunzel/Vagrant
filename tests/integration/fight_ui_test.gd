@@ -3,14 +3,13 @@ extends GdUnitTestSuite
 ## Fight input UI (BreathDiceSelection) inside the real Story scene.
 
 const STORY: String = "uid://db6oui711vqep"  # story.tscn
-const DORIAN: String = "uid://73nsysikxf7j"  # dorian.tres
 
 var _story: Story
 
 func _start(weapon_dice: Array[DieType]) -> void:
 	var decision: AdventureFightDecision = AdventureFightDecision.new()
 	decision.description = "Fight!"
-	decision.enemies = [load("uid://d3ytncs0be7oo")] as Array[MonsterProfile]  # lurker.tres
+	decision.enemies = [TestMonsters.cutthroat()] as Array[MonsterProfile]
 	var end_page: AdventurePage = AdventurePage.new()
 	end_page._title = "End"
 	decision.transition = end_page
@@ -24,7 +23,7 @@ func _start(weapon_dice: Array[DieType]) -> void:
 	_story = auto_free(load(STORY).instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
-	var profile: CharacterProfile = (load(DORIAN) as CharacterProfile).duplicate(true)
+	var profile: CharacterProfile = TestCharacters.adventurer()
 	for die: DieType in weapon_dice:
 		profile.weapons.append(WeaponProfile.create("Sword", die))
 	_story.start_adventure(adventure, profile)
@@ -82,7 +81,7 @@ func test_dice_log_shows_fight_result() -> void:
 	assert_str(text).contains("%d[/color] vs %d" % [result.get_player_side().threat, result.get_opponent_side().threat])
 	var player_injury: int = result.get_player_side().injury_taken
 	var opponent_injury: int = result.get_opponent_side().injury_taken
-	assert_bool(text.contains("Lurker %s" % Injury.to_bbcode(opponent_injury))).is_equal(opponent_injury > 0)
+	assert_bool(text.contains("Cutthroat %s" % Injury.to_bbcode(opponent_injury))).is_equal(opponent_injury > 0)
 	assert_bool(text.contains("you %s" % Injury.to_bbcode(player_injury))).is_equal(player_injury > 0)
 	assert_str(text).not_contains("−0")
 	# Injuries and the exchange summary sit below this roll, in the same entry
@@ -110,7 +109,7 @@ func test_next_exchange_waits_for_summary_typing() -> void:
 func test_dice_selection_shows_monster_threat() -> void:
 	_start([Rules.d10] as Array[DieType])
 	var request: FightRequest = await _choose(0)
-	assert_str(request.get_description()).is_equal("The Lurker threatens you with %s." % Fight.describe_attribute(Rules.STRENGTH))
+	assert_str(request.get_description()).is_equal("The Cutthroat threatens you with %s." % Fight.describe_attribute(Rules.STRENGTH))
 	assert_str(_final_text(_selection()._description)).is_equal(request.get_description())
 
 func test_dice_log_shows_save_result() -> void:
@@ -129,7 +128,7 @@ func test_dice_log_shows_save_result() -> void:
 	_story = auto_free(load(STORY).instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
-	_story.start_adventure(adventure, (load(DORIAN) as CharacterProfile).duplicate(true))
+	_story.start_adventure(adventure, TestCharacters.adventurer())
 	var choice: StoryChoice = _story._current_story_page.choices[0]
 	choice.chose()
 	await await_millis(50)
