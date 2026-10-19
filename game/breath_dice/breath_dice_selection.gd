@@ -104,8 +104,12 @@ func _update_nerves_target_selection(attribute: CharacterAttribute) -> void:
 	_nerves_target_selection.visible = attribute == Rules.INTELLIGENCE
 
 func display_dice_result(dice_result: DiceRequestResult) -> void:
-	_breath_dice_selection_buttons.update_colors(dice_result)
 	_dice_log_save_result_entry.show_dice_result(dice_result)
+
+## Colours the rolled dice by what became of them
+func display_dice_evaluation(dice_result: DiceRequestResult) -> void:
+	_breath_dice_selection_buttons.update_colors(dice_result)
+	_dice_log_save_result_entry.show_dice_evaluation(dice_result)
 
 func _enable_hud() -> void:
 	_ok_button.disabled = false

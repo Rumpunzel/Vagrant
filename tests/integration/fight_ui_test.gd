@@ -83,12 +83,15 @@ func test_dice_log_shows_fight_result() -> void:
 		waited += 20
 	var result: FightResult = choice.get_dice_result()
 	var text: String = _final_text(selection._dice_log_save_result_entry._entry)
-	assert_str(text).contains("%d[/color] vs %d" % [result.get_player_side().threat, result.get_opponent_side().threat])
-	var player_injury: int = result.get_player_side().injury_taken
-	var opponent_injury: int = result.get_opponent_side().injury_taken
-	assert_bool(text.contains("Cutthroat %s" % Injury.to_bbcode(opponent_injury))).is_equal(opponent_injury > 0)
-	assert_bool(text.contains("you %s" % Injury.to_bbcode(player_injury))).is_equal(player_injury > 0)
-	assert_str(text).not_contains("−0")
+	var player: FightSide = result.get_player_side()
+	var opponent: FightSide = result.get_opponent_side()
+	# Both threats with their stance icon, coloured by who won; injuries have their own display
+	assert_str(text).contains("%s [color=" % player.stance.to_bbcode())
+	assert_str(text).contains("%d[/color] vs %s [color=" % [player.threat, opponent.stance.to_bbcode()])
+	assert_str(text).ends_with("%d[/color]" % opponent.threat)
+	assert_str(text).not_contains("Cutthroat")
+	var player_injury: int = player.injury_taken
+	var opponent_injury: int = opponent.injury_taken
 	# Injuries and the exchange summary sit below this roll, in the same entry
 	var injury_count: int = int(player_injury > 0) + int(opponent_injury > 0)
 	assert_int(entry._injuries.get_child_count()).is_equal(injury_count)
@@ -115,10 +118,12 @@ func test_exchange_is_applied_step_by_step() -> void:
 			seen_dice_only = seen_dice_only or entry._outcome.visible
 			assert_dict(character.breath_dice).is_equal(breath_before)
 			assert_int(entry._injuries.get_child_count()).is_equal(0)
+			assert_str(entry._breath_dice_selection._dice_log_save_result_entry._entry.text).not_contains("☠")
 		await await_millis(5)
 		waited += 5
 	assert_bool(seen_dice_only).is_true()
 	assert_dict(character.breath_dice).is_not_equal(breath_before)
+	assert_str(entry._breath_dice_selection._dice_log_save_result_entry._entry.text).contains("☠")
 
 func test_next_exchange_waits_for_summary_typing() -> void:
 	_start([Rules.d10] as Array[DieType])

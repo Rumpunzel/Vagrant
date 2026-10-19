@@ -29,6 +29,10 @@ func display_dice_result(dice_result: DiceRequestResult) -> void:
 	assert(_current_page_entry)
 	_current_page_entry.display_dice_result(dice_result)
 
+func display_dice_evaluation(dice_result: DiceRequestResult) -> void:
+	assert(_current_page_entry is StoryEntry)
+	(_current_page_entry as StoryEntry).display_dice_evaluation(dice_result)
+
 func show_injury(target_name: String, magnitude: int) -> void:
 	assert(_current_page_entry is StoryEntry)
 	(_current_page_entry as StoryEntry).show_injury(target_name, magnitude)

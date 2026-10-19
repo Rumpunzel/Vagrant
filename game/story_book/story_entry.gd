@@ -50,6 +50,9 @@ func show_outcome(outcome: String) -> void:
 func display_dice_result(dice_result: DiceRequestResult) -> void:
 	_breath_dice_selection.display_dice_result(dice_result)
 
+func display_dice_evaluation(dice_result: DiceRequestResult) -> void:
+	_breath_dice_selection.display_dice_evaluation(dice_result)
+
 func is_dice_page() -> bool:
 	var chosen_choice: StoryChoice = story_page.get_chosen_choice()
 	return chosen_choice and chosen_choice.is_dice_choice()

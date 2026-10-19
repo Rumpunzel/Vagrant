@@ -176,10 +176,13 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	assert(dice_result)
 	assert(dice_result.get_dice_request() == _current_dice_request)
 	_event_queue.queue_delay(_reveal_delay)
-	_event_queue.queue_callable(func() -> void: _story_book.display_dice_result(dice_result))
 	if story_choice is StoryFightDecision:
 		_resolve_fight(dice_result as FightResult, story_choice as StoryFightDecision)
 		return
+	_event_queue.queue_callable(func() -> void:
+		_story_book.display_dice_result(dice_result)
+		_story_book.display_dice_evaluation(dice_result)
+	)
 	_event_queue.queue_callable(func() -> void: dice_request.character.parse_dice_result(dice_result))
 	_event_queue.queue_callable(_play_outcome_sound.bind(dice_result))
 	_event_queue.queue_callable(func() -> void: _current_dice_request = null)
@@ -196,7 +199,6 @@ func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision)
 		fight.start_exchange_from(fight_result)
 		_current_dice_request = null
 	)
-	_event_queue.queue_delay(_reveal_delay)
 	for step: int in Fight.Step.values(): _event_queue.queue_callable(func() -> void: await _show_fight_step(fight, step as Fight.Step, fight_result))
 	_event_queue.queue_callable(func() -> void:
 		if fight.is_ongoing():
@@ -212,7 +214,10 @@ func _show_fight_step(fight: Fight, step: Fight.Step, fight_result: FightResult)
 	var exchange: FightExchange = fight.get_last_exchange()
 	var shown: bool = not paragraph.is_empty()
 	match step:
+		# The dice log tells the threats with the dice, their colours come with what became of them
+		Fight.Step.DICE: _story_book.display_dice_result(fight_result)
 		Fight.Step.CONSEQUENCES:
+			_story_book.display_dice_evaluation(fight_result)
 			_play_outcome_sound(fight_result)
 			shown = true
 		# Injury sounds play when they are suffered
