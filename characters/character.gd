@@ -60,6 +60,17 @@ func lose_breath_dice(lost_breath_dice: Array[Die]) -> void:
 	breath_dice = new_breath_dice
 	lost_breath.emit(lost_breath_dice)
 
+func get_injury_total() -> int:
+	var total: int = 0
+	for injury: Injury in _injuries: total += injury.magnitude
+	return total
+
+## Injuries brought at least one score to 0 or below: every further injury calls for a Guts save against all injuries
+func is_overwhelmed_by_injuries() -> bool:
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES: if get_attribute_score(attribute).get_score() <= 0: return true
+	return false
+
+# TODO: injuries from outside fights (consequences) should also call for the incapacitation save; what being incapacitated means there is open
 func suffer_injury(injury: Injury) -> void:
 	assert(injury.magnitude > 0)
 	_injuries.append(injury)

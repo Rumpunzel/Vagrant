@@ -51,8 +51,9 @@ func test_fight_page_offers_fight_and_flee() -> void:
 func test_fighting_ends_on_an_outcome_page() -> void:
 	var exchanges: int = 0
 	while true:
-		var choice: StoryFightDecision = _story._current_story_page.choices[0]
-		var fight: Fight = choice.fight
+		# Fight on, or roll the Guts save when an injury overwhelms the player
+		var choice: StoryChoice = _story._current_story_page.choices[0]
+		var fight: Fight = (choice as StoryFightDecision).fight if choice is StoryFightDecision else _story._current_story_page.fight
 		await _pick(choice)
 		exchanges += 1
 		var page: StoryPage = _story._current_story_page
@@ -86,6 +87,27 @@ func test_resting_is_disabled_while_fighting() -> void:
 	assert_bool(mechanics._make_camp_button.disabled).is_false()
 	assert_bool(mechanics._catch_breath_button.disabled).is_equal(not mechanics._party.characters.values().any(func(character: Character) -> bool: return character.can_catch_breath(null)) and not mechanics._can_catch_breath)
 
+func test_overwhelming_injury_asks_for_a_guts_save() -> void:
+	var fight: Fight = (_story._current_story_page.choices[0] as StoryFightDecision).fight
+	_story._protagonist.suffer_injury(Injury.new(9))
+	# Normally started by the fight's injury step, which waits for it
+	_story._resist_incapacitation(fight)
+	var page: StoryPage = _story._current_story_page
+	assert_bool(page.is_fighting()).is_true()
+	assert_str(page.description).contains("hold on to your senses")
+	var save: StorySaveDecision = page.choices[0]
+	assert_object(save.get_dice_request().attribute).is_same(Rules.STRENGTH)
+	assert_int(save.get_dice_request().get_difficulty()).is_equal(9)
+	save.chose()
+	save.roll()
+	var waited: int = 0
+	while fight.get_paragraph_count() == 0 and waited < 8000:
+		_skip_typing()
+		await await_millis(10)
+		waited += 10
+	assert_bool(fight.player_incapacitated).is_equal(not save.get_dice_result().is_success())
+	assert_str(fight.get_exchange_summary()).contains("Everything goes dark." if fight.player_incapacitated else "You keep your senses.")
+
 func test_monster_lives_in_story() -> void:
 	var choice: StoryFightDecision = _story._current_story_page.choices[0]
 	assert_object(choice.fight.monster.get_parent()).is_same(_story._monsters)
@@ -99,7 +121,7 @@ func _skip_typing() -> void:
 	Input.parse_input_event(event)
 
 ## Chooses and rolls like the UI does, then waits for the next page
-func _pick(choice: StoryFightDecision) -> void:
+func _pick(choice: StoryChoice) -> void:
 	var page: StoryPage = _story._current_story_page
 	choice.chose()
 	choice.roll()

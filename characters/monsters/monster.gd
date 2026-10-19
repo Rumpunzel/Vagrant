@@ -44,6 +44,11 @@ func get_injury_total() -> int:
 	for injury: Injury in _injuries: total += injury.magnitude
 	return total
 
+## Injuries brought at least one score to 0 or below: every further injury calls for a Guts save against all injuries
+func is_overwhelmed_by_injuries() -> bool:
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES: if get_score(attribute) <= 0: return true
+	return false
+
 func get_breath_dice_count() -> int:
 	var count: int = 0
 	for amount: int in breath_dice.values(): count += amount

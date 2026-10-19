@@ -44,21 +44,22 @@ func test_unarmed_example_until_won() -> void:
 	_apply(fight, [1, 1, 2, 2, 7], 7, [3, 4, 5], 5)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.ONGOING)
 	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 2)
-	# Exchange 2: player loses the 9 (d12), Cutthroat its two 4s and an injury of 5
+	# Exchange 2: player loses the 9 (d12), Cutthroat its two 4s and an injury of 5, which leaves its Guts at -2.
+	# Overwhelmed, it saves against all 7 injury with its last die: the 8 holds, but above its Guts it is lost too -> won
+	fight.roll_dice = func(_pool: Array[Die]) -> Array[Die]: return FightTestDice.dice([Rules.d8], [8])
 	_apply(fight, [2, 2, 4, 7, 9], 7, [3, 4, 4], 3)
-	assert_int(fight.outcome).is_equal(Fight.Outcome.ONGOING)
 	assert_int(_character.get_breath_dice_count(Rules.d12)).is_equal(0)
-	assert_int(_monster.breath_dice[Rules.d8]).is_equal(1)
 	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 7)
-	# Exchange 3: Cutthroat's last die is lost -> won
-	_apply(fight, [1, 1, 2, 2], 7, [1], 0, [Rules.d4, Rules.d6, Rules.d8, Rules.d10], [Rules.d8])
+	assert_bool(fight.monster_incapacitated).is_false()
+	assert_bool(_monster.is_out_of_breath()).is_true()
 	assert_int(fight.outcome).is_equal(Fight.Outcome.WON)
 	assert_object(fight.get_transition()).is_same(_won)
-	assert_int(fight.get_exchange_count()).is_equal(3)
+	assert_int(fight.get_exchange_count()).is_equal(2)
 
 func test_player_out_of_breath_loses() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
-	_apply(fight, [2, 3, 4, 5, 6], 1, [1, 1, 1], 7)
+	# Every die above Guts 1 is lost; the Cutthroat wins the threat and stays unhurt
+	_apply(fight, [2, 3, 4, 5, 6], 1, [7, 7, 7], 7)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.LOST)
 	assert_object(fight.get_transition()).is_same(_lost)
 
@@ -117,10 +118,12 @@ func test_texts() -> void:
 func test_condition_description() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
 	assert_str(fight.get_condition_description()).is_equal("The Cutthroat is unhurt and breathes steadily.")
-	# Cutthroat loses both 4s (Guts 3 after the first injury) and takes 5 more
 	_apply(fight, [1, 1, 2, 2, 7], 7, [3, 4, 5], 5)
 	assert_str(fight.get_condition_description()).is_equal("The Cutthroat is bleeding and breathes steadily.")
-	_apply(fight, [2, 2, 4, 7, 9], 7, [3, 4, 4], 3)
+	# Cutthroat loses both 4s (Guts 3 after the first injury) and takes 1 more
+	_apply(fight, [1, 1, 2, 2, 5], 7, [3, 4, 4], 3)
+	assert_str(fight.get_condition_description()).is_equal("The Cutthroat is bleeding and gasps for its last breath.")
+	_monster.suffer_injury(Injury.new(5))
 	assert_str(fight.get_condition_description()).is_equal("The Cutthroat is grievously wounded and gasps for its last breath.")
 
 func test_flee_request_has_its_own_line() -> void:

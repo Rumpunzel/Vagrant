@@ -27,6 +27,11 @@ var protagonist: Character
 var monster: Monster
 var outcome: Outcome = Outcome.ONGOING
 var exchanges: Array[FightExchange] = []
+## Failed the Guts save after an injury that left a score at 0 or below; ends the fight like running out of breath
+var player_incapacitated: bool = false
+var monster_incapacitated: bool = false
+## Rolls the monster's incapacitation save; replaceable for fixed dice in tests
+var roll_dice: Callable = DiceRoller.roll_dice
 
 var _player_lost_breath_dice: Array[Die] = []
 var _player_weapon: Weapon
@@ -115,7 +120,9 @@ func apply_step(step: Step) -> String:
 		Step.PLAYER_INJURY:
 			if player.injury_taken > 0: protagonist.suffer_injury(Injury.new(player.injury_taken))
 		Step.MONSTER_INJURY:
-			if opponent.injury_taken > 0: monster.suffer_injury(Injury.new(opponent.injury_taken))
+			if opponent.injury_taken > 0:
+				monster.suffer_injury(Injury.new(opponent.injury_taken))
+				if monster.is_overwhelmed_by_injuries(): lines.append(_resist_monster_incapacitation())
 			# Injuries have their own display; only an exchange without any gets a line
 			elif player.injury_taken == 0: lines.append("Neither of you is hurt.")
 		Step.OUTCOME:
@@ -125,6 +132,36 @@ func apply_step(step: Step) -> String:
 	var paragraph: String = " ".join(lines)
 	if not paragraph.is_empty(): _paragraphs.append(paragraph)
 	return paragraph
+
+## After [constant Step.PLAYER_INJURY]: the player has to make a Guts save against all their injuries (see [method resist_player_incapacitation])
+func player_must_resist_incapacitation() -> bool:
+	var player: FightSide = get_last_exchange().first
+	return player.injury_taken > 0 and protagonist.is_overwhelmed_by_injuries()
+
+## The outcome of the player's incapacitation save; returns its line, which also joins the exchange summary
+func resist_player_incapacitation(success: bool) -> String:
+	player_incapacitated = not success
+	var line: String = "You keep your senses." if success else "Everything goes dark."
+	_paragraphs.append(line)
+	return line
+
+func get_paragraph_count() -> int: return _paragraphs.size()
+
+## Rolls all of the monster's breath dice as a Guts save against all its injuries
+func _resist_monster_incapacitation() -> String:
+	var difficulty: int = monster.get_injury_total()
+	var dice: Array[Die] = []
+	dice.assign(roll_dice.call(monster.get_breath_dice_pool()))
+	var highest: int = FightExchange.get_highest_result(dice)
+	var guts: int = monster.get_score(Rules.STRENGTH)
+	var lost: Array[Die] = []
+	lost.assign(dice.filter(func(die: Die) -> bool: return die.result > guts))
+	monster.lose_breath_dice(lost)
+	monster_incapacitated = highest < difficulty
+	return "The %s can barely stand: %s save against %d — %d. %s" % [
+		monster.get_monster_name(), describe_attribute(Rules.STRENGTH), difficulty, highest,
+		"It collapses." if monster_incapacitated else "It keeps its feet.",
+	]
 
 func _apply_remaining_steps() -> void:
 	while is_exchange_pending(): apply_step(_next_step as Step)
@@ -179,25 +216,27 @@ func get_condition_description() -> String:
 	elif breath_left < _get_total(monster.monster_profile.get_breath_dice()): breath = "is breathing hard"
 	return "The %s is %s and %s." % [monster.get_monster_name(), wounds, breath]
 
-## What has been told about the last exchange so far, one paragraph per step
-func get_exchange_summary() -> String:
+## What has been told about the last exchange so far, one paragraph per step, from paragraph [param from] on
+func get_exchange_summary(from: int = 0) -> String:
 	var summary: String = ""
-	for paragraph: String in _paragraphs: summary += "[p]%s[/p]" % paragraph
+	for paragraph: String in _paragraphs.slice(from): summary += "[p]%s[/p]" % paragraph
 	return summary
 
 func _describe_outcome() -> String:
 	match outcome:
 		Outcome.WON: return "The %s can no longer resist." % monster.get_monster_name()
-		Outcome.LOST: return "You are out of breath and can no longer resist."
+		Outcome.LOST: return "You sink to the ground and can no longer resist." if player_incapacitated else "You are out of breath and can no longer resist."
 		Outcome.DRAW: return "Neither of you can go on."
 		Outcome.FLED: return "You get away from the %s." % monster.get_monster_name()
 	return ""
 
 func _evaluate_outcome(player_fled: bool) -> Outcome:
+	# Collapsing while running away still lets the foe have you
+	if player_fled and player_incapacitated: return Outcome.LOST
 	# Checked before breath: running out of breath only matters for facing the next exchange
 	if player_fled: return Outcome.FLED
-	var player_out: bool = _is_out_of_breath(protagonist.breath_dice)
-	var monster_out: bool = monster.is_out_of_breath()
+	var player_out: bool = player_incapacitated or _is_out_of_breath(protagonist.breath_dice)
+	var monster_out: bool = monster_incapacitated or monster.is_out_of_breath()
 	if player_out and monster_out: return Outcome.DRAW
 	if player_out: return Outcome.LOST
 	if monster_out: return Outcome.WON

@@ -5,6 +5,7 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 ## Attributes
 - **Guts**, **Blood**, **Nerves**: 2d6 each. A double grants a rare origin.
 - **Injuries** lower all attributes by their total.
+- **Incapacitation:** after an injury that leaves any attribute at 0 or below, make a Guts save against the total of all injuries; failing = incapacitated. In fights: the player picks dice on a save page (also while fleeing), monsters roll all their breath dice. Outside fights: not yet (TODO).
 
 ## Breath dice
 - Start: d4, d6, d8, d10, d12.
@@ -27,7 +28,7 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 - **Order** (each step is told and applied in turn): rolled dice / threat → Nerves → losses and wield checks → (shields, disabled) → armour → injuries → outcome.
 - **Damage** = highest usable weapon die → stance → armour reduction, at least 0.
 - Injuries and losses apply after the exchange.
-- **End:** player flees → fled; otherwise 0 breath dice → that side is out (both = draw). Entering a fight with 0 breath = lost.
+- **End:** player incapacitated while fleeing → lost; player flees → fled; otherwise 0 breath dice or incapacitated → that side is out (both = draw). Entering a fight with 0 breath = lost.
 
 ## Weapons
 - Wield check: weapon die > wield attribute (default Guts) → can't wield, **mark** that face.
