@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="IncapacitationStep" format=3 uid="uid://dh64ggq16c16j"]
+
+[ext_resource type="Script" uid="uid://cljdeq5rrht0c" path="res://story/fight/steps/incapacitation_step.gd" id="1_2ptyw"]
+
+[resource]
+script = ExtResource("1_2ptyw")
+side = 1

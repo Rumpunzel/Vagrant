@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="ArmorStep" format=3 uid="uid://bxirwhewqnte0"]
+
+[ext_resource type="Script" uid="uid://i3jm3srv0wo2" path="res://story/fight/steps/armor_step.gd" id="1_4ii8u"]
+
+[resource]
+script = ExtResource("1_4ii8u")

@@ -144,20 +144,25 @@ func test_steps_apply_the_exchange_in_order() -> void:
 	var opponent: FightSide = FightSide.new(GUTS, _dice([Rules.d8, Rules.d8, Rules.d8], [8, 7, 1]), _scores(5))
 	fight.start_exchange(FightExchange.new(player, opponent), player.lost_breath_dice)
 	assert_bool(fight.is_exchange_pending()).is_true()
-	assert_str(fight.apply_step(Fight.Step.DICE)).starts_with("You threaten with")
-	assert_str(fight.apply_step(Fight.Step.UNNERVING)).is_empty()
+	assert_str(_advance(fight, DiceStep, ExchangeStep.Side.PLAYER)).is_equal("You threaten with %s (9)." % Fight.describe_attribute(GUTS))
+	assert_str(_advance(fight, DiceStep, ExchangeStep.Side.MONSTER)).is_equal("The Cutthroat threatens with %s (8)." % Fight.describe_attribute(GUTS))
+	assert_str(_advance(fight, UnnervingStep, ExchangeStep.Side.PLAYER)).is_empty()
+	assert_str(_advance(fight, UnnervingStep, ExchangeStep.Side.MONSTER)).is_empty()
 	assert_int(_character.get_breath_dice_count(Rules.d12)).is_equal(1)
-	assert_str(fight.apply_step(Fight.Step.CONSEQUENCES)).contains("You lose 1 breath die.")
+	assert_str(_advance(fight, ConsequencesStep, ExchangeStep.Side.PLAYER)).is_equal("You lose 1 breath die.")
 	assert_int(_character.get_breath_dice_count(Rules.d12)).is_equal(0)
+	assert_int(_monster.breath_dice[Rules.d8]).is_equal(3)
+	assert_str(_advance(fight, ConsequencesStep, ExchangeStep.Side.MONSTER)).is_equal("The Cutthroat loses 2 breath dice.")
 	assert_int(_monster.breath_dice[Rules.d8]).is_equal(1)
-	assert_str(fight.apply_step(Fight.Step.ARMOR)).is_empty()
-	assert_str(fight.apply_step(Fight.Step.PLAYER_INJURY)).is_empty()
-	assert_int(_character.get_attribute_score(GUTS).get_score()).is_equal(guts_before)
+	assert_str(_advance(fight, ArmorStep, ExchangeStep.Side.PLAYER)).is_empty()
+	assert_str(_advance(fight, ArmorStep, ExchangeStep.Side.MONSTER)).is_empty()
+	# The player is unhurt, so there is no injury step for them
 	assert_int(_monster.get_injury_total()).is_equal(0)
-	assert_str(fight.apply_step(Fight.Step.MONSTER_INJURY)).is_empty()
+	assert_str(_advance(fight, InjuryStep, ExchangeStep.Side.MONSTER)).is_empty()
 	assert_int(_monster.get_injury_total()).is_equal(1)
+	assert_int(_character.get_attribute_score(GUTS).get_score()).is_equal(guts_before)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.ONGOING)
-	assert_str(fight.apply_step(Fight.Step.OUTCOME)).is_empty()
+	assert_str(_advance(fight, OutcomeStep, ExchangeStep.Side.PLAYER)).is_empty()
 	assert_bool(fight.is_exchange_pending()).is_false()
 
 func test_nerves_attack_is_announced() -> void:
@@ -197,6 +202,13 @@ func _apply(
 ## Injuries are relative to the monster's authored Guts
 func _monster_guts() -> int:
 	return _monster.monster_profile.attribute_scores[GUTS]
+
+## Advances [param fight] by one step, which must be a [param step_class] for [param side]; returns what it told
+func _advance(fight: Fight, step_class: Script, side: ExchangeStep.Side) -> String:
+	var step: ExchangeStep = fight.get_current_step()
+	assert_object(step).is_instanceof(step_class)
+	assert_int(step.side).is_equal(side)
+	return fight.advance()
 
 func _scores(score: int) -> Dictionary[CharacterAttribute, int]:
 	return {GUTS: score, BLOOD: score, Rules.INTELLIGENCE: score}

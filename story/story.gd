@@ -211,9 +211,9 @@ func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision)
 		fight.start_exchange_from(fight_result)
 		_current_dice_request = null
 		_summary_start = 0
-	)
-	for step: int in Fight.Step.values(): _event_queue.queue_callable(func() -> void: await _show_fight_step(fight, step as Fight.Step, fight_result))
-	_event_queue.queue_callable(func() -> void:
+		while fight.is_exchange_pending():
+			var step: ExchangeStep = fight.get_current_step()
+			await _show_fight_step(fight, step, fight.advance(), fight_result)
 		if fight.is_ongoing():
 			_current_story_page = _create_fight_exchange_page(fight)
 			return
@@ -221,43 +221,36 @@ func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision)
 		enter_page(story_choice.get_transition())
 	)
 
-## Applies one step of the exchange, shows it once typed out, then pauses; steps with nothing to show pass silently
-func _show_fight_step(fight: Fight, step: Fight.Step, fight_result: FightResult) -> void:
-	var paragraph: String = fight.apply_step(step)
-	var exchange: FightExchange = fight.get_last_exchange()
-	var shown: bool = not paragraph.is_empty()
-	match step:
-		# The dice log tells the threats with the dice, their colours come with what became of them
-		Fight.Step.DICE: _story_book.display_dice_result(fight_result)
-		Fight.Step.CONSEQUENCES:
-			_story_book.display_dice_evaluation(fight_result)
-			_play_outcome_sound(fight_result)
-			shown = true
-		# Injury sounds play when they are suffered
-		Fight.Step.PLAYER_INJURY:
-			if exchange.first.injury_taken > 0:
-				_story_book.show_injury("You", exchange.first.injury_taken)
-				await _event_queue.wait(_reveal_delay)
-				if fight.player_must_resist_incapacitation(): await _resist_incapacitation(fight)
-		Fight.Step.MONSTER_INJURY:
-			if exchange.second.injury_taken > 0:
-				_story_book.show_injury(fight.monster.get_monster_name(), exchange.second.injury_taken)
-				shown = true
-	if not paragraph.is_empty(): await _story_book.show_outcome(fight.get_exchange_summary(_summary_start))
+## Shows what an exchange step did once typed out, then pauses; steps with nothing to show pass silently
+func _show_fight_step(fight: Fight, step: ExchangeStep, told: String, fight_result: FightResult) -> void:
+	var shown: bool = not told.is_empty()
+	# The dice log tells both threats with the player's dice, their colours come with what became of them
+	if step is DiceStep and step.is_player(): _story_book.display_dice_result(fight_result)
+	elif step is BreathDiceStep and step.is_player():
+		_story_book.display_dice_evaluation(fight_result)
+		_play_outcome_sound(fight_result)
+		shown = true
+	# Injury sounds play when they are suffered
+	elif step is InjuryStep:
+		_story_book.show_injury(step.pick("You", fight.monster.get_monster_name()), step.get_side(fight).injury_taken)
+		shown = true
+	elif step is IncapacitationStep and step.is_player():
+		await _resist_incapacitation(fight, step as IncapacitationStep)
+		return
+	if not told.is_empty(): await _story_book.show_outcome(fight.get_exchange_summary(_summary_start))
 	if shown: await _event_queue.wait(_reveal_delay)
 
 ## Shows a page with a Guts save against all the player's injuries and waits for the roll; the exchange goes on below it
-func _resist_incapacitation(fight: Fight) -> void:
-	var injuries: int = _protagonist.get_injury_total()
+func _resist_incapacitation(fight: Fight, step: IncapacitationStep) -> void:
 	var save_decision: AdventureSaveDecision = AdventureSaveDecision.new()
 	save_decision.description = "Stay conscious!"
 	save_decision.attribute = Rules.STRENGTH
-	save_decision.difficulty = injuries
+	save_decision.difficulty = step.get_difficulty(fight)
 	_incapacitation_save = StoryChoice.from_adventure_decision(save_decision, _protagonist) as StorySaveDecision
 	var save_page: StoryPage = StoryPage.new(
 		_current_story_page.adventure_page,
 		fight.get_title(),
-		"Your wounds (%s) pull you towards the dark. Your sight blurs, your knees give way — hold on to your senses!" % Injury.to_bbcode(injuries),
+		"Your wounds (%s) pull you towards the dark. Your sight blurs, your knees give way — hold on to your senses!" % Injury.to_bbcode(step.get_difficulty(fight)),
 		_current_story_page.background,
 		_current_story_page.ambience,
 		[_incapacitation_save] as Array[StoryChoice],
@@ -273,7 +266,7 @@ func _resist_incapacitation(fight: Fight) -> void:
 	_protagonist.parse_dice_result(save_result)
 	_play_outcome_sound(save_result)
 	_summary_start = fight.get_paragraph_count()
-	fight.resist_player_incapacitation(save_result.is_success())
+	step.resolve(fight, save_result.is_success())
 	await _story_book.show_outcome(fight.get_exchange_summary(_summary_start))
 	await _event_queue.wait(_reveal_delay)
 

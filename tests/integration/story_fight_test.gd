@@ -95,7 +95,8 @@ func test_overwhelming_injury_asks_for_a_guts_save() -> void:
 	var fight: Fight = (_story._current_story_page.choices[0] as StoryFightDecision).fight
 	_story._protagonist.suffer_injury(Injury.new(9))
 	# Normally started by the fight's injury step, which waits for it
-	_story._resist_incapacitation(fight)
+	var step: IncapacitationStep = IncapacitationStep.new()
+	_story._resist_incapacitation(fight, step)
 	var page: StoryPage = _story._current_story_page
 	assert_bool(page.is_fighting()).is_true()
 	assert_str(page.description).contains("hold on to your senses")

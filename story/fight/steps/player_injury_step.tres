@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="InjuryStep" format=3 uid="uid://dvdc07d57r7x6"]
+
+[ext_resource type="Script" uid="uid://bsj42fpstdjix" path="res://story/fight/steps/injury_step.gd" id="1_kekd7"]
+
+[resource]
+script = ExtResource("1_kekd7")
