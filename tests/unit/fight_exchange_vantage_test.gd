@@ -10,6 +10,7 @@ func test_double_vantage_with_guts_adds_twice_the_difference() -> void:
 	# 6 vs 2: vantage 4, doubled 8, on top of the weapon's 4
 	assert_int(_armed_against_unarmed(GUTS, false).second.injury_taken).is_equal(8)
 	assert_int(_armed_against_unarmed(GUTS, true).second.injury_taken).is_equal(12)
+	assert_int(_armed_against_unarmed(GUTS, true).first.damage_added).is_equal(8)
 
 func test_double_vantage_with_nerves_impairs_twice_as_much() -> void:
 	assert_dict(_armed_against_unarmed(NERVES, false).second.impairments).is_equal({GUTS: 4})
@@ -19,6 +20,7 @@ func test_double_vantage_with_blood_takes_twice_as_much_off() -> void:
 	# The foe's 9 is lowered by 4, or by 8 with double vantage
 	assert_int(_blood_against_armed(false).first.injury_taken).is_equal(5)
 	assert_int(_blood_against_armed(true).first.injury_taken).is_equal(1)
+	assert_int(_blood_against_armed(true).first.damage_avoided).is_equal(8)
 
 func test_tie_gives_no_vantage_to_double() -> void:
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d6], [5]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))

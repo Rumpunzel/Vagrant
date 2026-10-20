@@ -106,9 +106,15 @@ func _get_damage(side: FightSide, foe: FightSide) -> int:
 	var damage: int = side.weapon_damage
 	# Unarmed sides always threaten with Guts, which is how they deal the difference
 	var vantage: int = _get_stance_value(side)
-	if vantage > 0: damage = side.get_fight_stance().modify_damage_dealt(damage, vantage)
+	if vantage > 0:
+		var dealt: int = side.get_fight_stance().modify_damage_dealt(damage, vantage)
+		side.damage_added = dealt - damage
+		damage = dealt
 	var foe_vantage: int = _get_stance_value(foe)
-	if foe_vantage > 0: damage = foe.get_fight_stance().modify_damage_taken(damage, foe_vantage)
+	if foe_vantage > 0:
+		var taken: int = foe.get_fight_stance().modify_damage_taken(damage, foe_vantage)
+		foe.damage_avoided = maxi(damage, 0) - maxi(taken, 0)
+		damage = taken
 	var injury: int = maxi(damage - foe.damage_reduction, 0)
 	foe.damage_prevented = maxi(damage, 0) - injury
 	return injury

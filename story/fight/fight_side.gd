@@ -52,6 +52,9 @@ var weapon_damage: int = 0
 var injury_taken: int = 0
 ## How much of the foe's blow this side's armour took off
 var damage_prevented: int = 0
+## What this side's stance did with its vantage to the damage: added to its own blow (Guts), taken off the foe's (Blood)
+var damage_added: int = 0
+var damage_avoided: int = 0
 
 func _init(
 	with_stance: CharacterAttribute,

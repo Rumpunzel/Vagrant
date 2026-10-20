@@ -3,7 +3,7 @@ extends GdUnitTestSuite
 ## Exchange steps: each applies its part when entered, whatever order exchange_steps.tres puts them in.
 
 const GUTS: CharacterAttribute = Rules.STRENGTH
-var _side_steps: Array[Script] = [DiceStep, UnnervingStep, WeaponCheckStep, BreathDiceStep, ArmorStep, InjuryStep, IncapacitationStep]
+var _side_steps: Array[Script] = [DiceStep, UnnervingStep, WeaponCheckStep, BreathDiceStep, VantageStep, ArmorStep, InjuryStep, IncapacitationStep]
 
 var _character: Character
 var _monster: Monster
@@ -71,3 +71,13 @@ func test_no_tie_line_when_the_threats_differ() -> void:
 	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [4]), FightTestDice.scores(7))
 	_fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice)
 	assert_str(_fight.get_exchange_summary()).not_contains("gives way")
+
+func test_guts_and_blood_vantage_are_told() -> void:
+	# 4 vs 2: the player's Guts add 2 to the Sword's 1 (the Cutthroat keeps Guts 2); then 5 vs 2 with Blood: 3 off the Cutthroat's 5
+	var guts: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d6], [4]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))
+	_fight.apply_exchange(FightExchange.new(guts, FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [2]), FightTestDice.scores(7))), guts.lost_breath_dice)
+	assert_str(_fight.get_exchange_summary()).contains("You press your advantage: +2 to your blow.")
+	var blood: FightSide = FightSide.new(Rules.AGILITY, FightTestDice.dice([Rules.d6], [5]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))
+	var armed: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [2]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d8, 5))
+	_fight.apply_exchange(FightExchange.new(blood, armed), blood.lost_breath_dice)
+	assert_str(_fight.get_exchange_summary()).contains("You dodge 3 of the Cutthroat's blow.")
