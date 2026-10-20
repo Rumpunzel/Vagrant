@@ -10,7 +10,7 @@ func enter(fight: Fight) -> String:
 	return "" if is_player() else _resist_as_monster(fight)
 
 func get_difficulty(fight: Fight) -> int:
-	return fight.protagonist.get_injury_total() if is_player() else fight.monster.get_injury_total()
+	return get_actor(fight).get_injury_total()
 
 ## The player's save; returns the line telling the outcome, which also joins the exchange summary
 func resolve(fight: Fight, success: bool) -> String:
@@ -21,10 +21,10 @@ func resolve(fight: Fight, success: bool) -> String:
 	return line
 
 func _is_overwhelmed(fight: Fight) -> bool:
-	return fight.protagonist.is_overwhelmed_by_injuries() if is_player() else fight.monster.is_overwhelmed_by_injuries()
+	return get_actor(fight).is_overwhelmed_by_injuries()
 
 func _can_continue(fight: Fight) -> bool:
-	return not fight.protagonist.is_out_of_breath() if is_player() else not fight.monster.is_out_of_breath()
+	return not get_actor(fight).is_out_of_breath()
 
 func _resist_as_monster(fight: Fight) -> String:
 	var monster: Monster = fight.monster

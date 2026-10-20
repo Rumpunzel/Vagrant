@@ -1,13 +1,8 @@
 class_name Character
-extends Node
+extends Actor
 
-signal lost_breath(lost_breath_dice: Array[Die])
 signal caught_breath(recovered_dice: Dictionary[Die, int])
-signal suffered_injury(injury: Injury)
-
 signal character_profile_changed(character_profile: CharacterProfile)
-signal injuries_changed(injuries: Array[Injury])
-signal breath_dice_changed(breath_dice: Dictionary[Die, int])
 signal exhaustion_changed(exhaustion: Array[DieType])
 
 @export var character_profile: CharacterProfile :
@@ -28,63 +23,12 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 		exhaustion.sort_custom(DieType.compare_ascending)
 		exhaustion_changed.emit(exhaustion)
 
-var breath_dice: Dictionary[DieType, int] :
-	set(new_breath_dice):
-		if new_breath_dice == breath_dice: return
-		breath_dice = new_breath_dice
-		breath_dice_changed.emit(breath_dice)
-
 var most_recently_chosen_attribute: CharacterAttribute
-var weapons: Array[Weapon] = []
-var armor: Array[Armor] = []
-var shields: Array[Shield] = []
 ## Item -> how many are carried
 var items: Dictionary[ItemProfile, int] = {}
 
-# TODO: if you roll under an injury, increase magnitude by 1
-var _injuries: Array[Injury] :
-	set(new_injuries):
-		if new_injuries == _injuries: return
-		_injuries = new_injuries
-		injuries_changed.emit(_injuries)
-
 func parse_dice_result(dice_result: DiceRequestResult) -> void:
 	lose_breath_dice(dice_result.get_lost_breath_dice())
-
-func lose_breath_dice(lost_breath_dice: Array[Die]) -> void:
-	if lost_breath_dice.is_empty(): return
-	var new_breath_dice: Dictionary[DieType, int] = breath_dice.duplicate()
-	for breath_die: Die in lost_breath_dice:
-		new_breath_dice[breath_die.die_type] = new_breath_dice[breath_die.die_type] - 1
-		assert(new_breath_dice[breath_die.die_type] >= 0)
-	breath_dice = new_breath_dice
-	lost_breath.emit(lost_breath_dice)
-
-func get_injury_total() -> int:
-	var total: int = 0
-	for injury: Injury in _injuries: total += injury.magnitude
-	return total
-
-## Injuries brought at least one score to 0 or below: every further injury calls for a Guts save against all injuries
-func is_overwhelmed_by_injuries() -> bool:
-	for attribute: CharacterAttribute in Rules.ATTRIBUTES: if get_attribute_score(attribute).get_score() <= 0: return true
-	return false
-
-func get_breath_dice_count() -> int:
-	var count: int = 0
-	for amount: int in breath_dice.values(): count += amount
-	return count
-
-func is_out_of_breath() -> bool:
-	for amount: int in breath_dice.values(): if amount > 0: return false
-	return true
-
-# TODO: injuries from outside fights (consequences) should also call for the incapacitation save; what being incapacitated means there is open
-func suffer_injury(injury: Injury) -> void:
-	assert(injury.magnitude > 0)
-	_injuries.append(injury)
-	injuries_changed.emit(_injuries)
-	suffered_injury.emit(injury)
 
 func catch_breath(die_to_exhaust: DieType) -> void:
 	assert(die_to_exhaust)
@@ -100,9 +44,6 @@ func catch_breath(die_to_exhaust: DieType) -> void:
 
 func can_catch_breath(die_to_exhaust: DieType) -> bool:
 	return not get_recoverable_breath_dice(die_to_exhaust).is_empty() and get_available_exhaustion().size() > 1
-
-func get_breath_dice_pool() -> Array[Die]:
-	return DiceRoller.generate_dice_pool(breath_dice)
 
 func get_recoverable_breath_dice(die_to_exhaust: DieType) -> Dictionary[DieType, int]:
 	var recoverable_breath_dice: Dictionary[DieType, int] = {}
@@ -134,6 +75,8 @@ func get_smallest_exhaustion() -> DieType:
 
 func get_portrait() -> Texture2D:
 	return character_profile.portrait
+
+func get_score(attribute: CharacterAttribute) -> int: return get_attribute_score(attribute).get_score()
 
 func get_attribute_score(attribute: CharacterAttribute) -> AttributeScore:
 	return AttributeScore.new(attribute, character_profile.attribute_scores[attribute], get_internal_attribute_modifiers(), get_external_attribute_modifiers())

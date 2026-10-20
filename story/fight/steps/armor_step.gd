@@ -6,7 +6,7 @@ func enter(fight: Fight) -> String:
 	var lines: Array[String] = []
 	for blocked_die: Die in get_foe_side(fight).blocked_weapon_dice:
 		var blocking: Array[Armor] = []
-		blocking.assign(get_armor(fight).filter(func(piece: Armor) -> bool: return piece.blocks(blocked_die.result)))
+		blocking.assign(get_actor(fight).armor.filter(func(piece: Armor) -> bool: return piece.blocks(blocked_die.result)))
 		if not blocking.is_empty():
 			var piece: Armor = blocking.pick_random()
 			lines.append("%s %s blocks the %d." % [get_owner(fight).capitalize(), piece.get_equipment_name(), blocked_die.result])

@@ -38,7 +38,7 @@ func _init(for_decision: AdventureFightDecision, for_protagonist: Character, aga
 	protagonist = for_protagonist
 	monster = against_monster
 	monster.recover_breath()
-	if is_out_of_breath(protagonist.breath_dice): outcome = Outcome.LOST
+	if protagonist.is_out_of_breath(): outcome = Outcome.LOST
 
 func create_request(fleeing: bool = false) -> FightRequest:
 	assert(is_ongoing())
@@ -126,7 +126,7 @@ func _evaluate_outcome() -> Outcome:
 	if player_fled and player_incapacitated: return Outcome.LOST
 	# Checked before breath: running out of breath only matters for facing the next exchange
 	if player_fled: return Outcome.FLED
-	var player_out: bool = player_incapacitated or is_out_of_breath(protagonist.breath_dice)
+	var player_out: bool = player_incapacitated or protagonist.is_out_of_breath()
 	var monster_out: bool = monster_incapacitated or monster.is_out_of_breath()
 	if player_out and monster_out: return Outcome.DRAW
 	if player_out: return Outcome.LOST
@@ -179,7 +179,3 @@ static func _get_total(dice: Dictionary[DieType, int]) -> int:
 	var total: int = 0
 	for amount: int in dice.values(): total += amount
 	return total
-
-static func is_out_of_breath(breath_dice: Dictionary[DieType, int]) -> bool:
-	for amount: int in breath_dice.values(): if amount > 0: return false
-	return true

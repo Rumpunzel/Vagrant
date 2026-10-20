@@ -27,7 +27,8 @@ func get_owner(fight: Fight) -> String: return "your" if is_player() else "the %
 func get_foe_owner(fight: Fight) -> String: return "the %s's" % fight.monster.get_monster_name() if is_player() else "your"
 func get_weapon(fight: Fight) -> Weapon: return fight.player_weapon if is_player() else fight.opponent_weapon
 func get_foe_weapon(fight: Fight) -> Weapon: return fight.opponent_weapon if is_player() else fight.player_weapon
-func get_armor(fight: Fight) -> Array[Armor]: return fight.protagonist.armor if is_player() else fight.monster.armor
+## The character or monster this step is for
+func get_actor(fight: Fight) -> Actor: return fight.protagonist if is_player() else fight.monster
 ## [param player_text] or [param monster_text], whichever side this step is for
 func pick(player_text: String, monster_text: String) -> String: return player_text if is_player() else monster_text
 
