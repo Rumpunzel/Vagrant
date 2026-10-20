@@ -48,7 +48,7 @@ func test_unarmed_example_until_won() -> void:
 	# Overwhelmed, it saves against all 7 injury with its last die: the 8 holds, but above its Guts it is lost too -> won
 	fight.roll_dice = func(_pool: Array[Die]) -> Array[Die]: return FightTestDice.dice([Rules.d8], [8])
 	_apply(fight, [2, 2, 4, 7, 9], 7, [3, 4, 4], 3)
-	assert_int(_character.get_breath_dice_count(Rules.d12)).is_equal(0)
+	assert_int(_character.get_breath_dice_count_for(Rules.d12)).is_equal(0)
 	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 7)
 	assert_bool(fight.monster_incapacitated).is_false()
 	assert_bool(_monster.is_out_of_breath()).is_true()
@@ -80,7 +80,7 @@ func test_fleeing_out_of_breath_still_flees() -> void:
 	# Breath lost while fleeing matters for the next challenge, not this fight
 	var fight: Fight = Fight.new(_decision, _character, _monster)
 	_apply(fight, [2, 3, 4, 5, 6], 1, [1, 1, 1], 7, [Rules.d4, Rules.d6, Rules.d8, Rules.d10, Rules.d12], [Rules.d8, Rules.d8, Rules.d8], true)
-	assert_int(_character.get_breath_dice_count(Rules.d12)).is_equal(0)
+	assert_int(_character.get_breath_dice_count_for(Rules.d12)).is_equal(0)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.FLED)
 
 func test_fleeing_from_monster_out_of_breath_still_flees() -> void:

@@ -42,13 +42,13 @@ func test_steps_apply_their_part_only_when_entered() -> void:
 	var entered: Array[String] = []
 	while _fight.is_exchange_pending():
 		var step: ExchangeStep = _fight.get_current_step()
-		var player_dice: int = _character.get_breath_dice_count(Rules.d12)
+		var player_dice: int = _character.get_breath_dice_count_for(Rules.d12)
 		var monster_dice: int = _monster.breath_dice[Rules.d8]
 		var monster_injury: int = _monster.get_injury_total()
 		var told: String = _fight.advance()
 		var player_breath_step: bool = step is BreathDiceStep and step.is_player()
 		var monster_breath_step: bool = step is BreathDiceStep and not step.is_player()
-		assert_int(_character.get_breath_dice_count(Rules.d12)).is_equal(player_dice - 1 if player_breath_step else player_dice)
+		assert_int(_character.get_breath_dice_count_for(Rules.d12)).is_equal(player_dice - 1 if player_breath_step else player_dice)
 		assert_int(_monster.breath_dice[Rules.d8]).is_equal(monster_dice - 2 if monster_breath_step else monster_dice)
 		assert_int(_monster.get_injury_total()).is_equal(monster_injury + 1 if step is InjuryStep and not step.is_player() else monster_injury)
 		if player_breath_step: assert_str(told).is_equal("You lose 1 breath die.")

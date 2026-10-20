@@ -70,6 +70,15 @@ func is_overwhelmed_by_injuries() -> bool:
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: if get_attribute_score(attribute).get_score() <= 0: return true
 	return false
 
+func get_breath_dice_count() -> int:
+	var count: int = 0
+	for amount: int in breath_dice.values(): count += amount
+	return count
+
+func is_out_of_breath() -> bool:
+	for amount: int in breath_dice.values(): if amount > 0: return false
+	return true
+
 # TODO: injuries from outside fights (consequences) should also call for the incapacitation save; what being incapacitated means there is open
 func suffer_injury(injury: Injury) -> void:
 	assert(injury.magnitude > 0)
@@ -104,7 +113,7 @@ func get_recoverable_breath_dice(die_to_exhaust: DieType) -> Dictionary[DieType,
 		if recoverable > 0: recoverable_breath_dice[die_type] = recoverable
 	return recoverable_breath_dice
 
-func get_breath_dice_count(breath_die_type: DieType) -> int: return breath_dice[breath_die_type]
+func get_breath_dice_count_for(breath_die_type: DieType) -> int: return breath_dice[breath_die_type]
 
 func get_auto_selected_breath_dice(with_attribute: CharacterAttribute) -> Dictionary[DieType, int]:
 	var attribute_score: AttributeScore = get_attribute_score(with_attribute)

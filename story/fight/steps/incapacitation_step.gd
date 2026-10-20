@@ -4,7 +4,7 @@ extends ExchangeStep
 ## After an injury that overwhelms, a Guts save against all injuries. Monsters roll all their breath dice right away;
 ## the player's save is shown by whoever presents the exchange, who hands its outcome to [method resolve].
 
-func applies(fight: Fight) -> bool: return get_side(fight).injury_taken > 0 and _is_overwhelmed(fight)
+func applies(fight: Fight) -> bool: return get_side(fight).injury_taken > 0 and _is_overwhelmed(fight) and _can_continue(fight)
 
 func enter(fight: Fight) -> String:
 	return "" if is_player() else _resist_as_monster(fight)
@@ -22,6 +22,9 @@ func resolve(fight: Fight, success: bool) -> String:
 
 func _is_overwhelmed(fight: Fight) -> bool:
 	return fight.protagonist.is_overwhelmed_by_injuries() if is_player() else fight.monster.is_overwhelmed_by_injuries()
+
+func _can_continue(fight: Fight) -> bool:
+	return not fight.protagonist.is_out_of_breath() if is_player() else not fight.monster.is_out_of_breath()
 
 func _resist_as_monster(fight: Fight) -> String:
 	var monster: Monster = fight.monster

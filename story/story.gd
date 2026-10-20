@@ -30,8 +30,10 @@ var _protagonist: Character :
 		_protagonist = new_protagonist
 		if _current_dice_request: _current_dice_request.character = _protagonist
 
-## The pending save against being knocked out; rolling it calls [member _after_incapacitation_save], which goes on with the exchange
+## The pending save against being knocked out and the choice to give in instead; either calls [member _after_incapacitation_save]
+## (with the save's result, or null for giving in), which goes on with the exchange
 var _incapacitation_save: StorySaveDecision
+var _give_in: StoryChoice
 var _after_incapacitation_save: Callable
 ## Paragraphs of the exchange summary already shown on an earlier page (before an incapacitation save)
 var _summary_start: int = 0
@@ -162,6 +164,9 @@ func _create_fight_exchange_page(fight: Fight) -> StoryPage:
 
 func _on_choice_made(story_choice: StoryChoice) -> void:
 	assert(story_choice)
+	if story_choice == _give_in:
+		_end_incapacitation_choice(null)
+		return
 	var story_decision: AdventureDecision = story_choice.get_adventure_decision()
 	if story_decision != AdventureDecision.get_turn_back():
 		var decision_log: Array[StoryChoice] = _decision_log.get_or_add(story_decision, [] as Array[StoryChoice])
@@ -183,8 +188,7 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	assert(dice_result.get_dice_request() == _current_dice_request)
 	if story_choice == _incapacitation_save:
 		_current_dice_request = null
-		_incapacitation_save = null
-		_after_incapacitation_save.call(dice_result)
+		_end_incapacitation_choice(dice_result as SaveResult)
 		return
 	_event_queue.queue_delay(_reveal_delay)
 	if story_choice is StoryFightDecision:
@@ -262,6 +266,9 @@ func _ask_for_incapacitation_save(fight: Fight, step: IncapacitationStep, fight_
 	save_decision.attribute = Rules.STRENGTH
 	save_decision.difficulty = step.get_difficulty(fight)
 	_incapacitation_save = StoryChoice.from_adventure_decision(save_decision, _protagonist) as StorySaveDecision
+	var give_in_decision: AdventureDecision = AdventureDecision.new()
+	give_in_decision.description = "Give in."
+	_give_in = StoryChoice.from_adventure_decision(give_in_decision, _protagonist)
 	_after_incapacitation_save = func(save_result: SaveResult) -> void:
 		_event_queue.queue_delay(_reveal_delay)
 		_event_queue.queue_callable(func() -> void: _resolve_incapacitation_save(fight, step, save_result, fight_result, story_choice))
@@ -271,21 +278,28 @@ func _ask_for_incapacitation_save(fight: Fight, step: IncapacitationStep, fight_
 		"Your wounds (%s) pull you towards the dark. Your sight blurs, your knees give way — hold on to your senses!" % Injury.to_bbcode(step.get_difficulty(fight)),
 		_current_story_page.background,
 		_current_story_page.ambience,
-		[_incapacitation_save] as Array[StoryChoice],
+		[_incapacitation_save, _give_in] as Array[StoryChoice],
 		[],
 	)
 	save_page.fight = fight
 	_current_story_page = save_page
 
+func _end_incapacitation_choice(save_result: SaveResult) -> void:
+	_incapacitation_save = null
+	_give_in = null
+	_after_incapacitation_save.call(save_result)
+
+## [param save_result] is null when the player gave in: that fails the save without rolling
 func _resolve_incapacitation_save(fight: Fight, step: IncapacitationStep, save_result: SaveResult, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
-	_story_book.display_dice_result(save_result)
-	_story_book.display_dice_evaluation(save_result)
-	_protagonist.parse_dice_result(save_result)
-	_play_outcome_sound(save_result)
+	if save_result:
+		_story_book.display_dice_result(save_result)
+		_story_book.display_dice_evaluation(save_result)
+		_protagonist.parse_dice_result(save_result)
+		_play_outcome_sound(save_result)
 	fight.advance()
 	# The rest of the exchange is told on the save's page
 	_summary_start = fight.get_paragraph_count()
-	_reveal(fight, step.resolve(fight, save_result.is_success()), true)
+	_reveal(fight, step.resolve(fight, save_result != null and save_result.is_success()), true)
 	_event_queue.queue_callable(func() -> void: _play_fight_step(fight, fight_result, story_choice))
 
 func _play_outcome_sound(dice_result: DiceRequestResult) -> void:

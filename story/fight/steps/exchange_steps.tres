@@ -20,5 +20,5 @@
 
 [resource]
 script = ExtResource("1_steps")
-steps = Array[ExtResource("2_step")]([ExtResource("3_xssvq"), ExtResource("4_weu3c"), ExtResource("17_tie"), ExtResource("6_b2nqd"), ExtResource("9_kruhm"), ExtResource("5_ieokv"), ExtResource("7_sq65b"), ExtResource("8_eayqi"), ExtResource("10_ieokv"), ExtResource("11_sq65b"), ExtResource("7_c5lxt"), ExtResource("9_b2nqd"), ExtResource("16_s16sv"), ExtResource("14_s16sv"), ExtResource("12_kruhm")])
+steps = Array[ExtResource("2_step")]([ExtResource("3_xssvq"), ExtResource("4_weu3c"), ExtResource("17_tie"), ExtResource("5_ieokv"), ExtResource("9_kruhm"), ExtResource("6_b2nqd"), ExtResource("7_sq65b"), ExtResource("8_eayqi"), ExtResource("10_ieokv"), ExtResource("11_sq65b"), ExtResource("7_c5lxt"), ExtResource("9_b2nqd"), ExtResource("16_s16sv"), ExtResource("14_s16sv"), ExtResource("12_kruhm")])
 metadata/_custom_type_script = "uid://dwf7sy0jjca68"

@@ -5,7 +5,7 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 ## Attributes
 - **Guts**, **Blood**, **Nerves**: 2d6 each. A double grants a rare origin.
 - **Injuries** lower all attributes by their total.
-- **Incapacitation:** after an injury that leaves any attribute at 0 or below, make a Guts save against the total of all injuries; failing = incapacitated. In fights: the player picks dice on a save page (also while fleeing), monsters roll all their breath dice. Outside fights: not yet (TODO).
+- **Incapacitation:** after an injury that leaves any attribute at 0 or below, make a Guts save against the total of all injuries; failing = incapacitated. In fights: the player picks dice on a save page (also while fleeing) or gives in (counts as failed, no dice rolled), monsters roll all their breath dice. Outside fights: not yet (TODO).
 
 ## Breath dice
 - Start: d4, d6, d8, d10, d12.

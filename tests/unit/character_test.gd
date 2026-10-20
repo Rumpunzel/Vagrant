@@ -19,9 +19,9 @@ func test_lose_breath_dice() -> void:
 	var lost_signals: Array = []
 	_character.lost_breath.connect(func(dice: Array[Die]) -> void: lost_signals.append(dice))
 	_character.lose_breath_dice([Rules.d12.get_die(), Rules.d4.get_die()] as Array[Die])
-	assert_int(_character.get_breath_dice_count(Rules.d12)).is_equal(0)
-	assert_int(_character.get_breath_dice_count(Rules.d4)).is_equal(0)
-	assert_int(_character.get_breath_dice_count(Rules.d8)).is_equal(1)
+	assert_int(_character.get_breath_dice_count_for(Rules.d12)).is_equal(0)
+	assert_int(_character.get_breath_dice_count_for(Rules.d4)).is_equal(0)
+	assert_int(_character.get_breath_dice_count_for(Rules.d8)).is_equal(1)
 	assert_int(lost_signals.size()).is_equal(1)
 	_character.lose_breath_dice([] as Array[Die])
 	assert_int(lost_signals.size()).is_equal(1)
@@ -32,10 +32,10 @@ func test_catch_breath_exhausts_one_die_and_recovers_the_rest() -> void:
 	assert_dict(_character.get_recoverable_breath_dice(Rules.d4)).is_equal({Rules.d10: 1, Rules.d12: 1})
 	_character.catch_breath(Rules.d4)
 	assert_array(_character.exhaustion).is_equal([Rules.d4])
-	assert_int(_character.get_breath_dice_count(Rules.d12)).is_equal(1)
-	assert_int(_character.get_breath_dice_count(Rules.d10)).is_equal(1)
+	assert_int(_character.get_breath_dice_count_for(Rules.d12)).is_equal(1)
+	assert_int(_character.get_breath_dice_count_for(Rules.d10)).is_equal(1)
 	# The exhausted die is not recovered
-	assert_int(_character.get_breath_dice_count(Rules.d4)).is_equal(0)
+	assert_int(_character.get_breath_dice_count_for(Rules.d4)).is_equal(0)
 	assert_array(_character.get_available_exhaustion()).not_contains([Rules.d4])
 	assert_object(_character.get_smallest_exhaustion()).is_same(Rules.d6)
 

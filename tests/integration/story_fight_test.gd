@@ -115,6 +115,24 @@ func test_overwhelming_injury_asks_for_a_guts_save() -> void:
 	# The exchange went on after the save: collapsing loses the fight
 	if fight.player_incapacitated: assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(Fight.Outcome.LOST))
 
+func test_giving_in_loses_without_rolling() -> void:
+	var choice: StoryFightDecision = _story._current_story_page.choices[0]
+	var fight: Fight = choice.fight
+	_story._protagonist.suffer_injury(Injury.new(5))
+	var result: FightResult = choice.get_dice_request().roll()
+	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7))
+	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [4]), FightTestDice.scores(7)))
+	fight.start_exchange_from(result)
+	while not (fight.get_current_step() is IncapacitationStep and fight.get_current_step().is_player()): fight.advance()
+	_story._ask_for_incapacitation_save(fight, fight.get_current_step() as IncapacitationStep, result, choice)
+	var give_in: StoryChoice = _story._current_story_page.choices[1]
+	assert_str(give_in.get_description()).is_equal("Give in.")
+	var breath_before: Dictionary[DieType, int] = _story._protagonist.breath_dice.duplicate()
+	await _pick(give_in)
+	assert_bool(fight.player_incapacitated).is_true()
+	assert_dict(_story._protagonist.breath_dice).is_equal(breath_before)
+	assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(Fight.Outcome.LOST))
+
 func test_monster_lives_in_story() -> void:
 	var choice: StoryFightDecision = _story._current_story_page.choices[0]
 	assert_object(choice.fight.monster.get_parent()).is_same(_story._monsters)
@@ -131,7 +149,7 @@ func _skip_typing() -> void:
 func _pick(choice: StoryChoice) -> void:
 	var page: StoryPage = _story._current_story_page
 	choice.chose()
-	choice.roll()
+	if choice.is_dice_choice(): choice.roll()
 	var waited: int = 0
 	while _story._current_story_page == page:
 		_skip_typing()
