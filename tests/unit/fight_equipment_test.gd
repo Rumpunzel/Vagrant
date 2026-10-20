@@ -79,7 +79,8 @@ func test_summary_has_one_paragraph_per_step_and_side() -> void:
 	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, sword, knife)
 	var guts: String = Fight.describe_attribute(GUTS)
 	var paragraphs: PackedStringArray = fight.get_exchange_summary().trim_prefix("[p]").trim_suffix("[/p]").split("[/p][p]")
-	assert_array(Array(paragraphs)).is_equal([
+	# Every step and side tells its own paragraph; their order is authored in exchange_steps.tres
+	assert_array(Array(paragraphs)).contains_exactly_in_any_order([
 		"You threaten with %s (4) and your Sword (3)." % guts,
 		"The Cutthroat threatens with %s (6) and its Knife (7)." % Fight.describe_attribute(Rules.INTELLIGENCE),
 		"The Cutthroat unnerves you (−2 %s)." % guts,

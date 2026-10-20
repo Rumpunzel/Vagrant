@@ -51,7 +51,7 @@ func create_request(fleeing: bool = false) -> FightRequest:
 	request.nerves_target = monster.get_attack().get_stance()
 	return request
 
-## Applies the whole exchange at once; [method start_exchange] and [method advance] apply it step by step.
+## Applies the whole exchange at once; [method start_exchange], [method advance] and [method end_exchange] apply it step by step.
 ## An incapacitation save is left unresolved this way.
 func resolve(result: FightResult) -> void:
 	start_exchange_from(result)
@@ -105,6 +105,33 @@ func _find_step(from_index: int) -> void:
 
 func _apply_remaining_steps() -> void:
 	while is_exchange_pending(): advance()
+	end_exchange()
+
+## Once every step was applied: decides how the fight stands and returns the line telling it, "" while it goes on
+func end_exchange() -> String:
+	assert(not is_exchange_pending())
+	outcome = _evaluate_outcome()
+	var line: String = ""
+	match outcome:
+		Outcome.WON: line = "The %s can no longer resist." % monster.get_monster_name()
+		Outcome.LOST: line = "You sink to the ground and can no longer resist." if player_incapacitated else "You are out of breath and can no longer resist."
+		Outcome.DRAW: line = "Neither of you can go on."
+		Outcome.FLED: line = "You get away from the %s." % monster.get_monster_name()
+	tell(line)
+	return line
+
+func _evaluate_outcome() -> Outcome:
+	var player_fled: bool = get_last_exchange().first.fleeing
+	# Collapsing while running away still lets the foe have you
+	if player_fled and player_incapacitated: return Outcome.LOST
+	# Checked before breath: running out of breath only matters for facing the next exchange
+	if player_fled: return Outcome.FLED
+	var player_out: bool = player_incapacitated or is_out_of_breath(protagonist.breath_dice)
+	var monster_out: bool = monster_incapacitated or monster.is_out_of_breath()
+	if player_out and monster_out: return Outcome.DRAW
+	if player_out: return Outcome.LOST
+	if monster_out: return Outcome.WON
+	return Outcome.ONGOING
 
 func is_ongoing() -> bool: return outcome == Outcome.ONGOING
 func get_exchange_count() -> int: return exchanges.size()

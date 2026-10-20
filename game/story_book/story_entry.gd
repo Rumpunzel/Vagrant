@@ -40,12 +40,14 @@ func show_injury(target_name: String, magnitude: int) -> void:
 	injury_display.setup(target_name, magnitude)
 	_injuries.visible = true
 
-## Returns once the text is fully typed out
+## Starts typing [param outcome]; see [method is_outcome_typed]
 func show_outcome(outcome: String) -> void:
 	if outcome.is_empty(): return
 	_outcome.visible = true
 	_outcome.type_text(outcome)
-	if _outcome.visible_ratio < 1.0: await _outcome.finished_typing
+
+func is_outcome_typed() -> bool: return _outcome.visible_ratio >= 1.0
+func get_outcome_typed() -> Signal: return _outcome.finished_typing
 
 func display_dice_result(dice_result: DiceRequestResult) -> void:
 	_breath_dice_selection.display_dice_result(dice_result)

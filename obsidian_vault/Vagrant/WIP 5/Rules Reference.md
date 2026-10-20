@@ -25,7 +25,7 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
   - **Blood**: damage taken − vantage.
   - **Nerves**: chosen foe attribute − vantage for this exchange (before dice are checked).
 - **Unarmed** = Guts, weapon damage 0. **Flee** = Blood, always escapes after damage.
-- **Order** (each step is told and applied in turn, player first, then monster): rolled dice / threat → Nerves → losses and wield checks → (shields, disabled) → armour → injury + incapacitation save → outcome.
+- **Order** (each step is told and applied in turn, per side; authored in `exchange_steps.tres`): rolled dice / threat → tie, if any → Nerves → wield checks → breath dice lost → (shields, disabled) → armour → injury + incapacitation save → outcome. A side loses its breath dice before its incapacitation save.
 - **Damage** = highest usable weapon die → stance → armour reduction, at least 0.
 - Injuries and losses apply after the exchange.
 - **End:** player incapacitated while fleeing → lost; player flees → fled; otherwise 0 breath dice or incapacitated → that side is out (both = draw). Entering a fight with 0 breath = lost.

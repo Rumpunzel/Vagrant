@@ -11,17 +11,14 @@
 [ext_resource type="Resource" uid="uid://cf5eg57agn0u" path="res://story/fight/steps/player_weapon_check_step.tres" id="8_eayqi"]
 [ext_resource type="Resource" uid="uid://dvdc07d57r7x6" path="res://story/fight/steps/player_injury_step.tres" id="9_b2nqd"]
 [ext_resource type="Resource" uid="uid://cs2hryv3wrqp" path="res://story/fight/steps/player_breath_dice_step.tres" id="9_kruhm"]
-[ext_resource type="Script" uid="uid://pmw6dy05rlv1" path="res://story/fight/steps/outcome_step.gd" id="9_outcome"]
 [ext_resource type="Resource" uid="uid://cfdyeladp1kvv" path="res://story/fight/steps/monster_armor_step.tres" id="10_ieokv"]
 [ext_resource type="Resource" uid="uid://vrtralilmou3" path="res://story/fight/steps/monster_injury_step.tres" id="11_sq65b"]
 [ext_resource type="Resource" uid="uid://6q3ano8y7dxk" path="res://story/fight/steps/player_incapaciation_step.tres" id="12_kruhm"]
 [ext_resource type="Resource" uid="uid://dh64ggq16c16j" path="res://story/fight/steps/monster_incapaciation_step.tres" id="14_s16sv"]
 [ext_resource type="Resource" uid="uid://df2y74ycwja7k" path="res://story/fight/steps/monster_breath_dice_step.tres" id="16_s16sv"]
-
-[sub_resource type="Resource" id="outcome_player"]
-script = ExtResource("9_outcome")
+[ext_resource type="Resource" uid="uid://cy0mujukqr6lv" path="res://story/fight/steps/tie_step.tres" id="17_tie"]
 
 [resource]
 script = ExtResource("1_steps")
-steps = Array[ExtResource("2_step")]([ExtResource("3_xssvq"), ExtResource("4_weu3c"), ExtResource("6_b2nqd"), ExtResource("5_ieokv"), ExtResource("7_sq65b"), ExtResource("8_eayqi"), ExtResource("9_kruhm"), ExtResource("10_ieokv"), ExtResource("11_sq65b"), ExtResource("14_s16sv"), ExtResource("7_c5lxt"), ExtResource("9_b2nqd"), ExtResource("16_s16sv"), ExtResource("12_kruhm"), SubResource("outcome_player")])
+steps = Array[ExtResource("2_step")]([ExtResource("3_xssvq"), ExtResource("4_weu3c"), ExtResource("17_tie"), ExtResource("6_b2nqd"), ExtResource("9_kruhm"), ExtResource("5_ieokv"), ExtResource("7_sq65b"), ExtResource("8_eayqi"), ExtResource("10_ieokv"), ExtResource("11_sq65b"), ExtResource("7_c5lxt"), ExtResource("9_b2nqd"), ExtResource("16_s16sv"), ExtResource("14_s16sv"), ExtResource("12_kruhm")])
 metadata/_custom_type_script = "uid://dwf7sy0jjca68"

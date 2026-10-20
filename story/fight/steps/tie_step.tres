@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="TieStep" format=3 uid="uid://cy0mujukqr6lv"]
+
+[ext_resource type="Script" uid="uid://dh4ho20xw0dnf" path="res://story/fight/steps/tie_step.gd" id="1_tie"]
+
+[resource]
+script = ExtResource("1_tie")

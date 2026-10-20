@@ -4,8 +4,6 @@ extends Node
 
 signal story_page_entered(story_page: StoryPage)
 signal dice_requested(dice_request: DiceRequest)
-## The player rolled the Guts save against being knocked out in a fight
-signal incapacitation_save_rolled(save_result: SaveResult)
 
 @export_range(0.0, 5.0) var _reveal_delay: float = 1.5
 
@@ -32,8 +30,9 @@ var _protagonist: Character :
 		_protagonist = new_protagonist
 		if _current_dice_request: _current_dice_request.character = _protagonist
 
-## The pending save against being knocked out, resolved by the fight step waiting for it instead of the event queue
+## The pending save against being knocked out; rolling it calls [member _after_incapacitation_save], which goes on with the exchange
 var _incapacitation_save: StorySaveDecision
+var _after_incapacitation_save: Callable
 ## Paragraphs of the exchange summary already shown on an earlier page (before an incapacitation save)
 var _summary_start: int = 0
 
@@ -182,10 +181,10 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	var dice_result: DiceRequestResult = _current_dice_request.roll()
 	assert(dice_result)
 	assert(dice_result.get_dice_request() == _current_dice_request)
-	# The queue is busy with the fight step awaiting this save
 	if story_choice == _incapacitation_save:
 		_current_dice_request = null
-		incapacitation_save_rolled.emit(dice_result as SaveResult)
+		_incapacitation_save = null
+		_after_incapacitation_save.call(dice_result)
 		return
 	_event_queue.queue_delay(_reveal_delay)
 	if story_choice is StoryFightDecision:
@@ -211,9 +210,37 @@ func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision)
 		fight.start_exchange_from(fight_result)
 		_current_dice_request = null
 		_summary_start = 0
-		while fight.is_exchange_pending():
-			var step: ExchangeStep = fight.get_current_step()
-			await _show_fight_step(fight, step, fight.advance(), fight_result)
+		_play_fight_step(fight, fight_result, story_choice)
+	)
+
+## Applies and shows the next step of the exchange, then queues the pause after it and the step after that
+func _play_fight_step(fight: Fight, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
+	if not fight.is_exchange_pending():
+		_end_exchange(fight, fight_result, story_choice)
+		return
+	var step: ExchangeStep = fight.get_current_step()
+	if step is IncapacitationStep and step.is_player():
+		_ask_for_incapacitation_save(fight, step as IncapacitationStep, fight_result, story_choice)
+		return
+	var told: String = fight.advance()
+	var pause: bool = not told.is_empty()
+	# The dice log tells both threats with the player's dice, their colours come with what became of them
+	if step is DiceStep and step.is_player(): _story_book.display_dice_result(fight_result)
+	elif step is BreathDiceStep and step.is_player():
+		_story_book.display_dice_evaluation(fight_result)
+		_play_outcome_sound(fight_result)
+		pause = true
+	# Injury sounds play when they are suffered
+	elif step is InjuryStep:
+		_story_book.show_injury(step.pick("You", fight.monster.get_monster_name()), step.get_side(fight).injury_taken)
+		pause = true
+	_reveal(fight, told, pause)
+	_event_queue.queue_callable(func() -> void: _play_fight_step(fight, fight_result, story_choice))
+
+func _end_exchange(fight: Fight, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
+	var told: String = fight.end_exchange()
+	_reveal(fight, told, not told.is_empty())
+	_event_queue.queue_callable(func() -> void:
 		if fight.is_ongoing():
 			_current_story_page = _create_fight_exchange_page(fight)
 			return
@@ -221,32 +248,23 @@ func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision)
 		enter_page(story_choice.get_transition())
 	)
 
-## Shows what an exchange step did once typed out, then pauses; steps with nothing to show pass silently
-func _show_fight_step(fight: Fight, step: ExchangeStep, told: String, fight_result: FightResult) -> void:
-	var shown: bool = not told.is_empty()
-	# The dice log tells both threats with the player's dice, their colours come with what became of them
-	if step is DiceStep and step.is_player(): _story_book.display_dice_result(fight_result)
-	elif step is BreathDiceStep and step.is_player():
-		_story_book.display_dice_evaluation(fight_result)
-		_play_outcome_sound(fight_result)
-		shown = true
-	# Injury sounds play when they are suffered
-	elif step is InjuryStep:
-		_story_book.show_injury(step.pick("You", fight.monster.get_monster_name()), step.get_side(fight).injury_taken)
-		shown = true
-	elif step is IncapacitationStep and step.is_player():
-		await _resist_incapacitation(fight, step as IncapacitationStep)
-		return
-	if not told.is_empty(): await _story_book.show_outcome(fight.get_exchange_summary(_summary_start))
-	if shown: await _event_queue.wait(_reveal_delay)
+## Types the exchange summary if [param told] added to it and queues waiting for that, then the pause if [param pause]
+func _reveal(fight: Fight, told: String, pause: bool) -> void:
+	if not told.is_empty():
+		_story_book.show_outcome(fight.get_exchange_summary(_summary_start))
+		_event_queue.queue_until(_story_book.get_outcome_typed(), _story_book.is_outcome_typed)
+	if pause: _event_queue.queue_delay(_reveal_delay)
 
-## Shows a page with a Guts save against all the player's injuries and waits for the roll; the exchange goes on below it
-func _resist_incapacitation(fight: Fight, step: IncapacitationStep) -> void:
+## Shows a page with a Guts save against all the player's injuries; the exchange goes on below it once the save is rolled
+func _ask_for_incapacitation_save(fight: Fight, step: IncapacitationStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
 	var save_decision: AdventureSaveDecision = AdventureSaveDecision.new()
 	save_decision.description = "Stay conscious!"
 	save_decision.attribute = Rules.STRENGTH
 	save_decision.difficulty = step.get_difficulty(fight)
 	_incapacitation_save = StoryChoice.from_adventure_decision(save_decision, _protagonist) as StorySaveDecision
+	_after_incapacitation_save = func(save_result: SaveResult) -> void:
+		_event_queue.queue_delay(_reveal_delay)
+		_event_queue.queue_callable(func() -> void: _resolve_incapacitation_save(fight, step, save_result, fight_result, story_choice))
 	var save_page: StoryPage = StoryPage.new(
 		_current_story_page.adventure_page,
 		fight.get_title(),
@@ -258,17 +276,17 @@ func _resist_incapacitation(fight: Fight, step: IncapacitationStep) -> void:
 	)
 	save_page.fight = fight
 	_current_story_page = save_page
-	var save_result: SaveResult = await incapacitation_save_rolled
-	_incapacitation_save = null
-	await _event_queue.wait(_reveal_delay)
+
+func _resolve_incapacitation_save(fight: Fight, step: IncapacitationStep, save_result: SaveResult, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
 	_story_book.display_dice_result(save_result)
 	_story_book.display_dice_evaluation(save_result)
 	_protagonist.parse_dice_result(save_result)
 	_play_outcome_sound(save_result)
+	fight.advance()
+	# The rest of the exchange is told on the save's page
 	_summary_start = fight.get_paragraph_count()
-	step.resolve(fight, save_result.is_success())
-	await _story_book.show_outcome(fight.get_exchange_summary(_summary_start))
-	await _event_queue.wait(_reveal_delay)
+	_reveal(fight, step.resolve(fight, save_result.is_success()), true)
+	_event_queue.queue_callable(func() -> void: _play_fight_step(fight, fight_result, story_choice))
 
 func _play_outcome_sound(dice_result: DiceRequestResult) -> void:
 	if dice_result.is_success(): _success_audio_player.play()

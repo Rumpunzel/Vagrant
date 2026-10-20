@@ -92,26 +92,28 @@ func test_resting_is_disabled_while_fighting() -> void:
 	assert_bool(mechanics._catch_breath_button.disabled).is_equal(not mechanics._party.characters.values().any(func(character: Character) -> bool: return character.can_catch_breath(null)) and not mechanics._can_catch_breath)
 
 func test_overwhelming_injury_asks_for_a_guts_save() -> void:
-	var fight: Fight = (_story._current_story_page.choices[0] as StoryFightDecision).fight
-	_story._protagonist.suffer_injury(Injury.new(9))
-	# Normally started by the fight's injury step, which waits for it
-	var step: IncapacitationStep = IncapacitationStep.new()
-	_story._resist_incapacitation(fight, step)
+	var choice: StoryFightDecision = _story._current_story_page.choices[0]
+	var fight: Fight = choice.fight
+	# Guts 7 - 5 - 3 = -1: the exchange's 1 vs 4 overwhelms the player
+	_story._protagonist.suffer_injury(Injury.new(5))
+	var result: FightResult = choice.get_dice_request().roll()
+	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7))
+	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [4]), FightTestDice.scores(7)))
+	fight.start_exchange_from(result)
+	while not (fight.get_current_step() is IncapacitationStep and fight.get_current_step().is_player()): fight.advance()
+	# Normally reached by the exchange playing out step by step
+	_story._ask_for_incapacitation_save(fight, fight.get_current_step() as IncapacitationStep, result, choice)
 	var page: StoryPage = _story._current_story_page
 	assert_bool(page.is_fighting()).is_true()
 	assert_str(page.description).contains("hold on to your senses")
 	var save: StorySaveDecision = page.choices[0]
 	assert_object(save.get_dice_request().attribute).is_same(Rules.STRENGTH)
-	assert_int(save.get_dice_request().get_difficulty()).is_equal(9)
-	save.chose()
-	save.roll()
-	var waited: int = 0
-	while fight.get_paragraph_count() == 0 and waited < 8000:
-		_skip_typing()
-		await await_millis(10)
-		waited += 10
+	assert_int(save.get_dice_request().get_difficulty()).is_equal(8)
+	await _pick(save)
 	assert_bool(fight.player_incapacitated).is_equal(not save.get_dice_result().is_success())
 	assert_str(fight.get_exchange_summary()).contains("Everything goes dark." if fight.player_incapacitated else "You keep your senses.")
+	# The exchange went on after the save: collapsing loses the fight
+	if fight.player_incapacitated: assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(Fight.Outcome.LOST))
 
 func test_monster_lives_in_story() -> void:
 	var choice: StoryFightDecision = _story._current_story_page.choices[0]

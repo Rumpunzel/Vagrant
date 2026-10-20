@@ -37,10 +37,14 @@ func show_injury(target_name: String, magnitude: int) -> void:
 	assert(_current_page_entry is StoryEntry)
 	(_current_page_entry as StoryEntry).show_injury(target_name, magnitude)
 
-## Text below the current page's roll and injuries; returns once fully typed out
+## Starts typing the text below the current page's roll and injuries
 func show_outcome(outcome: String) -> void:
 	assert(_current_page_entry is StoryEntry)
-	await (_current_page_entry as StoryEntry).show_outcome(outcome)
+	(_current_page_entry as StoryEntry).show_outcome(outcome)
+
+func is_outcome_typed() -> bool: return (_current_page_entry as StoryEntry).is_outcome_typed()
+## Emitted once the current page's outcome is fully typed out (or skipped)
+func get_outcome_typed() -> Signal: return (_current_page_entry as StoryEntry).get_outcome_typed()
 
 func _flip_page() -> void:
 	assert(_current_page_entry)
