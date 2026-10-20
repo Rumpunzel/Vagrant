@@ -92,8 +92,9 @@ func test_dice_log_shows_fight_result() -> void:
 	assert_str(text).not_contains("Cutthroat")
 	var player_injury: int = player.injury_taken
 	var opponent_injury: int = opponent.injury_taken
-	# Injuries and the exchange summary sit below this roll, in the same entry
-	var injury_count: int = int(player_injury > 0) + int(opponent_injury > 0)
+	# Injuries and the exchange summary sit below this roll, in the same entry; after an incapacitation save the rest goes on its page
+	var resisting: bool = _story._current_story_page.choices[0] is StorySaveDecision
+	var injury_count: int = int(player_injury > 0) + int(opponent_injury > 0 and not resisting)
 	assert_int(entry._injuries.get_child_count()).is_equal(injury_count)
 	assert_bool(entry._injuries.visible).is_equal(injury_count > 0)
 	assert_bool(entry._outcome.visible).is_true()

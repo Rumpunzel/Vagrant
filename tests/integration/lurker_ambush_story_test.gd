@@ -33,8 +33,15 @@ func test_flee_from_ambush_in_story() -> void:
 	flee.chose()
 	flee.roll()
 	var waited: int = 0
-	while story._current_story_page.adventure_page != load(OUTCOME_PAGES[Fight.Outcome.FLED]) and waited < 8000:
+	while flee.fight.is_ongoing() or story._current_story_page.is_fighting():
+		# A hit that overwhelms calls for the Guts save first; collapsing while fleeing loses
+		var save: StoryChoice = story._current_story_page.choices[0] if not story._current_story_page.choices.is_empty() else null
+		if save is StorySaveDecision and not save.is_chosen() and not story._current_dice_request:
+			save.chose()
+			save.roll()
 		await await_millis(10)
 		waited += 10
-	assert_object(story._current_story_page.adventure_page).is_same(load(OUTCOME_PAGES[Fight.Outcome.FLED]))
-	assert_int(flee.fight.outcome).is_equal(Fight.Outcome.FLED)
+		if waited >= 10000: break
+	var expected: Fight.Outcome = Fight.Outcome.LOST if flee.fight.player_incapacitated else Fight.Outcome.FLED
+	assert_object(story._current_story_page.adventure_page).is_same(load(OUTCOME_PAGES[expected]))
+	assert_int(flee.fight.outcome).is_equal(expected)

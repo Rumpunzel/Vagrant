@@ -74,8 +74,11 @@ func test_fighting_ends_on_an_outcome_page() -> void:
 func test_fleeing_leaves_after_one_exchange() -> void:
 	var choice: StoryFightDecision = _story._current_story_page.choices[1]
 	await _pick(choice)
-	assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(Fight.Outcome.FLED))
-	assert_int(choice.fight.outcome).is_equal(Fight.Outcome.FLED)
+	# A hit that overwhelms calls for the Guts save first; collapsing while fleeing loses
+	if _story._current_story_page.choices[0] is StorySaveDecision: await _pick(_story._current_story_page.choices[0])
+	var expected: Fight.Outcome = Fight.Outcome.LOST if choice.fight.player_incapacitated else Fight.Outcome.FLED
+	assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(expected))
+	assert_int(choice.fight.outcome).is_equal(expected)
 
 func test_resting_is_disabled_while_fighting() -> void:
 	var mechanics: Mechanics = _story.get_node("PanelContainer/MarginContainer/HSplitContainer/HBoxContainer/Mechanics")
@@ -83,6 +86,7 @@ func test_resting_is_disabled_while_fighting() -> void:
 	assert_bool(mechanics._make_camp_button.disabled).is_true()
 	# Fleeing ends the fight: the outcome page lets the party rest again
 	await _pick(_story._current_story_page.choices[1] as StoryFightDecision)
+	if _story._current_story_page.choices[0] is StorySaveDecision: await _pick(_story._current_story_page.choices[0])
 	assert_bool(_story._current_story_page.is_fighting()).is_false()
 	assert_bool(mechanics._make_camp_button.disabled).is_false()
 	assert_bool(mechanics._catch_breath_button.disabled).is_equal(not mechanics._party.characters.values().any(func(character: Character) -> bool: return character.can_catch_breath(null)) and not mechanics._can_catch_breath)

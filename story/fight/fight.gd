@@ -151,7 +151,8 @@ func get_paragraph_count() -> int: return _paragraphs.size()
 func _resist_monster_incapacitation() -> String:
 	var difficulty: int = monster.get_injury_total()
 	var dice: Array[Die] = []
-	dice.assign(roll_dice.call(monster.get_breath_dice_pool()))
+	var rolled_dice: Array[Die] = roll_dice.call(monster.get_breath_dice_pool())
+	dice.assign(rolled_dice)
 	var highest: int = FightExchange.get_highest_result(dice)
 	var guts: int = monster.get_score(Rules.STRENGTH)
 	var lost: Array[Die] = []
