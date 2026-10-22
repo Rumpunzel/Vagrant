@@ -34,18 +34,25 @@ func test_sword_and_club() -> void:
 
 func test_marking_a_new_face() -> void:
 	var knife: Weapon = Weapon.create(load(KNIFE))
-	assert_int(knife.mark(5)).is_equal(Equipment.Mark.MARKED)
-	assert_int(knife.mark(2)).is_equal(Equipment.Mark.MARKED)
+	assert_int(knife.mark(5)).is_equal(5)
+	assert_int(knife.mark(2)).is_equal(2)
 	assert_array(knife.marked_faces).is_equal([2, 5])
 	assert_bool(knife.is_usable()).is_true()
 
-func test_marking_a_marked_face_ruins() -> void:
+func test_marking_a_marked_face_marks_the_next_higher_one() -> void:
 	var knife: Weapon = Weapon.create(load(KNIFE))
 	knife.mark(5)
-	assert_int(knife.mark(5)).is_equal(Equipment.Mark.RUINED)
+	assert_int(knife.mark(5)).is_equal(6)
+	assert_bool(knife.is_usable()).is_true()
+
+func test_no_higher_face_left_ruins() -> void:
+	var knife: Weapon = Weapon.create(load(KNIFE))
+	knife.mark(5)
+	knife.mark(6)
+	assert_int(knife.mark(5)).is_equal(0)
 	assert_bool(knife.is_usable()).is_false()
 	# Still carried and visible, just unusable
-	assert_array(knife.marked_faces).is_equal([5])
+	assert_array(knife.marked_faces).is_equal([5, 6])
 
 func test_first_usable_skips_ruined() -> void:
 	var weapons: Array[Weapon] = Weapon.carry([load(KNIFE), load(KNIFE)] as Array[WeaponProfile])
@@ -71,7 +78,14 @@ func test_weapon_keeps_its_state_as_a_resource() -> void:
 	assert_object(loaded.weapon_profile).is_same(load(KNIFE))
 	assert_array(loaded.marked_faces).is_equal([2, 5])
 	assert_bool(loaded.ruined).is_false()
-	assert_int(loaded.mark(5)).is_equal(Equipment.Mark.RUINED)
+	assert_int(loaded.mark(5)).is_equal(6)
+
+func test_marking_all_faces() -> void:
+	var knife: Weapon = Weapon.create(load(KNIFE))
+	knife.mark_all()
+	assert_array(knife.marked_faces).is_equal([1, 2, 3, 4, 5, 6])
+	assert_bool(knife.is_usable()).is_true()
+	assert_int(knife.mark(3)).is_equal(0)
 
 func test_battered_marks_two_different_faces() -> void:
 	var battered: MarkRandomFacesModifier = load(BATTERED)
@@ -97,6 +111,6 @@ func test_modifiers_apply_to_every_weapon_and_stack() -> void:
 
 func test_weapon_profiles_stay_untouched() -> void:
 	var club: Weapon = Weapon.carry([load(CLUB)] as Array[WeaponProfile], [load(BATTERED)] as Array[EquipmentModifier])[0]
-	club.mark(club.marked_faces[0])
-	assert_bool(club.ruined).is_true()
+	club.mark_all()
+	assert_int(club.marked_faces.size()).is_equal(6)
 	assert_array(Weapon.carry([load(CLUB)] as Array[WeaponProfile])[0].marked_faces).is_empty()

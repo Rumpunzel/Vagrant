@@ -21,30 +21,29 @@ func _resolve() -> void:
 	for side: FightSide in [first, second]:
 		if side.fleeing: side.stance = Rules.AGILITY
 		elif not side.is_armed(): side.stance = Rules.STRENGTH
-	for side: FightSide in [first, second]: _raise_shield(side, get_foe(side))
-	for side: FightSide in [first, second]: side.threat = get_highest_result(side.breath_dice, side)
+	for side: FightSide in [first, second]: side.threat = get_highest_result(side.breath_dice)
 	for side: FightSide in [first, second]:
 		var vantage: int = _get_stance_value(side)
 		if vantage > 0: _impair(get_foe(side), side.get_fight_stance().get_impairments(side.nerves_target, vantage))
 	for side: FightSide in [first, second]: _check_dice(side, get_foe(side))
 	for side: FightSide in [first, second]: get_foe(side).injury_taken = _get_damage(side, get_foe(side))
 
-## Lowers the foe's highest die (breath or weapon; a tie goes to the weapon) by the shield's result.
-## Losses, wielding and armour still use the rolled face; threat and damage use the lowered one.
-func _raise_shield(side: FightSide, foe: FightSide) -> void:
-	if side.shield_dice.is_empty(): return
-	var shield_die: Die = side.shield_dice[0]
-	if shield_die.result > side.get_score(side.shield_wield_attribute if side.shield_wield_attribute else Rules.STRENGTH):
-		side.failed_shield_dice.assign(side.shield_dice)
-		return
-	if side.shield_marked_faces.has(shield_die.result): return
-	var target: Die = null
-	for die: Die in foe.weapon_dice: if not target or die.result > target.result: target = die
-	for die: Die in foe.breath_dice: if not target or die.result > target.result: target = die
-	if not target: return
-	side.shield_target = target
-	side.shield_value = shield_die.result
-	foe.reduced_results[target] = maxi(foe.get_result(target) - shield_die.result, 0)
+## The defender's shield takes its result off [param damage] if raised; returns what gets through
+static func _raise_shield(defender: FightSide, damage: int) -> int:
+	defender.blow = maxi(damage, 0)
+	if defender.shield_dice.is_empty() or damage <= 0: return damage
+	var shield_die: Die = defender.shield_dice[0]
+	var forced: bool = shield_die.result > defender.get_shield_wield_score()
+	match defender.shield_use:
+		FightSide.ShieldUse.LOWER: return damage
+		FightSide.ShieldUse.AUTO:
+			var tactic: ShieldTactic = defender.shield_tactic if defender.shield_tactic else CautiousShieldTactic.new()
+			if not tactic.raises(defender, damage, forced): return damage
+	defender.raises_shield = true
+	defender.shield_blocked = mini(shield_die.result, damage)
+	if forced: defender.shield_strain = FightSide.Strain.OVERREACH
+	elif defender.shield_marked_faces.has(shield_die.result): defender.shield_strain = FightSide.Strain.MARKED_FACE
+	return damage - defender.shield_blocked
 
 ## Applied before dice are checked, so it can cost the foe breath dice or their weapon
 func _impair(foe: FightSide, impairments: Dictionary[CharacterAttribute, int]) -> void:
@@ -62,45 +61,27 @@ func _get_vantage(side: FightSide) -> int:
 	for ability: Ability in side.abilities: vantage = ability.modify_vantage(vantage)
 	return vantage
 
-## Of several weapon dice only one counts: the one dealing the most damage, then the one harming the weapon least
-func _choose_weapon_die(side: FightSide, foe: FightSide, wield_score: int) -> Die:
-	var chosen: Die = null
-	for die: Die in side.weapon_dice:
-		if not chosen: chosen = die
-		else:
-			var damage: int = _get_weapon_die_damage(die, side, foe, wield_score)
-			var chosen_damage: int = _get_weapon_die_damage(chosen, side, foe, wield_score)
-			var harm: int = _get_weapon_die_harm(die, side, foe, wield_score)
-			var chosen_harm: int = _get_weapon_die_harm(chosen, side, foe, wield_score)
-			if damage > chosen_damage or (damage == chosen_damage and (harm < chosen_harm or (harm == chosen_harm and die.result < chosen.result))): chosen = die
-	return chosen
-
-## Marked faces and results the foe's armour blocks deal nothing
-func _get_weapon_die_damage(die: Die, side: FightSide, foe: FightSide, wield_score: int) -> int:
-	if die.result > wield_score or foe.armor_blocks.has(die.result) or side.marked_faces.has(die.result): return 0
-	return die.result
-
-## 0: harmless, 1: marks the weapon (failing to wield it, or armour blocking the die), 2: ruins it (marking a marked face)
-func _get_weapon_die_harm(die: Die, side: FightSide, foe: FightSide, wield_score: int) -> int:
-	if die.result <= wield_score and not foe.armor_blocks.has(die.result): return 0
-	return 2 if side.marked_faces.has(die.result) else 1
-
 func _check_dice(side: FightSide, foe: FightSide) -> void:
 	var stance_score: int = side.get_score(side.stance)
 	side.lost_breath_dice.assign(side.breath_dice.filter(func(die: Die) -> bool: return die.result > stance_score))
 	if side.has_natural_weapons:
 		side.usable_weapon_dice.assign(side.weapon_dice)
 	elif side.is_armed():
-		var wield_score: int = side.get_score(side.wield_attribute if side.wield_attribute else Rules.STRENGTH)
-		var weapon_die: Die = _choose_weapon_die(side, foe, wield_score)
-		side.spare_weapon_dice.assign(side.weapon_dice.filter(func(die: Die) -> bool: return die != weapon_die))
-		if weapon_die.result <= wield_score: side.usable_weapon_dice.assign([weapon_die])
-		else: side.failed_weapon_dice.assign([weapon_die])
-	# Only wielded dice meet the foe's armour
+		var weapon_die: Die = side.chosen_weapon_die
+		if not weapon_die and not side.holds_back: weapon_die = (side.weapon_tactic if side.weapon_tactic else CautiousWeaponTactic.new()).choose_weapon_die(side, foe)
+		if weapon_die:
+			side.usable_weapon_dice.assign([weapon_die])
+			if weapon_die.result > side.get_wield_score(): side.weapon_strain = FightSide.Strain.OVERREACH
+			elif side.marked_faces.has(weapon_die.result): side.weapon_strain = FightSide.Strain.MARKED_FACE
+		for die: Die in side.weapon_dice:
+			if die == weapon_die: continue
+			if side.is_free_weapon_die(die): side.spare_weapon_dice.append(die)
+			else: side.failed_weapon_dice.append(die)
+	# Only the die struck with meets the foe's armour
 	side.blocked_weapon_dice.assign(side.usable_weapon_dice.filter(func(die: Die) -> bool: return foe.armor_blocks.has(die.result)))
 	var damaging_dice: Array[Die] = []
-	damaging_dice.assign(side.usable_weapon_dice.filter(func(die: Die) -> bool: return not side.blocked_weapon_dice.has(die) and not side.marked_faces.has(die.result)))
-	side.weapon_damage = get_highest_result(damaging_dice, side)
+	damaging_dice.assign(side.usable_weapon_dice.filter(func(die: Die) -> bool: return not side.blocked_weapon_dice.has(die)))
+	side.weapon_damage = get_highest_result(damaging_dice)
 
 func _get_damage(side: FightSide, foe: FightSide) -> int:
 	var damage: int = side.weapon_damage
@@ -115,12 +96,12 @@ func _get_damage(side: FightSide, foe: FightSide) -> int:
 		var taken: int = foe.get_fight_stance().modify_damage_taken(damage, foe_vantage)
 		foe.damage_avoided = maxi(damage, 0) - maxi(taken, 0)
 		damage = taken
+	damage = _raise_shield(foe, damage)
 	var injury: int = maxi(damage - foe.damage_reduction, 0)
 	foe.damage_prevented = maxi(damage, 0) - injury
 	return injury
 
-## Highest result among [param dice], counting the foe's shield if [param side] is given
-static func get_highest_result(dice: Array[Die], side: FightSide = null) -> int:
+static func get_highest_result(dice: Array[Die]) -> int:
 	var highest_result: int = 0
-	for die: Die in dice: highest_result = maxi(highest_result, side.get_result(die) if side else die.result)
+	for die: Die in dice: highest_result = maxi(highest_result, die.result)
 	return highest_result

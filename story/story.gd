@@ -33,8 +33,9 @@ var _protagonist: Character :
 ## The pending save against being knocked out and the choice to give in instead; either calls [member _after_incapacitation_save]
 ## (with the save's result, or null for giving in), which goes on with the exchange
 var _incapacitation_save: StorySaveDecision
-var _give_in: StoryChoice
 var _after_incapacitation_save: Callable
+## Plain choices offered in the middle of an exchange -> what choosing them does instead of following a transition
+var _pending_choices: Dictionary[StoryChoice, Callable] = {}
 ## Paragraphs of the exchange summary already shown on an earlier page (before an incapacitation save)
 var _summary_start: int = 0
 
@@ -88,6 +89,12 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 
 func enter_page(adventure_page: AdventurePage) -> void:
 	_current_story_page = _create_story_page(adventure_page) if adventure_page else null
+
+func get_protagonist() -> Character: return _protagonist
+
+## The monster [param monster_profile] spawned by [param spawning_page] (spawned now if it wasn't yet)
+func get_monster(spawning_page: AdventurePage, monster_profile: MonsterProfile, index: int = 0) -> Monster:
+	return _monsters.get_monster(spawning_page, monster_profile, index)
 
 func get_how_often_decision_has_been_made(story_decision: AdventureDecision) -> int:
 	if not _decision_log.has(story_decision): return 0
@@ -164,8 +171,10 @@ func _create_fight_exchange_page(fight: Fight) -> StoryPage:
 
 func _on_choice_made(story_choice: StoryChoice) -> void:
 	assert(story_choice)
-	if story_choice == _give_in:
-		_end_incapacitation_choice(null)
+	if _pending_choices.has(story_choice):
+		var resume: Callable = _pending_choices[story_choice]
+		_pending_choices.clear()
+		resume.call()
 		return
 	var story_decision: AdventureDecision = story_choice.get_adventure_decision()
 	if story_decision != AdventureDecision.get_turn_back():
@@ -174,9 +183,16 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 	var consequences: Array[StoryConsequence] = story_choice.get_consequences()
 	for consequence: StoryConsequence in consequences:
 		# A lambda keeps the RefCounted consequence alive until the queue reaches it; a bound Callable does not
-		_event_queue.queue_callable(func() -> void: consequence.resolve(_protagonist, 0))
+		_event_queue.queue_callable(func() -> void: consequence.resolve(self, 0))
 	if not consequences.is_empty(): _event_queue.queue_delay(_reveal_delay)
-	_event_queue.queue_callable(func() -> void: enter_page(story_choice.get_transition()))
+	_event_queue.queue_callable(func() -> void: _follow(story_choice))
+
+## Enters the choice's transition; without one, goes back as many pages as the decision says
+func _follow(story_choice: StoryChoice) -> void:
+	var transition: AdventurePage = story_choice.get_transition()
+	if not transition:
+		for _step: int in story_choice.get_adventure_decision().back_steps - 1: _page_stack.pop_back()
+	enter_page(transition)
 
 func _on_dice_requested(dice_request: DiceRequest, _story_choice: StoryChoice) -> void:
 	_current_dice_request = dice_request
@@ -204,7 +220,7 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	_event_queue.queue_delay(_reveal_delay)
 	var consequences: Array[StoryConsequence] = story_choice.get_consequences()
 	for consequence: StoryConsequence in consequences:
-		_event_queue.queue_callable(func() -> void: consequence.resolve(_protagonist, dice_result.get_margin()))
+		_event_queue.queue_callable(func() -> void: consequence.resolve(self, dice_result.get_margin()))
 	if not consequences.is_empty(): _event_queue.queue_delay(_reveal_delay)
 	_event_queue.queue_callable(func() -> void: enter_page(story_choice.get_transition()))
 
@@ -223,6 +239,15 @@ func _play_fight_step(fight: Fight, fight_result: FightResult, story_choice: Sto
 		_end_exchange(fight, fight_result, story_choice)
 		return
 	var step: ExchangeStep = fight.get_current_step()
+	if step is WeaponChoiceStep:
+		_ask_for_weapon_die(fight, step as WeaponChoiceStep, fight_result, story_choice)
+		return
+	if step is ShieldChoiceStep:
+		_ask_for_shield(fight, step as ShieldChoiceStep, fight_result, story_choice)
+		return
+	if step is ArmorChoiceStep:
+		_ask_for_armor(fight, step as ArmorChoiceStep, fight_result, story_choice)
+		return
 	if step is IncapacitationStep and step.is_player():
 		_ask_for_incapacitation_save(fight, step as IncapacitationStep, fight_result, story_choice)
 		return
@@ -248,7 +273,7 @@ func _end_exchange(fight: Fight, fight_result: FightResult, story_choice: StoryF
 		if fight.is_ongoing():
 			_current_story_page = _create_fight_exchange_page(fight)
 			return
-		for consequence: StoryConsequence in story_choice.get_consequences(): consequence.resolve(_protagonist, fight_result.get_margin())
+		for consequence: StoryConsequence in story_choice.get_consequences(): consequence.resolve(self, fight_result.get_margin())
 		enter_page(story_choice.get_transition())
 	)
 
@@ -259,6 +284,98 @@ func _reveal(fight: Fight, told: String, pause: bool) -> void:
 		_event_queue.queue_until(_story_book.get_outcome_typed(), _story_book.is_outcome_typed)
 	if pause: _event_queue.queue_delay(_reveal_delay)
 
+## Shows a page offering each rolled weapon die with what striking with it costs; the exchange goes on below it once one is chosen
+func _ask_for_weapon_die(fight: Fight, step: WeaponChoiceStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
+	fight.advance()
+	var weapon_side: FightSide = step.get_side(fight)
+	var weapon: Weapon = fight.player_weapon
+	var resume: Callable = func(die: Die) -> void:
+		fight.resolve_player_choice(func(player: FightSide) -> void:
+			player.chosen_weapon_die = die
+			player.holds_back = die == null
+		)
+		# The rest of the exchange is told on the decision's page
+		_summary_start = fight.get_paragraph_count()
+		_event_queue.queue_callable(func() -> void: _play_fight_step(fight, fight_result, story_choice))
+	var choices: Array[StoryChoice] = []
+	var results: Array[String] = []
+	for die: Die in step.get_options(fight):
+		results.append(str(die.result))
+		choices.append(_create_pending_choice(_describe_weapon_die(weapon_side, die), resume.bind(die)))
+	if not weapon_side.weapon_dice.any(weapon_side.is_free_weapon_die): choices.append(_create_pending_choice("Hold back.", resume.bind(null)))
+	_show_fight_decision_page(fight, "Your %s comes up %s." % [weapon.get_equipment_name(), " and ".join(results)], choices)
+
+## Shows a page asking whether to raise the shield against the foe's blow; the exchange goes on below it once decided
+func _ask_for_shield(fight: Fight, step: ShieldChoiceStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
+	fight.advance()
+	var shield_side: FightSide = step.get_side(fight)
+	var shield: Shield = fight.player_shield
+	var face: int = shield_side.shield_dice[0].result
+	var resume: Callable = func(raise: bool) -> void:
+		fight.resolve_player_choice(func(player: FightSide) -> void: player.shield_use = FightSide.ShieldUse.RAISE if raise else FightSide.ShieldUse.LOWER)
+		# The rest of the exchange is told on the decision's page
+		_summary_start = fight.get_paragraph_count()
+		_event_queue.queue_callable(func() -> void: _play_fight_step(fight, fight_result, story_choice))
+	var stops: int = mini(face, shield_side.blow)
+	var raise: String = "Raise your %s: it takes %d off, the %d gets marked." % [shield.get_equipment_name(), stops, face]
+	if face > shield_side.get_shield_wield_score(): raise = "Force your %s up: it takes %d off, then it is ruined." % [shield.get_equipment_name(), stops]
+	elif shield_side.shield_marked_faces.has(face): raise = "Raise your %s on the marked %d: it takes %d off, the next higher face gets marked." % [shield.get_equipment_name(), face, stops]
+	var choices: Array[StoryChoice] = [
+		_create_pending_choice(raise, resume.bind(true)),
+		_create_pending_choice("Take the blow.", resume.bind(false)),
+	]
+	var description: String = "The %s's blow comes at you with %d. Your %s comes up %d." % [fight.monster.get_monster_name(), shield_side.blow, shield.get_equipment_name(), face]
+	_show_fight_decision_page(fight, description, choices)
+
+## Asks, one page per blocked blow, which piece of armour takes it; the exchange goes on below the last one
+func _ask_for_armor(fight: Fight, step: ArmorChoiceStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
+	var blocked_die: Die = step.get_undecided_die(fight)
+	if not blocked_die:
+		fight.advance()
+		# The rest of the exchange is told on the decision's page
+		_summary_start = fight.get_paragraph_count()
+		_play_fight_step(fight, fight_result, story_choice)
+		return
+	var resume: Callable = func(armor_pick: ArmorPick) -> void:
+		fight.armor_picks[blocked_die] = armor_pick
+		_event_queue.queue_callable(func() -> void: _ask_for_armor(fight, step, fight_result, story_choice))
+	var choices: Array[StoryChoice] = []
+	for option: ArmorPick in ArmorPick.get_options(_protagonist.armor, blocked_die.result):
+		choices.append(_create_pending_choice(_describe_armor_pick(option, blocked_die.result), resume.bind(option)))
+	_show_fight_decision_page(fight, "Your armour catches the %s's %d." % [fight.monster.get_monster_name(), blocked_die.result], choices)
+
+func _describe_armor_pick(option: ArmorPick, result: int) -> String:
+	var piece: String = option.piece.get_equipment_name()
+	if option.ruin: return "Let your %s take it and be ruined." % piece
+	if option.piece.is_marked(result): return "Let your %s take it: the next higher result gets marked." % piece
+	return "Let your %s take it: the %d gets marked." % [piece, result]
+
+func _describe_weapon_die(weapon_side: FightSide, die: Die) -> String:
+	if die.result > weapon_side.get_wield_score(): return "Force the %d: every face gets marked." % die.result
+	if weapon_side.marked_faces.has(die.result): return "Force the marked %d: the next higher face gets marked." % die.result
+	return "Strike with the %d." % die.result
+
+func _create_pending_choice(description: String, on_chosen: Callable) -> StoryChoice:
+	var decision: AdventureDecision = AdventureDecision.new()
+	decision.description = description
+	var choice: StoryChoice = StoryChoice.from_adventure_decision(decision, _protagonist)
+	_pending_choices[choice] = on_chosen
+	return choice
+
+## A page of the fight, on the same backdrop, with decisions taken in the middle of an exchange
+func _show_fight_decision_page(fight: Fight, description: String, choices: Array[StoryChoice]) -> void:
+	var page: StoryPage = StoryPage.new(
+		_current_story_page.adventure_page,
+		fight.get_title(),
+		description,
+		_current_story_page.background,
+		_current_story_page.ambience,
+		choices,
+		[],
+	)
+	page.fight = fight
+	_current_story_page = page
+
 ## Shows a page with a Guts save against all the player's injuries; the exchange goes on below it once the save is rolled
 func _ask_for_incapacitation_save(fight: Fight, step: IncapacitationStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
 	var save_decision: AdventureSaveDecision = AdventureSaveDecision.new()
@@ -266,27 +383,16 @@ func _ask_for_incapacitation_save(fight: Fight, step: IncapacitationStep, fight_
 	save_decision.attribute = Rules.STRENGTH
 	save_decision.difficulty = step.get_difficulty(fight)
 	_incapacitation_save = StoryChoice.from_adventure_decision(save_decision, _protagonist) as StorySaveDecision
-	var give_in_decision: AdventureDecision = AdventureDecision.new()
-	give_in_decision.description = "Give in."
-	_give_in = StoryChoice.from_adventure_decision(give_in_decision, _protagonist)
+	var give_in: StoryChoice = _create_pending_choice("Give in.", func() -> void: _end_incapacitation_choice(null))
 	_after_incapacitation_save = func(save_result: SaveResult) -> void:
 		_event_queue.queue_delay(_reveal_delay)
 		_event_queue.queue_callable(func() -> void: _resolve_incapacitation_save(fight, step, save_result, fight_result, story_choice))
-	var save_page: StoryPage = StoryPage.new(
-		_current_story_page.adventure_page,
-		fight.get_title(),
-		"Your wounds (%s) pull you towards the dark. Your sight blurs, your knees give way — hold on to your senses!" % Injury.to_bbcode(step.get_difficulty(fight)),
-		_current_story_page.background,
-		_current_story_page.ambience,
-		[_incapacitation_save, _give_in] as Array[StoryChoice],
-		[],
-	)
-	save_page.fight = fight
-	_current_story_page = save_page
+	var description: String = "Your wounds (%s) pull you towards the dark. Your sight blurs, your knees give way — hold on to your senses!" % Injury.to_bbcode(step.get_difficulty(fight))
+	_show_fight_decision_page(fight, description, [_incapacitation_save, give_in] as Array[StoryChoice])
 
 func _end_incapacitation_choice(save_result: SaveResult) -> void:
 	_incapacitation_save = null
-	_give_in = null
+	_pending_choices.clear()
 	_after_incapacitation_save.call(save_result)
 
 ## [param save_result] is null when the player gave in: that fails the save without rolling

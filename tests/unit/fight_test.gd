@@ -44,13 +44,15 @@ func test_unarmed_example_until_won() -> void:
 	_apply(fight, [1, 1, 2, 2, 7], 7, [3, 4, 5], 5)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.ONGOING)
 	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 2)
-	# Exchange 2: player loses the 9 (d12), Cutthroat its two 4s and an injury of 5, which leaves its Guts at -2.
-	# Overwhelmed, it saves against all 7 injury with its last die: the 8 holds, but above its Guts it is lost too -> won
-	fight.roll_dice = func(_pool: Array[Die]) -> Array[Die]: return FightTestDice.dice([Rules.d8], [8])
+	# Exchange 2: player loses the 9 (d12), the Cutthroat takes an injury of 5, which leaves its Guts at -2.
+	# Overwhelmed, it loses no dice to the exchange but saves against all 7 injury with all three: the 8 holds,
+	# yet every die is above its Guts and lost -> won
+	fight.roll_dice = func(_pool: Array[Die]) -> Array[Die]: return FightTestDice.dice([Rules.d8, Rules.d8, Rules.d8], [8, 4, 4])
 	_apply(fight, [2, 2, 4, 7, 9], 7, [3, 4, 4], 3)
 	assert_int(_character.get_breath_dice_count_for(Rules.d12)).is_equal(0)
 	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 7)
-	assert_bool(fight.monster_incapacitated).is_false()
+	# Passing the save keeps it on its feet, but losing the fight leaves it beaten
+	assert_bool(_monster.incapacitated).is_true()
 	assert_bool(_monster.is_out_of_breath()).is_true()
 	assert_int(fight.outcome).is_equal(Fight.Outcome.WON)
 	assert_object(fight.get_transition()).is_same(_won)

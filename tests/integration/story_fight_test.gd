@@ -133,6 +133,66 @@ func test_giving_in_loses_without_rolling() -> void:
 	assert_dict(_story._protagonist.breath_dice).is_equal(breath_before)
 	assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(Fight.Outcome.LOST))
 
+func test_a_weapon_die_beyond_guts_can_be_forced() -> void:
+	var choice: StoryFightDecision = _story._current_story_page.choices[0]
+	var fight: Fight = choice.fight
+	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10))
+	_story._protagonist.weapons = [sword] as Array[Weapon]
+	choice.get_dice_request().selected_weapon = sword
+	var result: FightResult = choice.get_dice_request().roll()
+	# Guts 7: the Sword's 9 needs forcing; 4 vs 1 keeps the Cutthroat from hurting the player
+	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [4]), FightTestDice.scores(7), FightTestDice.dice([Rules.d10], [9]))
+	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [1]), FightTestDice.scores(7)))
+	fight.start_exchange_from(result)
+	while not fight.get_current_step() is WeaponChoiceStep: fight.advance()
+	_story._ask_for_weapon_die(fight, fight.get_current_step() as WeaponChoiceStep, result, choice)
+	var page: StoryPage = _story._current_story_page
+	assert_bool(page.is_fighting()).is_true()
+	assert_array(page.choices.map(func(option: StoryChoice) -> String: return option.get_description())).is_equal(["Force the 9: every face gets marked.", "Hold back."])
+	await _pick(page.choices[0])
+	assert_int(sword.marked_faces.size()).is_equal(10)
+	assert_int(fight.get_last_exchange().second.injury_taken).is_greater(8)
+
+func test_the_shield_can_be_raised_against_a_blow() -> void:
+	var choice: StoryFightDecision = _story._current_story_page.choices[0]
+	var fight: Fight = choice.fight
+	var buckler: Shield = Shield.create(ShieldProfile.create("Buckler", Rules.d6))
+	_story._protagonist.shields = [buckler] as Array[Shield]
+	var result: FightResult = choice.get_dice_request().roll()
+	# 1 vs 5: the Cutthroat's vantage of 4 comes at the player, whose Buckler shows a 3
+	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7))
+	player.shield_dice = FightTestDice.dice([Rules.d6], [3])
+	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [5]), FightTestDice.scores(7)))
+	result.player_shield = buckler
+	fight.start_exchange_from(result)
+	while not fight.get_current_step() is ShieldChoiceStep: fight.advance()
+	_story._ask_for_shield(fight, fight.get_current_step() as ShieldChoiceStep, result, choice)
+	var page: StoryPage = _story._current_story_page
+	assert_array(page.choices.map(func(option: StoryChoice) -> String: return option.get_description())).is_equal(["Raise your Buckler: it takes 3 off, the 3 gets marked.", "Take the blow."])
+	await _pick(page.choices[0])
+	assert_array(buckler.marked_faces).is_equal([3])
+	assert_int(fight.get_last_exchange().first.injury_taken).is_equal(1)
+
+func test_the_player_picks_which_armour_takes_a_blow() -> void:
+	var choice: StoryFightDecision = _story._current_story_page.choices[0]
+	var fight: Fight = choice.fight
+	var helmet: Armor = Armor.create(ArmorProfile.create("Helmet", [5, 10] as Array[int]))
+	var coif: Armor = Armor.create(ArmorProfile.create("Coif", [5] as Array[int]))
+	_story._protagonist.armor = [helmet, coif] as Array[Armor]
+	var result: FightResult = choice.get_dice_request().roll()
+	# The Cutthroat wins the threat and its knife comes up 5, which both pieces block
+	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7))
+	player.armor_blocks = [5, 10] as Array[int]
+	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [3]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d8, 5)))
+	fight.start_exchange_from(result)
+	while not fight.get_current_step() is ArmorChoiceStep: fight.advance()
+	_story._ask_for_armor(fight, fight.get_current_step() as ArmorChoiceStep, result, choice)
+	var page: StoryPage = _story._current_story_page
+	assert_array(page.choices.map(func(option: StoryChoice) -> String: return option.get_description())).is_equal(["Let your Helmet take it: the 5 gets marked.", "Let your Coif take it: the 5 gets marked."])
+	await _pick(page.choices[1])
+	assert_array(coif.marked_faces).is_equal([5])
+	assert_array(helmet.marked_faces).is_empty()
+
 func test_monster_lives_in_story() -> void:
 	var choice: StoryFightDecision = _story._current_story_page.choices[0]
 	assert_object(choice.fight.monster.get_parent()).is_same(_story._monsters)

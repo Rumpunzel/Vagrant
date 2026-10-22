@@ -17,8 +17,8 @@ func test_shields() -> void:
 
 func test_marking_and_ruin() -> void:
 	var buckler: Shield = Shield.create(load(BUCKLER))
-	assert_int(buckler.mark(6)).is_equal(Equipment.Mark.MARKED)
-	assert_int(buckler.mark(6)).is_equal(Equipment.Mark.RUINED)
+	assert_int(buckler.mark(6)).is_equal(6)
+	assert_int(buckler.mark(6)).is_equal(0)
 	assert_bool(buckler.is_usable()).is_false()
 
 func test_first_usable_and_modifiers() -> void:

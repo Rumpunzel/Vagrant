@@ -35,8 +35,8 @@ func _resist_as_monster(fight: Fight) -> String:
 	var lost: Array[Die] = []
 	lost.assign(dice.filter(func(die: Die) -> bool: return die.result > guts))
 	monster.lose_breath_dice(lost)
-	fight.monster_incapacitated = highest < difficulty
+	monster.incapacitated = highest < difficulty
 	return "The %s can barely stand: %s save against %d — %d. %s" % [
 		monster.get_monster_name(), Fight.describe_attribute(Rules.STRENGTH), difficulty, highest,
-		"It collapses." if fight.monster_incapacitated else "It keeps its feet.",
+		"It collapses." if monster.incapacitated else "It keeps its feet.",
 	]

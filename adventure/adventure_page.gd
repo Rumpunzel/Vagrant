@@ -20,9 +20,9 @@ enum Exclusivity {
 var _exclusivity: int = 0
 @export var _events: Array[AdventurePage]
 
-func are_all_prerequisites_fullfilled(_story: Story) -> bool:
+func are_all_prerequisites_fullfilled(story: Story) -> bool:
 	for condition: AdventureCondition in _conditions:
-		if not condition.is_true(): return false
+		if not condition.is_true(story, self): return false
 	return true
 
 func prepare() -> void: pass

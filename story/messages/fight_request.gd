@@ -8,6 +8,8 @@ var selected_weapon: Weapon : set = set_selected_weapon
 
 var opponent: Monster
 var fleeing: bool = false
+## Pick the weapon die after the roll even when none needs forcing
+var always_choose_weapon_die: bool = false
 ## Foe attribute to impair when threatening with Nerves
 var nerves_target: CharacterAttribute
 

@@ -19,9 +19,10 @@ func test_marked_result_still_blocks_and_marking_again_ruins() -> void:
 	var helmet: Armor = Armor.create(load(HELMET))
 	assert_bool(helmet.blocks(10)).is_true()
 	assert_bool(helmet.blocks(7)).is_false()
-	assert_int(helmet.mark(10)).is_equal(Equipment.Mark.MARKED)
+	assert_int(helmet.mark(10)).is_equal(10)
 	assert_bool(helmet.blocks(10)).is_true()
-	assert_int(helmet.mark(10)).is_equal(Equipment.Mark.RUINED)
+	# No higher result to mark instead
+	assert_int(helmet.mark(10)).is_equal(0)
 	assert_bool(helmet.blocks(5)).is_false()
 
 func test_pieces_stack() -> void:

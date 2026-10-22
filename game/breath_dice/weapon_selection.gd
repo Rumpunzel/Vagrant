@@ -15,6 +15,7 @@ func setup(fight_request: FightRequest) -> void:
 	var button_group: ButtonGroup = ButtonGroup.new()
 	_add_option(null, button_group)
 	for weapon: Weapon in fight_request.character.weapons: _add_option(weapon, button_group)
+	_add_choose_die_option()
 
 func get_option_count() -> int: return _buttons.size()
 
@@ -54,3 +55,14 @@ static func _describe_faces(weapon: Weapon) -> String:
 	var description: String = " ".join(faces)
 	if not weapon.is_usable(): description = "[color=gray]%s — ruined[/color]" % description
 	return description
+
+## With several weapon dice (Veteran), the player may ask to pick the die even when none needs forcing
+func _add_choose_die_option() -> void:
+	var extra_dice: int = 0
+	for ability: Ability in _fight_request.character.character_profile.get_abilities(): extra_dice += ability.get_extra_weapon_dice()
+	if extra_dice == 0: return
+	var check_box: CheckBox = CheckBox.new()
+	check_box.text = "Choose the weapon die myself"
+	check_box.button_pressed = _fight_request.always_choose_weapon_die
+	check_box.toggled.connect(func(pressed: bool) -> void: _fight_request.always_choose_weapon_die = pressed)
+	add_child(check_box)

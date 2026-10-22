@@ -3,25 +3,50 @@
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="1_page"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_decision"]
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_r0x4r"]
-[ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="3_transition"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_b35qd"]
-[ext_resource type="Resource" uid="uid://kfbf7v18dp6a" path="res://adventure/adventures/locations/swamp/swamp.tres" id="4_swamp"]
+[ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="5_transition"]
+[ext_resource type="Script" uid="uid://bs2whs2eq4xbj" path="res://adventure/adventure_monster_reference.gd" id="6_reference"]
+[ext_resource type="Script" uid="uid://do321suuawcvd" path="res://adventure/conditions/adventure_monster_condition.gd" id="7_condition"]
+[ext_resource type="Script" uid="uid://c247bn6rgr1gd" path="res://adventure/decisions/consequences/adventure_kill_monster_consequence.gd" id="8_kill"]
+[ext_resource type="Resource" uid="uid://d3ytncs0be7oo" path="res://characters/monsters/lurker.tres" id="9_lurker"]
 
-[sub_resource type="Resource" id="Resource_to_rocky_shore"]
-script = ExtResource("3_transition")
-_leads_to = "uid://ycd6xhx346l6"
+[sub_resource type="Resource" id="Resource_to_ambush"]
+script = ExtResource("5_transition")
+_leads_to = "uid://bxwqtk0p80o4g"
 metadata/_custom_type_script = "uid://buhl8mbur0qma"
 
-[sub_resource type="Resource" id="Resource_continue"]
+[sub_resource type="Resource" id="Resource_ambush_lurker"]
+script = ExtResource("6_reference")
+monster = ExtResource("9_lurker")
+spawned_by = SubResource("Resource_to_ambush")
+metadata/_custom_type_script = "uid://bs2whs2eq4xbj"
+
+[sub_resource type="Resource" id="Resource_lurker_beaten"]
+script = ExtResource("7_condition")
+monster = SubResource("Resource_ambush_lurker")
+state = 1
+metadata/_custom_type_script = "uid://do321suuawcvd"
+
+[sub_resource type="Resource" id="Resource_kill_lurker"]
+script = ExtResource("8_kill")
+monster = SubResource("Resource_ambush_lurker")
+metadata/_custom_type_script = "uid://c247bn6rgr1gd"
+
+[sub_resource type="Resource" id="Resource_to_temple_ruin"]
+script = ExtResource("5_transition")
+_leads_to = "uid://cs40ge42lw0ry"
+metadata/_custom_type_script = "uid://buhl8mbur0qma"
+
+[sub_resource type="Resource" id="Resource_kill"]
 script = ExtResource("2_decision")
-description = "Continue."
-transition = SubResource("Resource_to_rocky_shore")
+description = "Kill the Lurker."
+transition = SubResource("Resource_to_temple_ruin")
+consequences = Array[ExtResource("4_b35qd")]([SubResource("Resource_kill_lurker")])
 metadata/_custom_type_script = "uid://by3e6dkiypd3j"
 
 [resource]
 script = ExtResource("1_page")
-_title = "The Lurker Falls"
-_description = "The Lurker crumples into the black water and does not rise again. You stand over it, chest heaving, until the swamp falls silent once more."
-_area = ExtResource("4_swamp")
-_decisions = Array[ExtResource("2_decision")]([SubResource("Resource_continue")])
+_description = "The Lurker lies in the black water, too spent to rise. Its breath bubbles weakly at the surface."
+_conditions = Array[ExtResource("2_r0x4r")]([SubResource("Resource_lurker_beaten")])
+_decisions = Array[ExtResource("2_decision")]([SubResource("Resource_kill")])
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

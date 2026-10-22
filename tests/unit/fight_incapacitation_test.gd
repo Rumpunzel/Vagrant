@@ -78,7 +78,7 @@ func test_monster_collapses_when_its_save_fails() -> void:
 	_monster.suffer_injury(Injury.new(3))
 	_start_exchange_hurting_the_monster()
 	_finish_exchange()
-	assert_bool(_fight.monster_incapacitated).is_true()
+	assert_bool(_monster.incapacitated).is_true()
 	assert_int(_fight.outcome).is_equal(Fight.Outcome.WON)
 	assert_str(_fight.get_exchange_summary()).contains("save against 6 — 4. It collapses.")
 
@@ -87,7 +87,7 @@ func test_monster_keeps_its_feet_when_its_save_passes() -> void:
 	_monster.suffer_injury(Injury.new(3))
 	_start_exchange_hurting_the_monster()
 	_finish_exchange()
-	assert_bool(_fight.monster_incapacitated).is_false()
+	assert_bool(_monster.incapacitated).is_false()
 	assert_str(_fight.get_exchange_summary()).contains("save against 6 — 6. It keeps its feet.")
 
 ## 1 vs 4, unarmed: the player takes 3

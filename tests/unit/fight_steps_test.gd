@@ -3,7 +3,7 @@ extends GdUnitTestSuite
 ## Exchange steps: each applies its part when entered, whatever order exchange_steps.tres puts them in.
 
 const GUTS: CharacterAttribute = Rules.STRENGTH
-var _side_steps: Array[Script] = [DiceStep, UnnervingStep, WeaponCheckStep, BreathDiceStep, VantageStep, ArmorStep, InjuryStep, IncapacitationStep]
+var _side_steps: Array[Script] = [DiceStep, UnnervingStep, WeaponCheckStep, BreathDiceStep, VantageStep, ShieldStep, ArmorStep, InjuryStep, IncapacitationStep]
 
 var _character: Character
 var _monster: Monster

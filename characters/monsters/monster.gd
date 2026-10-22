@@ -14,10 +14,15 @@ const UNARMED_ATTACK: MonsterAttack = preload("uid://c4a0yss3o6pxw")  # guts_att
 
 @export var spawned_from: AdventurePage
 
+## Lost a fight or failed the Guts save after an injury that left a score at 0 or below; stays out of every fight from then on
+var incapacitated: bool = false
+var dead: bool = false
+
 func recover_breath() -> void:
 	breath_dice = monster_profile.get_breath_dice()
 
 func get_monster_name() -> String: return monster_profile.name
+func can_fight() -> bool: return not incapacitated and not dead
 ## Unarmed, a monster threatens with Guts like anyone else
 func get_attack() -> MonsterAttack: return monster_profile.attack if has_natural_weapons() or get_weapon() else UNARMED_ATTACK
 

@@ -2,7 +2,9 @@ class_name AdventureDecision
 extends Resource
 
 @export_multiline var description: String
+## None: goes back [member back_steps] pages
 @export var transition: AdventurePageReference
+@export_range(1, 5) var back_steps: int = 1
 @export var consequences: Array[AdventureConsequence]
 
 @export var _icon: Texture2D

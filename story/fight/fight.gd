@@ -20,7 +20,6 @@ var outcome: Outcome = Outcome.ONGOING
 var exchanges: Array[FightExchange] = []
 ## Failed the Guts save after an injury that left a score at 0 or below; ends the fight like running out of breath
 var player_incapacitated: bool = false
-var monster_incapacitated: bool = false
 ## Rolls the monster's incapacitation save; replaceable for fixed dice in tests
 var roll_dice: Callable = DiceRoller.roll_dice
 
@@ -28,6 +27,12 @@ var roll_dice: Callable = DiceRoller.roll_dice
 var player_lost_breath_dice: Array[Die] = []
 var player_weapon: Weapon
 var opponent_weapon: Weapon
+var player_shield: Shield
+var opponent_shield: Shield
+## Which of the player's pieces takes each blocked foe die, as the player picked it
+var armor_picks: Dictionary[Die, ArmorPick] = {}
+## The player wants to pick the weapon die even when none needs forcing (several weapon dice)
+var always_choose_weapon_die: bool = false
 
 var _step_index: int = -1
 var _paragraphs: Array[String] = []
@@ -49,6 +54,7 @@ func create_request(fleeing: bool = false) -> FightRequest:
 	if fleeing: request.attribute = Rules.AGILITY
 	elif not request.selected_weapon: request.attribute = Rules.STRENGTH
 	request.nerves_target = monster.get_attack().get_stance()
+	request.always_choose_weapon_die = always_choose_weapon_die
 	return request
 
 ## Applies the whole exchange at once; [method start_exchange], [method advance] and [method end_exchange] apply it step by step.
@@ -59,19 +65,23 @@ func resolve(result: FightResult) -> void:
 
 func start_exchange_from(result: FightResult) -> void:
 	assert(result.get_dice_request().opponent == monster)
-	start_exchange(result.exchange, result.get_lost_breath_dice(), result.get_dice_request().selected_weapon, result.opponent_weapon)
+	always_choose_weapon_die = result.get_dice_request().always_choose_weapon_die
+	start_exchange(result.exchange, result.get_lost_breath_dice(), result.get_dice_request().selected_weapon, result.opponent_weapon, result.player_shield, result.opponent_shield)
 
-func apply_exchange(exchange: FightExchange, lost_breath_dice: Array[Die], with_player_weapon: Weapon = null, with_opponent_weapon: Weapon = null) -> void:
-	start_exchange(exchange, lost_breath_dice, with_player_weapon, with_opponent_weapon)
+func apply_exchange(exchange: FightExchange, lost_breath_dice: Array[Die], with_player_weapon: Weapon = null, with_opponent_weapon: Weapon = null, with_player_shield: Shield = null, with_opponent_shield: Shield = null) -> void:
+	start_exchange(exchange, lost_breath_dice, with_player_weapon, with_opponent_weapon, with_player_shield, with_opponent_shield)
 	_apply_remaining_steps()
 
 ## Records the exchange without applying anything yet
-func start_exchange(exchange: FightExchange, lost_breath_dice: Array[Die], with_player_weapon: Weapon = null, with_opponent_weapon: Weapon = null) -> void:
+func start_exchange(exchange: FightExchange, lost_breath_dice: Array[Die], with_player_weapon: Weapon = null, with_opponent_weapon: Weapon = null, with_player_shield: Shield = null, with_opponent_shield: Shield = null) -> void:
 	assert(is_ongoing() and not is_exchange_pending())
 	exchanges.append(exchange)
 	player_lost_breath_dice = lost_breath_dice
 	player_weapon = with_player_weapon
 	opponent_weapon = with_opponent_weapon
+	player_shield = with_player_shield
+	opponent_shield = with_opponent_shield
+	armor_picks.clear()
 	_paragraphs.clear()
 	_find_step(0)
 
@@ -88,6 +98,15 @@ func advance() -> String:
 	tell(told)
 	_find_step(_step_index + 1)
 	return told
+
+## Resolves the exchange being applied again after [param change] (taking the player's [FightSide]) set what they chose,
+## e.g. the weapon die to strike with or whether to raise the shield.
+## Only for parts not applied yet: it keeps the dice rolled and what was told.
+func resolve_player_choice(change: Callable) -> void:
+	var exchange: FightExchange = get_last_exchange()
+	var player: FightSide = exchange.first.copy_inputs()
+	change.call(player)
+	exchanges[-1] = FightExchange.new(player, exchange.second.copy_inputs())
 
 ## Adds [param paragraph] to the exchange summary
 func tell(paragraph: String) -> void:
@@ -111,6 +130,8 @@ func _apply_remaining_steps() -> void:
 func end_exchange() -> String:
 	assert(not is_exchange_pending())
 	outcome = _evaluate_outcome()
+	# A beaten monster stays down; whether it is spared is up to the story
+	if outcome == Outcome.WON: monster.incapacitated = true
 	var line: String = ""
 	match outcome:
 		Outcome.WON: line = "The %s can no longer resist." % monster.get_monster_name()
@@ -127,7 +148,7 @@ func _evaluate_outcome() -> Outcome:
 	# Checked before breath: running out of breath only matters for facing the next exchange
 	if player_fled: return Outcome.FLED
 	var player_out: bool = player_incapacitated or protagonist.is_out_of_breath()
-	var monster_out: bool = monster_incapacitated or monster.is_out_of_breath()
+	var monster_out: bool = monster.incapacitated or monster.is_out_of_breath()
 	if player_out and monster_out: return Outcome.DRAW
 	if player_out: return Outcome.LOST
 	if monster_out: return Outcome.WON
@@ -153,8 +174,7 @@ func get_consequences() -> Array[AdventureConsequence]:
 		Outcome.LOST: return decision.failure_consequences
 	return []
 
-func get_title() -> String:
-	return "%s — Exchange %d" % [monster.get_monster_name(), get_exchange_count() + 1]
+func get_title() -> String: return  ""
 
 func get_condition_description() -> String:
 	var wounds: String = "unhurt"

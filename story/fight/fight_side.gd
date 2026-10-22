@@ -4,6 +4,22 @@ extends RefCounted
 ## One side of a single exchange: what it chose and rolled going in, and what happened to it.
 ## Filled in by [FightExchange]; contains no randomness itself.
 
+enum ShieldUse {
+	## As the side's [ShieldTactic] decides
+	AUTO,
+	## Raised even if it has to be forced
+	RAISE,
+	LOWER,
+}
+
+enum Strain {
+	NONE,
+	## Forced on a marked face: the next higher face gets marked
+	MARKED_FACE,
+	## Forced above the wield score: every face gets marked
+	OVERREACH,
+}
+
 # Input
 ## Set by [FightExchange]: Blood when fleeing, Guts when unarmed
 var stance: CharacterAttribute
@@ -12,14 +28,20 @@ var breath_dice: Array[Die]
 var weapon_dice: Array[Die]
 ## Attribute the weapon is wielded with; null = Guts
 var wield_attribute: CharacterAttribute
-## Faces of the weapon die that are marked and deal no damage
+## Faces of the weapon die that are marked: they can only be used by forcing the weapon
 var marked_faces: Array[int] = []
+## The weapon die chosen to strike with, forced if need be; null: as the [member weapon_tactic] decides
+var chosen_weapon_die: Die
+## Strike with none of the weapon dice
+var holds_back: bool = false
 ## Claws, fangs and the like: the breath dice are the weapon dice and need no wield check
 var has_natural_weapons: bool = false
+## At most one die, rolled with the others
 var shield_dice: Array[Die] = []
 ## Attribute the shield is raised with; null = Guts
 var shield_wield_attribute: CharacterAttribute
 var shield_marked_faces: Array[int] = []
+var shield_use: ShieldUse = ShieldUse.AUTO
 var armor_blocks: Array[int] = []
 var damage_reduction: int = 0
 ## Effective attribute scores at the start of the exchange (injuries already applied)
@@ -28,26 +50,33 @@ var scores: Dictionary[CharacterAttribute, int]
 var nerves_target: CharacterAttribute
 ## The fighter's abilities (monsters have none yet)
 var abilities: Array[Ability] = []
+## How this side decides when nobody asks the player; none: the cautious / sparing ones
+var weapon_tactic: WeaponTactic
+var shield_tactic: ShieldTactic
+var armor_tactic: ArmorTactic
 
 # Result
 var threat: int = 0
 ## Attribute -> reduction inflicted by the foe's Nerves for this exchange
 var impairments: Dictionary[CharacterAttribute, int] = {}
 var lost_breath_dice: Array[Die] = []
+## The weapon die struck with (at most one)
 var usable_weapon_dice: Array[Die] = []
-## Extra weapon dice that were rolled but not chosen: they count for nothing and mark nothing
+## How striking with it strains the weapon
+var weapon_strain: Strain = Strain.NONE
+## Weapon dice that could be used freely but were not chosen
 var spare_weapon_dice: Array[Die] = []
-## Weapon dice rolled above the wield score: the weapon could not be wielded, and these faces get marked
+## Weapon dice that would have needed forcing (above the wield score or on a marked face) and were not used
 var failed_weapon_dice: Array[Die] = []
 ## Wielded weapon dice the foe's armour blocked: they deal no damage
 var blocked_weapon_dice: Array[Die] = []
-## Shield dice rolled above the wield score: the shield could not be raised, and these faces get marked
-var failed_shield_dice: Array[Die] = []
-## The foe die this side's shield lowered, and by how much
-var shield_target: Die
-var shield_value: int = 0
-## Rolled results the foe's shield lowered: Die -> result used for threat and damage
-var reduced_results: Dictionary[Die, int] = {}
+## The foe's blow before this side's shield (after both stances)
+var blow: int = 0
+var raises_shield: bool = false
+## What the raised shield took off the blow, at most all of it
+var shield_blocked: int = 0
+## How raising it strains the shield: NONE marks the rolled face, MARKED_FACE the next higher one, OVERREACH ruins it
+var shield_strain: Strain = Strain.NONE
 var weapon_damage: int = 0
 var injury_taken: int = 0
 ## How much of the foe's blow this side's armour took off
@@ -71,13 +100,38 @@ func _init(
 	fleeing = is_fleeing
 	nerves_target = with_nerves_target
 
+func get_wield_score() -> int: return get_score(wield_attribute if wield_attribute else Rules.STRENGTH)
+
+func get_shield_wield_score() -> int: return get_score(shield_wield_attribute if shield_wield_attribute else Rules.STRENGTH)
+
+## Can be struck with without forcing the weapon
+func is_free_weapon_die(die: Die) -> bool: return die.result <= get_wield_score() and not marked_faces.has(die.result)
+
+## A fresh side with the same inputs, to resolve the exchange again (e.g. after choosing a weapon die)
+func copy_inputs() -> FightSide:
+	var copy: FightSide = FightSide.new(stance, breath_dice, scores, weapon_dice, fleeing, nerves_target)
+	copy.wield_attribute = wield_attribute
+	copy.marked_faces = marked_faces
+	copy.chosen_weapon_die = chosen_weapon_die
+	copy.holds_back = holds_back
+	copy.has_natural_weapons = has_natural_weapons
+	copy.shield_dice = shield_dice
+	copy.shield_wield_attribute = shield_wield_attribute
+	copy.shield_marked_faces = shield_marked_faces
+	copy.shield_use = shield_use
+	copy.armor_blocks = armor_blocks
+	copy.damage_reduction = damage_reduction
+	copy.abilities = abilities
+	copy.weapon_tactic = weapon_tactic
+	copy.shield_tactic = shield_tactic
+	copy.armor_tactic = armor_tactic
+	return copy
+
 func get_fight_stance() -> FightStance:
 	var fight_stance: FightStance = stance.fight_stance
 	assert(fight_stance, "%s has no FightStance" % stance)
 	return fight_stance
 
-## The result a die counts with: lowered by the foe's shield, otherwise as rolled
-func get_result(die: Die) -> int: return reduced_results.get(die, die.result)
 
 func get_score(attribute: CharacterAttribute) -> int:
 	return scores[attribute] - impairments.get(attribute, 0)

@@ -46,6 +46,42 @@ func test_decision_without_transition_goes_back() -> void:
 	assert_object(_story._current_story_page.adventure_page).is_same(_start)
 	assert_int(_story.get_how_often_page_has_been_entered(_start)).is_equal(2)
 
+func test_decision_can_go_back_several_pages() -> void:
+	var last: AdventurePage = _page("Last")
+	var back_twice: AdventureDecision = _decision("Back twice", null)
+	back_twice.back_steps = 2
+	last._decisions = [back_twice] as Array[AdventureDecision]
+	_next._decisions = [_decision("Go on", last)] as Array[AdventureDecision]
+	await _choose(0)
+	await _choose(0)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(_start)
+
+func test_monster_condition_follows_the_monster() -> void:
+	var reference: AdventureMonsterReference = AdventureMonsterReference.new()
+	reference.monster = TestMonsters.cutthroat()
+	var can_fight: AdventureMonsterCondition = _monster_condition(reference, AdventureMonsterCondition.State.CAN_FIGHT)
+	var beaten: AdventureMonsterCondition = _monster_condition(reference, AdventureMonsterCondition.State.INCAPACITATED)
+	var dead: AdventureMonsterCondition = _monster_condition(reference, AdventureMonsterCondition.State.DEAD)
+	assert_array([can_fight.is_true(_story, _start), beaten.is_true(_story, _start), dead.is_true(_story, _start)]).is_equal([true, false, false])
+	reference.get_monster(_story, _start).incapacitated = true
+	assert_array([can_fight.is_true(_story, _start), beaten.is_true(_story, _start), dead.is_true(_story, _start)]).is_equal([false, true, false])
+	# Another page's monster of the same profile is a different one
+	assert_bool(can_fight.is_true(_story, _next)).is_true()
+
+func test_killing_a_monster() -> void:
+	var reference: AdventureMonsterReference = AdventureMonsterReference.new()
+	reference.monster = TestMonsters.cutthroat()
+	reference.spawned_by = _start
+	var kill: AdventureKillMonsterConsequence = AdventureKillMonsterConsequence.new()
+	kill.monster = reference
+	kill.resolve(_story, 0)
+	var monster: Monster = _story.get_monster(_start, reference.monster)
+	assert_bool(monster.dead).is_true()
+	assert_bool(monster.can_fight()).is_false()
+	# Referenced from another page, it is still the start page's monster
+	assert_bool(_monster_condition(reference, AdventureMonsterCondition.State.DEAD).is_true(_story, _next)).is_true()
+
 func test_dead_end_offers_turn_back() -> void:
 	_next._decisions = [] as Array[AdventureDecision]
 	await _choose(0)
@@ -86,3 +122,9 @@ func _decision(description: String, transition: AdventurePage) -> AdventureDecis
 	decision.description = description
 	decision.transition = transition
 	return decision
+
+func _monster_condition(reference: AdventureMonsterReference, state: AdventureMonsterCondition.State) -> AdventureMonsterCondition:
+	var condition: AdventureMonsterCondition = AdventureMonsterCondition.new()
+	condition.monster = reference
+	condition.state = state
+	return condition

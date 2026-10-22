@@ -3,7 +3,7 @@ extends GdUnitTestSuite
 ## Adventure pages and how their nested events change title, description, decisions, background and ambience.
 
 class FalseCondition extends AdventureCondition:
-	func is_true() -> bool: return false
+	func is_true(_story: Story, _page: AdventurePage) -> bool: return false
 
 var _story: Story
 

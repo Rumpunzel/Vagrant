@@ -18,6 +18,10 @@ extends Resource
 ## Applied to every weapon, piece of armour and shield above when it is handed out, e.g. "battered"
 @export var equipment_modifiers: Array[EquipmentModifier] = []
 ## Used while the monster has a usable weapon (natural weapons always are)
+## How it fights with its gear; none: never forces a weapon or shield, spares its armour
+@export var weapon_tactic: WeaponTactic
+@export var shield_tactic: ShieldTactic
+@export var armor_tactic: ArmorTactic
 @export var attack: MonsterAttack = preload("uid://c4a0yss3o6pxw")  # guts_attack.tres
 
 @export var _breath_dice_size: DieType = Rules.d8
