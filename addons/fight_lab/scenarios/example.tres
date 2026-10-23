@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cjby5flxyttfj" path="res://addons/fight_lab/fight_lab_scenario.gd" id="1_scenario"]
 [ext_resource type="Script" uid="uid://d2w654t0o8253" path="res://addons/fight_lab/fight_lab_strategy.gd" id="2_strategy"]
-[ext_resource type="Script" uid="uid://0sjnyk2koodc" path="res://addons/fight_lab/sweeps/fight_lab_forcing_sweep.gd" id="3_sweep"]
 [ext_resource type="Resource" uid="uid://73nsysikxf7j" path="res://characters/dorian.tres" id="4_dorian"]
 [ext_resource type="Resource" uid="uid://pa4hn8gobi1w" path="res://addons/fight_lab/fighters/armed_dorian.tres" id="5_armed"]
 [ext_resource type="Resource" uid="uid://bgt5q8uo31yh0" path="res://characters/monsters/goblin.tres" id="6_goblin"]
@@ -13,15 +12,8 @@
 [sub_resource type="Resource" id="Resource_strategy"]
 script = ExtResource("2_strategy")
 
-[sub_resource type="Resource" id="Resource_sweep"]
-script = ExtResource("3_sweep")
-from = 0
-to = 4
-
 [resource]
 script = ExtResource("1_scenario")
 characters = Array[ExtResource("8_character_profile")]([ExtResource("4_dorian"), ExtResource("5_armed")])
 monsters = Array[ExtResource("9_monster_profile")]([ExtResource("6_goblin"), ExtResource("7_lurker")])
 strategy = SubResource("Resource_strategy")
-sweep = SubResource("Resource_sweep")
-runs = 300

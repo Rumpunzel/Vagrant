@@ -3,7 +3,7 @@ extends Control
 
 ## A bar chart: one slot per category, its series side by side or stacked. Hover a bar for its value.
 
-const MARGIN: Vector4 = Vector4(44, 26, 8, 20)  # left, top, right, bottom
+const MARGIN: Vector4 = Vector4(44, 44, 8, 20)  # left, top (title and legend), right, bottom
 const GRID_LINES: int = 4
 
 var title: String
@@ -55,16 +55,15 @@ func _get_tooltip(at_position: Vector2) -> String:
 				return "%s — %s: %s" % [categories[index], series[series_index]["name"], _format(series[series_index]["values"][index])]
 	return ""
 
+## Below the title, left to right
 func _draw_legend(font: Font, font_size: int) -> void:
-	var x: float = size.x - MARGIN.z
-	for index: int in range(series.size() - 1, -1, -1):
-		var label: String = series[index]["name"]
-		var width: float = font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size - 2).x
-		x -= width + 4
-		draw_string(font, Vector2(x, font_size + 2), label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size - 2, get_theme_color("font_color", "Label"))
-		x -= 12
-		draw_rect(Rect2(x, 6, 9, 9), series[index]["color"])
-		x -= 8
+	var x: float = 4.0
+	var y: float = font_size * 2.0 + 6.0
+	for entry: Dictionary in series:
+		draw_rect(Rect2(x, y - 9, 9, 9), entry["color"])
+		x += 13
+		draw_string(font, Vector2(x, y), entry["name"], HORIZONTAL_ALIGNMENT_LEFT, -1, font_size - 2, get_theme_color("font_color", "Label"))
+		x += font.get_string_size(entry["name"], HORIZONTAL_ALIGNMENT_LEFT, -1, font_size - 2).x + 12
 
 ## One rectangle per series for category [param index]
 func _get_bars(index: int) -> Array[Rect2]:

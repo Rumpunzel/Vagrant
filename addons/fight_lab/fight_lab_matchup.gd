@@ -6,6 +6,9 @@ extends RefCounted
 var character_profile: CharacterProfile
 var monster_profile: MonsterProfile
 var strategy: FightLabStrategy
+## Where the profiles sit in the scenario
+var character_index: int = -1
+var monster_index: int = -1
 var sweep_value: int = 0
 
 func _init(with_character_profile: CharacterProfile, with_monster_profile: MonsterProfile, with_strategy: FightLabStrategy) -> void:

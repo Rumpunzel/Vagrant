@@ -21,8 +21,9 @@ func _init(parent: Node) -> void:
 	assert(parent)
 	_parent = parent
 
-## One fight from full breath and fresh gear: outcome, exchanges, damage, breath left and what happened to the gear
-func simulate(matchup: FightLabMatchup, max_exchanges: int) -> Dictionary[String, Variant]:
+## One fight from full breath and fresh gear: outcome, exchanges, damage, breath spent and left, and what happened to the gear.
+## With [param with_log], "log" holds one entry per exchange: what was told, both threats, breath dice and injuries after it.
+func simulate(matchup: FightLabMatchup, max_exchanges: int, with_log: bool = false) -> Dictionary[String, Variant]:
 	var character: Character = _character_scene.instantiate()
 	_parent.add_child(character)
 	character.character_profile = matchup.character_profile
@@ -30,6 +31,8 @@ func simulate(matchup: FightLabMatchup, max_exchanges: int) -> Dictionary[String
 	_parent.add_child(monster)
 	monster.monster_profile = matchup.monster_profile
 	var gear_before: Dictionary[String, int] = _count_gear(character)
+	var breath_start: int = character.get_breath_dice_count()
+	var exchange_log: Array[Dictionary] = []
 	var fight: Fight = Fight.new(AdventureFightDecision.new(), character, monster)
 	var dealt: int = 0
 	var taken: int = 0
@@ -42,18 +45,29 @@ func simulate(matchup: FightLabMatchup, max_exchanges: int) -> Dictionary[String
 		taken += exchange.first.injury_taken
 		weapon_dropped = weapon_dropped or exchange.first.weapon_dropped
 		shield_dropped = shield_dropped or exchange.first.shield_dropped
+		if with_log: exchange_log.append({
+			"text": fight.get_exchange_summary(),
+			"threat": exchange.first.threat,
+			"monster_threat": exchange.second.threat,
+			"breath": character.get_breath_dice_count(),
+			"monster_breath": monster.get_breath_dice_count(),
+			"injuries": character.get_injury_total(),
+			"monster_injuries": monster.get_injury_total(),
+		})
 	var record: Dictionary[String, Variant] = {
 		"outcome": OUTCOMES[fight.outcome],
 		"exchanges": fight.get_exchange_count(),
 		"dealt": dealt,
 		"taken": taken,
 		"breath_left": character.get_breath_dice_count(),
+		"breath_spent": breath_start - character.get_breath_dice_count(),
 		"monster_breath_left": monster.get_breath_dice_count(),
 		"weapon_dropped": weapon_dropped,
 		"shield_dropped": shield_dropped,
 	}
 	var gear_after: Dictionary[String, int] = _count_gear(character)
 	for key: String in gear_after: record[key] = gear_after[key] - gear_before[key]
+	if with_log: record["log"] = exchange_log
 	character.free()
 	monster.free()
 	return record

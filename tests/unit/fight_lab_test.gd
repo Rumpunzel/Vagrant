@@ -12,7 +12,7 @@ func test_a_simulated_fight_ends_and_is_recorded() -> void:
 	assert_array(FightLabSimulator.OUTCOMES.values()).contains([record["outcome"]])
 	assert_int(record["exchanges"]).is_between(1, 50)
 	assert_int(record["breath_left"]).is_greater_equal(0)
-	for key: String in FightLabStats.MEANS + FightLabStats.RATES: assert_bool(record.has(key)).override_failure_message(key).is_true()
+	for key: String in FightLabStats.NUMBERS + FightLabStats.RATES: assert_bool(record.has(key)).override_failure_message(key).is_true()
 
 func test_simulated_fights_leave_no_nodes_behind() -> void:
 	var simulator: FightLabSimulator = FightLabSimulator.new(self)
@@ -30,16 +30,25 @@ func test_fleeing_at_full_breath_flees_at_once() -> void:
 	assert_array(["fled", "lost"]).contains([record["outcome"]])
 	assert_int(record["exchanges"]).is_equal(1)
 
-func test_summary_shares_and_means() -> void:
+func test_summary_shares_means_and_histograms() -> void:
 	var records: Array[Dictionary] = [_record("won", 2, 6), _record("won", 4, 2), _record("lost", 6, 0)]
 	var stats: Dictionary[String, Variant] = FightLabStats.summarize(records)
 	assert_int(stats["runs"]).is_equal(3)
 	assert_float(stats["outcomes"]["won"]).is_equal_approx(2.0 / 3.0, 0.001)
 	assert_float(stats["outcomes"]["lost"]).is_equal_approx(1.0 / 3.0, 0.001)
 	assert_float(stats["means"]["exchanges"]).is_equal(4.0)
-	assert_float(stats["per_exchange"]["dealt"]).is_equal_approx(8.0 / 12.0, 0.001)
 	assert_float(stats["rates"]["weapon_ruined"]).is_equal_approx(1.0 / 3.0, 0.001)
 	assert_dict(stats["histograms"]["exchanges"]).is_equal({"2": 1, "4": 1, "6": 1})
+
+func test_summary_tells_what_winning_cost() -> void:
+	var records: Array[Dictionary] = [_record("won", 2, 6), _record("won", 4, 2), _record("lost", 6, 0)]
+	records[0]["taken"] = 3
+	records[1]["taken"] = 5
+	records[2]["taken"] = 20
+	var won: Dictionary = FightLabStats.summarize(records)["won"]
+	assert_int(won["runs"]).is_equal(2)
+	assert_float(won["means"]["taken"]).is_equal(4.0)
+	assert_dict(won["histograms"]["taken"]).is_equal({"3": 1, "5": 1})
 
 func test_scenario_has_a_matchup_per_pairing_and_sweep_value() -> void:
 	var scenario: FightLabScenario = FightLabScenario.new()
@@ -49,10 +58,10 @@ func test_scenario_has_a_matchup_per_pairing_and_sweep_value() -> void:
 	var sweep: FightLabForcingSweep = FightLabForcingSweep.new()
 	sweep.from = 0
 	sweep.to = 3
-	scenario.sweep = sweep
-	var matchups: Array[FightLabMatchup] = scenario.get_matchups()
+	var matchups: Array[FightLabMatchup] = scenario.get_matchups(sweep)
 	assert_int(matchups.size()).is_equal(8)
 	assert_array(matchups.map(func(matchup: FightLabMatchup) -> int: return matchup.sweep_value)).is_equal([0, 1, 2, 3, 0, 1, 2, 3])
+	assert_array(matchups.map(func(matchup: FightLabMatchup) -> int: return matchup.character_index)).is_equal([0, 0, 0, 0, 1, 1, 1, 1])
 
 func test_characters_without_rolled_attributes_are_skipped() -> void:
 	var unrolled: CharacterProfile = TestCharacters.adventurer()
@@ -85,18 +94,36 @@ func test_forcing_sweep_sets_the_strategy_copy() -> void:
 	assert_object(_strategy.weapon_tactic).is_null()
 
 func test_run_summarizes_every_cell() -> void:
-	var scenario: FightLabScenario = FightLabScenario.new()
-	scenario.characters = [TestCharacters.adventurer()] as Array[CharacterProfile]
-	scenario.monsters = [TestMonsters.cutthroat()] as Array[MonsterProfile]
-	scenario.runs = 10
-	var result: Dictionary[String, Variant] = FightLabRun.new(scenario).execute(self)
+	var settings: FightLabRunSettings = _settings()
+	settings.fights = 10
+	var result: Dictionary[String, Variant] = FightLabRun.new(settings).execute(self)
 	assert_str(result["sweep"]).is_empty()
+	assert_array(result["characters"]).is_equal(["Tester"])
 	assert_int(result["cells"].size()).is_equal(1)
 	assert_int(result["cells"][0]["stats"]["runs"]).is_equal(10)
 	assert_str(JSON.stringify(result)).is_not_empty()
 
+func test_one_fight_is_logged_exchange_by_exchange() -> void:
+	var settings: FightLabRunSettings = _settings()
+	settings.mode = FightLabRunSettings.Mode.ONE_FIGHT
+	var result: Dictionary[String, Variant] = FightLabRun.new(settings).execute(self)
+	assert_bool(result.has("cells")).is_false()
+	var record: Dictionary = result["fight"]["record"]
+	var exchange_log: Array = record["log"]
+	assert_int(exchange_log.size()).is_equal(record["exchanges"])
+	assert_str(exchange_log[0]["text"]).contains("threaten")
+	assert_int(exchange_log[-1]["breath"]).is_equal(record["breath_left"])
+
+func _settings() -> FightLabRunSettings:
+	var scenario: FightLabScenario = FightLabScenario.new()
+	scenario.characters = [TestCharacters.adventurer()] as Array[CharacterProfile]
+	scenario.monsters = [TestMonsters.cutthroat()] as Array[MonsterProfile]
+	var settings: FightLabRunSettings = FightLabRunSettings.new()
+	settings.scenario = scenario
+	return settings
+
 func _record(outcome: String, exchanges: int, dealt: int) -> Dictionary:
-	var record: Dictionary = {"outcome": outcome, "exchanges": exchanges, "dealt": dealt, "taken": 1, "breath_left": 2, "monster_breath_left": 0, "weapon_dropped": false, "shield_dropped": false}
+	var record: Dictionary = {"outcome": outcome, "exchanges": exchanges, "dealt": dealt, "taken": 1, "breath_left": 2, "breath_spent": 3, "monster_breath_left": 0, "weapon_dropped": false, "shield_dropped": false}
 	for key: String in ["weapon_marks", "shield_marks", "armor_marks", "shield_ruined", "armor_ruined"]: record[key] = 0
 	record["weapon_ruined"] = int(outcome == "lost")
 	return record
