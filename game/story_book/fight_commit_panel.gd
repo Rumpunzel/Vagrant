@@ -24,10 +24,10 @@ func setup(fight: Fight, step: CommitStep) -> void:
 		_shield_switch.text = step.describe_shield(fight)
 		_shield_switch.button_pressed = side.get_shield_overshoot() == 0
 		add_child(_shield_switch)
-	var strike: Button = Button.new()
-	strike.text = "Strike!"
-	strike.pressed.connect(self.strike)
-	add_child(strike)
+	var strike_button: Button = Button.new()
+	strike_button.text = "Strike!"
+	strike_button.pressed.connect(self.strike)
+	add_child(strike_button)
 
 ## Commits to what is selected
 func strike() -> void: committed.emit(_weapon_die, _shield_switch != null and _shield_switch.button_pressed)
