@@ -45,9 +45,9 @@ func test_unarmed_example_until_won() -> void:
 	assert_int(fight.outcome).is_equal(Fight.Outcome.ONGOING)
 	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 2)
 	# Exchange 2: player loses the 9 (d12), the Cutthroat takes an injury of 5, which leaves its Guts at -2.
-	# Overwhelmed, it loses no dice to the exchange but saves against all 7 injury with all three: the 8 holds,
-	# yet every die is above its Guts and lost -> won
-	fight.roll_dice = func(_pool: Array[Die]) -> Array[Die]: return FightTestDice.dice([Rules.d8, Rules.d8, Rules.d8], [8, 4, 4])
+	# It loses both 4s to the exchange and saves against all 7 injury with its last die: the 8 holds,
+	# yet it is above its Guts and lost -> won
+	fight.roll_dice = func(_pool: Array[Die]) -> Array[Die]: return FightTestDice.dice([Rules.d8], [8])
 	_apply(fight, [2, 2, 4, 7, 9], 7, [3, 4, 4], 3)
 	assert_int(_character.get_breath_dice_count_for(Rules.d12)).is_equal(0)
 	assert_int(_monster.get_score(GUTS)).is_equal(_monster_guts() - 7)
@@ -108,14 +108,14 @@ func test_injuries_and_losses_reach_both_sides() -> void:
 func test_texts() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
 	assert_str(fight.create_request().get_description()).contains("The Cutthroat threatens you with")
-	assert_str(fight.get_title()).is_equal("Cutthroat — Exchange 1")
+	assert_str(fight.get_title()).is_equal("")
 	assert_str(fight.get_exchange_summary()).is_empty()
 	_apply(fight, [1, 1, 2, 2, 7], 7, [3, 4, 5], 5)
 	var summary: String = fight.get_exchange_summary()
 	assert_str(summary).contains("You threaten with")
 	# Injuries have their own display, they are not repeated in the text
 	assert_str(summary).not_contains("suffer")
-	assert_str(fight.get_title()).is_equal("Cutthroat — Exchange 2")
+	assert_str(fight.get_title()).is_equal("")
 
 func test_condition_description() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)

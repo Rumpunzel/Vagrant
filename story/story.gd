@@ -239,11 +239,8 @@ func _play_fight_step(fight: Fight, fight_result: FightResult, story_choice: Sto
 		_end_exchange(fight, fight_result, story_choice)
 		return
 	var step: ExchangeStep = fight.get_current_step()
-	if step is WeaponChoiceStep:
-		_ask_for_weapon_die(fight, step as WeaponChoiceStep, fight_result, story_choice)
-		return
-	if step is ShieldChoiceStep:
-		_ask_for_shield(fight, step as ShieldChoiceStep, fight_result, story_choice)
+	if step is CommitStep:
+		_ask_to_commit(fight, step as CommitStep, fight_result, story_choice)
 		return
 	if step is ArmorChoiceStep:
 		_ask_for_armor(fight, step as ArmorChoiceStep, fight_result, story_choice)
@@ -284,48 +281,24 @@ func _reveal(fight: Fight, told: String, pause: bool) -> void:
 		_event_queue.queue_until(_story_book.get_outcome_typed(), _story_book.is_outcome_typed)
 	if pause: _event_queue.queue_delay(_reveal_delay)
 
-## Shows a page offering each rolled weapon die with what striking with it costs; the exchange goes on below it once one is chosen
-func _ask_for_weapon_die(fight: Fight, step: WeaponChoiceStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
+## Shows the commit panel below the roll; the exchange goes on once the player strikes
+func _ask_to_commit(fight: Fight, step: CommitStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
 	fight.advance()
-	var weapon_side: FightSide = step.get_side(fight)
-	var weapon: Weapon = fight.player_weapon
-	var resume: Callable = func(die: Die) -> void:
+	var panel: FightCommitPanel = FightCommitPanel.new()
+	panel.setup(fight, step)
+	panel.committed.connect(func(weapon_die: Die, raises_shield: bool) -> void:
+		panel.queue_free()
 		fight.resolve_player_choice(func(player: FightSide) -> void:
-			player.chosen_weapon_die = die
-			player.holds_back = die == null
+			if step.has_weapon_choice(fight):
+				player.chosen_weapon_die = weapon_die
+				player.holds_back = weapon_die == null
+			if step.has_shield_choice(fight): player.shield_use = FightSide.ShieldUse.RAISE if raises_shield else FightSide.ShieldUse.LOWER
 		)
-		# The rest of the exchange is told on the decision's page
-		_summary_start = fight.get_paragraph_count()
+		# The dice log shows the threats as committed
+		fight_result.exchange = fight.get_last_exchange()
 		_event_queue.queue_callable(func() -> void: _play_fight_step(fight, fight_result, story_choice))
-	var choices: Array[StoryChoice] = []
-	var results: Array[String] = []
-	for die: Die in step.get_options(fight):
-		results.append(str(die.result))
-		choices.append(_create_pending_choice(_describe_weapon_die(weapon_side, die), resume.bind(die)))
-	if not weapon_side.weapon_dice.any(weapon_side.is_free_weapon_die): choices.append(_create_pending_choice("Hold back.", resume.bind(null)))
-	_show_fight_decision_page(fight, "Your %s comes up %s." % [weapon.get_equipment_name(), " and ".join(results)], choices)
-
-## Shows a page asking whether to raise the shield against the foe's blow; the exchange goes on below it once decided
-func _ask_for_shield(fight: Fight, step: ShieldChoiceStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
-	fight.advance()
-	var shield_side: FightSide = step.get_side(fight)
-	var shield: Shield = fight.player_shield
-	var face: int = shield_side.shield_dice[0].result
-	var resume: Callable = func(raise: bool) -> void:
-		fight.resolve_player_choice(func(player: FightSide) -> void: player.shield_use = FightSide.ShieldUse.RAISE if raise else FightSide.ShieldUse.LOWER)
-		# The rest of the exchange is told on the decision's page
-		_summary_start = fight.get_paragraph_count()
-		_event_queue.queue_callable(func() -> void: _play_fight_step(fight, fight_result, story_choice))
-	var stops: int = mini(face, shield_side.blow)
-	var raise: String = "Raise your %s: it takes %d off, the %d gets marked." % [shield.get_equipment_name(), stops, face]
-	if face > shield_side.get_shield_wield_score(): raise = "Force your %s up: it takes %d off, then it is ruined." % [shield.get_equipment_name(), stops]
-	elif shield_side.shield_marked_faces.has(face): raise = "Raise your %s on the marked %d: it takes %d off, the next higher face gets marked." % [shield.get_equipment_name(), face, stops]
-	var choices: Array[StoryChoice] = [
-		_create_pending_choice(raise, resume.bind(true)),
-		_create_pending_choice("Take the blow.", resume.bind(false)),
-	]
-	var description: String = "The %s's blow comes at you with %d. Your %s comes up %d." % [fight.monster.get_monster_name(), shield_side.blow, shield.get_equipment_name(), face]
-	_show_fight_decision_page(fight, description, choices)
+	)
+	_story_book.show_panel(panel)
 
 ## Asks, one page per blocked blow, which piece of armour takes it; the exchange goes on below the last one
 func _ask_for_armor(fight: Fight, step: ArmorChoiceStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
@@ -349,11 +322,6 @@ func _describe_armor_pick(option: ArmorPick, result: int) -> String:
 	if option.ruin: return "Let your %s take it and be ruined." % piece
 	if option.piece.is_marked(result): return "Let your %s take it: the next higher result gets marked." % piece
 	return "Let your %s take it: the %d gets marked." % [piece, result]
-
-func _describe_weapon_die(weapon_side: FightSide, die: Die) -> String:
-	if die.result > weapon_side.get_wield_score(): return "Force the %d: every face gets marked." % die.result
-	if weapon_side.marked_faces.has(die.result): return "Force the marked %d: the next higher face gets marked." % die.result
-	return "Strike with the %d." % die.result
 
 func _create_pending_choice(description: String, on_chosen: Callable) -> StoryChoice:
 	var decision: AdventureDecision = AdventureDecision.new()

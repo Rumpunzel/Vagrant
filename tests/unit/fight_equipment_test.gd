@@ -26,13 +26,20 @@ func test_a_die_beyond_guts_is_held_back_unless_forced() -> void:
 	assert_array(sword.marked_faces).is_empty()
 	assert_str(fight.get_exchange_summary()).contains("You hold back your Sword.")
 
-func test_forcing_beyond_guts_marks_every_face() -> void:
+func test_forcing_beyond_guts_marks_a_face_per_point_over() -> void:
 	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10))
 	var fight: Fight = Fight.new(_decision, _character, _monster)
 	_apply_armed(fight, sword, 9, [], 7, true)
-	assert_array(sword.marked_faces).is_equal([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+	assert_array(sword.marked_faces).is_equal([9, 10])
 	assert_bool(sword.ruined).is_false()
-	assert_str(fight.get_exchange_summary()).contains("You force your Sword beyond your strength: every face is marked.")
+	assert_str(fight.get_exchange_summary()).contains("You force your Sword: the 9 and 10 are marked.")
+
+func test_forcing_with_no_face_left_ruins_the_weapon() -> void:
+	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10), [10] as Array[int])
+	var fight: Fight = Fight.new(_decision, _character, _monster)
+	_apply_armed(fight, sword, 9, [], 7, true)
+	assert_bool(sword.ruined).is_true()
+	assert_str(fight.get_exchange_summary()).contains("You force your Sword: the 9 is marked, then it is ruined.")
 
 func test_forcing_a_marked_face_marks_the_next_higher_one() -> void:
 	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10), [4] as Array[int])
@@ -72,12 +79,14 @@ func test_blocked_die_marks_weapon_and_one_armor_piece() -> void:
 
 func test_blocking_a_marked_result_marks_the_next_higher_one() -> void:
 	_monster.armor = Armor.carry([ArmorProfile.create("Helmet", [5, 10] as Array[int])] as Array[ArmorProfile])
+	# A fresh sword and fight each time, so neither the sword's marks nor the Cutthroat going down stop the next blow
 	var fight: Fight = Fight.new(_decision, _character, _monster)
-	# A fresh sword each time, so its own marks don't keep it from striking
 	_apply_armed(fight, Weapon.create(WeaponProfile.create("Sword", Rules.d10)), 5, [5, 10] as Array[int], 12)
 	assert_array(_monster.armor[0].marked_faces).is_equal([5])
+	fight = Fight.new(_decision, _character, _monster)
 	_apply_armed(fight, Weapon.create(WeaponProfile.create("Sword", Rules.d10)), 5, [5, 10] as Array[int], 12)
 	assert_array(_monster.armor[0].marked_faces).is_equal([5, 10])
+	fight = Fight.new(_decision, _character, _monster)
 	_apply_armed(fight, Weapon.create(WeaponProfile.create("Sword", Rules.d10)), 5, [5, 10] as Array[int], 12)
 	# Nothing higher than the 10 is left: the Helmet still blocks, and is ruined
 	assert_bool(_monster.armor[0].ruined).is_true()
@@ -99,7 +108,7 @@ func test_summary_has_one_paragraph_per_step_and_side() -> void:
 	var knife: Weapon = Weapon.create(WeaponProfile.create("Knife", Rules.d8))
 	_monster.armor = Armor.carry([ArmorProfile.create("Gambeson", [] as Array[int], 1)] as Array[ArmorProfile])
 	var fight: Fight = Fight.new(_decision, _character, _monster)
-	# The cutthroat's Nerves (6) beat the player's Guts (4) by 2; its knife (7) would need forcing beyond its Guts 5
+	# The cutthroat's Nerves (6) beat the player's Guts (4) by 2; its knife (7) would need forcing beyond its Guts 5, so it holds it back
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [4]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 3))
 	var opponent: FightSide = FightSide.new(Rules.INTELLIGENCE, FightTestDice.dice([Rules.d8, Rules.d8], [6, 2]), FightTestDice.scores(5, 5, 7), FightTestDice.weapon(Rules.d8, 7), false, GUTS)
 	opponent.damage_reduction = 1
@@ -109,7 +118,7 @@ func test_summary_has_one_paragraph_per_step_and_side() -> void:
 	# Every step and side tells its own paragraph; their order is authored in exchange_steps.tres
 	assert_array(Array(paragraphs)).contains_exactly_in_any_order([
 		"You threaten with %s (4) and your Sword (3)." % guts,
-		"The Cutthroat threatens with %s (6) and its Knife (7)." % Fight.describe_attribute(Rules.INTELLIGENCE),
+		"The Cutthroat threatens with %s (6)." % Fight.describe_attribute(Rules.INTELLIGENCE),
 		"The Cutthroat unnerves you (−2 %s)." % guts,
 		"The Cutthroat holds back its Knife.",
 		"The Cutthroat's armour takes 1 off your blow.",
@@ -119,18 +128,19 @@ func test_raising_a_shield_marks_its_face() -> void:
 	var buckler: Shield = Shield.create(ShieldProfile.create("Buckler", Rules.d6))
 	_raise(buckler, 3)
 	assert_array(buckler.marked_faces).is_equal([3])
-	assert_str(_fight_text).contains("You raise your Buckler: 3 off the Cutthroat's blow. A 3 is marked on your Buckler.")
+	assert_str(_fight_text).contains("Your Buckler takes 3 off the Cutthroat's blow. A 3 is marked on your Buckler.")
 
 func test_raising_on_a_marked_face_marks_the_next_higher_one() -> void:
 	var buckler: Shield = Shield.create(ShieldProfile.create("Buckler", Rules.d6), [3] as Array[int])
 	_raise(buckler, 3)
 	assert_array(buckler.marked_faces).is_equal([3, 4])
 
-func test_forcing_a_shield_up_ruins_it() -> void:
+func test_forcing_a_shield_up_costs_threat_but_no_more_wear() -> void:
 	var buckler: Shield = Shield.create(ShieldProfile.create("Buckler", Rules.d6))
 	_raise(buckler, 6, 5)
-	assert_bool(buckler.ruined).is_true()
-	assert_str(_fight_text).contains("Your Buckler is ruined.")
+	assert_bool(buckler.ruined).is_false()
+	assert_array(buckler.marked_faces).is_equal([6])
+	assert_str(_fight_text).contains("forcing your Buckler (6, −1): a threat of 0")
 
 func test_summary_without_shields_has_no_shield_paragraph() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
@@ -138,13 +148,13 @@ func test_summary_without_shields_has_no_shield_paragraph() -> void:
 	assert_str(fight.get_exchange_summary()).not_contains("shield")
 	assert_str(fight.get_exchange_summary()).not_contains("Now you")
 
-func test_summary_lists_every_weapon_die() -> void:
+func test_summary_tells_the_weapon_die_struck_with() -> void:
 	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10))
 	var fight: Fight = Fight.new(_decision, _character, _monster)
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [4]), FightTestDice.scores(7), FightTestDice.dice([Rules.d10, Rules.d10], [3, 6]))
 	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [2]), FightTestDice.scores(5))
 	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, sword)
-	assert_str(fight.get_exchange_summary()).contains("and your Sword (3, 6)")
+	assert_str(fight.get_exchange_summary()).contains("and your Sword (6).")
 
 ## One exchange where the player swings [param sword] and rolls [param result]
 func _apply_armed(fight: Fight, sword: Weapon, result: int, opponent_armor_blocks: Array[int] = [], guts: int = 7, force: bool = false) -> void:
@@ -155,14 +165,14 @@ func _apply_armed(fight: Fight, sword: Weapon, result: int, opponent_armor_block
 	opponent.armor_blocks = opponent_armor_blocks
 	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, sword)
 
-## The Cutthroat's unarmed vantage of 4 comes at the player, who raises [param shield] on [param result] (forced if beyond [param guts])
+## The Cutthroat's unarmed 8 comes at the player, who raises [param shield] on [param result] (forced if beyond [param guts])
 func _raise(shield: Shield, result: int, guts: int = 7) -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster)
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(guts))
 	player.shield_dice = FightTestDice.dice([shield.get_die_type()], [result])
 	player.shield_marked_faces = shield.marked_faces.duplicate()
 	player.shield_use = FightSide.ShieldUse.RAISE
-	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [5]), FightTestDice.scores(5))
+	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [8]), FightTestDice.scores(5))
 	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, null, null, shield)
 	_fight_text = fight.get_exchange_summary()
 

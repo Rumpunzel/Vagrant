@@ -53,7 +53,7 @@ static func _describe_faces(weapon: Weapon) -> String:
 		if weapon.is_marked(face): faces.append("[color=#%s][s]%d[/s][/color]" % [Main.FAILURE.to_html(), face])
 		else: faces.append("%d" % face)
 	var description: String = " ".join(faces)
-	if not weapon.is_usable(): description = "[color=gray]%s — ruined[/color]" % description
+	if not weapon.is_usable(): description = "[color=gray]%s — %s[/color]" % [description, "dropped" if weapon.dropped and not weapon.ruined else "ruined"]
 	return description
 
 ## With several weapon dice (Veteran), the player may ask to pick the die even when none needs forcing

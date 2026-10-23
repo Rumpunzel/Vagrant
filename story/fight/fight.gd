@@ -100,7 +100,7 @@ func advance() -> String:
 	return told
 
 ## Resolves the exchange being applied again after [param change] (taking the player's [FightSide]) set what they chose,
-## e.g. the weapon die to strike with or whether to raise the shield.
+## e.g. the weapon die to strike with and whether to raise the shield.
 ## Only for parts not applied yet: it keeps the dice rolled and what was told.
 func resolve_player_choice(change: Callable) -> void:
 	var exchange: FightExchange = get_last_exchange()
@@ -132,6 +132,9 @@ func end_exchange() -> String:
 	outcome = _evaluate_outcome()
 	# A beaten monster stays down; whether it is spared is up to the story
 	if outcome == Outcome.WON: monster.incapacitated = true
+	if not is_ongoing():
+		protagonist.pick_up_dropped_gear()
+		monster.pick_up_dropped_gear()
 	var line: String = ""
 	match outcome:
 		Outcome.WON: line = "The %s can no longer resist." % monster.get_monster_name()

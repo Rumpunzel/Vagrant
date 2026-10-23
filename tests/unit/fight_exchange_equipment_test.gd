@@ -54,15 +54,15 @@ func test_failed_weapon_die_is_reported() -> void:
 	assert_int(player.weapon_damage).is_equal(0)
 
 func test_armor_blocks_weapon_damage() -> void:
-	# Sword 10 against a helmet: blocked, so only the Guts vantage hits
+	# Sword 10 against a helmet: blocked, but it still threatens: 10 vs 5, so the Guts vantage of 5 hits
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.player_dice([1, 1, 2, 2, 7]), FightTestDice.scores(12), FightTestDice.weapon(Rules.d10, 10))
 	var lurker: FightSide = FightSide.new(GUTS, FightTestDice.lurker_dice([3, 4, 5]), FightTestDice.scores(5))
 	lurker.armor_blocks = [5, 10] as Array[int]
 	FightExchange.new(player, lurker)
 	assert_array(FightTestDice.results(player.blocked_weapon_dice)).is_equal([10])
 	assert_int(player.weapon_damage).is_equal(0)
-	assert_int(player.threat).is_equal(7)
-	assert_int(lurker.injury_taken).is_equal(2)
+	assert_int(player.threat).is_equal(10)
+	assert_int(lurker.injury_taken).is_equal(5)
 
 func test_failed_weapon_never_meets_armor() -> void:
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.player_dice([1, 1, 2, 2, 3]), FightTestDice.scores(5), FightTestDice.weapon(Rules.d10, 10))

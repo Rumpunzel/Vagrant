@@ -6,44 +6,58 @@ const GUTS: CharacterAttribute = Rules.STRENGTH
 const BLOOD: CharacterAttribute = Rules.AGILITY
 
 func test_raised_shield_takes_its_result_off_the_blow() -> void:
-	# 1 vs 5: the unarmed Lurker's vantage of 4 is its blow; the 3 takes 3 off
+	# The free 3 threatens too: 3 vs 7, so the unarmed Lurker's vantage of 4 is its blow; the 3 takes 3 off
 	var player: FightSide = _shielded(3)
-	FightExchange.new(player, _lurker(5))
+	FightExchange.new(player, _lurker(7))
 	assert_bool(player.raises_shield).is_true()
+	assert_int(player.threat).is_equal(3)
 	assert_int(player.blow).is_equal(4)
 	assert_int(player.shield_blocked).is_equal(3)
 	assert_int(player.injury_taken).is_equal(1)
-	assert_int(player.shield_strain).is_equal(FightSide.Strain.NONE)
 
 func test_shield_takes_at_most_the_whole_blow() -> void:
 	var player: FightSide = _shielded(6)
-	FightExchange.new(player, _lurker(5))
-	assert_int(player.shield_blocked).is_equal(4)
+	FightExchange.new(player, _lurker(8))
+	assert_int(player.blow).is_equal(2)
+	assert_int(player.shield_blocked).is_equal(2)
 	assert_int(player.injury_taken).is_equal(0)
 
-func test_no_blow_no_raise() -> void:
+func test_no_blow_nothing_blocked() -> void:
 	var player: FightSide = _shielded(3, [6] as Array[int])
 	FightExchange.new(player, _lurker(2))
-	assert_bool(player.raises_shield).is_false()
+	assert_bool(player.raises_shield).is_true()
 	assert_int(player.blow).is_equal(0)
+	assert_int(player.shield_blocked).is_equal(0)
 
 func test_shield_beyond_guts_is_only_raised_when_forced() -> void:
 	var player: FightSide = _shielded(6, [1] as Array[int], 5)
 	FightExchange.new(player, _lurker(5))
 	assert_bool(player.raises_shield).is_false()
+	# Forcing the 6 over Guts 5 costs 1 threat: 0 vs 5
 	var forced: FightSide = _shielded(6, [1] as Array[int], 5)
 	forced.shield_use = FightSide.ShieldUse.RAISE
 	FightExchange.new(forced, _lurker(5))
 	assert_bool(forced.raises_shield).is_true()
-	assert_int(forced.shield_strain).is_equal(FightSide.Strain.OVERREACH)
+	assert_int(forced.shield_overshoot).is_equal(1)
+	assert_int(forced.threat).is_equal(0)
+	assert_int(forced.blow).is_equal(5)
 	assert_int(forced.injury_taken).is_equal(0)
 
-func test_marked_face_still_blocks() -> void:
+func test_marked_face_still_blocks_and_threatens() -> void:
 	var player: FightSide = _shielded(3)
 	player.shield_marked_faces = [3] as Array[int]
-	FightExchange.new(player, _lurker(5))
+	FightExchange.new(player, _lurker(7))
+	assert_int(player.threat).is_equal(3)
 	assert_int(player.shield_blocked).is_equal(3)
-	assert_int(player.shield_strain).is_equal(FightSide.Strain.MARKED_FACE)
+
+func test_unnerved_shield_is_dropped() -> void:
+	# The free 6 is committed; the foe's Nerves win 8 vs 6, Guts counts as 5, so the shield is dropped and blocks nothing
+	var player: FightSide = _shielded(6)
+	var lurker: FightSide = FightSide.new(Rules.INTELLIGENCE, FightTestDice.dice([Rules.d8], [8]), FightTestDice.scores(9), FightTestDice.weapon(Rules.d8, 1), false, GUTS)
+	FightExchange.new(player, lurker)
+	assert_bool(player.shield_dropped).is_true()
+	assert_bool(player.raises_shield).is_false()
+	assert_int(player.shield_blocked).is_equal(0)
 
 func test_lowered_shield_takes_the_blow() -> void:
 	var player: FightSide = _shielded(3)
@@ -53,8 +67,8 @@ func test_lowered_shield_takes_the_blow() -> void:
 	assert_int(player.injury_taken).is_equal(4)
 
 func test_shield_comes_after_blood_and_before_the_gambeson() -> void:
-	# 6 vs 4 with Blood: the Lurker's 6 loses 2 to the vantage, 3 to the shield and 1 to the Gambeson
-	var player: FightSide = FightSide.new(BLOOD, FightTestDice.dice([Rules.d6], [6]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))
+	# 8 vs 6 (the Lurker's 6 threatens too) with Blood: its 6 loses 2 to the vantage, 3 to the shield and 1 to the Gambeson
+	var player: FightSide = FightSide.new(BLOOD, FightTestDice.dice([Rules.d8], [8]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))
 	player.shield_dice = FightTestDice.dice([Rules.d6], [3])
 	player.damage_reduction = 1
 	var lurker: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [4]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d8, 6))
@@ -68,9 +82,10 @@ func test_monsters_raise_shields_too() -> void:
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d6], [5]), FightTestDice.scores(7))
 	var lurker: FightSide = _lurker(1)
 	lurker.shield_dice = FightTestDice.dice([Rules.d8], [2])
+	# Its 2 threatens: 5 vs 2, a blow of 3, 2 of it blocked
 	FightExchange.new(player, lurker)
 	assert_bool(lurker.raises_shield).is_true()
-	assert_int(lurker.injury_taken).is_equal(2)
+	assert_int(lurker.injury_taken).is_equal(1)
 
 ## Unarmed with a d6 shield of [param shield_result]
 func _shielded(shield_result: int, breath_results: Array[int] = [1], guts: int = 7) -> FightSide:

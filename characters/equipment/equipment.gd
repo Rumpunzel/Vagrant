@@ -6,6 +6,8 @@ extends Resource
 
 @export var marked_faces: Array[int] = []
 @export var ruined: bool = false
+## Lost to the foe's Nerves: unusable until the fight is over
+var dropped: bool = false
 
 ## Faces that can be marked: a weapon's die faces, the results a piece of armour blocks
 @abstract func get_markable_faces() -> Array[int]
@@ -37,7 +39,7 @@ func mark_all() -> void:
 	marked_faces.sort()
 	emit_changed()
 
-func is_usable() -> bool: return not ruined
+func is_usable() -> bool: return not ruined and not dropped
 func is_marked(face: int) -> bool: return marked_faces.has(face)
 
 func _set_state(new_marked_faces: Array[int], new_ruined: bool) -> void:

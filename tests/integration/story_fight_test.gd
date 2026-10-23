@@ -140,36 +140,39 @@ func test_a_weapon_die_beyond_guts_can_be_forced() -> void:
 	_story._protagonist.weapons = [sword] as Array[Weapon]
 	choice.get_dice_request().selected_weapon = sword
 	var result: FightResult = choice.get_dice_request().roll()
-	# Guts 7: the Sword's 9 needs forcing; 4 vs 1 keeps the Cutthroat from hurting the player
+	# Guts 7: forcing the Sword's 9 costs 2 threat; 4 − 2 vs 1 still keeps the Cutthroat from hurting the player
 	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [4]), FightTestDice.scores(7), FightTestDice.dice([Rules.d10], [9]))
 	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [1]), FightTestDice.scores(7)))
 	fight.start_exchange_from(result)
-	while not fight.get_current_step() is WeaponChoiceStep: fight.advance()
-	_story._ask_for_weapon_die(fight, fight.get_current_step() as WeaponChoiceStep, result, choice)
-	var page: StoryPage = _story._current_story_page
-	assert_bool(page.is_fighting()).is_true()
-	assert_array(page.choices.map(func(option: StoryChoice) -> String: return option.get_description())).is_equal(["Force the 9: every face gets marked.", "Hold back."])
-	await _pick(page.choices[0])
-	assert_int(sword.marked_faces.size()).is_equal(10)
+	_story._play_fight_step(fight, result, choice)
+	var panel: FightCommitPanel = _get_commit_panel()
+	var options: Array[Node] = panel.find_children("*", "CheckBox", true, false)
+	assert_array(options.map(func(option: CheckBox) -> String: return option.text)).is_equal(["Force the 9: −2 threat, 2 faces get marked.", "Hold back."])
+	# Nothing is free, so holding back is what the panel starts on
+	assert_bool((options[1] as CheckBox).button_pressed).is_true()
+	(options[0] as CheckBox).button_pressed = true
+	await _strike(panel)
+	assert_array(sword.marked_faces).is_equal([9, 10])
 	assert_int(fight.get_last_exchange().second.injury_taken).is_greater(8)
 
-func test_the_shield_can_be_raised_against_a_blow() -> void:
+func test_the_shield_is_raised_by_default_when_free() -> void:
 	var choice: StoryFightDecision = _story._current_story_page.choices[0]
 	var fight: Fight = choice.fight
 	var buckler: Shield = Shield.create(ShieldProfile.create("Buckler", Rules.d6))
 	_story._protagonist.shields = [buckler] as Array[Shield]
 	var result: FightResult = choice.get_dice_request().roll()
-	# 1 vs 5: the Cutthroat's vantage of 4 comes at the player, whose Buckler shows a 3
+	# The Buckler's 3 threatens: 3 vs 7, so the Cutthroat's vantage of 4 comes at the player and the 3 takes 3 off
 	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7))
 	player.shield_dice = FightTestDice.dice([Rules.d6], [3])
-	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [5]), FightTestDice.scores(7)))
+	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [7]), FightTestDice.scores(7)))
 	result.player_shield = buckler
 	fight.start_exchange_from(result)
-	while not fight.get_current_step() is ShieldChoiceStep: fight.advance()
-	_story._ask_for_shield(fight, fight.get_current_step() as ShieldChoiceStep, result, choice)
-	var page: StoryPage = _story._current_story_page
-	assert_array(page.choices.map(func(option: StoryChoice) -> String: return option.get_description())).is_equal(["Raise your Buckler: it takes 3 off, the 3 gets marked.", "Take the blow."])
-	await _pick(page.choices[0])
+	_story._play_fight_step(fight, result, choice)
+	var panel: FightCommitPanel = _get_commit_panel()
+	var switch: CheckButton = panel.find_children("*", "CheckButton", true, false)[0]
+	assert_str(switch.text).is_equal("Raise your Buckler.")
+	assert_bool(switch.button_pressed).is_true()
+	await _strike(panel)
 	assert_array(buckler.marked_faces).is_equal([3])
 	assert_int(fight.get_last_exchange().first.injury_taken).is_equal(1)
 
@@ -210,6 +213,20 @@ func _pick(choice: StoryChoice) -> void:
 	var page: StoryPage = _story._current_story_page
 	choice.chose()
 	if choice.is_dice_choice(): choice.roll()
+	await _wait_for_page_after(page)
+
+## Strikes as committed in [param panel], then waits for the page after the exchange
+func _strike(panel: FightCommitPanel) -> void:
+	var page: StoryPage = _story._current_story_page
+	panel.strike()
+	await _wait_for_page_after(page)
+
+func _get_commit_panel() -> FightCommitPanel:
+	var panels: Array[Node] = get_tree().root.find_children("*", "VBoxContainer", true, false).filter(func(node: Node) -> bool: return node is FightCommitPanel)
+	assert_int(panels.size()).is_equal(1)
+	return panels[0]
+
+func _wait_for_page_after(page: StoryPage) -> void:
 	var waited: int = 0
 	while _story._current_story_page == page:
 		_skip_typing()

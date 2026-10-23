@@ -18,27 +18,48 @@ func before_test() -> void:
 	add_child(_monster)
 	_monster.monster_profile = TestMonsters.cutthroat()
 
-func test_cautious_weapon_tactic_holds_back_a_die_beyond_guts() -> void:
-	var side: FightSide = _armed(9, CautiousWeaponTactic.new())
+func test_weapon_tactic_never_forces_by_default() -> void:
+	var side: FightSide = _armed(9, null)
 	FightExchange.new(side, _unarmed())
 	assert_array(side.usable_weapon_dice).is_empty()
 
-func test_reckless_weapon_tactic_forces_it() -> void:
-	var side: FightSide = _armed(9, RecklessWeaponTactic.new())
+func test_weapon_tactic_forces_up_to_its_max_overshoot() -> void:
+	var side: FightSide = _armed(9, _forcing_weapon(2))
 	FightExchange.new(side, _unarmed())
 	assert_int(side.weapon_damage).is_equal(9)
 	assert_int(side.weapon_strain).is_equal(FightSide.Strain.OVERREACH)
+	assert_int(side.threat).is_equal(-1)
 
-func test_cautious_shield_tactic_does_not_force_the_shield() -> void:
-	var side: FightSide = _shielded(8, CautiousShieldTactic.new())
+func test_weapon_tactic_holds_back_beyond_its_max_overshoot() -> void:
+	var side: FightSide = _armed(9, _forcing_weapon(1))
+	FightExchange.new(side, _unarmed())
+	assert_array(side.usable_weapon_dice).is_empty()
+
+func test_weapon_tactic_forces_marked_faces_only_if_set() -> void:
+	var side: FightSide = _armed(5, _forcing_weapon(0))
+	side.marked_faces = [5] as Array[int]
+	FightExchange.new(side, _unarmed())
+	assert_array(side.usable_weapon_dice).is_empty()
+	var tactic: ForcingWeaponTactic = _forcing_weapon(0)
+	tactic.force_marked_faces = true
+	var forcing: FightSide = _armed(5, tactic)
+	forcing.marked_faces = [5] as Array[int]
+	FightExchange.new(forcing, _unarmed())
+	assert_int(forcing.weapon_strain).is_equal(FightSide.Strain.MARKED_FACE)
+
+func test_shield_tactic_never_forces_by_default() -> void:
+	var side: FightSide = _shielded(8, null)
 	FightExchange.new(side, _hitting())
 	assert_bool(side.raises_shield).is_false()
 
-func test_reckless_shield_tactic_forces_it() -> void:
-	var side: FightSide = _shielded(8, RecklessShieldTactic.new())
+func test_shield_tactic_forces_up_to_its_max_overshoot() -> void:
+	var tactic: ForcingShieldTactic = ForcingShieldTactic.new()
+	tactic.max_overshoot = 1
+	var side: FightSide = _shielded(8, tactic)
 	FightExchange.new(side, _hitting())
 	assert_bool(side.raises_shield).is_true()
-	assert_int(side.shield_strain).is_equal(FightSide.Strain.OVERREACH)
+	assert_int(side.shield_overshoot).is_equal(1)
+	assert_int(side.threat).is_equal(0)
 
 func test_armor_step_follows_the_monsters_armor_tactic() -> void:
 	var helmet: Armor = Armor.create(ArmorProfile.create("Helmet", [5, 10] as Array[int]))
@@ -56,8 +77,8 @@ func test_armor_step_follows_the_monsters_armor_tactic() -> void:
 
 func test_monster_tactics_reach_its_side() -> void:
 	var profile: MonsterProfile = TestMonsters.cutthroat()
-	profile.weapon_tactic = RecklessWeaponTactic.new()
-	profile.shield_tactic = RecklessShieldTactic.new()
+	profile.weapon_tactic = _forcing_weapon(12)
+	profile.shield_tactic = ForcingShieldTactic.new()
 	profile.armor_tactic = LastOptionArmorTactic.new()
 	_monster.monster_profile = profile
 	var request: FightRequest = FightRequest.new(_character, AdventureFightDecision.new())
@@ -80,6 +101,11 @@ func _shielded(result: int, tactic: ShieldTactic) -> FightSide:
 	side.shield_dice = FightTestDice.dice([Rules.d8], [result])
 	side.shield_tactic = tactic
 	return side
+
+func _forcing_weapon(max_overshoot: int) -> ForcingWeaponTactic:
+	var tactic: ForcingWeaponTactic = ForcingWeaponTactic.new()
+	tactic.max_overshoot = max_overshoot
+	return tactic
 
 func _unarmed() -> FightSide:
 	return FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [1]), FightTestDice.scores(7))

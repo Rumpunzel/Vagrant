@@ -37,6 +37,10 @@ func show_injury(target_name: String, magnitude: int) -> void:
 	assert(_current_page_entry is StoryEntry)
 	(_current_page_entry as StoryEntry).show_injury(target_name, magnitude)
 
+func show_panel(panel: Control) -> void:
+	assert(_current_page_entry is StoryEntry)
+	(_current_page_entry as StoryEntry).show_panel(panel)
+
 ## Starts typing the text below the current page's roll and injuries
 func show_outcome(outcome: String) -> void:
 	assert(_current_page_entry is StoryEntry)

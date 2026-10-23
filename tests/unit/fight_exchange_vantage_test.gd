@@ -35,8 +35,9 @@ func test_losing_side_has_no_vantage_to_double() -> void:
 	var player: FightSide = FightSide.new(BLOOD, FightTestDice.dice([Rules.d6], [2]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))
 	player.abilities = [VantageMultiplierAbility.new()] as Array[Ability]
 	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [6]), FightTestDice.scores(10), FightTestDice.weapon(Rules.d10, 9))
+	# The foe's 9 threatens too: 9 vs 2
 	var exchange: FightExchange = FightExchange.new(player, opponent)
-	assert_int(exchange.first.injury_taken).is_equal(9 + 4)
+	assert_int(exchange.first.injury_taken).is_equal(9 + 7)
 
 func _armed_against_unarmed(stance: CharacterAttribute, double_vantage: bool) -> FightExchange:
 	var player: FightSide = FightSide.new(stance, FightTestDice.dice([Rules.d6], [6]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 4), false, GUTS)
@@ -45,7 +46,9 @@ func _armed_against_unarmed(stance: CharacterAttribute, double_vantage: bool) ->
 	return FightExchange.new(player, opponent)
 
 func _blood_against_armed(double_vantage: bool) -> FightExchange:
-	var player: FightSide = FightSide.new(BLOOD, FightTestDice.dice([Rules.d6], [6]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))
+	var player: FightSide = FightSide.new(BLOOD, FightTestDice.dice([Rules.d6], [5]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))
 	if double_vantage: player.abilities = [VantageMultiplierAbility.new()] as Array[Ability]
-	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [2]), FightTestDice.scores(10), FightTestDice.weapon(Rules.d10, 9))
+	# Forcing the 9 one over Guts 8 costs the foe 1 threat: 5 vs 1
+	var opponent: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [2]), FightTestDice.scores(8), FightTestDice.weapon(Rules.d10, 9))
+	opponent.chosen_weapon_die = opponent.weapon_dice[0]
 	return FightExchange.new(player, opponent)

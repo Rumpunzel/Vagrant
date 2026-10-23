@@ -4,8 +4,8 @@ extends Resource
 
 ## How a fighter decides which weapon die to strike with
 
-## The die to strike with (forced if it needs to be), or null to hold back. [param side] is resolved up to its dice checks,
-## so its scores already count the foe's Nerves.
+## The die to strike with (forced if it needs to be), or null to hold back. Decided before the threat,
+## so [param side]'s scores don't count the foe's Nerves yet.
 @abstract func choose_weapon_die(side: FightSide, foe: FightSide) -> Die
 
 ## How good striking with [param die] is: one the foe's armour doesn't block (that would mark the weapon), then the highest

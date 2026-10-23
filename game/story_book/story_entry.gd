@@ -40,6 +40,11 @@ func show_injury(target_name: String, magnitude: int) -> void:
 	injury_display.setup(target_name, magnitude)
 	_injuries.visible = true
 
+## Shows [param panel] above the outcome, e.g. to decide something mid-exchange without turning the page
+func show_panel(panel: Control) -> void:
+	_outcome.add_sibling(panel)
+	_outcome.get_parent().move_child(panel, _outcome.get_index())
+
 ## Starts typing [param outcome]; see [method is_outcome_typed]
 func show_outcome(outcome: String) -> void:
 	if outcome.is_empty(): return

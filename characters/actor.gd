@@ -55,6 +55,11 @@ func is_overwhelmed_by_injuries() -> bool:
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: if get_score(attribute) <= 0: return true
 	return false
 
+## Picks up what the foe's Nerves made this actor drop
+func pick_up_dropped_gear() -> void:
+	for weapon: Weapon in weapons: weapon.dropped = false
+	for shield: Shield in shields: shield.dropped = false
+
 func get_breath_dice_count() -> int:
 	var count: int = 0
 	for amount: int in breath_dice.values(): count += amount

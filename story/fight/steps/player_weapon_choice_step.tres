@@ -1,6 +1,0 @@
-[gd_resource type="Resource" script_class="WeaponChoiceStep" format=3 uid="uid://c23kjs0qbt700"]
-
-[ext_resource type="Script" uid="uid://lxytha6ql703" path="res://story/fight/steps/weapon_choice_step.gd" id="1_choice"]
-
-[resource]
-script = ExtResource("1_choice")

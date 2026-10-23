@@ -79,6 +79,7 @@ func test_dice_log_shows_fight_result() -> void:
 	# Every step of the exchange is typed out and paused on before the next exchange
 	var waited: int = 0
 	while _story._current_story_page == page and waited < 20000:
+		_strike_if_asked()
 		await await_millis(20)
 		waited += 20
 	var result: FightResult = choice.get_dice_result()
@@ -114,6 +115,7 @@ func test_exchange_is_applied_step_by_step() -> void:
 	var seen_dice_only: bool = false
 	var waited: int = 0
 	while _story._current_story_page == page and waited < 20000:
+		_strike_if_asked()
 		# Until the consequences are told, nothing is lost and nobody is hurt
 		if entry._outcome.text.count("[p]") <= 1:
 			seen_dice_only = seen_dice_only or entry._outcome.visible
@@ -134,6 +136,7 @@ func test_next_exchange_waits_for_summary_typing() -> void:
 	(page.choices[0] as StoryFightDecision).roll()
 	var waited: int = 0
 	while _story._current_story_page == page and waited < 20000:
+		_strike_if_asked()
 		# While the summary is still being typed, the next page must not appear
 		if entry._outcome.visible and entry._outcome.visible_ratio < 1.0: assert_object(_story._current_story_page).is_same(page)
 		await await_millis(5)
@@ -203,6 +206,11 @@ func test_weapon_selection_shows_marks_and_ruin() -> void:
 	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]5[/s]")
 	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[1])).contains("ruined")
 	assert_bool(weapons._buttons[2].disabled).is_true()
+
+## Strikes as the commit panel starts out, if the exchange asks the player to commit
+func _strike_if_asked() -> void:
+	for node: Node in get_tree().root.find_children("*", "VBoxContainer", true, false):
+		if node is FightCommitPanel and not node.is_queued_for_deletion(): (node as FightCommitPanel).strike()
 
 func _final_text(label: TypingLabel) -> String:
 	return label._text_to_type if not label._text_to_type.is_empty() else label.text

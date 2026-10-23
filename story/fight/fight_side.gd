@@ -14,9 +14,9 @@ enum ShieldUse {
 
 enum Strain {
 	NONE,
-	## Forced on a marked face: the next higher face gets marked
+	## Forced on a marked face within the wield score: the next higher face gets marked
 	MARKED_FACE,
-	## Forced above the wield score: every face gets marked
+	## Forced above the wield score: one face gets marked per point it is above
 	OVERREACH,
 }
 
@@ -50,7 +50,7 @@ var scores: Dictionary[CharacterAttribute, int]
 var nerves_target: CharacterAttribute
 ## The fighter's abilities (monsters have none yet)
 var abilities: Array[Ability] = []
-## How this side decides when nobody asks the player; none: the cautious / sparing ones
+## How this side commits when nobody asks the player; none: never forcing, sparing armour
 var weapon_tactic: WeaponTactic
 var shield_tactic: ShieldTactic
 var armor_tactic: ArmorTactic
@@ -64,6 +64,11 @@ var lost_breath_dice: Array[Die] = []
 var usable_weapon_dice: Array[Die] = []
 ## How striking with it strains the weapon
 var weapon_strain: Strain = Strain.NONE
+## How far the weapon die struck with is above the wield score; taken off the threat
+var weapon_overshoot: int = 0
+## The foe's Nerves made this side drop its weapon, or its shield, for the rest of the fight
+var weapon_dropped: bool = false
+var shield_dropped: bool = false
 ## Weapon dice that could be used freely but were not chosen
 var spare_weapon_dice: Array[Die] = []
 ## Weapon dice that would have needed forcing (above the wield score or on a marked face) and were not used
@@ -73,10 +78,10 @@ var blocked_weapon_dice: Array[Die] = []
 ## The foe's blow before this side's shield (after both stances)
 var blow: int = 0
 var raises_shield: bool = false
+## How far the raised shield's die is above its wield score; taken off the threat
+var shield_overshoot: int = 0
 ## What the raised shield took off the blow, at most all of it
 var shield_blocked: int = 0
-## How raising it strains the shield: NONE marks the rolled face, MARKED_FACE the next higher one, OVERREACH ruins it
-var shield_strain: Strain = Strain.NONE
 var weapon_damage: int = 0
 var injury_taken: int = 0
 ## How much of the foe's blow this side's armour took off
@@ -103,6 +108,10 @@ func _init(
 func get_wield_score() -> int: return get_score(wield_attribute if wield_attribute else Rules.STRENGTH)
 
 func get_shield_wield_score() -> int: return get_score(shield_wield_attribute if shield_wield_attribute else Rules.STRENGTH)
+
+func get_weapon_overshoot(die: Die) -> int: return maxi(die.result - get_wield_score(), 0)
+
+func get_shield_overshoot() -> int: return maxi(shield_dice[0].result - get_shield_wield_score(), 0)
 
 ## Can be struck with without forcing the weapon
 func is_free_weapon_die(die: Die) -> bool: return die.result <= get_wield_score() and not marked_faces.has(die.result)
@@ -131,7 +140,6 @@ func get_fight_stance() -> FightStance:
 	var fight_stance: FightStance = stance.fight_stance
 	assert(fight_stance, "%s has no FightStance" % stance)
 	return fight_stance
-
 
 func get_score(attribute: CharacterAttribute) -> int:
 	return scores[attribute] - impairments.get(attribute, 0)

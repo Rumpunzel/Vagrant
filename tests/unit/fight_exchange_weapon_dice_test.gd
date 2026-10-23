@@ -50,13 +50,33 @@ func test_with_nothing_free_nothing_strikes() -> void:
 	assert_int(player.failed_weapon_dice.size()).is_equal(2)
 	assert_int(player.weapon_damage).is_equal(0)
 
-func test_free_means_after_being_unnerved() -> void:
-	# The foe's Nerves win by 2: Guts 7 counts as 5, so the 6 needs forcing and the 4 strikes
+func test_a_free_weapon_die_threatens() -> void:
+	var player: FightSide = _player_with_weapon(5)
+	_resolve(player)
+	assert_int(player.threat).is_equal(5)
+
+func test_a_forced_weapon_die_costs_its_overshoot_in_threat() -> void:
+	var player: FightSide = _player_with_weapon(8, [] as Array[int], 5)
+	player.chosen_weapon_die = player.weapon_dice[0]
+	_resolve(player)
+	assert_int(player.weapon_overshoot).is_equal(3)
+	assert_int(player.threat).is_equal(-2)
+
+func test_a_forced_marked_face_does_not_threaten() -> void:
+	var player: FightSide = _player_with_weapon(4, [4] as Array[int])
+	player.chosen_weapon_die = player.weapon_dice[0]
+	_resolve(player)
+	assert_int(player.threat).is_equal(1)
+
+func test_the_die_is_committed_before_being_unnerved_and_dropped_after() -> void:
+	# The 6 is free for Guts 7 and threatens; the foe's Nerves win 8 vs 6, Guts counts as 5, so the Sword is dropped
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7), FightTestDice.dice([Rules.d10, Rules.d10], [6, 4]))
-	var opponent: FightSide = FightSide.new(Rules.INTELLIGENCE, FightTestDice.dice([Rules.d8], [3]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d8, 1), false, GUTS)
+	var opponent: FightSide = FightSide.new(Rules.INTELLIGENCE, FightTestDice.dice([Rules.d8], [8]), FightTestDice.scores(9), FightTestDice.weapon(Rules.d8, 1), false, GUTS)
 	FightExchange.new(player, opponent)
-	assert_int(player.weapon_damage).is_equal(4)
-	assert_array(player.failed_weapon_dice).contains_same_exactly(player.weapon_dice[0])
+	assert_int(player.threat).is_equal(6)
+	assert_bool(player.weapon_dropped).is_true()
+	assert_array(player.usable_weapon_dice).is_empty()
+	assert_int(player.weapon_damage).is_equal(0)
 
 func test_marked_face_is_skipped() -> void:
 	var player: FightSide = _two_weapon_dice([6, 4], 7, [6] as Array[int])

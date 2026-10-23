@@ -18,14 +18,13 @@
 [ext_resource type="Resource" uid="uid://df2y74ycwja7k" path="res://story/fight/steps/monster_breath_dice_step.tres" id="16_s16sv"]
 [ext_resource type="Resource" uid="uid://cy0mujukqr6lv" path="res://story/fight/steps/tie_step.tres" id="17_tie"]
 [ext_resource type="Resource" uid="uid://c68pct8fhssrt" path="res://story/fight/steps/player_armor_choice_step.tres" id="24_armor_choice"]
-[ext_resource type="Resource" uid="uid://bsc66rg7268cv" path="res://story/fight/steps/player_shield_choice_step.tres" id="21_shield_choice"]
 [ext_resource type="Resource" uid="uid://fkykq3xvgcdv" path="res://story/fight/steps/monster_shield_step.tres" id="22_monster_shield"]
 [ext_resource type="Resource" uid="uid://ml0w6r86347r" path="res://story/fight/steps/player_shield_step.tres" id="23_player_shield"]
-[ext_resource type="Resource" uid="uid://c23kjs0qbt700" path="res://story/fight/steps/player_weapon_choice_step.tres" id="20_weapon_choice"]
+[ext_resource type="Resource" uid="uid://c23kjs0qbt700" path="res://story/fight/steps/player_commit_step.tres" id="20_commit"]
 [ext_resource type="Resource" uid="uid://d1je7tsli8y5v" path="res://story/fight/steps/monster_vantage_step.tres" id="18_monster_vantage"]
 [ext_resource type="Resource" uid="uid://b57iiou5d3kh0" path="res://story/fight/steps/player_vantage_step.tres" id="19_player_vantage"]
 
 [resource]
 script = ExtResource("1_steps")
-steps = Array[ExtResource("2_step")]([ExtResource("3_xssvq"), ExtResource("4_weu3c"), ExtResource("17_tie"), ExtResource("5_ieokv"), ExtResource("9_kruhm"), ExtResource("6_b2nqd"), ExtResource("7_sq65b"), ExtResource("20_weapon_choice"), ExtResource("8_eayqi"), ExtResource("18_monster_vantage"), ExtResource("19_player_vantage"), ExtResource("21_shield_choice"), ExtResource("22_monster_shield"), ExtResource("23_player_shield"), ExtResource("10_ieokv"), ExtResource("11_sq65b"), ExtResource("24_armor_choice"), ExtResource("7_c5lxt"), ExtResource("9_b2nqd"), ExtResource("16_s16sv"), ExtResource("14_s16sv"), ExtResource("12_kruhm")])
+steps = Array[ExtResource("2_step")]([ExtResource("20_commit"), ExtResource("3_xssvq"), ExtResource("4_weu3c"), ExtResource("17_tie"), ExtResource("5_ieokv"), ExtResource("9_kruhm"), ExtResource("6_b2nqd"), ExtResource("7_sq65b"), ExtResource("8_eayqi"), ExtResource("18_monster_vantage"), ExtResource("19_player_vantage"), ExtResource("22_monster_shield"), ExtResource("23_player_shield"), ExtResource("10_ieokv"), ExtResource("11_sq65b"), ExtResource("24_armor_choice"), ExtResource("7_c5lxt"), ExtResource("9_b2nqd"), ExtResource("16_s16sv"), ExtResource("14_s16sv"), ExtResource("12_kruhm")])
 metadata/_custom_type_script = "uid://dwf7sy0jjca68"

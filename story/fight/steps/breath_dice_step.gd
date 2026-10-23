@@ -1,7 +1,7 @@
 class_name BreathDiceStep
 extends ExchangeStep
 
-func applies(fight: Fight) -> bool: return not get_actor(fight).is_overwhelmed_by_injuries() and get_side(fight).lost_breath_dice.size() > 0
+func applies(fight: Fight) -> bool: return not get_side(fight).lost_breath_dice.is_empty()
 
 ## This side's breath dice are lost and its weapon gets marked where it could not be wielded
 func enter(fight: Fight) -> String:
