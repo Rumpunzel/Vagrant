@@ -9,9 +9,9 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 	set(new_character_profile):
 		if new_character_profile == character_profile: return
 		character_profile = new_character_profile
-		weapons = Weapon.carry(character_profile.weapons, character_profile.weapon_modifiers)
-		armor = Armor.carry(character_profile.armor, character_profile.armor_modifiers)
-		shields = Shield.carry(character_profile.shields, character_profile.shield_modifiers)
+		weapons = Weapon.carry(character_profile.weapons, character_profile.get_weapon_modifiers())
+		armor = Armor.carry(character_profile.armor, character_profile.get_armor_modifiers())
+		shields = Shield.carry(character_profile.shields, character_profile.get_shield_modifiers())
 		items = character_profile.items.duplicate()
 		_recover_breath_dice()
 		character_profile_changed.emit(character_profile)
@@ -77,6 +77,16 @@ func get_portrait() -> Texture2D:
 	return character_profile.portrait
 
 func get_score(attribute: CharacterAttribute) -> int: return get_attribute_score(attribute).get_score()
+func set_profile(profile: ActorProfile) -> void: character_profile = profile as CharacterProfile
+func get_actor_name() -> String: return character_profile.name
+func get_abilities() -> Array[Ability]: return character_profile.get_abilities()
+
+## Origins may spare some of the breath dice an exchange cost
+func get_lost_breath_dice(lost_breath_dice: Array[Die]) -> Array[Die]:
+	var lost: Array[Die] = lost_breath_dice.duplicate()
+	for origin: Origin in character_profile.origins:
+		if origin: lost = origin.get_lost_breath_dice(lost)
+	return lost
 
 func get_attribute_score(attribute: CharacterAttribute) -> AttributeScore:
 	return AttributeScore.new(attribute, character_profile.attribute_scores[attribute], get_internal_attribute_modifiers(), get_external_attribute_modifiers())

@@ -4,7 +4,7 @@ extends ExchangeStep
 ## Where the player decides which piece of their armour takes a blocked blow, whenever there is more than one way to take it.
 ## Shown by whoever presents the exchange, who stores each pick in [member Fight.armor_picks].
 
-func applies(fight: Fight) -> bool: return is_player() and get_undecided_die(fight) != null
+func applies(fight: Fight) -> bool: return is_player(fight) and get_undecided_die(fight) != null
 
 func enter(_fight: Fight) -> String: return ""
 

@@ -5,7 +5,7 @@ extends RefCounted
 
 const OUTCOMES: Array[String] = ["won", "lost", "draw", "fled", "unfinished"]
 ## Per fight: averaged, and counted per value
-const NUMBERS: Array[String] = ["exchanges", "dealt", "taken", "breath_left", "breath_spent", "monster_breath_left", "weapon_marks", "shield_marks", "armor_marks"]
+const NUMBERS: Array[String] = ["exchanges", "dealt", "taken", "breath_left", "breath_spent", "foe_breath_left", "weapon_marks", "shield_marks", "armor_marks"]
 ## Share of fights in which it happened at least once
 const RATES: Array[String] = ["weapon_ruined", "weapon_dropped", "shield_ruined", "shield_dropped", "armor_ruined"]
 ## What winning cost, over the fights won only

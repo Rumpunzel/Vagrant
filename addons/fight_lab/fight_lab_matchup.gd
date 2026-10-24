@@ -1,18 +1,18 @@
 class_name FightLabMatchup
 extends RefCounted
 
-## One cell of the Fight Lab: who fights whom, how the player fights, and the sweep value if any
+## One cell of the Fight Lab: who fights whom, how the characters among them fight, and the sweep value if any
 
-var character_profile: CharacterProfile
-var monster_profile: MonsterProfile
-var strategy: FightLabStrategy
-## Where the profiles sit in the scenario
-var character_index: int = -1
-var monster_index: int = -1
+var profile_a: ActorProfile
+var profile_b: ActorProfile
+var strategy_a: FightLabStrategy
+var strategy_b: FightLabStrategy
+## Where the profiles sit on their sides in the scenario
+var a_index: int = -1
+var b_index: int = -1
 var sweep_value: int = 0
 
-func _init(with_character_profile: CharacterProfile, with_monster_profile: MonsterProfile, with_strategy: FightLabStrategy) -> void:
-	assert(with_character_profile and with_monster_profile and with_strategy)
-	character_profile = with_character_profile
-	monster_profile = with_monster_profile
-	strategy = with_strategy
+func _init(with_profile_a: ActorProfile, with_profile_b: ActorProfile) -> void:
+	assert(with_profile_a and with_profile_b)
+	profile_a = with_profile_a
+	profile_b = with_profile_b

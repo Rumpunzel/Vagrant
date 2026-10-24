@@ -13,7 +13,7 @@ func get_values() -> Array[int]:
 	values.assign(range(from, to + 1))
 	return values
 
-## What is varied, e.g. "Character Guts"
+## What is varied, e.g. "Side A Guts"
 @abstract func get_label() -> String
 ## Changes copies of the matchup's profiles or strategy for [param value]; never the originals
 @abstract func apply(value: int, matchup: FightLabMatchup) -> void

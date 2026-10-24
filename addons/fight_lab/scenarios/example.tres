@@ -6,14 +6,13 @@
 [ext_resource type="Resource" uid="uid://pa4hn8gobi1w" path="res://addons/fight_lab/fighters/armed_dorian.tres" id="5_armed"]
 [ext_resource type="Resource" uid="uid://bgt5q8uo31yh0" path="res://characters/monsters/goblin.tres" id="6_goblin"]
 [ext_resource type="Resource" uid="uid://d3ytncs0be7oo" path="res://characters/monsters/lurker.tres" id="7_lurker"]
-[ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="8_character_profile"]
-[ext_resource type="Script" uid="uid://1342yb3eb2bh" path="res://characters/monsters/monster_profile.gd" id="9_monster_profile"]
+[ext_resource type="Script" uid="uid://ccqy6fcxk75ur" path="res://characters/actor_profile.gd" id="8_actor_profile"]
 
 [sub_resource type="Resource" id="Resource_strategy"]
 script = ExtResource("2_strategy")
 
 [resource]
 script = ExtResource("1_scenario")
-characters = Array[ExtResource("8_character_profile")]([ExtResource("4_dorian"), ExtResource("5_armed")])
-monsters = Array[ExtResource("9_monster_profile")]([ExtResource("6_goblin"), ExtResource("7_lurker")])
-strategy = SubResource("Resource_strategy")
+side_a = Array[ExtResource("8_actor_profile")]([ExtResource("4_dorian"), ExtResource("5_armed")])
+side_b = Array[ExtResource("8_actor_profile")]([ExtResource("6_goblin"), ExtResource("7_lurker")])
+strategy_a = SubResource("Resource_strategy")

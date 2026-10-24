@@ -15,7 +15,7 @@ func before_test() -> void:
 	_monster = auto_free(load("uid://kmifqq0ejuri").instantiate())  # monster.tscn
 	add_child(_monster)
 	_monster.monster_profile = TestMonsters.cutthroat()
-	_fight = Fight.new(AdventureFightDecision.new(), _character, _monster)
+	_fight = Fight.new(AdventureFightDecision.new(), _character, _monster, _character)
 
 func test_only_pieces_with_the_fitting_result_unmarked_are_options() -> void:
 	var helmet: Armor = _piece("Helmet", [5, 10])
@@ -84,7 +84,8 @@ func _start_exchange_with_the_monster_hitting(result: int) -> void:
 	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7))
 	player.armor_blocks = Armor.get_blocked_results(_character.armor)
 	var monster: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [3]), FightTestDice.scores(12), FightTestDice.weapon(Rules.d10, result))
-	_fight.start_exchange(FightExchange.new(player, monster), player.lost_breath_dice, null, Weapon.create(WeaponProfile.create("Club", Rules.d10)))
+	monster.weapon = Weapon.create(WeaponProfile.create("Club", Rules.d10))
+	_fight.start_exchange(FightExchange.new(player, monster))
 
 func _advance_to_armor_choice() -> void:
 	while not _fight.get_current_step() is ArmorChoiceStep: _fight.advance()

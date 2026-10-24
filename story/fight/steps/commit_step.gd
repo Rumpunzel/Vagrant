@@ -4,7 +4,7 @@ extends ExchangeStep
 ## Where the player commits, right after the roll: the weapon die to strike with and whether to raise the shield.
 ## Shown and resolved by whoever presents the exchange, through [method Fight.resolve_player_choice].
 
-func applies(fight: Fight) -> bool: return is_player() and (has_weapon_choice(fight) or has_shield_choice(fight))
+func applies(fight: Fight) -> bool: return is_player(fight) and (has_weapon_choice(fight) or has_shield_choice(fight))
 
 func enter(_fight: Fight) -> String: return ""
 

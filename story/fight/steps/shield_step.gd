@@ -9,4 +9,4 @@ func enter(fight: Fight) -> String:
 	var shield_side: FightSide = get_side(fight)
 	var shield: Shield = get_shield(fight)
 	var face: int = shield_side.shield_dice[0].result
-	return "%s %s takes %d off %s blow. %s" % [get_owner(fight).capitalize(), shield.get_equipment_name(), shield_side.shield_blocked, get_foe_owner(fight), _mark(shield, face, get_owner(fight))]
+	return "%s %s takes %d off %s blow. %s" % [Fight.capitalize_first(get_owner(fight)), shield.get_equipment_name(), shield_side.shield_blocked, get_foe_owner(fight), _mark(shield, face, get_owner(fight))]

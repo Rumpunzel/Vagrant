@@ -40,6 +40,14 @@ func set_nerves_target(character_attribute: CharacterAttribute) -> void: nerves_
 func get_stance_description(for_attribute: CharacterAttribute) -> String:
 	return get_source().stance_descriptions.get(for_attribute, for_attribute.fight_stance.description)
 
+## What the player chose for this exchange
+func get_plan() -> FightPlan:
+	var plan: FightPlan = FightPlan.new(character, attribute, selected_breath_dice)
+	plan.nerves_target = nerves_target
+	plan.weapon = selected_weapon
+	plan.fleeing = fleeing
+	return plan
+
 func _create_result() -> FightResult:
 	assert(character)
 	character.most_recently_chosen_attribute = attribute

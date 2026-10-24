@@ -21,6 +21,9 @@ enum Strain {
 }
 
 # Input
+## The gear behind the weapon and shield dice, marked by the steps; null: none (or natural weapons)
+var weapon: Weapon
+var shield: Shield
 ## Set by [FightExchange]: Blood when fleeing, Guts when unarmed
 var stance: CharacterAttribute
 var fleeing: bool
@@ -119,6 +122,8 @@ func is_free_weapon_die(die: Die) -> bool: return die.result <= get_wield_score(
 ## A fresh side with the same inputs, to resolve the exchange again (e.g. after choosing a weapon die)
 func copy_inputs() -> FightSide:
 	var copy: FightSide = FightSide.new(stance, breath_dice, scores, weapon_dice, fleeing, nerves_target)
+	copy.weapon = weapon
+	copy.shield = shield
 	copy.wield_attribute = wield_attribute
 	copy.marked_faces = marked_faces
 	copy.chosen_weapon_die = chosen_weapon_die

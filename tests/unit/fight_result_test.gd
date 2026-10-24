@@ -112,9 +112,9 @@ func test_shields_are_rolled_for_both_sides() -> void:
 	_character.shields[0].ruined = true
 	_monster.shields = Shield.carry([ShieldProfile.create("Round Shield", Rules.d8)] as Array[ShieldProfile])
 	var result: FightResult = _create_request().roll()
-	assert_object(result.player_shield).is_same(_character.shields[1])
+	assert_object(result.get_player_side().shield).is_same(_character.shields[1])
 	assert_object(result.get_player_side().shield_dice[0].die_type).is_same(Rules.d12)
-	assert_object(result.opponent_shield).is_same(_monster.shields[0])
+	assert_object(result.get_opponent_side().shield).is_same(_monster.shields[0])
 	assert_object(result.get_opponent_side().shield_dice[0].die_type).is_same(Rules.d8)
 
 func test_stance_descriptions_come_from_fight_stances() -> void:
@@ -153,15 +153,15 @@ func test_player_side_uses_picked_weapon() -> void:
 
 func test_armed_monster_uses_first_usable_weapon() -> void:
 	var result: FightResult = _create_request().roll()
-	assert_object(result.opponent_weapon).is_same(_monster.weapons[0])
+	assert_object(result.get_opponent_side().weapon).is_same(_monster.weapons[0])
 	_monster.weapons[0].ruined = true
 	result = _create_request().roll()
-	assert_object(result.opponent_weapon).is_same(_monster.weapons[1])
+	assert_object(result.get_opponent_side().weapon).is_same(_monster.weapons[1])
 	assert_object(result.get_opponent_side().weapon_dice[0].die_type).is_same(Rules.d6)
 	# With every weapon ruined it fights unarmed, not with natural weapons
 	_monster.weapons[1].ruined = true
 	result = _create_request().roll()
-	assert_object(result.opponent_weapon).is_null()
+	assert_object(result.get_opponent_side().weapon).is_null()
 	assert_bool(result.get_opponent_side().is_armed()).is_false()
 	assert_bool(result.get_opponent_side().has_natural_weapons).is_false()
 

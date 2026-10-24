@@ -2,7 +2,7 @@
 extends HSplitContainer
 
 ## The result of many fights: the matrix on the left, the charts of what is selected in it on the right.
-## Row header: one character against every monster. Column header: every character against one monster.
+## Row header: one fighter of side A against all of side B. Column header: all of side A against one fighter of side B.
 ## Cell: one pairing in detail (its distributions, or the sweep values). Ctrl+click cells: those pairings side by side.
 
 const FightLabChart: GDScript = preload("uid://bq8r7sebmls8p")  # fight_lab_chart.gd
@@ -86,9 +86,9 @@ func _build_matrix() -> void:
 	var monsters: Array[String] = _get_monsters()
 	_matrix.columns = monsters.size() + 1
 	_matrix.add_child(Label.new())
-	for monster: int in monsters.size(): _matrix.add_child(_header_button(monsters[monster], "Every character against the %s" % monsters[monster], _select_column.bind(monster)))
+	for monster: int in monsters.size(): _matrix.add_child(_header_button(monsters[monster], "All of side A against %s" % monsters[monster], _select_column.bind(monster)))
 	for character: int in characters.size():
-		_matrix.add_child(_header_button(characters[character], "%s against every monster" % characters[character], _select_row.bind(character)))
+		_matrix.add_child(_header_button(characters[character], "%s against all of side B" % characters[character], _select_row.bind(character)))
 		for monster: int in monsters.size():
 			var button: Button = Button.new()
 			button.set_meta("cell", Vector2i(character, monster))
@@ -173,8 +173,8 @@ func _refresh() -> void:
 		return
 	else:
 		match _view:
-			"row": _heading.text = "%s against every monster" % characters[_view_index]
-			"column": _heading.text = "Every character against the %s" % monsters[_view_index]
+			"row": _heading.text = "%s against all of side B" % characters[_view_index]
+			"column": _heading.text = "All of side A against %s" % monsters[_view_index]
 			_: _heading.text = "Side by side"
 		for cell: Vector2i in _selection:
 			var entry: Dictionary = _get_cell(cell.x, cell.y)
@@ -198,11 +198,11 @@ func _show_comparison(categories: Array[String], stats: Array[Dictionary]) -> vo
 		_chart("Fights won", categories, [_series(stats, "Won", OUTCOME_COLORS["won"], ["outcomes", "won"])], false, true),
 	])
 	if _shows("damage"): _add_section("damage", [
-		_chart("Damage per fight", categories, [_series(stats, "You deal", YOU, ["means", "dealt"]), _series(stats, "You take", FOE, ["means", "taken"])]),
+		_chart("Damage per fight", categories, [_series(stats, "Dealt", YOU, ["means", "dealt"]), _series(stats, "Taken", FOE, ["means", "taken"])]),
 		_chart("Breath dice per fight", categories, [
-			_series(stats, "You spend", YOU, ["means", "breath_spent"]),
-			_series(stats, "You keep", YOU.darkened(0.4), ["means", "breath_left"]),
-			_series(stats, "Foe keeps", FOE, ["means", "monster_breath_left"]),
+			_series(stats, "Spent", YOU, ["means", "breath_spent"]),
+			_series(stats, "Kept", YOU.darkened(0.4), ["means", "breath_left"]),
+			_series(stats, "Foe keeps", FOE, ["means", "foe_breath_left"]),
 		]),
 	])
 	if _shows("length"): _add_section("length", [_chart("Exchanges per fight", categories, [_series(stats, "Exchanges", YOU, ["means", "exchanges"])])])
@@ -296,22 +296,22 @@ func _shows(section: String) -> bool: return shown_sections.has(section)
 
 func _get_characters() -> Array[String]:
 	var names: Array[String] = []
-	names.assign(_result.get("characters", []))
+	names.assign(_result.get("side_a", []))
 	return names
 
 func _get_monsters() -> Array[String]:
 	var names: Array[String] = []
-	names.assign(_result.get("monsters", []))
+	names.assign(_result.get("side_b", []))
 	return names
 
 ## Every cell of the pairing, one per sweep value
 func _get_cells(character: int, monster: int) -> Array[Dictionary]:
 	var cells: Array[Dictionary] = []
 	for cell: Dictionary in _result.get("cells", []):
-		if int(cell["character"]) == character and int(cell["monster"]) == monster: cells.append(cell)
+		if int(cell["a"]) == character and int(cell["b"]) == monster: cells.append(cell)
 	return cells
 
-## The pairing's cell at the chosen sweep value; empty for skipped characters
+## The pairing's cell at the chosen sweep value; empty for skipped fighters
 func _get_cell(character: int, monster: int) -> Dictionary:
 	var cells: Array[Dictionary] = _get_cells(character, monster)
 	if cells.is_empty(): return {}

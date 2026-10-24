@@ -1,7 +1,8 @@
 class_name Fight
 extends RefCounted
 
-## One fight between the protagonist and a single monster, across exchanges.
+## One fight between two actors, across exchanges: in the story the protagonist (the player) against a monster,
+## in the Fight Lab any two characters or monsters. Outcomes are told from the first actor's side.
 
 enum Outcome {
 	ONGOING,
@@ -14,21 +15,18 @@ enum Outcome {
 ## The steps every exchange goes through, in order
 var exchange_steps: ExchangeSteps = load("uid://yydyqypkbn0y")  # exchange_steps.tres
 var decision: AdventureFightDecision
-var protagonist: Character
-var monster: Monster
+## [member FightExchange.first]'s actor
+var first: Actor
+var second: Actor
+## The actor whose choices the story asks the player for (always [member first]); null: both decide by themselves
+var player: Actor
 var outcome: Outcome = Outcome.ONGOING
 var exchanges: Array[FightExchange] = []
-## Failed the Guts save after an injury that left a score at 0 or below; ends the fight like running out of breath
-var player_incapacitated: bool = false
-## Rolls the monster's incapacitation save; replaceable for fixed dice in tests
+## Who failed the Guts save after an injury that left a score at 0 or below; ends the fight for them like running out of breath
+var incapacitated: Dictionary[Actor, bool] = {}
+## Rolls the incapacitation saves of actors that decide by themselves; replaceable for fixed dice in tests
 var roll_dice: Callable = DiceRoller.roll_dice
 
-## Of the exchange being applied; the player's lost breath dice may differ from the exchange's raw losses (origins)
-var player_lost_breath_dice: Array[Die] = []
-var player_weapon: Weapon
-var opponent_weapon: Weapon
-var player_shield: Shield
-var opponent_shield: Shield
 ## Which of the player's pieces takes each blocked foe die, as the player picked it
 var armor_picks: Dictionary[Die, ArmorPick] = {}
 ## The player wants to pick the weapon die even when none needs forcing (several weapon dice)
@@ -37,17 +35,21 @@ var always_choose_weapon_die: bool = false
 var _step_index: int = -1
 var _paragraphs: Array[String] = []
 
-func _init(for_decision: AdventureFightDecision, for_protagonist: Character, against_monster: Monster) -> void:
-	assert(for_decision and for_protagonist and against_monster)
+func _init(for_decision: AdventureFightDecision, first_actor: Actor, second_actor: Actor, with_player: Actor = null) -> void:
+	assert(for_decision and first_actor and second_actor)
+	assert(not with_player or with_player == first_actor, "The player fights as the first actor")
 	decision = for_decision
-	protagonist = for_protagonist
-	monster = against_monster
-	monster.recover_breath()
-	if protagonist.is_out_of_breath(): outcome = Outcome.LOST
+	first = first_actor
+	second = second_actor
+	player = with_player
+	for actor: Actor in [first, second]: actor.prepare_for_fight()
+	if first.is_out_of_breath(): outcome = Outcome.LOST
 
+## The player's request for the next exchange; only in the story, where the player's character fights a monster
 func create_request(fleeing: bool = false) -> FightRequest:
-	assert(is_ongoing())
-	var request: FightRequest = FightRequest.new(protagonist, decision)
+	assert(is_ongoing() and player is Character and second is Monster)
+	var monster: Monster = second
+	var request: FightRequest = FightRequest.new(player as Character, decision)
 	request.opponent = monster
 	request.fleeing = fleeing
 	# Same as the resolver enforces
@@ -58,29 +60,24 @@ func create_request(fleeing: bool = false) -> FightRequest:
 	return request
 
 ## Applies the whole exchange at once; [method start_exchange], [method advance] and [method end_exchange] apply it step by step.
-## An incapacitation save is left unresolved this way.
+## The player's incapacitation save is left unresolved this way.
 func resolve(result: FightResult) -> void:
 	start_exchange_from(result)
 	_apply_remaining_steps()
 
 func start_exchange_from(result: FightResult) -> void:
-	assert(result.get_dice_request().opponent == monster)
+	assert(result.get_dice_request().opponent == second)
 	always_choose_weapon_die = result.get_dice_request().always_choose_weapon_die
-	start_exchange(result.exchange, result.get_lost_breath_dice(), result.get_dice_request().selected_weapon, result.opponent_weapon, result.player_shield, result.opponent_shield)
+	start_exchange(result.exchange)
 
-func apply_exchange(exchange: FightExchange, lost_breath_dice: Array[Die], with_player_weapon: Weapon = null, with_opponent_weapon: Weapon = null, with_player_shield: Shield = null, with_opponent_shield: Shield = null) -> void:
-	start_exchange(exchange, lost_breath_dice, with_player_weapon, with_opponent_weapon, with_player_shield, with_opponent_shield)
+func apply_exchange(exchange: FightExchange) -> void:
+	start_exchange(exchange)
 	_apply_remaining_steps()
 
 ## Records the exchange without applying anything yet
-func start_exchange(exchange: FightExchange, lost_breath_dice: Array[Die], with_player_weapon: Weapon = null, with_opponent_weapon: Weapon = null, with_player_shield: Shield = null, with_opponent_shield: Shield = null) -> void:
+func start_exchange(exchange: FightExchange) -> void:
 	assert(is_ongoing() and not is_exchange_pending())
 	exchanges.append(exchange)
-	player_lost_breath_dice = lost_breath_dice
-	player_weapon = with_player_weapon
-	opponent_weapon = with_opponent_weapon
-	player_shield = with_player_shield
-	opponent_shield = with_opponent_shield
 	armor_picks.clear()
 	_paragraphs.clear()
 	_find_step(0)
@@ -99,7 +96,7 @@ func advance() -> String:
 	_find_step(_step_index + 1)
 	return told
 
-## Resolves the exchange being applied again after [param change] (taking the player's [FightSide]) set what they chose,
+## Resolves the exchange being applied again after [param change] (taking the first actor's [FightSide]) set what they chose,
 ## e.g. the weapon die to strike with and whether to raise the shield.
 ## Only for parts not applied yet: it keeps the dice rolled and what was told.
 func resolve_player_choice(change: Callable) -> void:
@@ -131,31 +128,40 @@ func end_exchange() -> String:
 	assert(not is_exchange_pending())
 	outcome = _evaluate_outcome()
 	# A beaten monster stays down; whether it is spared is up to the story
-	if outcome == Outcome.WON: monster.incapacitated = true
+	if outcome == Outcome.WON and second is Monster: (second as Monster).incapacitated = true
 	if not is_ongoing():
-		protagonist.pick_up_dropped_gear()
-		monster.pick_up_dropped_gear()
+		for actor: Actor in [first, second]: actor.pick_up_dropped_gear()
 	var line: String = ""
 	match outcome:
-		Outcome.WON: line = "The %s can no longer resist." % monster.get_monster_name()
-		Outcome.LOST: line = "You sink to the ground and can no longer resist." if player_incapacitated else "You are out of breath and can no longer resist."
-		Outcome.DRAW: line = "Neither of you can go on."
-		Outcome.FLED: line = "You get away from the %s." % monster.get_monster_name()
+		Outcome.WON: line = "%s can no longer resist." % capitalize_first(Fight.describe_actor(second, player))
+		Outcome.LOST:
+			var loser: String = capitalize_first(Fight.describe_actor(first, player))
+			var verb: String = "sink" if first == player else "sinks"
+			if not incapacitated.get(first, false): verb = "are out of breath" if first == player else "is out of breath"
+			else: verb += " to the ground"
+			line = "%s %s and can no longer resist." % [loser, verb]
+		Outcome.DRAW: line = "Neither of you can go on." if player else "Neither of them can go on."
+		Outcome.FLED: line = "%s %s away from %s." % [capitalize_first(Fight.describe_actor(first, player)), "get" if first == player else "gets", Fight.describe_actor(second, player)]
 	tell(line)
 	return line
 
 func _evaluate_outcome() -> Outcome:
-	var player_fled: bool = get_last_exchange().first.fleeing
+	var first_incapacitated: bool = incapacitated.get(first, false)
+	var first_fled: bool = get_last_exchange().first.fleeing
 	# Collapsing while running away still lets the foe have you
-	if player_fled and player_incapacitated: return Outcome.LOST
+	if first_fled and first_incapacitated: return Outcome.LOST
 	# Checked before breath: running out of breath only matters for facing the next exchange
-	if player_fled: return Outcome.FLED
-	var player_out: bool = player_incapacitated or protagonist.is_out_of_breath()
-	var monster_out: bool = monster.incapacitated or monster.is_out_of_breath()
-	if player_out and monster_out: return Outcome.DRAW
-	if player_out: return Outcome.LOST
-	if monster_out: return Outcome.WON
+	if first_fled: return Outcome.FLED
+	var first_out: bool = _is_out(first)
+	var second_out: bool = _is_out(second)
+	if first_out and second_out: return Outcome.DRAW
+	if first_out: return Outcome.LOST
+	if second_out: return Outcome.WON
 	return Outcome.ONGOING
+
+func _is_out(actor: Actor) -> bool:
+	if incapacitated.get(actor, false) or actor.is_out_of_breath(): return true
+	return actor is Monster and (actor as Monster).incapacitated
 
 func is_ongoing() -> bool: return outcome == Outcome.ONGOING
 func get_exchange_count() -> int: return exchanges.size()
@@ -179,7 +185,10 @@ func get_consequences() -> Array[AdventureConsequence]:
 
 func get_title() -> String: return  ""
 
+## How the monster the player fights looks; only in the story
 func get_condition_description() -> String:
+	assert(second is Monster)
+	var monster: Monster = second
 	var wounds: String = "unhurt"
 	if monster.get_score(monster.get_attack().get_stance()) <= 0: wounds = "grievously wounded"
 	elif monster.get_injury_total() > 0: wounds = "bleeding"
@@ -194,6 +203,12 @@ func get_exchange_summary(from: int = 0) -> String:
 	var summary: String = ""
 	for paragraph: String in _paragraphs.slice(from): summary += "[p]%s[/p]" % paragraph
 	return summary
+
+## "you" for [param player], else "the Lurker", "Dorian"
+static func describe_actor(actor: Actor, player: Actor) -> String: return "you" if actor == player else actor.get_reference()
+
+## Upper-cases only the first letter (unlike [method String.capitalize])
+static func capitalize_first(text: String) -> String: return text.left(1).to_upper() + text.substr(1)
 
 static func describe_attribute(attribute: CharacterAttribute) -> String:
 	return "[color=%s]%s[/color]" % [attribute.color.to_html(), attribute.descriptor]

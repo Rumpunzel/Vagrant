@@ -76,7 +76,7 @@ func test_fleeing_leaves_after_one_exchange() -> void:
 	await _pick(choice)
 	# A hit that overwhelms calls for the Guts save first; collapsing while fleeing loses
 	if _story._current_story_page.choices[0] is StorySaveDecision: await _pick(_story._current_story_page.choices[0])
-	var expected: Fight.Outcome = Fight.Outcome.LOST if choice.fight.player_incapacitated else Fight.Outcome.FLED
+	var expected: Fight.Outcome = Fight.Outcome.LOST if choice.fight.incapacitated.get(choice.fight.player, false) else Fight.Outcome.FLED
 	assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(expected))
 	assert_int(choice.fight.outcome).is_equal(expected)
 
@@ -100,7 +100,7 @@ func test_overwhelming_injury_asks_for_a_guts_save() -> void:
 	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7))
 	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [4]), FightTestDice.scores(7)))
 	fight.start_exchange_from(result)
-	while not (fight.get_current_step() is IncapacitationStep and fight.get_current_step().is_player()): fight.advance()
+	while not (fight.get_current_step() is IncapacitationStep and fight.get_current_step().is_first()): fight.advance()
 	# Normally reached by the exchange playing out step by step
 	_story._ask_for_incapacitation_save(fight, fight.get_current_step() as IncapacitationStep, result, choice)
 	var page: StoryPage = _story._current_story_page
@@ -110,10 +110,10 @@ func test_overwhelming_injury_asks_for_a_guts_save() -> void:
 	assert_object(save.get_dice_request().attribute).is_same(Rules.STRENGTH)
 	assert_int(save.get_dice_request().get_difficulty()).is_equal(8)
 	await _pick(save)
-	assert_bool(fight.player_incapacitated).is_equal(not save.get_dice_result().is_success())
-	assert_str(fight.get_exchange_summary()).contains("Everything goes dark." if fight.player_incapacitated else "You keep your senses.")
+	assert_bool(fight.incapacitated.get(fight.player, false)).is_equal(not save.get_dice_result().is_success())
+	assert_str(fight.get_exchange_summary()).contains("Everything goes dark." if fight.incapacitated.get(fight.player, false) else "You keep your senses.")
 	# The exchange went on after the save: collapsing loses the fight
-	if fight.player_incapacitated: assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(Fight.Outcome.LOST))
+	if fight.incapacitated.get(fight.player, false): assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(Fight.Outcome.LOST))
 
 func test_giving_in_loses_without_rolling() -> void:
 	var choice: StoryFightDecision = _story._current_story_page.choices[0]
@@ -123,13 +123,13 @@ func test_giving_in_loses_without_rolling() -> void:
 	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7))
 	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [4]), FightTestDice.scores(7)))
 	fight.start_exchange_from(result)
-	while not (fight.get_current_step() is IncapacitationStep and fight.get_current_step().is_player()): fight.advance()
+	while not (fight.get_current_step() is IncapacitationStep and fight.get_current_step().is_first()): fight.advance()
 	_story._ask_for_incapacitation_save(fight, fight.get_current_step() as IncapacitationStep, result, choice)
 	var give_in: StoryChoice = _story._current_story_page.choices[1]
 	assert_str(give_in.get_description()).is_equal("Give in.")
 	var breath_before: Dictionary[DieType, int] = _story._protagonist.breath_dice.duplicate()
 	await _pick(give_in)
-	assert_bool(fight.player_incapacitated).is_true()
+	assert_bool(fight.incapacitated.get(fight.player, false)).is_true()
 	assert_dict(_story._protagonist.breath_dice).is_equal(breath_before)
 	assert_object(_story._current_story_page.adventure_page).is_same(_outcome_pages.find_key(Fight.Outcome.LOST))
 
@@ -142,6 +142,7 @@ func test_a_weapon_die_beyond_guts_can_be_forced() -> void:
 	var result: FightResult = choice.get_dice_request().roll()
 	# Guts 7: forcing the Sword's 9 costs 2 threat; 4 − 2 vs 1 still keeps the Cutthroat from hurting the player
 	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [4]), FightTestDice.scores(7), FightTestDice.dice([Rules.d10], [9]))
+	player.weapon = sword
 	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [1]), FightTestDice.scores(7)))
 	fight.start_exchange_from(result)
 	_story._play_fight_step(fight, result, choice)
@@ -165,7 +166,7 @@ func test_the_shield_is_raised_by_default_when_free() -> void:
 	var player: FightSide = FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7))
 	player.shield_dice = FightTestDice.dice([Rules.d6], [3])
 	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [7]), FightTestDice.scores(7)))
-	result.player_shield = buckler
+	player.shield = buckler
 	fight.start_exchange_from(result)
 	_story._play_fight_step(fight, result, choice)
 	var panel: FightCommitPanel = _get_commit_panel()
@@ -198,8 +199,8 @@ func test_the_player_picks_which_armour_takes_a_blow() -> void:
 
 func test_monster_lives_in_story() -> void:
 	var choice: StoryFightDecision = _story._current_story_page.choices[0]
-	assert_object(choice.fight.monster.get_parent()).is_same(_story._monsters)
-	assert_object(choice.fight.monster.spawned_from).is_same(_fight_page)
+	assert_object((choice.fight.second as Monster).get_parent()).is_same(_story._monsters)
+	assert_object((choice.fight.second as Monster).spawned_from).is_same(_fight_page)
 
 ## Releasing the skip key, like a player would, so typed-out text does not slow the test down
 func _skip_typing() -> void:

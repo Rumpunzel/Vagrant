@@ -10,7 +10,7 @@ func _init(for_fight: Fight, is_fleeing: bool) -> void:
 	assert(for_fight)
 	fight = for_fight
 	fleeing = is_fleeing
-	super(fight.decision, fight.protagonist)
+	super(fight.decision, fight.player as Character)
 
 func get_adventure_decision() -> AdventureFightDecision: return _adventure_decision
 func get_dice_request() -> FightRequest: return dice_request

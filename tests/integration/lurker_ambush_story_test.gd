@@ -29,7 +29,7 @@ func test_flee_from_ambush_in_story() -> void:
 	var flee: StoryFightDecision = fight_choices[1]
 	assert_str(flee.get_description()).is_equal("Wun away!")
 	# The Lurker belongs to the ambush event, not the temple ruin
-	assert_object(flee.fight.monster.spawned_from).is_same(load(LURKER_AMBUSH))
+	assert_object((flee.fight.second as Monster).spawned_from).is_same(load(LURKER_AMBUSH))
 	flee.chose()
 	flee.roll()
 	var waited: int = 0
@@ -42,6 +42,6 @@ func test_flee_from_ambush_in_story() -> void:
 		await await_millis(10)
 		waited += 10
 		if waited >= 10000: break
-	var expected: Fight.Outcome = Fight.Outcome.LOST if flee.fight.player_incapacitated else Fight.Outcome.FLED
+	var expected: Fight.Outcome = Fight.Outcome.LOST if flee.fight.incapacitated.get(flee.fight.player, false) else Fight.Outcome.FLED
 	assert_object(story._current_story_page.adventure_page).is_same(load(OUTCOME_PAGES[expected]))
 	assert_int(flee.fight.outcome).is_equal(expected)

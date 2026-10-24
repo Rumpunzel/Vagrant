@@ -10,7 +10,7 @@ func enter(fight: Fight) -> String:
 		if not options.is_empty():
 			var tactic: ArmorTactic = get_side(fight).armor_tactic if get_side(fight).armor_tactic else SparingArmorTactic.new()
 			var armor_pick: ArmorPick = fight.armor_picks.get(blocked_die, tactic.pick(options)) as ArmorPick
-			var piece_name: String = "%s %s" % [get_owner(fight).capitalize(), armor_pick.piece.get_equipment_name()]
+			var piece_name: String = "%s %s" % [Fight.capitalize_first(get_owner(fight)), armor_pick.piece.get_equipment_name()]
 			if armor_pick.ruin:
 				armor_pick.piece.ruin()
 				lines.append("%s blocks the %d and is ruined." % [piece_name, blocked_die.result])
@@ -19,5 +19,5 @@ func enter(fight: Fight) -> String:
 				lines.append(_mark(armor_pick.piece, blocked_die.result, get_owner(fight)))
 		lines.append(_mark(get_foe_weapon(fight), blocked_die.result, get_foe_owner(fight)))
 	var prevented: int = get_side(fight).damage_prevented
-	if prevented > 0: lines.append(pick("Your armour takes %d off the %s's blow." % [prevented, fight.monster.get_monster_name()], "The %s's armour takes %d off your blow." % [fight.monster.get_monster_name(), prevented]))
+	if prevented > 0: lines.append("%s armour takes %d off %s blow." % [Fight.capitalize_first(get_owner(fight)), prevented, get_foe_owner(fight)])
 	return _join(lines)

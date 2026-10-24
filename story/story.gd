@@ -140,7 +140,7 @@ func _create_fight(adventure_page: AdventurePage, decision: AdventureFightDecisi
 	# The monster belongs to the page (or event) that defines the fight, not the page it is shown on
 	var spawning_page: AdventurePage = adventure_page.find_decision_owner(decision)
 	if not spawning_page: spawning_page = adventure_page
-	return Fight.new(decision, _protagonist, _monsters.get_monster(spawning_page, decision.enemies[0]))
+	return Fight.new(decision, _protagonist, _monsters.get_monster(spawning_page, decision.enemies[0]), _protagonist)
 
 ## A fight already lost on arrival (no breath dice to resist with) only offers its failure path
 func _create_lost_fight_decision(fight: Fight) -> AdventureDecision:
@@ -245,20 +245,20 @@ func _play_fight_step(fight: Fight, fight_result: FightResult, story_choice: Sto
 	if step is ArmorChoiceStep:
 		_ask_for_armor(fight, step as ArmorChoiceStep, fight_result, story_choice)
 		return
-	if step is IncapacitationStep and step.is_player():
+	if step is IncapacitationStep and step.is_player(fight):
 		_ask_for_incapacitation_save(fight, step as IncapacitationStep, fight_result, story_choice)
 		return
 	var told: String = fight.advance()
 	var pause: bool = not told.is_empty()
 	# The dice log tells both threats with the player's dice, their colours come with what became of them
-	if step is DiceStep and step.is_player(): _story_book.display_dice_result(fight_result)
-	elif step is BreathDiceStep and step.is_player():
+	if step is DiceStep and step.is_player(fight): _story_book.display_dice_result(fight_result)
+	elif step is BreathDiceStep and step.is_player(fight):
 		_story_book.display_dice_evaluation(fight_result)
 		_play_outcome_sound(fight_result)
 		pause = true
 	# Injury sounds play when they are suffered
 	elif step is InjuryStep:
-		_story_book.show_injury(step.pick("You", fight.monster.get_monster_name()), step.get_side(fight).injury_taken)
+		_story_book.show_injury(step.pick(fight, "You", step.get_actor(fight).get_actor_name()), step.get_side(fight).injury_taken)
 		pause = true
 	_reveal(fight, told, pause)
 	_event_queue.queue_callable(func() -> void: _play_fight_step(fight, fight_result, story_choice))
@@ -315,7 +315,7 @@ func _ask_for_armor(fight: Fight, step: ArmorChoiceStep, fight_result: FightResu
 	var choices: Array[StoryChoice] = []
 	for option: ArmorPick in ArmorPick.get_options(_protagonist.armor, blocked_die.result):
 		choices.append(_create_pending_choice(_describe_armor_pick(option, blocked_die.result), resume.bind(option)))
-	_show_fight_decision_page(fight, "Your armour catches the %s's %d." % [fight.monster.get_monster_name(), blocked_die.result], choices)
+	_show_fight_decision_page(fight, "Your armour catches %s %d." % [step.get_foe_owner(fight), blocked_die.result], choices)
 
 func _describe_armor_pick(option: ArmorPick, result: int) -> String:
 	var piece: String = option.piece.get_equipment_name()

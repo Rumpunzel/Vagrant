@@ -16,8 +16,8 @@ var _scenario_picker: EditorResourcePicker
 var _mode: OptionButton
 var _fights: EditorSpinSlider
 var _sweep_picker: EditorResourcePicker
-var _character: OptionButton
-var _monster: OptionButton
+var _a_option: OptionButton
+var _b_option: OptionButton
 var _max_exchanges: EditorSpinSlider
 var _seed: SpinBox
 var _run_button: Button
@@ -46,10 +46,10 @@ func _init() -> void:
 	_fights = _spin_slider("Fights", 1, 10000, _settings.fights, bar)
 	_sweep_picker = _picker("FightLabSweep", "Optional sweep: every matchup once per value", bar)
 	_sweep_picker.edited_resource = _settings.sweep
-	_character = OptionButton.new()
-	bar.add_child(_character)
-	_monster = OptionButton.new()
-	bar.add_child(_monster)
+	_a_option = OptionButton.new()
+	bar.add_child(_a_option)
+	_b_option = OptionButton.new()
+	bar.add_child(_b_option)
 	_max_exchanges = _spin_slider("Max exchanges", 1, 200, _settings.max_exchanges, bar)
 	_seed = SpinBox.new()
 	_seed.prefix = "Seed"
@@ -126,7 +126,7 @@ func _process(_delta: float) -> void:
 
 func _load_result(status: String) -> void:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(RESULT_FILE)) if FileAccess.file_exists(RESULT_FILE) else null
-	if not parsed is Dictionary or not (parsed as Dictionary).has("characters"):
+	if not parsed is Dictionary or not (parsed as Dictionary).has("side_a"):
 		_status.text = "The simulation failed; run the runner scene by hand to see why." if status == "Done" else ""
 		return
 	var result: Dictionary = parsed
@@ -148,19 +148,19 @@ func _update_mode() -> void:
 	var one_fight: bool = _mode.get_selected_id() == FightLabRunSettings.Mode.ONE_FIGHT
 	_fights.visible = not one_fight
 	_sweep_picker.visible = not one_fight
-	_character.visible = one_fight
-	_monster.visible = one_fight
+	_a_option.visible = one_fight
+	_b_option.visible = one_fight
 	_run_button.text = "Fight" if one_fight else "Run"
 
-## The scenario's characters and monsters to pick the one fight from
+## The scenario's sides to pick the one fight from
 func _update_pairing_options() -> void:
 	var scenario: FightLabScenario = _scenario_picker.edited_resource as FightLabScenario
-	for option: OptionButton in [_character, _monster]: option.clear()
+	for option: OptionButton in [_a_option, _b_option]: option.clear()
 	if not scenario: return
-	for profile: CharacterProfile in scenario.characters: _character.add_item(profile.name if profile else "(empty)")
-	for profile: MonsterProfile in scenario.monsters: _monster.add_item(profile.name if profile else "(empty)")
-	_character.selected = clampi(_settings.character, 0, _character.item_count - 1)
-	_monster.selected = clampi(_settings.monster, 0, _monster.item_count - 1)
+	for profile: ActorProfile in scenario.side_a: _a_option.add_item(profile.name if profile else "(empty)")
+	for profile: ActorProfile in scenario.side_b: _b_option.add_item(profile.name if profile else "(empty)")
+	_a_option.selected = clampi(_settings.a, 0, _a_option.item_count - 1)
+	_b_option.selected = clampi(_settings.b, 0, _b_option.item_count - 1)
 
 func _update_sections() -> void:
 	_settings.sections = _get_sections()
@@ -179,8 +179,8 @@ func _store_settings() -> void:
 	_settings.max_exchanges = int(_max_exchanges.value)
 	_settings.random_seed = int(_seed.value)
 	_settings.sweep = _sweep_picker.edited_resource as FightLabSweep
-	_settings.character = maxi(_character.selected, 0)
-	_settings.monster = maxi(_monster.selected, 0)
+	_settings.a = maxi(_a_option.selected, 0)
+	_settings.b = maxi(_b_option.selected, 0)
 	_settings.sections = _get_sections()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SETTINGS_FILE).get_base_dir())
 	ResourceSaver.save(_settings, SETTINGS_FILE)

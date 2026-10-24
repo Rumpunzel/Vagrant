@@ -69,8 +69,9 @@ func test_armor_step_follows_the_monsters_armor_tactic() -> void:
 	var opponent: FightSide = _unarmed()
 	opponent.armor_blocks = [5, 10] as Array[int]
 	opponent.armor_tactic = LastOptionArmorTactic.new()
-	var fight: Fight = Fight.new(AdventureFightDecision.new(), _character, _monster)
-	fight.apply_exchange(FightExchange.new(player, opponent), player.lost_breath_dice, Weapon.create(WeaponProfile.create("Sword", Rules.d10)))
+	var fight: Fight = Fight.new(AdventureFightDecision.new(), _character, _monster, _character)
+	player.weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10))
+	fight.apply_exchange(FightExchange.new(player, opponent))
 	# The sparing default would have worn down the Helmet
 	assert_array(coif.marked_faces).is_equal([10])
 	assert_array(helmet.marked_faces).is_empty()

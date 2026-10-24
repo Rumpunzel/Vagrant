@@ -34,16 +34,16 @@ func _init() -> void:
 func show_result(result: Dictionary) -> void:
 	var fight: Dictionary = result["fight"]
 	var record: Dictionary = fight["record"]
-	var character: String = result["characters"][int(fight["character"])]
-	var monster: String = result["monsters"][int(fight["monster"])]
+	var character: String = result["side_a"][int(fight["a"])]
+	var monster: String = result["side_b"][int(fight["b"])]
 	var exchange_log: Array = record["log"]
 	_heading.text = "%s vs %s: %s after %d exchange%s" % [character, monster, record["outcome"], exchange_log.size(), "" if exchange_log.size() == 1 else "s"]
 	var categories: Array[String] = []
 	for index: int in exchange_log.size(): categories.append(str(index + 1))
 	for child: Node in _timeline.get_children(): child.queue_free()
-	_add_chart("Threat per exchange", categories, [_series(exchange_log, "You", YOU, "threat"), _series(exchange_log, monster, FOE, "monster_threat")])
-	_add_chart("Breath dice after each exchange", categories, [_series(exchange_log, "You", YOU, "breath"), _series(exchange_log, monster, FOE, "monster_breath")])
-	_add_chart("Injuries after each exchange", categories, [_series(exchange_log, "You", YOU, "injuries"), _series(exchange_log, monster, FOE, "monster_injuries")])
+	_add_chart("Threat per exchange", categories, [_series(exchange_log, character, YOU, "threat"), _series(exchange_log, monster, FOE, "foe_threat")])
+	_add_chart("Breath dice after each exchange", categories, [_series(exchange_log, character, YOU, "breath"), _series(exchange_log, monster, FOE, "foe_breath")])
+	_add_chart("Injuries after each exchange", categories, [_series(exchange_log, character, YOU, "injuries"), _series(exchange_log, monster, FOE, "foe_injuries")])
 	var text: String = ""
 	for index: int in exchange_log.size(): text += "[b]Exchange %d[/b]%s" % [index + 1, exchange_log[index]["text"]]
 	_log.text = text

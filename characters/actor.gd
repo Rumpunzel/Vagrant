@@ -28,6 +28,22 @@ var _injuries: Array[Injury] :
 
 ## The effective score: injuries already taken off
 @abstract func get_score(attribute: CharacterAttribute) -> int
+@abstract func get_actor_name() -> String
+## How fight texts name it when it isn't the player: "the Lurker", "Dorian"
+func get_reference() -> String: return get_actor_name()
+## "its", "their"
+func get_possessive_pronoun() -> String: return "their"
+
+## The character or monster profile it is made from
+@abstract func set_profile(profile: ActorProfile) -> void
+
+func get_abilities() -> Array[Ability]: return []
+## Claws, fangs and the like: its breath dice are its weapon dice
+func has_natural_weapons() -> bool: return false
+## What of [param lost_breath_dice] it actually loses (origins may spare some)
+func get_lost_breath_dice(lost_breath_dice: Array[Die]) -> Array[Die]: return lost_breath_dice
+## Called as a fight against it starts
+func prepare_for_fight() -> void: pass
 
 func lose_breath_dice(lost_breath_dice: Array[Die]) -> void:
 	if lost_breath_dice.is_empty(): return
