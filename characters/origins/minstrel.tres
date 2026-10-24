@@ -1,12 +1,16 @@
 [gd_resource type="Resource" script_class="Origin" format=3 uid="uid://de62kh1q4mybj"]
 
 [ext_resource type="Texture2D" uid="uid://cpio2dgd5kcva" path="res://characters/origins/icons/drama-masks.svg" id="1_mepsy"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_aqcgm"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_mjcs8"]
+[ext_resource type="Script" uid="uid://yfcblst84p4j" path="res://characters/abilities/ability.gd" id="ab_1"]
+
+[sub_resource type="Resource" id="Ability_minstrel_0"]
+script = ExtResource("ab_1")
+description = "+1 company renown"
 
 [resource]
 script = ExtResource("2_mjcs8")
-abilities = Array[String](["+1 company renown"])
+abilities = Array[ExtResource("ab_1")]([SubResource("Ability_minstrel_0")])
 name = "Minstrel"
 icon = ExtResource("1_mepsy")
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

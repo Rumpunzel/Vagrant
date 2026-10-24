@@ -11,6 +11,9 @@ extends PageEntry
 @export var _choices: FlexContainer
 @export var _breath_dice_collapsible_container: CollapsibleContainer
 @export var _breath_dice_selection: BreathDiceSelection
+@export var _injuries: Container
+@export var _outcome: TypingLabel
+@export var _injury_display: PackedScene
 @export var _dialog_button: PackedScene
 
 var story_page: StoryPage : set = set_story_page
@@ -31,8 +34,31 @@ func request_dice(dice_request: DiceRequest) -> void:
 	await get_tree().process_frame
 	_breath_dice_collapsible_container.open_tween()
 
+func show_injury(target_name: String, magnitude: int) -> void:
+	var injury_display: InjuryDisplay = _injury_display.instantiate()
+	_injuries.add_child(injury_display)
+	injury_display.setup(target_name, magnitude)
+	_injuries.visible = true
+
+## Shows [param panel] above the outcome, e.g. to decide something mid-exchange without turning the page
+func show_panel(panel: Control) -> void:
+	_outcome.add_sibling(panel)
+	_outcome.get_parent().move_child(panel, _outcome.get_index())
+
+## Starts typing [param outcome]; see [method is_outcome_typed]
+func show_outcome(outcome: String) -> void:
+	if outcome.is_empty(): return
+	_outcome.visible = true
+	_outcome.type_text(outcome)
+
+func is_outcome_typed() -> bool: return _outcome.visible_ratio >= 1.0
+func get_outcome_typed() -> Signal: return _outcome.finished_typing
+
 func display_dice_result(dice_result: DiceRequestResult) -> void:
 	_breath_dice_selection.display_dice_result(dice_result)
+
+func display_dice_evaluation(dice_result: DiceRequestResult) -> void:
+	_breath_dice_selection.display_dice_evaluation(dice_result)
 
 func is_dice_page() -> bool:
 	var chosen_choice: StoryChoice = story_page.get_chosen_choice()

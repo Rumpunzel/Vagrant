@@ -1,12 +1,20 @@
 [gd_resource type="Resource" script_class="Origin" format=3 uid="uid://bpesh0vj6mbdm"]
 
 [ext_resource type="Texture2D" uid="uid://cf181o5jyh3vl" path="res://characters/origins/icons/graduate-cap.svg" id="1_vh0is"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_adaqc"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_medmp"]
+[ext_resource type="Script" uid="uid://yfcblst84p4j" path="res://characters/abilities/ability.gd" id="ab_1"]
+
+[sub_resource type="Resource" id="Ability_scholar_0"]
+script = ExtResource("ab_1")
+description = "No question limit for one subject."
+
+[sub_resource type="Resource" id="Ability_scholar_1"]
+script = ExtResource("ab_1")
+description = "[b]+1[/b] to all other expertises."
 
 [resource]
 script = ExtResource("2_medmp")
-abilities = Array[String](["No question limit for one subject.", "[b]+1[/b] to all other expertises."])
+abilities = Array[ExtResource("ab_1")]([SubResource("Ability_scholar_0"), SubResource("Ability_scholar_1")])
 name = "Scholar"
 icon = ExtResource("1_vh0is")
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

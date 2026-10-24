@@ -10,7 +10,7 @@
 
 [sub_resource type="Resource" id="Resource_vfpl1"]
 script = ExtResource("4_vbvy7")
-_leads_to = "res://adventure/adventures/locations/beach/castle_ruin.tres"
+_leads_to = "uid://dk3q4ia5u7q6m"
 
 [sub_resource type="Resource" id="Resource_c1yb7"]
 script = ExtResource("3_jui2c")
@@ -19,7 +19,7 @@ transition = SubResource("Resource_vfpl1")
 
 [sub_resource type="Resource" id="Resource_bjlpt"]
 script = ExtResource("4_vbvy7")
-_leads_to = "res://adventure/adventures/locations/swamp/temple_ruin.tres"
+_leads_to = "uid://cs40ge42lw0ry"
 
 [sub_resource type="Resource" id="Resource_025i5"]
 script = ExtResource("3_jui2c")

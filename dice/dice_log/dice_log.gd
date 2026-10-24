@@ -7,9 +7,6 @@ signal entry_added(entry: Control)
 @export var _scroll_container: ScrollContainer
 @export var _log_entries: Container
 @export var _dice_log_die_entry: PackedScene
-@export var _dice_log_entry_group: PackedScene
-
-var _current_entry_group: DiceLogEntryGroup = null
 
 func _ready() -> void:
 	DiceRoller.die_rolled.connect(_on_die_rolled)
@@ -21,16 +18,6 @@ func _on_die_rolled(die: Die) -> void:
 	var dice_log_entry: DiceLogDieEntry = _dice_log_die_entry.instantiate()
 	_log_entries.add_child(dice_log_entry)
 	dice_log_entry.initialize_die_result(die)
-
-func _on_save_rolled(save_result: SaveResult) -> void:
-	var save_request: SaveRequest = save_result.get_dice_request()
-	if _current_entry_group == null or _current_entry_group.character != save_request.character:
-		if _current_entry_group != null: _current_entry_group.entry_added.disconnect(_on_entry_entered_tree)
-		_current_entry_group = _dice_log_entry_group.instantiate()
-		_current_entry_group.character = save_request.character
-		_current_entry_group.entry_added.connect(_on_entry_entered_tree)
-		_log_entries.add_child(_current_entry_group)
-	_current_entry_group.add_entry(save_result)
 
 func _on_entry_entered_tree(node: Node) -> void:
 	if not node is Control: return

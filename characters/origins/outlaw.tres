@@ -1,12 +1,16 @@
 [gd_resource type="Resource" script_class="Origin" format=3 uid="uid://binkm27w771kw"]
 
 [ext_resource type="Texture2D" uid="uid://b1nrbvek1tou5" path="res://characters/origins/icons/executioner-hood.svg" id="1_5uhwg"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_nkdfw"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_sq5ij"]
+[ext_resource type="Script" uid="uid://yfcblst84p4j" path="res://characters/abilities/ability.gd" id="ab_1"]
+
+[sub_resource type="Resource" id="Ability_outlaw_0"]
+script = ExtResource("ab_1")
+description = "[b]+3[/b] company infamy"
 
 [resource]
 script = ExtResource("2_sq5ij")
-abilities = Array[String](["[b]+3[/b] company infamy"])
+abilities = Array[ExtResource("ab_1")]([SubResource("Ability_outlaw_0")])
 type = 1
 name = "Outlaw"
 icon = ExtResource("1_5uhwg")

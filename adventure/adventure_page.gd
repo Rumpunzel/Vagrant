@@ -14,7 +14,6 @@ enum Exclusivity {
 @export var _area: AdventureArea
 @export var _background: Texture2D
 @export var _ambience: AudioStream
-@export var _one_time_only: bool = false
 @export var _conditions: Array[AdventureCondition]
 @export var _decisions: Array[AdventureDecision]
 @export_flags("Hide Base:1", "Hide Below:2", "Hide Above:4", "Hide All:7")
@@ -22,10 +21,9 @@ var _exclusivity: int = 0
 @export var _events: Array[AdventurePage]
 
 func are_all_prerequisites_fullfilled(story: Story) -> bool:
-	if _one_time_only and story.get_how_often_page_has_been_entered(self) > 1: return false
 	for condition: AdventureCondition in _conditions:
-		if condition.is_true(): return true
-	return _conditions.is_empty()
+		if not condition.is_true(story, self): return false
+	return true
 
 func prepare() -> void: pass
 
@@ -38,23 +36,16 @@ func get_page_title(story: Story) -> String:
 	return "%s — %s" % [_area.name, _title]
 
 func get_description(story: Story) -> String:
-	var combined_description: String = ""
-	for event: AdventurePage in _events:
-		if event.are_all_prerequisites_fullfilled(story):
-			if event.exclude_above(): combined_description = ""
-			combined_description += "%s" % event.get_description(story)
-			if event.exclude_below():
-				if event.exclude_base(): return combined_description
-				else: break
-	return ("[p]%s[/p]" % _description) + combined_description
+	var events: Array[AdventurePage] = get_events(story)
+	var description: String = "" if _is_base_hidden(events) else "[p]%s[/p]" % _description
+	for event: AdventurePage in events: description += event.get_description(story)
+	return description
 
 func get_background(story: Story) -> Texture2D:
 	for event: AdventurePage in _events:
 		if event.are_all_prerequisites_fullfilled(story):
 			var event_background: Texture2D = event.get_background(story)
 			if event_background: return event_background
-	#var area_background: Texture2D = _area.background if _area else null
-	#return _background if _background else area_background
 	return _background
 
 func get_area_background() -> Texture2D:
@@ -69,36 +60,43 @@ func get_ambience(story: Story) -> AudioStream:
 	return _ambience if _ambience != null else area_ambience
 
 func get_decisions(story: Story) ->  Array[AdventureDecision]:
-	var combined_decisions: Array[AdventureDecision] = [ ]
-	for event: AdventurePage in _events:
-		if event.are_all_prerequisites_fullfilled(story):
-			if event.exclude_above(): combined_decisions = [ ]
-			combined_decisions.append_array(event.get_decisions(story))
-			if event.exclude_below():
-				if event.exclude_base(): return combined_decisions
-				else: break
-	combined_decisions.append_array(_decisions)
-	return combined_decisions
+	var events: Array[AdventurePage] = get_events(story)
+	var decisions: Array[AdventureDecision] = [ ]
+	for event: AdventurePage in events: decisions.append_array(event.get_decisions(story))
+	if not _is_base_hidden(events): decisions.append_array(_decisions)
+	return decisions
 
+## Events whose prerequisites are met, in order. Hide Above drops the ones before an event, Hide Below the ones after it.
 func get_events(story: Story) -> Array[AdventurePage]:
 	var events: Array[AdventurePage] = [ ]
 	for event: AdventurePage in _events:
-		if event.are_all_prerequisites_fullfilled(story):
-			if event.exclude_above(): events = [ ]
-			events.append(event)
-			if event.exclude_below():
-				if event.exclude_base(): return events
-				else: break
+		if not event.are_all_prerequisites_fullfilled(story): continue
+		if event.exclude_above(): events = [ ]
+		events.append(event)
+		if event.exclude_below(): break
 	return events
 
+## Hide Base on any active event drops this page's own description and decisions
+static func _is_base_hidden(events: Array[AdventurePage]) -> bool:
+	for event: AdventurePage in events: if event.exclude_base(): return true
+	return false
+
 func exclude_base() -> bool:
-	return _exclusivity & Exclusivity.EXCLUDE_BELOW
+	return _exclusivity & Exclusivity.EXCLUDE_BASE
 
 func exclude_below() -> bool:
 	return _exclusivity & Exclusivity.EXCLUDE_BELOW
 
 func exclude_above() -> bool:
 	return _exclusivity & Exclusivity.EXCLUDE_ABOVE
+
+## The page (this one or a nested event) that defines [param decision], since [method get_decisions] flattens events
+func find_decision_owner(decision: AdventureDecision) -> AdventurePage:
+	if _decisions.has(decision): return self
+	for event: AdventurePage in _events:
+		var owner: AdventurePage = event.find_decision_owner(decision)
+		if owner: return owner
+	return null
 
 func get_adventure_page() -> AdventurePage:
 	return self

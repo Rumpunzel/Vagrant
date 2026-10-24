@@ -29,6 +29,27 @@ func display_dice_result(dice_result: DiceRequestResult) -> void:
 	assert(_current_page_entry)
 	_current_page_entry.display_dice_result(dice_result)
 
+func display_dice_evaluation(dice_result: DiceRequestResult) -> void:
+	assert(_current_page_entry is StoryEntry)
+	(_current_page_entry as StoryEntry).display_dice_evaluation(dice_result)
+
+func show_injury(target_name: String, magnitude: int) -> void:
+	assert(_current_page_entry is StoryEntry)
+	(_current_page_entry as StoryEntry).show_injury(target_name, magnitude)
+
+func show_panel(panel: Control) -> void:
+	assert(_current_page_entry is StoryEntry)
+	(_current_page_entry as StoryEntry).show_panel(panel)
+
+## Starts typing the text below the current page's roll and injuries
+func show_outcome(outcome: String) -> void:
+	assert(_current_page_entry is StoryEntry)
+	(_current_page_entry as StoryEntry).show_outcome(outcome)
+
+func is_outcome_typed() -> bool: return (_current_page_entry as StoryEntry).is_outcome_typed()
+## Emitted once the current page's outcome is fully typed out (or skipped)
+func get_outcome_typed() -> Signal: return (_current_page_entry as StoryEntry).get_outcome_typed()
+
 func _flip_page() -> void:
 	assert(_current_page_entry)
 	_current_page_entry.custom_minimum_size.y = _page_content_slider.value

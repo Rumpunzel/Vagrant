@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="GutsAttack" format=3 uid="uid://c4a0yss3o6pxw"]
+
+[ext_resource type="Script" uid="uid://cv68ofo75bg4s" path="res://characters/monsters/attacks/guts_attack.gd" id="1_guts"]
+
+[resource]
+script = ExtResource("1_guts")
+metadata/_custom_type_script = "uid://cv68ofo75bg4s"

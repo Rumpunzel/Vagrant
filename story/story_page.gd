@@ -10,15 +10,18 @@ var area_background: Texture2D
 var ambience: AudioStream
 var choices: Array[StoryChoice]
 var events: Array[AdventurePage]
+## Set on fight exchange pages, which are not adventure pages of their own
+var fight: Fight
+## Taken right away instead of showing the page, e.g. a fight lost on arrival
+var forced_choice: StoryChoice
 
 func _init(
-	protagonist: Character,
 	from_adventure_page: AdventurePage,
 	from_page_title: String,
 	from_description: String,
 	from_background: Texture2D,
 	from_ambience: AudioStream,
-	from_choices: Array[AdventureDecision],
+	from_choices: Array[StoryChoice],
 	from_events: Array[AdventurePage],
 ) -> void:
 	adventure_page = from_adventure_page
@@ -27,9 +30,13 @@ func _init(
 	background = from_background
 	area_background = adventure_page.get_area_background()
 	ambience = from_ambience
-	if from_choices.is_empty(): from_choices.append(AdventureDecision.get_continue())
-	choices.assign(from_choices.map(StoryChoice.from_adventure_decision.bind(protagonist)))
+	assert(not from_choices.is_empty())
+	choices = from_choices
 	events = from_events
+
+func is_fight_exchange() -> bool: return fight != null
+## The first page of a fight offers it, every following exchange belongs to it
+func is_fighting() -> bool: return is_fight_exchange() or choices.any(func(choice: StoryChoice) -> bool: return choice is StoryFightDecision)
 
 func create_story_entry() -> StoryEntry:
 	var story_entry_scene: PackedScene = load("uid://cy2ymcfk2tejn")

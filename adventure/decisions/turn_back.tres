@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="AdventureDecision" format=3 uid="uid://b4qjxus6rghvc"]
+
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="1_vq2tg"]
+
+[resource]
+script = ExtResource("1_vq2tg")
+description = "Turn back."

@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="DiceStep" format=3 uid="uid://cnpsbbxl8koyx"]
+
+[ext_resource type="Script" uid="uid://cnfv28ydei14g" path="res://story/fight/steps/dice_step.gd" id="1_qs4k8"]
+
+[resource]
+script = ExtResource("1_qs4k8")
+side = 1

@@ -1,0 +1,226 @@
+extends GdUnitTestSuite
+
+## Fight input UI (BreathDiceSelection) inside the real Story scene.
+
+const STORY: String = "uid://db6oui711vqep"  # story.tscn
+
+var _story: Story
+
+func _start(weapon_dice: Array[DieType]) -> void:
+	var decision: AdventureFightDecision = AdventureFightDecision.new()
+	decision.description = "Fight!"
+	decision.enemies = [TestMonsters.cutthroat()] as Array[MonsterProfile]
+	var end_page: AdventurePage = AdventurePage.new()
+	end_page._title = "End"
+	decision.transition = end_page
+	decision.failure_transition = end_page
+	decision.draw_transition = end_page
+	decision.flee_transition = end_page
+	var page: AdventurePage = AdventurePage.new()
+	page._decisions = [decision] as Array[AdventureDecision]
+	var adventure: Adventure = Adventure.new()
+	adventure.starting_page = page
+	_story = auto_free(load(STORY).instantiate())
+	_story._reveal_delay = 0.01
+	add_child(_story)
+	var profile: CharacterProfile = TestCharacters.adventurer()
+	for die: DieType in weapon_dice:
+		profile.weapons.append(WeaponProfile.create("Sword", die))
+	_story.start_adventure(adventure, profile)
+
+## Collapsible tweens and page fades; let them finish so gdUnit does not report them as orphans
+func after_test() -> void:
+	await await_millis(500)
+
+func test_armed_fight_offers_stance_and_nerves_target() -> void:
+	_start([Rules.d10] as Array[DieType])
+	var request: FightRequest = await _choose(0)
+	var selection: BreathDiceSelection = _selection()
+	assert_bool(request.has_stance_choice()).is_true()
+	assert_bool(selection._stance_selection.attribute_selected.is_connected(request.set_attribute)).is_true()
+	assert_object(request.nerves_target).is_same(Rules.STRENGTH)
+	request.attribute = Rules.STRENGTH
+	assert_bool(selection._nerves_target_selection.visible).is_false()
+	request.attribute = Rules.INTELLIGENCE
+	assert_bool(selection._nerves_target_selection.visible).is_true()
+	assert_object(selection._stance_selection.get_panel().attribute).is_same(Rules.INTELLIGENCE)
+	selection._nerves_target_selection.set_selected_attribute(Rules.AGILITY)
+	assert_object(request.nerves_target).is_same(Rules.AGILITY)
+
+func test_flee_has_no_stance_and_switching_cleans_up() -> void:
+	_start([Rules.d10] as Array[DieType])
+	var fight_request: FightRequest = await _choose(0)
+	var flee_request: FightRequest = await _choose(1)
+	var selection: BreathDiceSelection = _selection()
+	assert_bool(flee_request.has_stance_choice()).is_false()
+	assert_object(flee_request.attribute).is_same(Rules.AGILITY)
+	assert_bool(selection._nerves_target_selection.visible).is_false()
+	# Nothing of the abandoned Fight request is still wired to the UI
+	assert_bool(fight_request.rolled.is_connected(selection._on_fight_rolled)).is_false()
+	assert_bool(selection._stance_selection.attribute_selected.is_connected(fight_request.set_attribute)).is_false()
+	assert_bool(selection._nerves_target_selection.attribute_selected.is_connected(fight_request.set_nerves_target)).is_false()
+	assert_bool(flee_request.rolled.is_connected(selection._on_fight_rolled)).is_true()
+
+func test_unarmed_fight_has_no_stance() -> void:
+	_start([] as Array[DieType])
+	var request: FightRequest = await _choose(0)
+	assert_bool(request.has_stance_choice()).is_false()
+	assert_object(request.attribute).is_same(Rules.STRENGTH)
+	assert_bool(_selection()._stance_selection.attribute_selected.is_connected(request.set_attribute)).is_false()
+
+func test_dice_log_shows_fight_result() -> void:
+	_start([Rules.d10] as Array[DieType])
+	await _choose(0)
+	var selection: BreathDiceSelection = _selection()
+	var entry: StoryEntry = _story._story_book._current_page_entry
+	var page: StoryPage = _story._current_story_page
+	var choice: StoryFightDecision = page.choices[0]
+	choice.roll()
+	# Every step of the exchange is typed out and paused on before the next exchange
+	var waited: int = 0
+	while _story._current_story_page == page and waited < 20000:
+		_strike_if_asked()
+		await await_millis(20)
+		waited += 20
+	var result: FightResult = choice.get_dice_result()
+	var text: String = _final_text(selection._dice_log_save_result_entry._entry)
+	var player: FightSide = result.get_player_side()
+	var opponent: FightSide = result.get_opponent_side()
+	# Both threats with their stance icon, coloured by who won; injuries have their own display
+	assert_str(text).contains("%s [color=" % player.stance.to_bbcode())
+	assert_str(text).contains("%d[/color] vs %s [color=" % [player.threat, opponent.stance.to_bbcode()])
+	assert_str(text).ends_with("%d[/color]" % opponent.threat)
+	assert_str(text).not_contains("Cutthroat")
+	var player_injury: int = player.injury_taken
+	var opponent_injury: int = opponent.injury_taken
+	# Injuries and the exchange summary sit below this roll, in the same entry; steps after an incapacitation save go on its page
+	var injury_count: int = int(player_injury > 0) + int(opponent_injury > 0)
+	if _story._current_story_page.choices[0] is StorySaveDecision: assert_int(entry._injuries.get_child_count()).is_between(1, injury_count)
+	else: assert_int(entry._injuries.get_child_count()).is_equal(injury_count)
+	assert_bool(entry._injuries.visible).is_equal(injury_count > 0)
+	assert_bool(entry._outcome.visible).is_true()
+	assert_str(_final_text(entry._outcome)).contains("You threaten with")
+
+func test_exchange_is_applied_step_by_step() -> void:
+	_start([Rules.d10] as Array[DieType])
+	var request: FightRequest = await _choose(0)
+	var page: StoryPage = _story._current_story_page
+	var entry: StoryEntry = _story._story_book._current_page_entry
+	var character: Character = request.character
+	# Guts 1 and all dice rolled: some are lost unless all five come up 1
+	character.suffer_injury(Injury.new(6))
+	request.selected_breath_dice = character.breath_dice.duplicate()
+	var breath_before: Dictionary[DieType, int] = character.breath_dice.duplicate()
+	(page.choices[0] as StoryFightDecision).roll()
+	var seen_dice_only: bool = false
+	var waited: int = 0
+	while _story._current_story_page == page and waited < 20000:
+		_strike_if_asked()
+		# Until the consequences are told, nothing is lost and nobody is hurt
+		if entry._outcome.text.count("[p]") <= 1:
+			seen_dice_only = seen_dice_only or entry._outcome.visible
+			assert_dict(character.breath_dice).is_equal(breath_before)
+			assert_int(entry._injuries.get_child_count()).is_equal(0)
+			assert_str(entry._breath_dice_selection._dice_log_save_result_entry._entry.text).not_contains("☠")
+		await await_millis(5)
+		waited += 5
+	assert_bool(seen_dice_only).is_true()
+	assert_dict(character.breath_dice).is_not_equal(breath_before)
+	assert_str(entry._breath_dice_selection._dice_log_save_result_entry._entry.text).contains("☠")
+
+func test_next_exchange_waits_for_summary_typing() -> void:
+	_start([Rules.d10] as Array[DieType])
+	await _choose(0)
+	var page: StoryPage = _story._current_story_page
+	var entry: StoryEntry = _story._story_book._current_page_entry
+	(page.choices[0] as StoryFightDecision).roll()
+	var waited: int = 0
+	while _story._current_story_page == page and waited < 20000:
+		_strike_if_asked()
+		# While the summary is still being typed, the next page must not appear
+		if entry._outcome.visible and entry._outcome.visible_ratio < 1.0: assert_object(_story._current_story_page).is_same(page)
+		await await_millis(5)
+		waited += 5
+	assert_object(_story._current_story_page).is_not_same(page)
+	assert_float(entry._outcome.visible_ratio).is_equal(1.0)
+
+func test_dice_selection_shows_monster_threat() -> void:
+	_start([Rules.d10] as Array[DieType])
+	var request: FightRequest = await _choose(0)
+	assert_str(request.get_description()).is_equal("The Cutthroat threatens you with %s." % Fight.describe_attribute(Rules.STRENGTH))
+	assert_str(_final_text(_selection()._description)).is_equal(request.get_description())
+
+func test_dice_log_shows_save_result() -> void:
+	var decision: AdventureSaveDecision = AdventureSaveDecision.new()
+	decision.description = "Jump"
+	decision.attribute = Rules.AGILITY
+	decision.difficulty = 1
+	var end_page: AdventurePage = AdventurePage.new()
+	end_page._title = "End"
+	decision.transition = end_page
+	decision.failure_transition = end_page
+	var page: AdventurePage = AdventurePage.new()
+	page._decisions = [decision] as Array[AdventureDecision]
+	var adventure: Adventure = Adventure.new()
+	adventure.starting_page = page
+	_story = auto_free(load(STORY).instantiate())
+	_story._reveal_delay = 0.01
+	add_child(_story)
+	_story.start_adventure(adventure, TestCharacters.adventurer())
+	var choice: StoryChoice = _story._current_story_page.choices[0]
+	choice.chose()
+	await await_millis(50)
+	var selection: BreathDiceSelection = _selection()
+	choice.roll()
+	await await_millis(1000)
+	var text: String = _final_text(selection._dice_log_save_result_entry._entry)
+	assert_str(text).not_contains("Rolling...")
+	assert_str(text).contains("→")
+
+## TypingLabel may still be typing; its target text is what will be shown
+func test_weapon_selection_offers_unarmed_and_weapons() -> void:
+	_start([Rules.d10, Rules.d6] as Array[DieType])
+	var request: FightRequest = await _choose(0)
+	var selection: BreathDiceSelection = _selection()
+	var weapons: WeaponSelection = selection._weapon_selection
+	assert_bool(weapons.visible).is_true()
+	assert_int(weapons.get_option_count()).is_equal(3)
+	assert_object(request.selected_weapon).is_same(_story._protagonist.weapons[0])
+	# Picking "Unarmed" removes the stance choice
+	weapons.press(0)
+	assert_object(request.selected_weapon).is_null()
+	assert_bool(request.has_stance_choice()).is_false()
+	assert_bool(selection._stance_selection.attribute_selected.is_connected(request.set_attribute)).is_false()
+	weapons.press(2)
+	assert_object(request.selected_weapon).is_same(_story._protagonist.weapons[1])
+	assert_bool(selection._stance_selection.attribute_selected.is_connected(request.set_attribute)).is_true()
+
+func test_weapon_selection_shows_marks_and_ruin() -> void:
+	_start([Rules.d6, Rules.d8] as Array[DieType])
+	_story._protagonist.weapons[0].marked_faces = [2, 5] as Array[int]
+	_story._protagonist.weapons[1].ruined = true
+	await _choose(0)
+	var weapons: WeaponSelection = _selection()._weapon_selection
+	weapons.setup(_story._current_story_page.choices[0].get_dice_request())
+	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]2[/s]")
+	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]5[/s]")
+	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[1])).contains("ruined")
+	assert_bool(weapons._buttons[2].disabled).is_true()
+
+## Strikes as the commit panel starts out, if the exchange asks the player to commit
+func _strike_if_asked() -> void:
+	for node: Node in get_tree().root.find_children("*", "VBoxContainer", true, false):
+		if node is FightCommitPanel and not node.is_queued_for_deletion(): (node as FightCommitPanel).strike()
+
+func _final_text(label: TypingLabel) -> String:
+	return label._text_to_type if not label._text_to_type.is_empty() else label.text
+
+func _choose(index: int) -> FightRequest:
+	var choice: StoryFightDecision = _story._current_story_page.choices[index]
+	choice.chose()
+	await await_millis(50)
+	return choice.get_dice_request()
+
+func _selection() -> BreathDiceSelection:
+	var entry: StoryEntry = _story._story_book._current_page_entry
+	return entry._breath_dice_selection

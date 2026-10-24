@@ -8,5 +8,5 @@
 
 [resource]
 script = ExtResource("5_f500k")
-description = "+1 to all attributes."
+description = "[b]+1[/b] to all attributes."
 metadata/_custom_type_script = "uid://dsrjqjh4js5i5"

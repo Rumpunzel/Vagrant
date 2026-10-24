@@ -8,10 +8,11 @@
 [ext_resource type="PackedScene" uid="uid://cjdgl0lvge2cl" path="res://game/characters/ability_labels.tscn" id="5_davb4"]
 [ext_resource type="Texture2D" uid="uid://c0ckr8il0i4ct" path="res://assets/editor_icons/save.svg" id="6_i22xi"]
 [ext_resource type="Texture2D" uid="uid://cg3jqm5s4qxhx" path="res://assets/editor_icons/load.svg" id="7_mkqqw"]
+[ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://game/characters/inventory/inventory.tscn" id="9_inventory"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c5c64"]
 
-[node name="CharacterSheet" type="PanelContainer" unique_id=700185680 node_paths=PackedStringArray("_name", "_title", "_attributes", "_breath_dice", "_ability_labels", "_portrait")]
+[node name="CharacterSheet" type="PanelContainer" unique_id=700185680 node_paths=PackedStringArray("_name", "_title", "_attributes", "_breath_dice", "_ability_labels", "_inventory", "_portrait")]
 offset_right = 336.0
 offset_bottom = 294.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_c5c64")
@@ -21,6 +22,7 @@ _title = NodePath("MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/Ma
 _attributes = NodePath("MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/CharacterAttributesPanel")
 _breath_dice = NodePath("MarginContainer/VBoxContainer/VBoxContainer/VBoxContainer/BreathDiceSelectionButtons")
 _ability_labels = NodePath("MarginContainer/VBoxContainer/VBoxContainer/AbilityLabels")
+_inventory = NodePath("MarginContainer/VBoxContainer/Inventory")
 _name_suffix = "Character Sheet"
 _portrait = NodePath("Vignette/Portrait")
 metadata/_custom_type_script = "uid://dkwi26f6nf1xj"
@@ -96,6 +98,9 @@ layout_mode = 2
 mouse_behavior_recursive = 2
 
 [node name="AbilityLabels" parent="MarginContainer/VBoxContainer/VBoxContainer" unique_id=1324638432 instance=ExtResource("5_davb4")]
+layout_mode = 2
+
+[node name="Inventory" parent="MarginContainer/VBoxContainer" instance=ExtResource("9_inventory")]
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1667062991]

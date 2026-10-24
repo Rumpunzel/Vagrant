@@ -1,6 +1,7 @@
 class_name AdventureInjuryConsequence
 extends AdventureConsequence
 
-func resolve(protagonist: Character, damage: int) -> void:
-	var injury: Injury = Injury.new(damage)
-	protagonist.suffer_injury(injury)
+## The margin is the damage
+func resolve(story: Story, margin: int) -> void:
+	if margin <= 0: return
+	story.get_protagonist().suffer_injury(Injury.new(margin))

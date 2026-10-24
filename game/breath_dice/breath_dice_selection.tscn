@@ -10,10 +10,12 @@
 [ext_resource type="Script" uid="uid://bl43kjn1e4mdp" path="res://custom_nodes/control/display_button.gd" id="5_bhkt5"]
 [ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="6_lcgf6"]
 [ext_resource type="PackedScene" uid="uid://cqeuqu32m0rr8" path="res://dice/dice_log/dice_log_save_result_entry.tscn" id="7_oei8s"]
+[ext_resource type="Script" uid="uid://3ifn4qlnnqpi" path="res://game/breath_dice/weapon_selection.gd" id="9_weapons"]
+[ext_resource type="Texture2D" uid="uid://b2gskja6u1rym" path="res://assets/editor_icons/cubes.svg" id="12_b482a"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lcgf6"]
 
-[node name="BreathDiceSelection" type="PanelContainer" unique_id=711374009 node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
+[node name="BreathDiceSelection" type="PanelContainer" unique_id=711374009 node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection", "_nerves_target_selection", "_weapon_selection", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
 offset_right = 336.0
 offset_bottom = 185.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lcgf6")
@@ -22,6 +24,8 @@ _portrait = NodePath("Vignette/Portrait")
 _description = NodePath("MarginContainer/VBoxContainer/PanelContainer/MarginContainer/Description")
 _stance_selection_collapsible_container = NodePath("MarginContainer/VBoxContainer/CollapsibleContainer")
 _stance_selection = NodePath("MarginContainer/VBoxContainer/CollapsibleContainer/StanceSelection")
+_nerves_target_selection = NodePath("MarginContainer/VBoxContainer/NervesTargetSelection")
+_weapon_selection = NodePath("MarginContainer/VBoxContainer/WeaponSelection")
 _breath_dice_selection_buttons = NodePath("MarginContainer/VBoxContainer/BreathDiceSelectionButtons")
 _all_in_button = NodePath("MarginContainer/VBoxContainer/HBoxContainer/AllInButton")
 _ok_button = NodePath("MarginContainer/VBoxContainer/HBoxContainer/OKButton")
@@ -95,6 +99,15 @@ offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="NervesTargetSelection" parent="MarginContainer/VBoxContainer" unique_id=1329504788 instance=ExtResource("3_m1dxb")]
+visible = false
+layout_mode = 2
+
+[node name="WeaponSelection" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=222972314]
+visible = false
+layout_mode = 2
+script = ExtResource("9_weapons")
+
 [node name="DiceRequestEntry" parent="MarginContainer/VBoxContainer" unique_id=959955054 instance=ExtResource("4_tj3a7")]
 layout_mode = 2
 
@@ -119,10 +132,14 @@ script = ExtResource("5_bhkt5")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
 [node name="OKButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1818047687]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
-text = "Roll Dice!"
+toggle_mode = true
+icon = ExtResource("12_b482a")
+icon_alignment = 1
+expand_icon = true
 script = ExtResource("5_bhkt5")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 

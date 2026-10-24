@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="VantageStep" format=3 uid="uid://d1je7tsli8y5v"]
+
+[ext_resource type="Script" uid="uid://cloxpqvujnj2e" path="res://story/fight/steps/vantage_step.gd" id="1_vantage"]
+
+[resource]
+script = ExtResource("1_vantage")
+side = 1

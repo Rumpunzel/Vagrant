@@ -7,10 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://c4nfw1eoy5wcn" path="res://assets/icons/chest.svg" id="5_0cqav"]
 [ext_resource type="Texture2D" uid="uid://dlbqtdfwdtmiu" path="res://assets/icons/donkey.svg" id="6_0cqav"]
 
-[node name="Inventory" type="PanelContainer" unique_id=156054154]
+[node name="Inventory" type="PanelContainer" unique_id=156054154 node_paths=PackedStringArray("_list")]
 offset_right = 268.0
 offset_bottom = 678.0
 script = ExtResource("1_swy6m")
+_list = NodePath("MarginContainer/VBoxContainer/Miscellaneous")
 metadata/_custom_type_script = "uid://e2idwn4erjnm"
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=786351589]
@@ -28,6 +29,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1648705651]
+visible = false
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer" unique_id=218148369]

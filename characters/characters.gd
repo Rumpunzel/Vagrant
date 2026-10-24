@@ -5,11 +5,14 @@ extends Node
 signal character_added(character: Character)
 signal characters_updated(characters: Dictionary[CharacterProfile, Character])
 
+@export_group("Configuration")
+@export var _character_scene: PackedScene = preload("uid://bl0pdxri24fnh")
+
 var characters: Dictionary[CharacterProfile, Character] = { }
 
 func create_character(character_profile: CharacterProfile) -> Character:
 	assert(not characters.has(character_profile), "Character is not allowed to exist when being created!")
-	var character: Character = preload("uid://bl0pdxri24fnh").instantiate()
+	var character: Character = _character_scene.instantiate()
 	character.character_profile = character_profile
 	characters[character_profile] = character
 	add_child(character)

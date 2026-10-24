@@ -1,12 +1,20 @@
 [gd_resource type="Resource" script_class="Origin" format=3 uid="uid://bj6k6l430dyvn"]
 
 [ext_resource type="Texture2D" uid="uid://blcffdsjp6tdv" path="res://characters/origins/icons/hood.svg" id="1_iqyjl"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_6iwro"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="3_5fmqg"]
+[ext_resource type="Script" uid="uid://yfcblst84p4j" path="res://characters/abilities/ability.gd" id="ab_1"]
+
+[sub_resource type="Resource" id="Ability_scoundrel_0"]
+script = ExtResource("ab_1")
+description = "[b]+1[/b] company infamy."
+
+[sub_resource type="Resource" id="Ability_scoundrel_1"]
+script = ExtResource("ab_1")
+description = "Feats of thievery go unanswered."
 
 [resource]
 script = ExtResource("3_5fmqg")
-abilities = Array[String](["[b]+1[/b] company infamy.", "Feats of thievery go unanswered."])
+abilities = Array[ExtResource("ab_1")]([SubResource("Ability_scoundrel_0"), SubResource("Ability_scoundrel_1")])
 name = "Scoundrel"
 icon = ExtResource("1_iqyjl")
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://cf181o5jyh3vl" path="res://characters/origins/icons/graduate-cap.svg" id="7_x4kkx"]
 [ext_resource type="Texture2D" uid="uid://dk0uewf13jjsi" path="res://characters/origins/icons/caesar.svg" id="8_110h8"]
 [ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="8_xqdek"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="9_tix2n"]
 [ext_resource type="Texture2D" uid="uid://d073jvxfp62ln" path="res://characters/origins/icons/barbute.svg" id="10_gg73k"]
 [ext_resource type="Texture2D" uid="uid://vo5h0q8e31bp" path="res://characters/origins/icons/sun-priest.svg" id="11_pqbml"]
 [ext_resource type="Texture2D" uid="uid://u83ycsrxsky0" path="res://characters/origins/icons/pointy-hat.svg" id="11_u031w"]
@@ -30,7 +31,7 @@
 [ext_resource type="Texture2D" uid="uid://o266jm48qawt" path="res://characters/origins/icons/spartan-helmet.svg" id="21_jodaj"]
 [ext_resource type="Resource" uid="uid://7uemslxbeu5b" path="res://characters/origins/artisan.tres" id="22_ujcxx"]
 
-[sub_resource type="Resource" id="Resource_w58ic"]
+[sub_resource type="Resource" id="Resource_6ki8v"]
 script = ExtResource("8_xqdek")
 
 [node name="OriginsPicker" type="VBoxContainer" unique_id=1557581856 node_paths=PackedStringArray("_origins_list", "_ability_labels")]
@@ -38,7 +39,7 @@ offset_right = 1241.0
 offset_bottom = 383.0
 theme_override_constants/separation = 8
 script = ExtResource("1_gr0sf")
-_character_profile = SubResource("Resource_w58ic")
+_character_profile = SubResource("Resource_6ki8v")
 _origins_directory = "res://characters/origins"
 _origins_list = NodePath("HBoxContainer/Origins")
 _ability_labels = [NodePath("HBoxContainer/Kin"), NodePath("HBoxContainer/Ilk")]

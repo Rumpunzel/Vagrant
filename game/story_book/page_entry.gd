@@ -21,14 +21,6 @@ enum State {
 
 func setup_page(new_story_page: StoryPage) -> void:
 	set_story_page(new_story_page)
-	#var background: Texture2D = get_story_page().background
-	#_background.texture = background
-	#if background:
-		#_background.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
-		#_background.show_behind_parent = false
-	#else:
-		#_background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		#_background.show_behind_parent = true
 
 func enter_page() -> void:
 	@warning_ignore("unsafe_method_access")

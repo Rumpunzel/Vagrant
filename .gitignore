@@ -4,3 +4,6 @@
 *.dll
 /.vscode
 /obsidian_vault/Vagrant/.obsidian
+
+# gdUnit4 test reports
+/reports/

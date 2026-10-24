@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://kmifqq0ejuri"]
+
+[ext_resource type="Script" uid="uid://bdnfeo8ijyw0t" path="res://characters/monsters/monster.gd" id="1_mnstr"]
+[ext_resource type="AudioStream" uid="uid://ch4ggshn3nkkw" path="res://assets/sfx/injury/rpg-sword-attack-combo-34-388950.mp3" id="2_dmg34"]
+[ext_resource type="AudioStream" uid="uid://dsl5vlc41o07e" path="res://assets/sfx/injury/rpg-sword-attack-combo-39-388951.mp3" id="3_dmg39"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_dmg"]
+streams_count = 2
+stream_0/stream = ExtResource("2_dmg34")
+stream_1/stream = ExtResource("3_dmg39")
+
+[node name="Monster" type="Node" unique_id=1484151701 groups=["Monsters"]]
+script = ExtResource("1_mnstr")
+metadata/_custom_type_script = "uid://bdnfeo8ijyw0t"
+
+[node name="InjurySounds" type="AudioStreamPlayer" parent="." unique_id=1512992049]
+bus = &"SFX"
+
+[node name="DamageSounds" type="AudioStreamPlayer" parent="." unique_id=272193814]
+stream = SubResource("AudioStreamRandomizer_dmg")
+bus = &"SFX"
+
+[connection signal="suffered_injury" from="." to="InjurySounds" method="play" unbinds=1]
+[connection signal="suffered_injury" from="." to="DamageSounds" method="play" unbinds=1]

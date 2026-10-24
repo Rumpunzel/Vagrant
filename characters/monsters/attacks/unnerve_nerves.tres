@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="NervesAttack" format=3 uid="uid://c808l4x586eox"]
+
+[ext_resource type="Script" uid="uid://bb4h64cwr4st0" path="res://characters/monsters/attacks/nerves_attack.gd" id="1_mpj62"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="2_mpj62"]
+
+[resource]
+script = ExtResource("1_mpj62")
+target = ExtResource("2_mpj62")
+metadata/_custom_type_script = "uid://bb4h64cwr4st0"

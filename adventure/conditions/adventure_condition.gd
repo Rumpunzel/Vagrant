@@ -2,4 +2,5 @@
 class_name AdventureCondition
 extends Resource
 
-@abstract func is_true() -> bool
+## [param page] is the page (or event) whose prerequisite this is
+@abstract func is_true(story: Story, page: AdventurePage) -> bool
