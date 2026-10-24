@@ -23,14 +23,14 @@ metadata/_custom_type_script = "uid://chexy7222h0k"
 
 [resource]
 script = ExtResource("7_lh5ix")
-name = "Lurker"
 portrait = ExtResource("6_ld57m")
 attribute_scores = Dictionary[ExtResource("2_gd730"), int]({
 ExtResource("3_rob4c"): 5,
 ExtResource("4_o77w5"): 7,
 ExtResource("5_sk1ac"): 7
 })
-weapons = Array[ExtResource("8_weapon")]([ExtResource("9_knife")])
 weapon_tactic = SubResource("Resource_u7b12")
 attack = ExtResource("3_lh5ix")
+name = "Lurker"
+weapons = Array[ExtResource("8_weapon")]([ExtResource("9_knife")])
 metadata/_custom_type_script = "uid://1342yb3eb2bh"

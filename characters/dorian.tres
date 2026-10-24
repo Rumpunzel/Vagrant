@@ -64,7 +64,6 @@ dice = Array[ExtResource("10_gmgy5")]([SubResource("Resource_ay5a8"), SubResourc
 
 [resource]
 script = ExtResource("17_ckreo")
-name = "Dorian"
 title = "Test Adventurer"
 portrait = ExtResource("16_rt0sg")
 _portrait_directory = "res://assets/portraits/HE-MF-2H-M116"
@@ -78,3 +77,4 @@ ExtResource("11_38m1i"): SubResource("Resource_auy6q"),
 ExtResource("12_vsf3q"): SubResource("Resource_q8koy")
 })
 origins = Array[ExtResource("13_gam16")]([ExtResource("14_1atq2"), ExtResource("15_60rk6")])
+name = "Dorian"
