@@ -14,7 +14,7 @@ const NODE_SPACING: Vector2 = Vector2(280, 240)
 const THUMBNAIL_SIZE: Vector2 = Vector2(220, 124)
 ## Room for a frame's title and the menu when scrolling to the nodes
 const SCROLL_MARGIN: Vector2 = Vector2(80, 160)
-const FRAME_MARGIN: int = 80
+const FRAME_MARGIN: int = 64
 const FRAME_BACKGROUND_ALPHA: float = 0.35
 const DASHED_COLOR: Color = Color(1, 1, 1, 0.6)
 const FADED: Color = Color(1, 1, 1, 0.5)
