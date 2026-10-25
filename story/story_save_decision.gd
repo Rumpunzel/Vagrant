@@ -11,6 +11,5 @@ func get_consequences() -> Array[StoryConsequence]:
 	else: story_consequences.assign(get_adventure_decision().failure_consequences.map(StoryConsequence.from_adventure_consequence))
 	return story_consequences
 
-func get_transition() -> AdventurePage:
-	if get_dice_result().is_success(): return get_adventure_decision().transition.get_adventure_page()
-	return get_adventure_decision().failure_transition.get_adventure_page()
+func get_transition_reference() -> AdventurePageReference:
+	return get_adventure_decision().transition if get_dice_result().is_success() else get_adventure_decision().failure_transition

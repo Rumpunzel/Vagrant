@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 
-## Story bookkeeping with plain decisions: transitions, going back, visit and decision logs.
+## Story bookkeeping with plain decisions: transitions, going back, visit and decision logs, event hosts.
 
 const STORY: String = "uid://db6oui711vqep"  # story.tscn
 
@@ -103,6 +103,36 @@ func test_consequences_resolve() -> void:
 	# Plain decisions resolve consequences with no margin, so the injury consequence does nothing
 	assert_array(injuries).is_empty()
 	assert_object(_story._current_story_page.adventure_page).is_same(_next)
+
+func test_host_reference_returns_to_the_page_the_event_was_on() -> void:
+	var event: AdventurePage = _page("")
+	var inside: AdventurePage = _page("Inside")
+	event.decisions = [_decision("Look closer", inside)] as Array[AdventureDecision]
+	var back_to_host: AdventureDecision = _decision("Return", null)
+	back_to_host.transition = AdventureHostReference.new()
+	inside.decisions = [back_to_host] as Array[AdventureDecision]
+	_start.events = [event] as Array[AdventurePage]
+	_story.enter_page(_start)
+	# The event's decisions come first
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(inside)
+	assert_object(_story.get_host()).is_same(_start)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(_start)
+
+func test_generic_events_spawn_per_host() -> void:
+	var event: AdventurePage = _page("Ambush")
+	var cutthroat: MonsterProfile = TestMonsters.cutthroat()
+	_story._host = _start
+	var at_start: Monster = _story.get_monster(event, cutthroat)
+	_story._host = _next
+	# Shared by default: one monster wherever the event is
+	assert_object(_story.get_monster(event, cutthroat)).is_same(at_start)
+	event.generic = true
+	var at_next: Monster = _story.get_monster(event, cutthroat)
+	assert_object(at_next).is_not_same(at_start)
+	_story._host = _start
+	assert_object(_story.get_monster(event, cutthroat)).is_not_same(at_next)
 
 func _choose(index: int) -> void:
 	var page: StoryPage = _story._current_story_page

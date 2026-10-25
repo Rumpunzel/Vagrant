@@ -5,6 +5,11 @@
 [resource]
 script = ExtResource("1_b0ump")
 positions = Dictionary[String, Vector2]({
+"uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g": Vector2(0, 0),
+"uid://bxwqtk0p80o4g/uid://cs40ge42lw0ry": Vector2(280, 60),
+"uid://bxwqtk0p80o4g/uid://dgfjjbm210jot": Vector2(280, 360),
+"uid://bxwqtk0p80o4g/uid://dsfrbfoig3deo": Vector2(280, 260),
+"uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(280, 160),
 "uid://cs40ge42lw0ry": Vector2(20, 300),
 "uid://dk3q4ia5u7q6m": Vector2(280, 0),
 "uid://ycd6xhx346l6": Vector2(0, 0)

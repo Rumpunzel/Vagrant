@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://btrr51xe6kwox"]
 
 [ext_resource type="Script" uid="uid://mev68l26dpuw" path="res://addons/adventure_editor/adventure_editor.gd" id="1_editor"]
+[ext_resource type="Script" uid="uid://btr84b5ffvx7o" path="res://addons/adventure_editor/adventure_map_view.gd" id="2_map"]
+[ext_resource type="Script" uid="uid://bia748sn01rc2" path="res://addons/adventure_editor/adventure_event_view.gd" id="3_event"]
 
-[node name="AdventureEditor" type="GraphEdit" unique_id=220152484]
+[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_tabs", "_map", "_events_tab", "_event_list", "_event_view")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -10,3 +12,40 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 script = ExtResource("1_editor")
+_picker = NodePath("Picker")
+_tabs = NodePath("Tabs")
+_map = NodePath("Tabs/Map")
+_events_tab = NodePath("Tabs/Events")
+_event_list = NodePath("Tabs/Events/List")
+_event_view = NodePath("Tabs/Events/Graph")
+
+[node name="Picker" type="EditorResourcePicker" parent="." unique_id=2024756789]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+base_type = "Adventure"
+
+[node name="Tabs" type="TabContainer" parent="." unique_id=1445356189]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Map" type="GraphEdit" parent="Tabs" unique_id=1590962896]
+layout_mode = 2
+scroll_offset = Vector2(0, -31)
+script = ExtResource("2_map")
+metadata/_tab_index = 0
+
+[node name="Events" type="HSplitContainer" parent="Tabs" unique_id=844746193]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="List" type="ItemList" parent="Tabs/Events" unique_id=1677729342]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Graph" type="GraphEdit" parent="Tabs/Events" unique_id=906972324]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("3_event")

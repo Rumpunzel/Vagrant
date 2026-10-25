@@ -1,147 +1,98 @@
 @tool
 class_name AdventureEditor
-extends GraphEdit
+extends VBoxContainer
 
-## Main screen of the adventure editor plugin: the map of one adventure ([AdventureGraph]), areas as frames, pages as nodes, events as cards on their hosts.
+## Main screen of the adventure editor plugin: one adventure as a map ([AdventureMapView]) and its events ([AdventureEventView]).
 ## Only views for now: selecting opens the resource in the Inspector, moving nodes saves the [AdventureLayout].
 
-const NODE_SPACING: Vector2 = Vector2(280, 240)
-const THUMBNAIL_SIZE: Vector2 = Vector2(220, 124)
-const AREA_BACKGROUND_ALPHA: float = 0.35
-const EVENT_LINK_COLOR: Color = Color(1, 1, 1, 0.6)
-const FRAME_MARGIN: Vector2 = Vector2(80, 120)
+const INDENT: String = "    "
+
+@export_group("Configuration")
+@export var _picker: EditorResourcePicker
+@export var _tabs: TabContainer
+@export var _map: AdventureMapView
+@export var _events_tab: Control
+@export var _event_list: ItemList
+@export var _host_picker: OptionButton
+@export var _event_view: AdventureEventView
 
 var adventure: Adventure : set = set_adventure
 
 var _graph: AdventureGraph
 var _layout: AdventureLayout
-var _picker: EditorResourcePicker
-var _nodes: Dictionary[AdventurePage, GraphNode] = {}
-var _resources: Dictionary[GraphElement, Resource] = {}
-var _event_links: Control
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup() -> void:
-	_add_event_links_layer()
-	_picker = EditorResourcePicker.new()
-	_picker.base_type = "Adventure"
-	_picker.custom_minimum_size.x = 240
+	_map.setup()
+	_event_view.setup()
 	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
-	get_menu_hbox().add_child(_picker)
-	node_selected.connect(_on_node_selected)
-	end_node_move.connect(_save_layout)
-	scroll_offset_changed.connect(func(_offset: Vector2) -> void: _event_links.queue_redraw())
+	_map.event_opened.connect(open_event)
+	_event_view.event_opened.connect(open_event)
+	_event_view.exit_opened.connect(_open_location)
+	_map.layout_changed.connect(_save_layout)
+	_event_view.layout_changed.connect(_save_layout)
+	_event_list.item_selected.connect(func(index: int) -> void: _show_event(_event_list.get_item_metadata(index) as AdventurePage, null))
+	_host_picker.item_selected.connect(func(index: int) -> void: _event_view.show_event(_event_view.get_event(), _host_picker.get_item_metadata(index) as AdventurePage))
 	EditorInterface.get_inspector().property_edited.connect(_on_property_edited)
 
 func set_adventure(value: Adventure) -> void:
 	adventure = value
-	if _picker != null: _picker.edited_resource = value
+	_picker.edited_resource = value
 	_layout = AdventureLayout.load_for(value) if value != null else null
+	_map.layout = _layout
+	_event_view.layout = _layout
+	_event_view.show_event(null)
 	rebuild()
-	_scroll_to_pages()
-
-## Puts the top left page near the top left corner, leaving room for its frame's title and the menu
-func _scroll_to_pages() -> void:
-	if _nodes.is_empty(): return
-	var top_left: Vector2 = Vector2.INF
-	for node: GraphNode in _nodes.values(): top_left = top_left.min(node.position_offset)
-	scroll_offset = (top_left - FRAME_MARGIN) * zoom
+	_map.scroll_to_nodes()
 
 func rebuild() -> void:
-	clear_connections()
-	for element: GraphElement in _resources:
-		remove_child(element)
-		element.queue_free()
-	_nodes.clear()
-	_resources.clear()
 	_graph = AdventureGraph.new(adventure)
-	var frames: Dictionary[AdventureArea, GraphFrame] = {}
-	for area: AdventureArea in _graph.areas: frames[area] = _add_frame(area)
-	var row_sizes: Dictionary[int, int] = {}
-	for page: AdventurePage in _graph.pages:
-		var node: GraphNode = _add_node(page)
-		var area: AdventureArea = page.area
-		var row: int = _graph.areas.find(area) if area != null else _graph.areas.size()
-		var column: int = row_sizes.get(row, 0)
-		row_sizes[row] = column + 1
-		node.position_offset = _layout.positions.get(AdventureLayout.get_key(page), Vector2(column, row) * NODE_SPACING)
-		if area != null: attach_graph_element_to_frame(node.name, frames[area].name)
-	for link: AdventureGraph.Link in _graph.links:
-		if not link.through_event: connect_node(_nodes[link.from].name, 0, _nodes[link.to].name, 0)
-	_event_links.queue_redraw.call_deferred()
+	_map.show_graph(_graph)
+	_event_list.clear()
+	var listed: Array[AdventurePage] = [ ]
+	for event: AdventurePage in _graph.get_top_events(): _list_event(event, 0, listed)
+	var current: AdventurePage = _event_view.get_event()
+	if listed.has(current): _show_event(current, _event_view.get_host())
+	else: _show_event(null, null)
 
-func _add_frame(area: AdventureArea) -> GraphFrame:
-	var frame: GraphFrame = GraphFrame.new()
-	frame.name = "Area%d" % _resources.size()
-	frame.title = area.name
-	frame.autoshrink_enabled = true
-	if area.background != null:
-		var background: TextureRect = _make_texture_rect(area.background)
-		background.modulate.a = AREA_BACKGROUND_ALPHA
-		frame.add_child(background)
-	add_child(frame)
-	_resources[frame] = area
-	return frame
+## Shows [param event] in the events tab, at [param host] if given
+func open_event(event: AdventurePage, host: AdventurePage) -> void:
+	_tabs.current_tab = _tabs.get_tab_idx_from_control(_events_tab)
+	_show_event(event, host)
+	_event_view.scroll_to_nodes()
 
-func _add_node(page: AdventurePage) -> GraphNode:
-	var node: GraphNode = GraphNode.new()
-	node.name = "Page%d" % _resources.size()
-	node.title = AdventureGraph.get_title(page)
-	var content: VBoxContainer = VBoxContainer.new()
-	content.custom_minimum_size.x = THUMBNAIL_SIZE.x
-	if page.background != null:
-		var thumbnail: TextureRect = _make_texture_rect(page.background)
-		thumbnail.custom_minimum_size = THUMBNAIL_SIZE
-		content.add_child(thumbnail)
-	for event: AdventurePage in page.events: content.add_child(_make_event_card(event))
-	node.add_child(content)
-	node.set_slot(0, true, 0, Color.WHITE, true, 0, Color.WHITE)
-	node.position_offset_changed.connect(_event_links.queue_redraw)
-	add_child(node)
-	_nodes[page] = node
-	_resources[node] = page
-	return node
+## Scenarios list their options below them, events the sub-events of their pages
+func _list_event(event: AdventurePage, depth: int, listed: Array[AdventurePage]) -> void:
+	if listed.has(event): return
+	listed.append(event)
+	var kind: String = " (scenario)" if event is AdventureEventScenario else ""
+	var index: int = _event_list.add_item(INDENT.repeat(depth) + AdventureGraph.get_title(event) + kind)
+	_event_list.set_item_metadata(index, event)
+	_event_list.set_item_tooltip(index, event.resource_path)
+	var nested: Array[AdventurePage] = event.events.duplicate()
+	if not event is AdventureEventScenario:
+		for page: AdventurePage in AdventureEventGraph.new(event).pages.slice(1): nested.append_array(page.events)
+	for sub_event: AdventurePage in nested: _list_event(sub_event, depth + 1, listed)
 
-func _make_event_card(event: AdventurePage) -> Button:
-	var card: Button = Button.new()
-	card.text = AdventureGraph.get_title(event)
-	card.tooltip_text = "Event: %s" % event.resource_path
-	card.pressed.connect(func() -> void: EditorInterface.edit_resource(event))
-	return card
+func _show_event(event: AdventurePage, host: AdventurePage) -> void:
+	_event_view.show_event(event, host)
+	_event_list.deselect_all()
+	for index: int in _event_list.item_count:
+		if _event_list.get_item_metadata(index) == event: _event_list.select(index)
+	_host_picker.clear()
+	_host_picker.add_item("At any host")
+	_host_picker.set_item_metadata(0, null)
+	if event == null: return
+	for location: AdventurePage in _graph.get_location_hosts(event):
+		_host_picker.add_item("At %s" % AdventureGraph.get_title(location))
+		_host_picker.set_item_metadata(_host_picker.item_count - 1, location)
+		if location == host: _host_picker.select(_host_picker.item_count - 1)
 
-func _make_texture_rect(texture: Texture2D) -> TextureRect:
-	var texture_rect: TextureRect = TextureRect.new()
-	texture_rect.texture = texture
-	texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return texture_rect
-
-func _on_node_selected(element: Node) -> void:
-	var resource: Resource = _resources.get(element as GraphElement)
-	if resource != null: EditorInterface.edit_resource(resource)
+func _open_location(location: AdventurePage) -> void:
+	_tabs.current_tab = _tabs.get_tab_idx_from_control(_map)
+	_map.focus_page(location)
 
 func _on_property_edited(_property: String) -> void: rebuild()
 
 func _save_layout() -> void:
-	if adventure == null: return
-	for page: AdventurePage in _nodes: _layout.positions[AdventureLayout.get_key(page)] = _nodes[page].position_offset
-	_layout.save_for(adventure)
-
-## Links through events are dashed, which GraphEdit's connections can't be; drawn above the frames, which would hide them
-func _add_event_links_layer() -> void:
-	_event_links = Control.new()
-	_event_links.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_event_links.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_event_links.draw.connect(_draw_event_links)
-	add_child(_event_links, false, Node.INTERNAL_MODE_FRONT)
-
-func _draw_event_links() -> void:
-	var to_local: Transform2D = _event_links.get_global_transform().affine_inverse()
-	for link: AdventureGraph.Link in _graph.links:
-		if not link.through_event: continue
-		var from: GraphNode = _nodes[link.from]
-		var to: GraphNode = _nodes[link.to]
-		var start: Vector2 = to_local * from.get_global_transform() * from.get_output_port_position(0)
-		var end: Vector2 = to_local * to.get_global_transform() * to.get_input_port_position(0)
-		_event_links.draw_dashed_line(start, end, EVENT_LINK_COLOR, 2.0 * zoom, 10.0 * zoom)
+	if adventure != null: _layout.save_for(adventure)

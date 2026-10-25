@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="AdventureEventScenario" format=3 uid="uid://c16ehct0w6n48"]
+
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="1_page"]
+[ext_resource type="Script" uid="uid://bqpu74yxd3ok3" path="res://adventure/adventure_event_scenario.gd" id="2_scenario"]
+[ext_resource type="Resource" uid="uid://bxwqtk0p80o4g" path="res://adventure/adventures/locations/swamp/events/lurker_ambush.tres" id="3_ambush"]
+[ext_resource type="Resource" uid="uid://m4wl5ad8o0i7" path="res://adventure/adventures/locations/swamp/events/lurker_ambush_won.tres" id="4_won"]
+
+[resource]
+script = ExtResource("2_scenario")
+title = "Lurker"
+events = Array[ExtResource("1_page")]([ExtResource("3_ambush"), ExtResource("4_won")])

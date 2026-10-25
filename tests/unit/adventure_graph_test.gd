@@ -100,11 +100,26 @@ func test_event_loops_end() -> void:
 	_link(lost, ambush)
 	assert_array(AdventureGraph.new(_adventure(ruin)).pages).contains_exactly([ruin])
 
-func test_title_falls_back_to_file_name() -> void:
+func test_collects_events_and_their_hosts() -> void:
+	var ruin: AdventurePage = _location("Ruin", _swamp)
+	var temple: AdventurePage = _location("Temple", _swamp)
+	var ambush: AdventurePage = _location("Ambush", null)
+	var nested: AdventurePage = _location("Nested", null)
+	ruin.events.append(ambush)
+	temple.events.append(ambush)
+	ambush.events.append(nested)
+	_link(ruin, temple)
+	var graph: AdventureGraph = AdventureGraph.new(_adventure(ruin))
+	assert_array(graph.event_hosts.keys()).contains_exactly([ambush, nested])
+	assert_array(graph.get_hosts(ambush)).contains_exactly([ruin, temple])
+	assert_array(graph.get_hosts(nested)).contains_exactly([ambush])
+	assert_array(graph.get_hosts(ruin)).is_empty()
+
+func test_title_falls_back_to_capitalized_file_name() -> void:
 	assert_str(AdventureGraph.get_title(_location("Shore", null))).is_equal("Shore")
 	var untitled: AdventurePage = _location("", null)
 	untitled.resource_path = "res://somewhere/rocky_shore.tres"
-	assert_str(AdventureGraph.get_title(untitled)).is_equal("rocky_shore")
+	assert_str(AdventureGraph.get_title(untitled)).is_equal("Rocky Shore")
 
 func _adventure(starting_page: AdventurePage) -> Adventure:
 	var adventure: Adventure = Adventure.new()

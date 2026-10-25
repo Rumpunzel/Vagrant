@@ -36,7 +36,8 @@ func discard() -> void: assert(not is_chosen()); discarded.emit()
 @abstract func get_adventure_decision() -> AdventureDecision
 @abstract func get_dice_request() -> DiceRequest
 @abstract func get_dice_result() -> DiceResult
-@abstract func get_transition() -> AdventurePage
+## Resolved by [Story] ([method AdventurePageReference.resolve]); none goes back
+@abstract func get_transition_reference() -> AdventurePageReference
 @abstract func get_consequences() -> Array[StoryConsequence]
 
 func get_description() -> String: return get_adventure_decision().description

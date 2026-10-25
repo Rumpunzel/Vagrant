@@ -19,6 +19,8 @@ enum Exclusivity {
 @export_flags("Hide Base:1", "Hide Below:2", "Hide Above:4", "Hide All:7")
 var exclusivity: int = 0
 @export var events: Array[AdventurePage]
+## Each host gets its own of what this event spawns (monsters); otherwise all hosts share them
+@export var generic: bool = false
 
 func are_all_prerequisites_fullfilled(story: Story) -> bool:
 	for condition: AdventureCondition in conditions:
@@ -28,10 +30,9 @@ func are_all_prerequisites_fullfilled(story: Story) -> bool:
 func prepare() -> void: pass
 
 func get_page_title(story: Story) -> String:
-	for event: AdventurePage in events:
-		if event.are_all_prerequisites_fullfilled(story):
-			var event_title: String = event.get_page_title(story)
-			if not event_title.is_empty(): return event_title
+	for event: AdventurePage in _get_candidate_events(story):
+		var event_title: String = event.get_page_title(story)
+		if not event_title.is_empty(): return event_title
 	if area == null: return "%s" % title if not title.is_empty() else ""
 	return "%s — %s" % [area.name, title]
 
@@ -42,20 +43,18 @@ func get_description(story: Story) -> String:
 	return text
 
 func get_background(story: Story) -> Texture2D:
-	for event: AdventurePage in events:
-		if event.are_all_prerequisites_fullfilled(story):
-			var event_background: Texture2D = event.get_background(story)
-			if event_background: return event_background
+	for event: AdventurePage in _get_candidate_events(story):
+		var event_background: Texture2D = event.get_background(story)
+		if event_background: return event_background
 	return background
 
 func get_area_background() -> Texture2D:
 	return area.background if area else null
 
 func get_ambience(story: Story) -> AudioStream:
-	for event: AdventurePage in events:
-		if event.are_all_prerequisites_fullfilled(story):
-			var event_ambience: AudioStream = event.get_ambience(story)
-			if event_ambience != null: return event_ambience
+	for event: AdventurePage in _get_candidate_events(story):
+		var event_ambience: AudioStream = event.get_ambience(story)
+		if event_ambience != null: return event_ambience
 	var area_ambience: AudioStream = area.ambience if area != null else null
 	return ambience if ambience != null else area_ambience
 
@@ -69,12 +68,23 @@ func get_decisions(story: Story) ->  Array[AdventureDecision]:
 ## Events whose prerequisites are met, in order. Hide Above drops the ones before an event, Hide Below the ones after it.
 func get_events(story: Story) -> Array[AdventurePage]:
 	var active_events: Array[AdventurePage] = [ ]
-	for event: AdventurePage in events:
-		if not event.are_all_prerequisites_fullfilled(story): continue
+	for event: AdventurePage in _get_candidate_events(story):
 		if event.exclude_above(): active_events = [ ]
 		active_events.append(event)
 		if event.exclude_below(): break
 	return active_events
+
+## What a host shows for this event, once its prerequisites are met: the event itself (a scenario: one of its events or none)
+func resolve_event(_story: Story) -> AdventurePage: return self
+
+## Events whose prerequisites are met, scenarios resolved, in order; before Hide Above / Below
+func _get_candidate_events(story: Story) -> Array[AdventurePage]:
+	var candidates: Array[AdventurePage] = [ ]
+	for event: AdventurePage in events:
+		if not event.are_all_prerequisites_fullfilled(story): continue
+		var shown: AdventurePage = event.resolve_event(story)
+		if shown != null: candidates.append(shown)
+	return candidates
 
 ## Hide Base on any active event drops this page's own description and decisions
 static func _is_base_hidden(active_events: Array[AdventurePage]) -> bool:
