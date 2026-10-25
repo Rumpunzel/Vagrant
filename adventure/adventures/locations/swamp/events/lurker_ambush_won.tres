@@ -5,10 +5,10 @@
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_r0x4r"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_b35qd"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="5_transition"]
-[ext_resource type="Script" uid="uid://by4c6kid8h44s" path="res://adventure/adventure_host_reference.gd" id="9_host"]
 [ext_resource type="Script" uid="uid://bs2whs2eq4xbj" path="res://adventure/adventure_monster_reference.gd" id="6_reference"]
 [ext_resource type="Script" uid="uid://do321suuawcvd" path="res://adventure/conditions/adventure_monster_condition.gd" id="7_condition"]
 [ext_resource type="Script" uid="uid://c247bn6rgr1gd" path="res://adventure/decisions/consequences/adventure_kill_monster_consequence.gd" id="8_kill"]
+[ext_resource type="Script" uid="uid://by4c6kid8h44s" path="res://adventure/adventure_host_reference.gd" id="9_host"]
 [ext_resource type="Resource" uid="uid://d3ytncs0be7oo" path="res://characters/monsters/lurker.tres" id="9_lurker"]
 
 [sub_resource type="Resource" id="Resource_to_ambush"]
