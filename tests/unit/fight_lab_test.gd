@@ -50,6 +50,19 @@ func test_summary_tells_what_winning_cost() -> void:
 	assert_float(won["means"]["taken"]).is_equal(4.0)
 	assert_dict(won["histograms"]["taken"]).is_equal({"3": 1, "5": 1})
 
+func test_summary_counts_values_per_outcome() -> void:
+	var records: Array[Dictionary] = [_record("won", 2, 6), _record("won", 2, 2), _record("lost", 6, 0)]
+	var by_outcome: Dictionary = FightLabStats.summarize(records)["by_outcome"]
+	assert_dict(by_outcome["exchanges"]["won"]).is_equal({"2": 2})
+	assert_dict(by_outcome["exchanges"]["lost"]).is_equal({"6": 1})
+	assert_dict(by_outcome["exchanges"]["draw"]).is_empty()
+
+func test_percentiles_of_a_histogram() -> void:
+	var results: GDScript = load("uid://cuh3q2c6v1lmb")  # fight_lab_results.gd
+	# Ten fights: 1 ×1, 2 ×4, 3 ×4, 9 ×1
+	assert_array(results._percentiles({"1": 1, "2": 4, "3": 4, "9": 1})).is_equal([1.0, 2.0, 2.0, 3.0, 3.0])
+	assert_array(results._percentiles({})).is_empty()
+
 func test_scenario_has_a_matchup_per_pairing_and_sweep_value() -> void:
 	var scenario: FightLabScenario = FightLabScenario.new()
 	scenario.side_a = [TestCharacters.adventurer(), TestCharacters.adventurer()] as Array[ActorProfile]

@@ -1,17 +1,19 @@
 @tool
 extends Control
 
-## A bar chart: one slot per category, its series side by side or stacked. Hover a bar for its value.
+## A bar or box chart: one slot per category, its series side by side or stacked. Hover a bar or box for its values.
 
 const MARGIN: Vector4 = Vector4(44, 44, 8, 20)  # left, top (title and legend), right, bottom
 const GRID_LINES: int = 4
 
 var title: String
 var categories: Array[String] = []
-## {name: String, color: Color, values: Array[float]}, one value per category
+## {name: String, color: Color, values: Array[float]}, one value per category;
+## as boxes {name, color, boxes: Array}, per category the 10th, 25th, 50th, 75th and 90th percentile ([] without data)
 var series: Array[Dictionary] = []
 var stacked: bool = false
 var percent: bool = false
+var boxed: bool = false
 
 func _init() -> void:
 	custom_minimum_size = Vector2(340, 210)
@@ -23,7 +25,13 @@ func show_data(new_title: String, new_categories: Array[String], new_series: Arr
 	series = new_series
 	stacked = is_stacked
 	percent = is_percent
+	boxed = false
 	queue_redraw()
+
+## Box plots: per category and series, the middle half as a box with the median, whiskers to the 10th and 90th percentile
+func show_boxes(new_title: String, new_categories: Array[String], new_series: Array[Dictionary]) -> void:
+	show_data(new_title, new_categories, new_series)
+	boxed = true
 
 func _draw() -> void:
 	var font: Font = get_theme_default_font()
@@ -43,7 +51,9 @@ func _draw() -> void:
 	var label_step: int = ceili(categories.size() * 40.0 / plot.size.x)
 	for index: int in categories.size():
 		var bars: Array[Rect2] = _get_bars(index)
-		for series_index: int in bars.size(): draw_rect(bars[series_index], series[series_index]["color"])
+		for series_index: int in bars.size():
+			if boxed: _draw_box(bars[series_index], series[series_index]["boxes"][index], series[series_index]["color"])
+			else: draw_rect(bars[series_index], series[series_index]["color"])
 		if index % label_step == 0:
 			draw_string(font, Vector2(plot.position.x + slot * index, plot.end.y + font_size + 2), categories[index], HORIZONTAL_ALIGNMENT_CENTER, slot * label_step, font_size - 2, text_color)
 
@@ -51,9 +61,27 @@ func _get_tooltip(at_position: Vector2) -> String:
 	for index: int in categories.size():
 		var bars: Array[Rect2] = _get_bars(index)
 		for series_index: int in bars.size():
-			if bars[series_index].grow(1).has_point(at_position):
-				return "%s — %s: %s" % [categories[index], series[series_index]["name"], _format(series[series_index]["values"][index])]
+			if not bars[series_index].grow(1).has_point(at_position): continue
+			if not boxed: return "%s — %s: %s" % [categories[index], series[series_index]["name"], _format(series[series_index]["values"][index])]
+			var box: Array = series[series_index]["boxes"][index]
+			if box.is_empty(): return "%s — %s: no fights" % [categories[index], series[series_index]["name"]]
+			return "%s — %s: median %s, middle half %s–%s, 10–90%%: %s–%s" % [categories[index], series[series_index]["name"], _format(box[2]), _format(box[1]), _format(box[3]), _format(box[0]), _format(box[4])]
 	return ""
+
+## [param area] spans the whiskers; the box is the middle half, the line the median
+func _draw_box(area: Rect2, box: Array, color: Color) -> void:
+	if box.is_empty(): return
+	var plot: Rect2 = _get_plot_rect()
+	var top: float = _get_top()
+	var center: float = area.get_center().x
+	draw_line(Vector2(center, _get_y(box[0], plot, top)), Vector2(center, _get_y(box[4], plot, top)), color, 1.5)
+	for whisker: float in [box[0], box[4]]: draw_line(Vector2(center - area.size.x * 0.25, _get_y(whisker, plot, top)), Vector2(center + area.size.x * 0.25, _get_y(whisker, plot, top)), color, 1.5)
+	var box_rect: Rect2 = Rect2(area.position.x, _get_y(box[3], plot, top), area.size.x, maxf(_get_y(box[1], plot, top) - _get_y(box[3], plot, top), 2.0))
+	draw_rect(box_rect, Color(color, 0.75))
+	draw_line(Vector2(area.position.x, _get_y(box[2], plot, top)), Vector2(area.end.x, _get_y(box[2], plot, top)), Color.WHITE, 2.0)
+
+static func _get_y(value: float, plot: Rect2, top: float) -> float:
+	return plot.end.y - plot.size.y * maxf(value, 0.0) / top
 
 ## Below the title, left to right
 func _draw_legend(font: Font, font_size: int) -> void:
@@ -73,6 +101,13 @@ func _get_bars(index: int) -> Array[Rect2]:
 	var bars: Array[Rect2] = []
 	var base: float = 0.0
 	for series_index: int in series.size():
+		if boxed:
+			var width_of_box: float = slot * 0.8 / series.size()
+			var box: Array = series[series_index]["boxes"][index]
+			var low: float = _get_y(box[0], plot, top) if not box.is_empty() else plot.end.y
+			var high: float = _get_y(box[4], plot, top) if not box.is_empty() else plot.end.y
+			bars.append(Rect2(plot.position.x + slot * (index + 0.1) + width_of_box * series_index, high, width_of_box, maxf(low - high, 2.0)))
+			continue
 		var value: float = maxf(float(series[series_index]["values"][index]), 0.0)
 		var height: float = plot.size.y * value / top
 		if stacked:
@@ -93,7 +128,7 @@ func _get_top() -> float:
 	for index: int in categories.size():
 		var total: float = 0.0
 		for entry: Dictionary in series:
-			var value: float = float(entry["values"][index])
+			var value: float = (float(entry["boxes"][index][4]) if not entry["boxes"][index].is_empty() else 0.0) if boxed else float(entry["values"][index])
 			total = total + value if stacked else maxf(total, value)
 		highest = maxf(highest, total)
 	if highest <= 0.0: return 1.0

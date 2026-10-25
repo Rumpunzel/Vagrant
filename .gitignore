@@ -1,9 +1,20 @@
-# Godot 4+ specific ignores
+# Godot's cache and imports
 .godot/
+
+# Leftovers of interrupted scene saves and of Windows replacing the git plugin's DLL
 *.tmp
-*.dll
-/.vscode
-/obsidian_vault/Vagrant/.obsidian
+*.TMP
+
+# Editor and tool settings, at any level
+.vscode/
+.vs/
+.idea/
+.obsidian/
+
+# Operating system files, at any level
+.DS_Store
+Thumbs.db
+desktop.ini
 
 # gdUnit4 test reports
 /reports/

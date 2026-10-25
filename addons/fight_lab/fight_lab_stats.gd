@@ -10,9 +10,12 @@ const NUMBERS: Array[String] = ["exchanges", "dealt", "taken", "breath_left", "b
 const RATES: Array[String] = ["weapon_ruined", "weapon_dropped", "shield_ruined", "shield_dropped", "armor_ruined"]
 ## What winning cost, over the fights won only
 const WIN_COSTS: Array[String] = ["taken", "breath_spent"]
+## Counted per value and outcome: how the outcome depends on fight length and cost
+const BY_OUTCOME: Array[String] = ["exchanges", "taken", "breath_spent"]
 
 ## { runs, outcomes: {won: share, ...}, means: {...}, histograms: {key: {value: fights}}, rates: {...},
-## won: {runs, means: {taken, breath_spent}, histograms: {...}} }. Histogram values are text, as JSON keeps them.
+## won: {runs, means: {taken, breath_spent}, histograms: {...}}, by_outcome: {key: {outcome: {value: fights}}} }.
+## Histogram values are text, as JSON keeps them.
 static func summarize(records: Array[Dictionary]) -> Dictionary[String, Variant]:
 	var outcomes: Dictionary[String, float] = {}
 	for outcome: String in OUTCOMES: outcomes[outcome] = _share(records, func(record: Dictionary) -> bool: return record["outcome"] == outcome)
@@ -27,7 +30,18 @@ static func summarize(records: Array[Dictionary]) -> Dictionary[String, Variant]
 		"histograms": _histograms(records, NUMBERS),
 		"rates": rates,
 		"won": {"runs": won.size(), "means": _means(won, WIN_COSTS), "histograms": _histograms(won, WIN_COSTS)},
+		"by_outcome": _by_outcome(records),
 	}
+
+static func _by_outcome(records: Array[Dictionary]) -> Dictionary[String, Dictionary]:
+	var by_outcome: Dictionary[String, Dictionary] = {}
+	for key: String in BY_OUTCOME: by_outcome[key] = {}
+	for outcome: String in OUTCOMES:
+		var of_outcome: Array[Dictionary] = []
+		of_outcome.assign(records.filter(func(record: Dictionary) -> bool: return record["outcome"] == outcome))
+		var histograms: Dictionary[String, Dictionary] = _histograms(of_outcome, BY_OUTCOME)
+		for key: String in BY_OUTCOME: by_outcome[key][outcome] = histograms[key]
+	return by_outcome
 
 static func _share(records: Array[Dictionary], counts: Callable) -> float:
 	if records.is_empty(): return 0.0

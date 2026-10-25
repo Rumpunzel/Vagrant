@@ -193,19 +193,19 @@ func _show_comparison(categories: Array[String], stats: Array[Dictionary]) -> vo
 		for outcome: String in OUTCOME_COLORS: outcomes.append(_series(stats, outcome, OUTCOME_COLORS[outcome], ["outcomes", outcome]))
 		_add_section("outcome", [_chart("Outcome (share of fights)", categories, outcomes, true, true)])
 	if _shows("cost"): _add_section("cost", [
-		_chart("Injury taken in won fights", categories, [_series(stats, "Injury", FOE, ["won", "means", "taken"])]),
-		_chart("Breath dice spent in won fights", categories, [_series(stats, "Breath dice", YOU, ["won", "means", "breath_spent"])]),
+		_box_chart("Injury taken in won fights", categories, [_boxes(stats, "Injury", FOE, ["won", "histograms", "taken"])]),
+		_box_chart("Breath dice spent in won fights", categories, [_boxes(stats, "Breath dice", YOU, ["won", "histograms", "breath_spent"])]),
 		_chart("Fights won", categories, [_series(stats, "Won", OUTCOME_COLORS["won"], ["outcomes", "won"])], false, true),
 	])
 	if _shows("damage"): _add_section("damage", [
-		_chart("Damage per fight", categories, [_series(stats, "Dealt", YOU, ["means", "dealt"]), _series(stats, "Taken", FOE, ["means", "taken"])]),
-		_chart("Breath dice per fight", categories, [
-			_series(stats, "Spent", YOU, ["means", "breath_spent"]),
-			_series(stats, "Kept", YOU.darkened(0.4), ["means", "breath_left"]),
-			_series(stats, "Foe keeps", FOE, ["means", "foe_breath_left"]),
+		_box_chart("Damage per fight", categories, [_boxes(stats, "Dealt", YOU, ["histograms", "dealt"]), _boxes(stats, "Taken", FOE, ["histograms", "taken"])]),
+		_box_chart("Breath dice per fight", categories, [
+			_boxes(stats, "Spent", YOU, ["histograms", "breath_spent"]),
+			_boxes(stats, "Kept", YOU.darkened(0.4), ["histograms", "breath_left"]),
+			_boxes(stats, "Foe keeps", FOE, ["histograms", "foe_breath_left"]),
 		]),
 	])
-	if _shows("length"): _add_section("length", [_chart("Exchanges per fight", categories, [_series(stats, "Exchanges", YOU, ["means", "exchanges"])])])
+	if _shows("length"): _add_section("length", [_box_chart("Exchanges per fight", categories, [_boxes(stats, "Exchanges", YOU, ["histograms", "exchanges"])])])
 	if _shows("gear"): _add_gear_section(categories, stats)
 
 ## The spread of one pairing's fights: how often each value came up
@@ -217,17 +217,17 @@ func _show_distributions(stats: Dictionary) -> void:
 		_add_section("outcome", [_chart("Outcome (share of fights)", all, outcomes, true, true)])
 	if _shows("cost"):
 		var won: Dictionary = stats["won"]
-		if int(won["runs"]) == 0: _add_section("cost", [_note("No fight was won.")])
-		else: _add_section("cost", [
-			_histogram("Injury taken in won fights", won, "taken", FOE),
-			_histogram("Breath dice spent in won fights", won, "breath_spent", YOU),
-		])
+		var contents: Array[Control] = []
+		if int(won["runs"]) == 0: contents.append(_note("No fight was won."))
+		else: contents.append_array([_histogram("Injury taken in won fights", won, "taken", FOE), _histogram("Breath dice spent in won fights", won, "breath_spent", YOU)])
+		contents.append_array([_outcome_histogram("Outcome by injury taken", stats, "taken"), _outcome_histogram("Outcome by breath dice spent", stats, "breath_spent")])
+		_add_section("cost", contents)
 	if _shows("damage"): _add_section("damage", [
 		_histogram("Damage dealt per fight", stats, "dealt", YOU),
 		_histogram("Damage taken per fight", stats, "taken", FOE),
 		_histogram("Breath dice left at the end", stats, "breath_left", YOU),
 	])
-	if _shows("length"): _add_section("length", [_histogram("Exchanges per fight", stats, "exchanges", YOU)])
+	if _shows("length"): _add_section("length", [_histogram("Exchanges per fight", stats, "exchanges", YOU), _outcome_histogram("Outcome by fight length", stats, "exchanges")])
 	if _shows("gear"): _add_gear_section(all, [stats] as Array[Dictionary])
 
 func _add_gear_section(categories: Array[String], stats: Array[Dictionary]) -> void:
@@ -276,6 +276,55 @@ func _histogram(title: String, stats: Dictionary, key: String, color: Color) -> 
 			categories.append(str(value))
 			shares.append(float(histogram.get(str(value), 0)) / float(stats["runs"]))
 	return _chart(title, categories, [{"name": "Fights", "color": color, "values": shares}], false, true)
+
+func _box_chart(title: String, categories: Array[String], series: Array[Dictionary]) -> Control:
+	var chart: Control = FightLabChart.new()
+	chart.show_boxes(title, categories, series)
+	return chart
+
+## How the fights with each value of [param key] ended, stacked, as shares of all fights
+func _outcome_histogram(title: String, stats: Dictionary, key: String) -> Control:
+	var by_outcome: Dictionary = stats["by_outcome"][key]
+	var values: Array[int] = []
+	for outcome: String in by_outcome:
+		for value: String in by_outcome[outcome]: values.append(value.to_int())
+	var categories: Array[String] = []
+	if not values.is_empty():
+		for value: int in range(values.min(), values.max() + 1): categories.append(str(value))
+	var series: Array[Dictionary] = []
+	for outcome: String in OUTCOME_COLORS:
+		var shares: Array[float] = []
+		for value: String in categories: shares.append(float(by_outcome.get(outcome, {}).get(value, 0)) / float(stats["runs"]))
+		series.append({"name": outcome, "color": OUTCOME_COLORS[outcome], "values": shares})
+	return _chart(title, categories, series, true, true)
+
+## Box series: per stats dictionary, the percentiles of the histogram [param path] leads to
+static func _boxes(stats: Array[Dictionary], label: String, color: Color, path: Array[String]) -> Dictionary:
+	var boxes: Array = []
+	for entry: Dictionary in stats:
+		var histogram: Variant = entry
+		for key: String in path: histogram = histogram[key]
+		boxes.append(_percentiles(histogram))
+	return {"name": label, "color": color, "boxes": boxes}
+
+## The 10th, 25th, 50th, 75th and 90th percentile of a {value: fights} histogram; [] when it is empty
+static func _percentiles(histogram: Dictionary) -> Array[float]:
+	var values: Array[int] = []
+	var total: int = 0
+	for value: String in histogram:
+		values.append(value.to_int())
+		total += int(histogram[value])
+	if total == 0: return []
+	values.sort()
+	var percentiles: Array[float] = []
+	for share: float in [0.1, 0.25, 0.5, 0.75, 0.9]:
+		var counted: int = 0
+		for value: int in values:
+			counted += int(histogram[str(value)])
+			if counted >= share * total:
+				percentiles.append(float(value))
+				break
+	return percentiles
 
 static func _note(text: String) -> Control:
 	var label: Label = Label.new()
