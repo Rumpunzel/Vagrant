@@ -56,10 +56,10 @@ metadata/_custom_type_script = "uid://b8exmtc8feoad"
 
 [resource]
 script = ExtResource("3_1x56p")
-_title = "Lurker Ambush"
-_description = "Something foul and wicked your way comes!"
+title = "Lurker Ambush"
+description = "Something foul and wicked your way comes!"
 background = ExtResource("1_74683")
-_conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurker_can_fight")])
-_decisions = Array[ExtResource("2_74683")]([SubResource("Resource_2rcic")])
-_exclusivity = 7
+conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurker_can_fight")])
+decisions = Array[ExtResource("2_74683")]([SubResource("Resource_2rcic")])
+exclusivity = 7
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

@@ -12,6 +12,6 @@ metadata/_custom_type_script = "uid://by3e6dkiypd3j"
 
 [resource]
 script = ExtResource("1_page")
-_description = "You and the Lurker both sink to your knees, too spent to strike again. It slinks back into the reeds, and you crawl the other way."
-_decisions = Array[ExtResource("2_decision")]([SubResource("Resource_continue")])
+description = "You and the Lurker both sink to your knees, too spent to strike again. It slinks back into the reeds, and you crawl the other way."
+decisions = Array[ExtResource("2_decision")]([SubResource("Resource_continue")])
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

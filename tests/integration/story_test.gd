@@ -14,10 +14,10 @@ func before_test() -> void:
 	_start = _page("Start")
 	_next = _page("Next")
 	_to_next = _decision("Go on", _next)
-	_start._decisions = [_to_next] as Array[AdventureDecision]
+	_start.decisions = [_to_next] as Array[AdventureDecision]
 	# No transition: back to the previous page
 	_back = _decision("Go back", null)
-	_next._decisions = [_back] as Array[AdventureDecision]
+	_next.decisions = [_back] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.title = "Test"
 	adventure.starting_page = _start
@@ -50,8 +50,8 @@ func test_decision_can_go_back_several_pages() -> void:
 	var last: AdventurePage = _page("Last")
 	var back_twice: AdventureDecision = _decision("Back twice", null)
 	back_twice.back_steps = 2
-	last._decisions = [back_twice] as Array[AdventureDecision]
-	_next._decisions = [_decision("Go on", last)] as Array[AdventureDecision]
+	last.decisions = [back_twice] as Array[AdventureDecision]
+	_next.decisions = [_decision("Go on", last)] as Array[AdventureDecision]
 	await _choose(0)
 	await _choose(0)
 	await _choose(0)
@@ -83,7 +83,7 @@ func test_killing_a_monster() -> void:
 	assert_bool(_monster_condition(reference, AdventureMonsterCondition.State.DEAD).is_true(_story, _next)).is_true()
 
 func test_dead_end_offers_turn_back() -> void:
-	_next._decisions = [] as Array[AdventureDecision]
+	_next.decisions = [] as Array[AdventureDecision]
 	await _choose(0)
 	var choices: Array[StoryChoice] = _story._current_story_page.choices
 	assert_int(choices.size()).is_equal(1)
@@ -114,7 +114,7 @@ func _choose(index: int) -> void:
 
 func _page(title: String) -> AdventurePage:
 	var page: AdventurePage = AdventurePage.new()
-	page._title = title
+	page.title = title
 	return page
 
 func _decision(description: String, transition: AdventurePage) -> AdventureDecision:

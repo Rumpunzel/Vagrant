@@ -13,6 +13,6 @@ metadata/_custom_type_script = "uid://by3e6dkiypd3j"
 
 [resource]
 script = ExtResource("1_page")
-_description = "You run. The Lurker's hiss follows you through the reeds until, at last, the swamp lets you go."
-_decisions = Array[ExtResource("2_decision")]([SubResource("Resource_continue")])
+description = "You run. The Lurker's hiss follows you through the reeds until, at last, the swamp lets you go."
+decisions = Array[ExtResource("2_decision")]([SubResource("Resource_continue")])
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

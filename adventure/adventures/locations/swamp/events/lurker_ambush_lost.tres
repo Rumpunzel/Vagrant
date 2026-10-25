@@ -12,7 +12,7 @@ metadata/_custom_type_script = "uid://by3e6dkiypd3j"
 
 [resource]
 script = ExtResource("1_page")
-_description = "Your strength gives out and the Lurker's cold knife finds you. The world goes dark.
+description = "Your strength gives out and the Lurker's cold knife finds you. The world goes dark.
 You wake much later at the edge of the swamp, bruised, bleeding, and alone."
-_decisions = Array[ExtResource("2_decision")]([SubResource("Resource_continue")])
+decisions = Array[ExtResource("2_decision")]([SubResource("Resource_continue")])
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

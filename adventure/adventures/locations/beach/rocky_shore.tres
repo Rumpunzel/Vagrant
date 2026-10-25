@@ -28,8 +28,8 @@ transition = SubResource("Resource_bjlpt")
 
 [resource]
 script = ExtResource("5_5fv8t")
-_title = "Rocky Shore"
-_description = "The cold waves roll across the ragged shorelines."
-_area = ExtResource("5_r3xmp")
-_decisions = Array[ExtResource("3_jui2c")]([SubResource("Resource_c1yb7"), SubResource("Resource_025i5")])
-_events = Array[ExtResource("5_5fv8t")]([ExtResource("6_wt0kr")])
+title = "Rocky Shore"
+description = "The cold waves roll across the ragged shorelines."
+area = ExtResource("5_r3xmp")
+decisions = Array[ExtResource("3_jui2c")]([SubResource("Resource_c1yb7"), SubResource("Resource_025i5")])
+events = Array[ExtResource("5_5fv8t")]([ExtResource("6_wt0kr")])

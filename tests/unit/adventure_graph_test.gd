@@ -34,7 +34,7 @@ func test_unreachable_pages_are_left_out() -> void:
 
 func test_turn_back_and_self_links_draw_nothing() -> void:
 	var shore: AdventurePage = _location("Shore", _beach)
-	shore._decisions.append(AdventureDecision.new())
+	shore.decisions.append(AdventureDecision.new())
 	_link(shore, shore)
 	var graph: AdventureGraph = AdventureGraph.new(_adventure(shore))
 	assert_array(graph.pages).contains_exactly([shore])
@@ -47,7 +47,7 @@ func test_every_transition_of_a_decision_links() -> void:
 	var save: AdventureSaveDecision = AdventureSaveDecision.new()
 	save.transition = won
 	save.failure_transition = lost
-	ruin._decisions.append(save)
+	ruin.decisions.append(save)
 	assert_array(AdventureGraph.new(_adventure(ruin)).pages).contains_exactly_in_any_order([ruin, won, lost])
 
 func test_pages_without_area_linked_directly_are_nodes() -> void:
@@ -63,7 +63,7 @@ func test_location_behind_an_event_links_from_the_host() -> void:
 	var temple: AdventurePage = _location("Temple", _swamp)
 	var ambush: AdventurePage = _location("Ambush", null)
 	var won: AdventurePage = _location("Won", null)
-	ruin._events.append(ambush)
+	ruin.events.append(ambush)
 	_link(ambush, won)
 	_link(won, temple)
 	var graph: AdventureGraph = AdventureGraph.new(_adventure(ruin))
@@ -75,8 +75,8 @@ func test_nested_events_are_walked() -> void:
 	var temple: AdventurePage = _location("Temple", _swamp)
 	var ambush: AdventurePage = _location("Ambush", null)
 	var inner: AdventurePage = _location("Inner", null)
-	ruin._events.append(ambush)
-	ambush._events.append(inner)
+	ruin.events.append(ambush)
+	ambush.events.append(inner)
 	_link(inner, temple)
 	assert_bool(AdventureGraph.new(_adventure(ruin)).get_link(ruin, temple).through_event).is_true()
 
@@ -84,7 +84,7 @@ func test_direct_link_wins_over_one_through_an_event() -> void:
 	var ruin: AdventurePage = _location("Ruin", _swamp)
 	var temple: AdventurePage = _location("Temple", _swamp)
 	var ambush: AdventurePage = _location("Ambush", null)
-	ruin._events.append(ambush)
+	ruin.events.append(ambush)
 	_link(ambush, temple)
 	_link(ruin, temple)
 	var graph: AdventureGraph = AdventureGraph.new(_adventure(ruin))
@@ -95,7 +95,7 @@ func test_event_loops_end() -> void:
 	var ruin: AdventurePage = _location("Ruin", _swamp)
 	var ambush: AdventurePage = _location("Ambush", null)
 	var lost: AdventurePage = _location("Lost", null)
-	ruin._events.append(ambush)
+	ruin.events.append(ambush)
 	_link(ambush, lost)
 	_link(lost, ambush)
 	assert_array(AdventureGraph.new(_adventure(ruin)).pages).contains_exactly([ruin])
@@ -113,11 +113,11 @@ func _adventure(starting_page: AdventurePage) -> Adventure:
 
 func _location(title: String, area: AdventureArea) -> AdventurePage:
 	var page: AdventurePage = AdventurePage.new()
-	page._title = title
-	page._area = area
+	page.title = title
+	page.area = area
 	return page
 
 func _link(from: AdventurePage, to: AdventurePage) -> void:
 	var decision: AdventureDecision = AdventureDecision.new()
 	decision.transition = to
-	from._decisions.append(decision)
+	from.decisions.append(decision)

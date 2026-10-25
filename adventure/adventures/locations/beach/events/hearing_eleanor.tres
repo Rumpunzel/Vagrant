@@ -6,4 +6,4 @@
 
 [resource]
 script = ExtResource("1_3veit")
-_description = "You hear a knocking sound from the castle ruins to the north-east."
+description = "You hear a knocking sound from the castle ruins to the north-east."

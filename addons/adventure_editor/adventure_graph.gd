@@ -27,8 +27,8 @@ func _init(adventure: Adventure) -> void:
 		var page: AdventurePage = queue.pop_front()
 		if pages.has(page): continue
 		pages.append(page)
-		if page._area != null and not areas.has(page._area): areas.append(page._area)
-		for target: AdventurePage in _get_targets(page._decisions):
+		if page.area != null and not areas.has(page.area): areas.append(page.area)
+		for target: AdventurePage in _get_targets(page.decisions):
 			_add_link(page, target, false)
 			queue.append(target)
 		for target: AdventurePage in _get_event_targets(page):
@@ -36,10 +36,8 @@ func _init(adventure: Adventure) -> void:
 			queue.append(target)
 
 static func get_title(page: AdventurePage) -> String:
-	return page._title if not page._title.is_empty() else page.resource_path.get_file().get_basename()
+	return page.title if not page.title.is_empty() else page.resource_path.get_file().get_basename()
 
-static func get_area(page: AdventurePage) -> AdventureArea: return page._area
-static func get_events(page: AdventurePage) -> Array[AdventurePage]: return page._events
 
 func get_link(from: AdventurePage, to: AdventurePage) -> Link:
 	for link: Link in links: if link.from == from and link.to == to: return link
@@ -54,15 +52,15 @@ func _add_link(from: AdventurePage, to: AdventurePage, through_event: bool) -> v
 
 ## Locations reached from [param host]'s events, also through (nested) events and pages without an area behind them
 static func _get_event_targets(host: AdventurePage) -> Array[AdventurePage]:
-	var hidden: Array[AdventurePage] = host._events.duplicate()
+	var hidden: Array[AdventurePage] = host.events.duplicate()
 	var targets: Array[AdventurePage] = [ ]
 	var index: int = 0
 	while index < hidden.size():
 		var page: AdventurePage = hidden[index]
 		index += 1
-		for event: AdventurePage in page._events: if not hidden.has(event): hidden.append(event)
-		for target: AdventurePage in _get_targets(page._decisions):
-			if target._area != null: targets.append(target)
+		for event: AdventurePage in page.events: if not hidden.has(event): hidden.append(event)
+		for target: AdventurePage in _get_targets(page.decisions):
+			if target.area != null: targets.append(target)
 			elif not hidden.has(target): hidden.append(target)
 	return targets
 

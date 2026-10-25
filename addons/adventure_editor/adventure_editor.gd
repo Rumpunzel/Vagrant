@@ -60,7 +60,7 @@ func rebuild() -> void:
 	var row_sizes: Dictionary[int, int] = {}
 	for page: AdventurePage in _graph.pages:
 		var node: GraphNode = _add_node(page)
-		var area: AdventureArea = AdventureGraph.get_area(page)
+		var area: AdventureArea = page.area
 		var row: int = _graph.areas.find(area) if area != null else _graph.areas.size()
 		var column: int = row_sizes.get(row, 0)
 		row_sizes[row] = column + 1
@@ -93,7 +93,7 @@ func _add_node(page: AdventurePage) -> GraphNode:
 		var thumbnail: TextureRect = _make_texture_rect(page.background)
 		thumbnail.custom_minimum_size = THUMBNAIL_SIZE
 		content.add_child(thumbnail)
-	for event: AdventurePage in AdventureGraph.get_events(page): content.add_child(_make_event_card(event))
+	for event: AdventurePage in page.events: content.add_child(_make_event_card(event))
 	node.add_child(content)
 	node.set_slot(0, true, 0, Color.WHITE, true, 0, Color.WHITE)
 	node.position_offset_changed.connect(_event_links.queue_redraw)

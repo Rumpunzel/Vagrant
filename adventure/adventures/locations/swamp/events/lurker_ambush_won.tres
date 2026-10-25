@@ -46,7 +46,7 @@ metadata/_custom_type_script = "uid://by3e6dkiypd3j"
 
 [resource]
 script = ExtResource("1_page")
-_description = "The Lurker lies in the black water, too spent to rise. Its breath bubbles weakly at the surface."
-_conditions = Array[ExtResource("2_r0x4r")]([SubResource("Resource_lurker_beaten")])
-_decisions = Array[ExtResource("2_decision")]([SubResource("Resource_kill")])
+description = "The Lurker lies in the black water, too spent to rise. Its breath bubbles weakly at the surface."
+conditions = Array[ExtResource("2_r0x4r")]([SubResource("Resource_lurker_beaten")])
+decisions = Array[ExtResource("2_decision")]([SubResource("Resource_kill")])
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

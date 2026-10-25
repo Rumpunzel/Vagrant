@@ -19,8 +19,8 @@ transition = SubResource("Resource_y5shu")
 
 [resource]
 script = ExtResource("3_gmk2e")
-_title = "Castle Ruin"
-_description = "The ruined castle towers high above you on the cliff. Behind a cluster of overgrown rocks you spot a hidden gate carved into the cliffside wall."
-_area = ExtResource("5_rumxx")
-_decisions = Array[ExtResource("1_ctu8i")]([SubResource("Resource_106m3")])
-_events = Array[ExtResource("3_gmk2e")]([ExtResource("6_ct28b")])
+title = "Castle Ruin"
+description = "The ruined castle towers high above you on the cliff. Behind a cluster of overgrown rocks you spot a hidden gate carved into the cliffside wall."
+area = ExtResource("5_rumxx")
+decisions = Array[ExtResource("1_ctu8i")]([SubResource("Resource_106m3")])
+events = Array[ExtResource("3_gmk2e")]([ExtResource("6_ct28b")])

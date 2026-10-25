@@ -154,7 +154,7 @@ func test_summary_tells_who_was_unnerved() -> void:
 func test_find_decision_owner_in_events() -> void:
 	var base: AdventurePage = load("uid://cs40ge42lw0ry")  # temple_ruin.tres
 	var ambush: AdventurePage = load("uid://bxwqtk0p80o4g")  # lurker_ambush.tres
-	for ambush_decision: AdventureDecision in ambush._decisions:
+	for ambush_decision: AdventureDecision in ambush.decisions:
 		assert_object(base.find_decision_owner(ambush_decision)).is_same(ambush)
 	assert_object(base.find_decision_owner(AdventureDecision.new())).is_null()
 
