@@ -2,20 +2,20 @@
 extends Control
 
 ## A Custom Control node placed inside the inspector of [CollapsibleContainer].
-## Allows for selecting various FoldingPresets which change the 
+## Allows for selecting various FoldingPresets which change the
 ## [member CollapsibleContainer.sizing_constraint] and its container sizing flags.
 ## [br]
-## [br]The buttons fade out if they cannot be used (i.e., if the required 
-## parent container is not there). 
-## [br][br]The TIPS button remind the user that a container parent is required 
+## [br]The buttons fade out if they cannot be used (i.e., if the required
+## parent container is not there).
+## [br][br]The TIPS button remind the user that a container parent is required
 ## to access some buttons.
 ## [br]
 ## [br]
 ## Placed in inspector through: collapsible_container_inspector_plugin.gd
 ## [br][br]Utilizes the [member CollapsibleContainer._editor_plugin] in [CollapsibleContainer] for
-## undo-redo functionality. 
+## undo-redo functionality.
 
-# REMINDER: if the buttons aren't changing colors properly, it may be because 
+# REMINDER: if the buttons aren't changing colors properly, it may be because
 # the inspector is updating too soon.
 
 enum ButtonStates {NORMAL, HOVERED, PRESSED}
@@ -43,27 +43,27 @@ enum ButtonStates {NORMAL, HOVERED, PRESSED}
 @export var v_center_wide : TextureButton
 @export var v_bottom_wide : TextureButton
 
-@onready var currently_pressed_button = top_left
-
 # Set by collapsible_container_inspector_plugin.gd
 var collapsible : CollapsibleContainer
+
+@onready var currently_pressed_button = top_left
 
 
 func _ready() -> void:
 	# Avoid unnecessary error prints.
-	if collapsible == null: 
+	if collapsible == null:
 		return
-	
+
 	if collapsible._in_game():
 		return
-	
+
 	# If required container parent is not there, fade out some buttons.
 	if not collapsible._has_parent_container():
 		discourage_container_required_buttons()
-	
-	# Toggle button corresponding to whatever the current FoldingPreset is set to. 
+
+	# Toggle button corresponding to whatever the current FoldingPreset is set to.
 	set_to_correct_button()
-	
+
 	# Connect all buttons to clicked().
 	top_left.pressed.connect(clicked.bind(top_left))
 	top_center.pressed.connect(clicked.bind(top_center))
@@ -93,7 +93,7 @@ func _ready() -> void:
 func set_to_correct_button() -> void:
 	var direction : CollapsibleContainer.FoldingPreset = collapsible.get_folding_direction_preset()
 	#print("Set color to: ", CollapsibleContainer.FoldingPreset.keys()[direction])
-	
+
 	value_label.set_text("")
 	match direction:
 		CollapsibleContainer.FoldingPreset.UNDEFINED:
@@ -130,7 +130,7 @@ func set_to_correct_button() -> void:
 		CollapsibleContainer.FoldingPreset.PRESET_RIGHT_WIDE:
 			change_color(v_bottom_wide)
 
-# All buttons that require the collapsible to have a container parent in order 
+# All buttons that require the collapsible to have a container parent in order
 # for the folding preset to work as intended... are faded.
 func discourage_container_required_buttons() -> void:
 	var container_required_buttons : Array[Node] = get_tree().get_nodes_in_group("container_required")
@@ -139,34 +139,34 @@ func discourage_container_required_buttons() -> void:
 
 # REMINDER: if the buttons aren't changing colors, it may be because the inspecor is updating too soon.
 # Toggles the pressed button and untoggles the previously pressed button.
-# Sets the appropriate folding_preset inside of CollapsibleContainer. 
+# Sets the appropriate folding_preset inside of CollapsibleContainer.
 func clicked(button : TextureButton) -> void:
 	change_color(button)
 	folding_preset_selected(button)
 
-# The button in parameter is pressed. This changes it's texture to the 
+# The button in parameter is pressed. This changes it's texture to the
 # "pressed" texture, set in its inspector. Hence, changing its color.
-# 
+#
 # Enables the previously pressed button and unpresses it (un-toggled).
 # Disables the current button sets it to pressed (toggled).
 func change_color(button : TextureButton) -> void:
 	currently_pressed_button.button_pressed = false
 	currently_pressed_button.disabled = false
-	
+
 	currently_pressed_button = button
 	button.disabled = true
 
 # Uses EditorUndoRedoManager to set the collapsible's folding_direction_preset variable.
 func set_folding_preset(preset : CollapsibleContainer.FoldingPreset) -> void:
 	var editor_undo_redot : EditorUndoRedoManager = collapsible._editor_plugin.get_undo_redo()
-	
+
 	editor_undo_redot.create_action("changed folding_direction_preset")
 	editor_undo_redot.add_undo_property(collapsible, "folding_direction_preset", collapsible._folding_direction_preset)
 	editor_undo_redot.add_do_property(collapsible, "folding_direction_preset", preset)
 	editor_undo_redot.commit_action(true)
 
-# calls set_folding_preset() with the correct parameter. 
-func folding_preset_selected(button : TextureButton) -> void:
+# calls set_folding_preset() with the correct parameter.
+func folding_preset_selected(_button : TextureButton) -> void:
 	match currently_pressed_button:
 		top_left:
 			set_folding_preset(CollapsibleContainer.FoldingPreset.PRESET_TOP_LEFT)
@@ -204,7 +204,7 @@ func folding_preset_selected(button : TextureButton) -> void:
 		v_bottom_wide:
 			set_folding_preset(CollapsibleContainer.FoldingPreset.PRESET_RIGHT_WIDE)
 
-# Called when full_rect button is pressed. 
+# Called when full_rect button is pressed.
 # Future: this button should probably be re-labelled as the "TIPS" button.
 func _on_full_rect_pressed() -> void:
 	print(full_rect.get_tooltip())

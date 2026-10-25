@@ -17,7 +17,7 @@
 
 [node name="BreathDiceSelection" type="PanelContainer" unique_id=711374009 node_paths=PackedStringArray("_portrait", "_description", "_stance_selection_collapsible_container", "_stance_selection", "_nerves_target_selection", "_weapon_selection", "_breath_dice_selection_buttons", "_all_in_button", "_ok_button", "_dice_log_dice_request_entry", "_dice_log_save_result_entry")]
 offset_right = 336.0
-offset_bottom = 185.0
+offset_bottom = 202.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_lcgf6")
 script = ExtResource("1_6stf5")
 _portrait = NodePath("Vignette/Portrait")
@@ -71,9 +71,7 @@ metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 
 [node name="CollapsibleContainer" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1623645970]
 process_mode = 3
-editor_description = "
-			A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
-			
+editor_description = "A custom/plugin Control node capable of hiding and revealing its children by folding and unfolding.
 Give feedback at: https://github.com/ArshvirGoraya/Godot-Collapsible-Container"
 visible = false
 clip_contents = true
@@ -83,6 +81,8 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 script = ExtResource("6_lcgf6")
 starts_opened = false
+start_with_clip_contents = false
+hide_when_closed = true
 folding_direction_preset = 14
 sizing_constraint = 1
 sizing_node = NodePath("StanceSelection")
@@ -143,8 +143,5 @@ expand_icon = true
 script = ExtResource("5_bhkt5")
 metadata/_custom_type_script = "uid://bl43kjn1e4mdp"
 
-[connection signal="state_set" from="MarginContainer/VBoxContainer/CollapsibleContainer" to="MarginContainer/VBoxContainer/CollapsibleContainer" method="_on_state_set"]
-[connection signal="tween_completed" from="MarginContainer/VBoxContainer/CollapsibleContainer" to="MarginContainer/VBoxContainer/CollapsibleContainer" method="_on_tween_completed"]
-[connection signal="tween_started" from="MarginContainer/VBoxContainer/CollapsibleContainer" to="MarginContainer/VBoxContainer/CollapsibleContainer" method="_on_tween_started"]
 [connection signal="toggled" from="MarginContainer/VBoxContainer/HBoxContainer/AllInButton" to="MarginContainer/VBoxContainer/BreathDiceSelectionButtons" method="select_all"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/OKButton" to="." method="_on_confirmed"]

@@ -4,7 +4,7 @@ extends Node
 ## [code]godot --headless --path . <this scene>[/code]. Godot prints SCRIPT ERROR for every script that fails, which CI looks for.
 ## Needed because the tests and the editor scan only compile the scripts they happen to load.
 
-const VENDORED: Array[String] = ["res://addons/collapsible_container", "res://addons/gdUnit4", "res://addons/godot-git-plugin", "res://addons/tooltips_pro"]
+const VENDORED: Array[String] = ["res://addons/gdUnit4", "res://addons/godot-git-plugin", "res://addons/tooltips_pro"]
 
 func _ready() -> void:
 	var count: int = _load_scripts("res://")

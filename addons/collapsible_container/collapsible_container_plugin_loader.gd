@@ -2,7 +2,7 @@
 extends EditorPlugin
 
 ## Loads and removes the CollapsibleContainer inspector plugin.
-## 
+##
 ## Assigns CollapsibleContainer's member variable _editor_plugin to self.
 
 var collapsible_container_inspector_plugin = preload("collapsible_container_inspector_plugin.gd")
@@ -20,5 +20,5 @@ func _exit_tree():
 func _handles(object: Object) -> bool:
 	if object is CollapsibleContainer:
 		object._editor_plugin = self
-	
+
 	return false

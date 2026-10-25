@@ -28,7 +28,7 @@ enum-name: ([A-Z][a-z0-9]*)+
 excluded_directories: !!set
   .git: null
   .godot: null
-  collapsible_container: null
+  examples (OPTIONAL): null
   gdUnit4: null
   godot-git-plugin: null
   tooltips_pro: null
