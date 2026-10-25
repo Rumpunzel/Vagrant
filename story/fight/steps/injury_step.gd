@@ -1,5 +1,5 @@
 class_name InjuryStep
-extends ExchangeStep
+extends ResolutionStep
 
 func applies(fight: Fight) -> bool: return get_side(fight).injury_taken > 0
 

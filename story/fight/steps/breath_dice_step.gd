@@ -1,5 +1,5 @@
 class_name BreathDiceStep
-extends ExchangeStep
+extends ResolutionStep
 
 func applies(fight: Fight) -> bool: return not get_side(fight).lost_breath_dice.is_empty()
 

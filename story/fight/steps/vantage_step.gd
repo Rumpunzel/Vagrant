@@ -1,5 +1,5 @@
 class_name VantageStep
-extends ExchangeStep
+extends ResolutionStep
 
 ## What this side's stance did to the damage with its vantage; Nerves tells its part in [UnnervingStep]
 func enter(fight: Fight) -> String:

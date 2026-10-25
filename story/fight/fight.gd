@@ -12,7 +12,7 @@ enum Outcome {
 	FLED,
 }
 
-## The steps every exchange goes through, in order
+## The steps every exchange goes through, phase by phase
 var exchange_steps: ExchangeSteps = load("uid://yydyqypkbn0y")  # exchange_steps.tres
 var decision: AdventureFightDecision
 ## [member FightExchange.first]'s actor
@@ -32,6 +32,7 @@ var armor_picks: Dictionary[Die, ArmorPick] = {}
 ## The player wants to pick the weapon die even when none needs forcing (several weapon dice)
 var always_choose_weapon_die: bool = false
 
+var _steps: Array[ExchangeStep] = exchange_steps.get_steps()
 var _step_index: int = -1
 var _paragraphs: Array[String] = []
 
@@ -87,7 +88,7 @@ func is_exchange_pending() -> bool: return _step_index >= 0
 ## The step [method advance] enters next
 func get_current_step() -> ExchangeStep:
 	assert(is_exchange_pending())
-	return exchange_steps.steps[_step_index]
+	return _steps[_step_index]
 
 ## Enters the next step of the started exchange and returns what it told (also added to the summary)
 func advance() -> String:
@@ -101,9 +102,9 @@ func advance() -> String:
 ## Only for parts not applied yet: it keeps the dice rolled and what was told.
 func resolve_player_choice(change: Callable) -> void:
 	var exchange: FightExchange = get_last_exchange()
-	var player: FightSide = exchange.first.copy_inputs()
-	change.call(player)
-	exchanges[-1] = FightExchange.new(player, exchange.second.copy_inputs())
+	var player_side: FightSide = exchange.first.copy_inputs()
+	change.call(player_side)
+	exchanges[-1] = FightExchange.new(player_side, exchange.second.copy_inputs())
 
 ## Adds [param paragraph] to the exchange summary
 func tell(paragraph: String) -> void:
@@ -113,8 +114,8 @@ func get_paragraph_count() -> int: return _paragraphs.size()
 
 ## The first step from [param from_index] on that applies; -1 when none is left
 func _find_step(from_index: int) -> void:
-	for index: int in range(from_index, exchange_steps.steps.size()):
-		if exchange_steps.steps[index].applies(self):
+	for index: int in range(from_index, _steps.size()):
+		if _steps[index].applies(self):
 			_step_index = index
 			return
 	_step_index = -1
@@ -205,7 +206,7 @@ func get_exchange_summary(from: int = 0) -> String:
 	return summary
 
 ## "you" for [param player], else "the Lurker", "Dorian"
-static func describe_actor(actor: Actor, player: Actor) -> String: return "you" if actor == player else actor.get_reference()
+static func describe_actor(actor: Actor, player_actor: Actor) -> String: return "you" if actor == player_actor else actor.get_reference()
 
 ## Upper-cases only the first letter (unlike [method String.capitalize])
 static func capitalize_first(text: String) -> String: return text.left(1).to_upper() + text.substr(1)

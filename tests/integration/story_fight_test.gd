@@ -189,8 +189,8 @@ func test_the_player_picks_which_armour_takes_a_blow() -> void:
 	player.armor_blocks = [5, 10] as Array[int]
 	result.exchange = FightExchange.new(player, FightSide.new(Rules.STRENGTH, FightTestDice.dice([Rules.d8], [3]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d8, 5)))
 	fight.start_exchange_from(result)
-	while not fight.get_current_step() is ArmorChoiceStep: fight.advance()
-	_story._ask_for_armor(fight, fight.get_current_step() as ArmorChoiceStep, result, choice)
+	while not (fight.get_current_step() is ArmorStep and fight.get_current_step().is_player(fight)): fight.advance()
+	_story._ask_for_armor(fight, fight.get_current_step() as ArmorStep, result, choice)
 	var page: StoryPage = _story._current_story_page
 	assert_array(page.choices.map(func(option: StoryChoice) -> String: return option.get_description())).is_equal(["Let your Helmet take it: the 5 gets marked.", "Let your Coif take it: the 5 gets marked."])
 	await _pick(page.choices[1])

@@ -2,7 +2,7 @@
 class_name ExchangeStep
 extends Resource
 
-## One step of an exchange, for one side; the order is authored in [ExchangeSteps].
+## One step of an exchange, for one side. [ExchangeSteps] puts them in order: the resolution steps as authored, the others as the rules fix them.
 ## Steps are shared resources: everything they work on comes from the [Fight] passed in.
 
 enum ExchangeSide {

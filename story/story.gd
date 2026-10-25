@@ -242,8 +242,8 @@ func _play_fight_step(fight: Fight, fight_result: FightResult, story_choice: Sto
 	if step is CommitStep:
 		_ask_to_commit(fight, step as CommitStep, fight_result, story_choice)
 		return
-	if step is ArmorChoiceStep:
-		_ask_for_armor(fight, step as ArmorChoiceStep, fight_result, story_choice)
+	if step is ArmorStep and (step as ArmorStep).get_undecided_die(fight):
+		_ask_for_armor(fight, step as ArmorStep, fight_result, story_choice)
 		return
 	if step is IncapacitationStep and step.is_player(fight):
 		_ask_for_incapacitation_save(fight, step as IncapacitationStep, fight_result, story_choice)
@@ -300,18 +300,17 @@ func _ask_to_commit(fight: Fight, step: CommitStep, fight_result: FightResult, s
 	)
 	_story_book.show_panel(panel)
 
-## Asks, one page per blocked blow, which piece of armour takes it; the exchange goes on below the last one
-func _ask_for_armor(fight: Fight, step: ArmorChoiceStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
+## Asks, one page per blocked blow, which piece of armour takes it; the armour step and the rest of the exchange go on below the last one
+func _ask_for_armor(fight: Fight, step: ArmorStep, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
 	var blocked_die: Die = step.get_undecided_die(fight)
-	if not blocked_die:
-		fight.advance()
-		# The rest of the exchange is told on the decision's page
-		_summary_start = fight.get_paragraph_count()
-		_play_fight_step(fight, fight_result, story_choice)
-		return
 	var resume: Callable = func(armor_pick: ArmorPick) -> void:
 		fight.armor_picks[blocked_die] = armor_pick
-		_event_queue.queue_callable(func() -> void: _ask_for_armor(fight, step, fight_result, story_choice))
+		if step.get_undecided_die(fight):
+			_event_queue.queue_callable(func() -> void: _ask_for_armor(fight, step, fight_result, story_choice))
+			return
+		# The rest of the exchange is told on the decision's page
+		_summary_start = fight.get_paragraph_count()
+		_event_queue.queue_callable(func() -> void: _play_fight_step(fight, fight_result, story_choice))
 	var choices: Array[StoryChoice] = []
 	for option: ArmorPick in ArmorPick.get_options(_protagonist.armor, blocked_die.result):
 		choices.append(_create_pending_choice(_describe_armor_pick(option, blocked_die.result), resume.bind(option)))

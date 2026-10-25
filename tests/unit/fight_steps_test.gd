@@ -1,6 +1,7 @@
 extends GdUnitTestSuite
 
-## Exchange steps: each applies its part when entered, whatever order exchange_steps.tres puts them in.
+## Exchange steps: each applies its part when entered, whatever order exchange_steps.tres gives them within their phase
+## (only the resolution is authored; the other phases are fixed in code).
 
 const GUTS: CharacterAttribute = Rules.STRENGTH
 var _side_steps: Array[Script] = [DiceStep, UnnervingStep, WeaponCheckStep, BreathDiceStep, VantageStep, ShieldStep, ArmorStep, InjuryStep, IncapacitationStep]
@@ -19,20 +20,12 @@ func before_test() -> void:
 	_fight = Fight.new(AdventureFightDecision.new(), _character, _monster, _character)
 
 func test_authored_order_has_every_step_once_per_side() -> void:
-	var steps: Array[ExchangeStep] = _fight.exchange_steps.steps
+	var steps: Array[ExchangeStep] = _fight.exchange_steps.get_steps()
 	for step_class: Script in _side_steps:
 		for side: ExchangeStep.ExchangeSide in [ExchangeStep.ExchangeSide.FIRST, ExchangeStep.ExchangeSide.SECOND]:
 			var matching: Array = steps.filter(func(step: ExchangeStep) -> bool: return is_instance_of(step, step_class) and step.side == side)
 			assert_int(matching.size()).override_failure_message("%s for side %d" % [step_class.get_global_name(), side]).is_equal(1)
 	assert_int(steps.filter(func(step: ExchangeStep) -> bool: return step is TieStep).size()).is_equal(1)
-
-func test_breath_dice_are_lost_before_the_incapacitation_save() -> void:
-	# The save rolls the dice a side has left; losing the exchange's dice after it would count them twice
-	var steps: Array[ExchangeStep] = _fight.exchange_steps.steps
-	for side: ExchangeStep.ExchangeSide in [ExchangeStep.ExchangeSide.FIRST, ExchangeStep.ExchangeSide.SECOND]:
-		var breath: int = steps.find_custom(func(step: ExchangeStep) -> bool: return step is BreathDiceStep and step.side == side)
-		var save: int = steps.find_custom(func(step: ExchangeStep) -> bool: return step is IncapacitationStep and step.side == side)
-		assert_int(breath).override_failure_message("breath dice step for side %d comes after its incapacitation step" % side).is_less(save)
 
 func test_steps_apply_their_part_only_when_entered() -> void:
 	# 9 vs 8: the player's 9 is lost (Guts 7), the monster's 8 and 7 too (Guts 5); unarmed, only the winner's vantage of 1 hurts

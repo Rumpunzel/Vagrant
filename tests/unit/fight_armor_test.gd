@@ -51,7 +51,7 @@ func test_the_players_pick_takes_the_blow() -> void:
 	_character.armor = [helmet, coif] as Array[Armor]
 	_start_exchange_with_the_monster_hitting(10)
 	_advance_to_armor_choice()
-	var step: ArmorChoiceStep = _fight.get_current_step()
+	var step: ArmorStep = _fight.get_current_step()
 	var blocked_die: Die = step.get_undecided_die(_fight)
 	_fight.armor_picks[blocked_die] = ArmorPick.new(coif)
 	_finish_exchange()
@@ -70,11 +70,10 @@ func test_ruining_a_piece_still_blocks() -> void:
 func test_no_decision_with_a_single_option() -> void:
 	_character.armor = [_piece("Helmet", [5, 10])] as Array[Armor]
 	_start_exchange_with_the_monster_hitting(10)
-	var steps: Array[Script] = []
 	while _fight.is_exchange_pending():
-		steps.append(_fight.get_current_step().get_script())
+		var step: ExchangeStep = _fight.get_current_step()
+		if step is ArmorStep: assert_object((step as ArmorStep).get_undecided_die(_fight)).is_null()
 		_fight.advance()
-	assert_array(steps).not_contains([ArmorChoiceStep])
 
 func _piece(piece_name: String, blocked_results: Array[int], marked_results: Array[int] = []) -> Armor:
 	return Armor.create(ArmorProfile.create(piece_name, blocked_results), marked_results)
@@ -88,7 +87,7 @@ func _start_exchange_with_the_monster_hitting(result: int) -> void:
 	_fight.start_exchange(FightExchange.new(player, monster))
 
 func _advance_to_armor_choice() -> void:
-	while not _fight.get_current_step() is ArmorChoiceStep: _fight.advance()
+	while not (_fight.get_current_step() is ArmorStep and _fight.get_current_step().is_player(_fight)): _fight.advance()
 
 func _finish_exchange() -> void:
 	while _fight.is_exchange_pending(): _fight.advance()

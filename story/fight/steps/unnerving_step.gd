@@ -1,5 +1,5 @@
 class_name UnnervingStep
-extends ExchangeStep
+extends ResolutionStep
 
 ## Tells how the foe's Nerves impaired this side, and drops the gear it made this side lose for the rest of the fight
 func enter(fight: Fight) -> String:

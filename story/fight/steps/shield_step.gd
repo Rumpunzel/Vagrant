@@ -1,5 +1,5 @@
 class_name ShieldStep
-extends ExchangeStep
+extends ResolutionStep
 
 ## This side's raised shield: tells what it took off the blow and marks it for blocking
 

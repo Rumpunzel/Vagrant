@@ -1,5 +1,5 @@
 class_name WeaponCheckStep
-extends ExchangeStep
+extends ResolutionStep
 
 ## Marks what forcing the weapon cost, and tells when this side held back
 func enter(fight: Fight) -> String:
