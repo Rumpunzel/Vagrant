@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="AdventureLayout" format=3 uid="uid://87y0lob6kdqk"]
+
+[ext_resource type="Script" uid="uid://bhjwca0d4ytsu" path="res://addons/adventure_editor/adventure_layout.gd" id="1_b0ump"]
+
+[resource]
+script = ExtResource("1_b0ump")
+positions = Dictionary[String, Vector2]({
+"uid://cs40ge42lw0ry": Vector2(20, 300),
+"uid://dk3q4ia5u7q6m": Vector2(280, 0),
+"uid://ycd6xhx346l6": Vector2(0, 0)
+})

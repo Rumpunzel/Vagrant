@@ -125,10 +125,10 @@ func test_background_and_ambience_fallbacks() -> void:
 	assert_object(page.get_area_background()).is_same(area.background)
 	assert_object(page.get_ambience(_story)).is_same(area.ambience)
 	var event: AdventurePage = _page("", "")
-	event._background = PlaceholderTexture2D.new()
+	event.background = PlaceholderTexture2D.new()
 	event._ambience = AudioStreamGenerator.new()
 	page._events = [event] as Array[AdventurePage]
-	assert_object(page.get_background(_story)).is_same(event._background)
+	assert_object(page.get_background(_story)).is_same(event.background)
 	assert_object(page.get_ambience(_story)).is_same(event._ambience)
 
 func test_transition_loads_its_page() -> void:

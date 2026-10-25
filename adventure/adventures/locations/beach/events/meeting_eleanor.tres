@@ -11,7 +11,7 @@
 [sub_resource type="Resource" id="Resource_j24m5"]
 script = ExtResource("3_t43k6")
 _description = "She throws a strange artifact at your head, then dabs on the haters."
-_background = ExtResource("3_k8kem")
+background = ExtResource("3_k8kem")
 
 [sub_resource type="Resource" id="Resource_fqbk4"]
 script = ExtResource("1_npy2t")

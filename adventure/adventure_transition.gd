@@ -8,5 +8,6 @@ func prepare() -> void:
 	ResourceLoader.load_threaded_request(_leads_to)
 
 func get_adventure_page() -> AdventurePage:
-	var adventure_page: AdventurePage = Files.load_async(_leads_to)
+	# The adventure editor reads links too; Files isn't @tool
+	var adventure_page: AdventurePage = load(_leads_to) if Engine.is_editor_hint() else Files.load_async(_leads_to)
 	return adventure_page

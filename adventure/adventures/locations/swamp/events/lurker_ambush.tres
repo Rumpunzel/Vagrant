@@ -9,9 +9,9 @@
 [ext_resource type="Script" uid="uid://1342yb3eb2bh" path="res://characters/monsters/monster_profile.gd" id="5_rh2nm"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="7_3hvfw"]
 [ext_resource type="Resource" uid="uid://d3ytncs0be7oo" path="res://characters/monsters/lurker.tres" id="7_b2xt8"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="8_2rcic"]
 [ext_resource type="Script" uid="uid://do321suuawcvd" path="res://adventure/conditions/adventure_monster_condition.gd" id="9_can_fight"]
 [ext_resource type="Script" uid="uid://bs2whs2eq4xbj" path="res://adventure/adventure_monster_reference.gd" id="10_reference"]
-[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="8_2rcic"]
 
 [sub_resource type="Resource" id="Resource_its_lurker"]
 script = ExtResource("10_reference")
@@ -58,7 +58,7 @@ metadata/_custom_type_script = "uid://b8exmtc8feoad"
 script = ExtResource("3_1x56p")
 _title = "Lurker Ambush"
 _description = "Something foul and wicked your way comes!"
-_background = ExtResource("1_74683")
+background = ExtResource("1_74683")
 _conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurker_can_fight")])
 _decisions = Array[ExtResource("2_74683")]([SubResource("Resource_2rcic")])
 _exclusivity = 7

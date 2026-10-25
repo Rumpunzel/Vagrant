@@ -12,7 +12,7 @@ enum Exclusivity {
 @export_placeholder("Title") var _title: String
 @export_multiline var _description: String
 @export var _area: AdventureArea
-@export var _background: Texture2D
+@export var background: Texture2D
 @export var _ambience: AudioStream
 @export var _conditions: Array[AdventureCondition]
 @export var _decisions: Array[AdventureDecision]
@@ -46,7 +46,7 @@ func get_background(story: Story) -> Texture2D:
 		if event.are_all_prerequisites_fullfilled(story):
 			var event_background: Texture2D = event.get_background(story)
 			if event_background: return event_background
-	return _background
+	return background
 
 func get_area_background() -> Texture2D:
 	return _area.background if _area else null

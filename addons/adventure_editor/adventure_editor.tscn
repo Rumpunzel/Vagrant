@@ -1,27 +1,12 @@
 [gd_scene format=3 uid="uid://btrr51xe6kwox"]
 
-[node name="AdventureEditor" type="GraphEdit" unique_id=836409515]
+[ext_resource type="Script" uid="uid://mev68l26dpuw" path="res://addons/adventure_editor/adventure_editor.gd" id="1_editor"]
+
+[node name="AdventureEditor" type="GraphEdit" unique_id=220152484]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="GraphFrame" type="GraphFrame" parent="." unique_id=2074450009]
-layout_mode = 0
-offset_left = 357.0
-offset_top = 118.0
-offset_right = 831.0
-offset_bottom = 362.0
-mouse_filter = 1
-position_offset = Vector2(357, 118)
-title = "Beach"
-
-[node name="GraphNode" type="GraphNode" parent="." unique_id=1938318692]
-layout_mode = 0
-offset_left = 1093.0
-offset_top = 234.0
-offset_right = 1311.0
-offset_bottom = 386.0
-mouse_filter = 1
-position_offset = Vector2(1093, 234)
+size_flags_vertical = 3
+script = ExtResource("1_editor")
