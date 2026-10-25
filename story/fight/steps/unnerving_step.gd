@@ -9,6 +9,7 @@ func enter(fight: Fight) -> String:
 	var parts: Array[String] = []
 	for attribute: CharacterAttribute in impairments: parts.append("−%d %s" % [impairments[attribute], Fight.describe_attribute(attribute)])
 	var lines: Array[String] = ["%s %s %s (%s)." % [get_foe_subject(fight), pick_foe(fight, "unnerve", "unnerves"), get_object(fight), ", ".join(parts)]]
+	lines.append(describe_vantage_ability(fight, true))
 	if unnerved_side.weapon_dropped: lines.append(_drop(get_weapon(fight), fight))
 	if unnerved_side.shield_dropped: lines.append(_drop(get_shield(fight), fight))
 	return _join(lines)

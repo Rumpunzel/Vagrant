@@ -81,6 +81,12 @@ func set_profile(profile: ActorProfile) -> void: character_profile = profile as 
 func get_actor_name() -> String: return character_profile.name
 func get_abilities() -> Array[Ability]: return character_profile.get_abilities()
 
+func get_origin_names(applies: Callable) -> Array[String]:
+	var names: Array[String] = []
+	for origin: Origin in character_profile.origins:
+		if origin and origin.abilities.any(applies): names.append(origin.name)
+	return names
+
 ## Origins may spare some of the breath dice an exchange cost
 func get_lost_breath_dice(lost_breath_dice: Array[Die]) -> Array[Die]:
 	var lost: Array[Die] = lost_breath_dice.duplicate()

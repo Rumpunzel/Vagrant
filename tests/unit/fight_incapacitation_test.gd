@@ -62,7 +62,7 @@ func test_failed_save_loses_the_fight() -> void:
 	_finish_exchange()
 	assert_int(_fight.outcome).is_equal(Fight.Outcome.LOST)
 	assert_str(_fight.get_exchange_summary()).contains("Everything goes dark.")
-	assert_str(_fight.get_exchange_summary()).contains("You sink to the ground")
+	assert_str(_fight.get_exchange_summary()).not_contains("can no longer resist")
 
 func test_passed_save_fights_on() -> void:
 	_character.suffer_injury(Injury.new(5))
@@ -81,6 +81,8 @@ func test_monster_collapses_when_its_save_fails() -> void:
 	assert_bool(_monster.incapacitated).is_true()
 	assert_int(_fight.outcome).is_equal(Fight.Outcome.WON)
 	assert_str(_fight.get_exchange_summary()).contains("save against 6 — 4. It collapses.")
+	# Its collapse is the end of it: no extra line that it can no longer resist
+	assert_str(_fight.get_exchange_summary()).not_contains("can no longer resist")
 
 func test_monster_keeps_its_feet_when_its_save_passes() -> void:
 	_fight.roll_dice = func(_pool: Array[Die]) -> Array[Die]: return FightTestDice.dice([Rules.d8], [6])

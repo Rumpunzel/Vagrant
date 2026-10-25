@@ -38,9 +38,20 @@ func describe_roll(fight: Fight) -> String:
 
 static func describe_weapon_die(weapon_side: FightSide, die: Die) -> String:
 	var overshoot: int = weapon_side.get_weapon_overshoot(die)
-	if overshoot > 0: return "Force the %d: −%d threat, %s marked." % [die.result, overshoot, "a face gets" if overshoot == 1 else "%d faces get" % overshoot]
-	if weapon_side.marked_faces.has(die.result): return "Force the marked %d: the next higher face gets marked." % die.result
+	if overshoot > 0: return "Force the %d: −%d threat, %s." % [die.result, overshoot, _describe_wear(weapon_side.weapon, die.result, overshoot)]
+	if weapon_side.marked_faces.has(die.result): return "Force the marked %d: %s." % [die.result, _describe_wear(weapon_side.weapon, die.result, 1)]
 	return "Strike with the %d." % die.result
+
+## What forcing does to [param weapon]: "marks the 9 and 10 (6 of 8 faces left)", "marks the 8, then it is ruined"
+static func _describe_wear(weapon: Weapon, face: int, times: int) -> String:
+	var faces: Array[int] = weapon.preview_marks(face, times)
+	var ruined: bool = faces.has(0)
+	faces.erase(0)
+	var marked: Array[String] = []
+	for marked_face: int in faces: marked.append(str(marked_face))
+	var text: String = "marks the %s" % " and ".join(marked) if not marked.is_empty() else ""
+	if ruined: return "%s, then it is ruined" % text if not text.is_empty() else "it is ruined"
+	return "%s (%d of %d faces left)" % [text, weapon.get_unmarked_count() - faces.size(), weapon.get_markable_faces().size()]
 
 func describe_shield(fight: Fight) -> String:
 	var shield_side: FightSide = get_side(fight)

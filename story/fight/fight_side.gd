@@ -60,6 +60,9 @@ var armor_tactic: ArmorTactic
 
 # Result
 var threat: int = 0
+## How much this side won the threat by, before and after its abilities changed it (0 on a tie or when it lost)
+var base_vantage: int = 0
+var vantage: int = 0
 ## Attribute -> reduction inflicted by the foe's Nerves for this exchange
 var impairments: Dictionary[CharacterAttribute, int] = {}
 var lost_breath_dice: Array[Die] = []

@@ -44,6 +44,16 @@ func pick(fight: Fight, player_text: String, other_text: String) -> String: retu
 ## The same for the foe's verbs
 func pick_foe(fight: Fight, player_text: String, other_text: String) -> String: return player_text if get_foe(fight) == fight.player else other_text
 
+## "Veteran turns your vantage of 3 into 6." when an origin's ability changed this side's vantage (the foe's with [param of_foe]), else ""
+func describe_vantage_ability(fight: Fight, of_foe: bool = false) -> String:
+	var vantage_side: FightSide = get_foe_side(fight) if of_foe else get_side(fight)
+	if vantage_side.vantage == vantage_side.base_vantage: return ""
+	var actor: Actor = get_foe(fight) if of_foe else get_actor(fight)
+	var pronoun: String = "your" if actor == fight.player else actor.get_possessive_pronoun()
+	var base: int = vantage_side.base_vantage
+	var origins: Array[String] = actor.get_origin_names(func(ability: Ability) -> bool: return ability.modify_vantage(base) != base)
+	return "%s %s %s vantage of %d into %d." % [" and ".join(origins), "turn" if origins.size() > 1 else "turns", pronoun, base, vantage_side.vantage]
+
 ## Marks [param face] on [param equipment] and returns the line telling it, "" if nothing was marked
 static func _mark(equipment: Equipment, face: int, owner: String) -> String:
 	if not equipment or not equipment.is_usable(): return ""

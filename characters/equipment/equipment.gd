@@ -17,11 +17,7 @@ var dropped: bool = false
 func mark(face: int) -> int:
 	assert(not ruined)
 	assert(get_markable_faces().has(face))
-	var target: int = face
-	if marked_faces.has(face):
-		target = 0
-		for markable_face: int in get_markable_faces():
-			if markable_face > face and not marked_faces.has(markable_face) and (target == 0 or markable_face < target): target = markable_face
+	var target: int = _get_mark_target(face, marked_faces)
 	if target == 0: ruined = true
 	else:
 		marked_faces.append(target)
@@ -39,8 +35,29 @@ func mark_all() -> void:
 	marked_faces.sort()
 	emit_changed()
 
+## The faces [param times] calls of [method mark] on [param face] would mark, without marking them; ends with 0 if that ruins the item
+func preview_marks(face: int, times: int) -> Array[int]:
+	var marked: Array[int] = marked_faces.duplicate()
+	var faces: Array[int] = []
+	for _index: int in times:
+		var target: int = _get_mark_target(face, marked)
+		faces.append(target)
+		if target == 0: break
+		marked.append(target)
+	return faces
+
+func get_unmarked_count() -> int: return get_markable_faces().size() - marked_faces.size()
+
 func is_usable() -> bool: return not ruined and not dropped
 func is_marked(face: int) -> bool: return marked_faces.has(face)
+
+## [param face], or the next higher face not in [param marked]; 0 when none is left
+func _get_mark_target(face: int, marked: Array[int]) -> int:
+	if not marked.has(face): return face
+	var target: int = 0
+	for markable_face: int in get_markable_faces():
+		if markable_face > face and not marked.has(markable_face) and (target == 0 or markable_face < target): target = markable_face
+	return target
 
 func _set_state(new_marked_faces: Array[int], new_ruined: bool) -> void:
 	marked_faces = new_marked_faces.duplicate()

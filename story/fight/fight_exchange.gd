@@ -77,8 +77,10 @@ func _get_stance_value(side: FightSide) -> int:
 ## How much [param side] won the threat by, as its abilities count it; 0 on a tie or when it lost
 func _get_vantage(side: FightSide) -> int:
 	var vantage: int = maxi(side.threat - get_foe(side).threat, 0)
-	if vantage == 0: return 0
-	for ability: Ability in side.abilities: vantage = ability.modify_vantage(vantage)
+	side.base_vantage = vantage
+	if vantage > 0:
+		for ability: Ability in side.abilities: vantage = ability.modify_vantage(vantage)
+	side.vantage = vantage
 	return vantage
 
 func _check_dice(side: FightSide, foe: FightSide) -> void:

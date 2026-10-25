@@ -133,14 +133,12 @@ func end_exchange() -> String:
 	if not is_ongoing():
 		for actor: Actor in [first, second]: actor.pick_up_dropped_gear()
 	var line: String = ""
+	# A loser who collapsed on the save was told so already
 	match outcome:
-		Outcome.WON: line = "%s can no longer resist." % capitalize_first(Fight.describe_actor(second, player))
+		Outcome.WON:
+			if not incapacitated.get(second, false): line = "%s can no longer resist." % capitalize_first(Fight.describe_actor(second, player))
 		Outcome.LOST:
-			var loser: String = capitalize_first(Fight.describe_actor(first, player))
-			var verb: String = "sink" if first == player else "sinks"
-			if not incapacitated.get(first, false): verb = "are out of breath" if first == player else "is out of breath"
-			else: verb += " to the ground"
-			line = "%s %s and can no longer resist." % [loser, verb]
+			if not incapacitated.get(first, false): line = "%s %s out of breath and can no longer resist." % [capitalize_first(Fight.describe_actor(first, player)), "are" if first == player else "is"]
 		Outcome.DRAW: line = "Neither of you can go on." if player else "Neither of them can go on."
 		Outcome.FLED: line = "%s %s away from %s." % [capitalize_first(Fight.describe_actor(first, player)), "get" if first == player else "gets", Fight.describe_actor(second, player)]
 	tell(line)

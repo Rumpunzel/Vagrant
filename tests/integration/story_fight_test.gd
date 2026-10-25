@@ -148,7 +148,7 @@ func test_a_weapon_die_beyond_guts_can_be_forced() -> void:
 	_story._play_fight_step(fight, result, choice)
 	var panel: FightCommitPanel = _get_commit_panel()
 	var options: Array[Node] = panel.find_children("*", "CheckBox", true, false)
-	assert_array(options.map(func(option: CheckBox) -> String: return option.text)).is_equal(["Force the 9: −2 threat, 2 faces get marked.", "Hold back."])
+	assert_array(options.map(func(option: CheckBox) -> String: return option.text)).is_equal(["Force the 9: −2 threat, marks the 9 and 10 (8 of 10 faces left).", "Hold back."])
 	# Nothing is free, so holding back is what the panel starts on
 	assert_bool((options[1] as CheckBox).button_pressed).is_true()
 	(options[0] as CheckBox).button_pressed = true

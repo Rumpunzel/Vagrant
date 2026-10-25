@@ -114,3 +114,10 @@ func test_weapon_profiles_stay_untouched() -> void:
 	club.mark_all()
 	assert_int(club.marked_faces.size()).is_equal(6)
 	assert_array(Weapon.carry([load(CLUB)] as Array[WeaponProfile])[0].marked_faces).is_empty()
+
+func test_preview_marks_cascades_without_marking() -> void:
+	var knife: Weapon = Weapon.create(WeaponProfile.create("Knife", Rules.d4), [3] as Array[int])
+	assert_array(knife.preview_marks(2, 2)).is_equal([2, 4])
+	assert_array(knife.preview_marks(3, 3)).is_equal([4, 0])
+	assert_array(knife.marked_faces).is_equal([3])
+	assert_bool(knife.ruined).is_false()

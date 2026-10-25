@@ -74,3 +74,41 @@ func test_guts_and_blood_vantage_are_told() -> void:
 	var armed: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [2]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d8, 5))
 	_fight.apply_exchange(FightExchange.new(blood, armed))
 	assert_str(_fight.get_exchange_summary()).contains("You dodge 3 of the Cutthroat's blow.")
+
+func test_peasant_tells_the_breath_dice_it_spared() -> void:
+	_grant("Peasant", HighestBreathDieLossAbility.new())
+	# All three of the player's dice are above Guts 1, the Peasant only loses the highest
+	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4, Rules.d6, Rules.d8], [2, 3, 4]), FightTestDice.scores(1))
+	_fight.apply_exchange(FightExchange.new(player, FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [1]), FightTestDice.scores(7))))
+	assert_str(_fight.get_exchange_summary()).contains("You lose 1 breath die. Peasant spares you 2 of 3 breath dice.")
+
+func test_no_peasant_note_when_nothing_was_spared() -> void:
+	_grant("Peasant", HighestBreathDieLossAbility.new())
+	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [4]), FightTestDice.scores(1))
+	_fight.apply_exchange(FightExchange.new(player, FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [1]), FightTestDice.scores(7))))
+	assert_str(_fight.get_exchange_summary()).contains("You lose 1 breath die.")
+	assert_str(_fight.get_exchange_summary()).not_contains("spares")
+
+func test_veteran_tells_the_vantage_it_doubled() -> void:
+	var veteran: VantageMultiplierAbility = VantageMultiplierAbility.new()
+	_grant("Veteran", veteran)
+	# 4 vs 2 with Guts: a vantage of 2, doubled
+	var player: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d6], [4]), FightTestDice.scores(7), FightTestDice.weapon(Rules.d10, 1))
+	player.abilities = [veteran] as Array[Ability]
+	_fight.apply_exchange(FightExchange.new(player, FightSide.new(GUTS, FightTestDice.dice([Rules.d8], [2]), FightTestDice.scores(7))))
+	assert_str(_fight.get_exchange_summary()).contains("You press your advantage: +4 to your blow. Veteran turns your vantage of 2 into 4.")
+
+func test_forcing_tells_what_it_does_to_the_weapon() -> void:
+	var sword: Weapon = Weapon.create(WeaponProfile.create("Sword", Rules.d10), [10] as Array[int])
+	var side: FightSide = FightSide.new(GUTS, FightTestDice.dice([Rules.d4], [1]), FightTestDice.scores(7), FightTestDice.dice([Rules.d10, Rules.d10], [8, 9]))
+	side.weapon = sword
+	side.marked_faces = sword.marked_faces.duplicate()
+	assert_str(CommitStep.describe_weapon_die(side, side.weapon_dice[0])).is_equal("Force the 8: −1 threat, marks the 8 (8 of 10 faces left).")
+	assert_str(CommitStep.describe_weapon_die(side, side.weapon_dice[1])).is_equal("Force the 9: −2 threat, marks the 9, then it is ruined.")
+	assert_array(sword.marked_faces).is_equal([10])
+
+## The player's first origin gets [param ability] and is called [param origin_name]
+func _grant(origin_name: String, ability: Ability) -> void:
+	var origin: Origin = _character.character_profile.origins[0]
+	origin.name = origin_name
+	origin.abilities = [ability] as Array[Ability]

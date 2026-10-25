@@ -42,6 +42,8 @@ func get_abilities() -> Array[Ability]: return []
 func has_natural_weapons() -> bool: return false
 ## What of [param lost_breath_dice] it actually loses (origins may spare some)
 func get_lost_breath_dice(lost_breath_dice: Array[Die]) -> Array[Die]: return lost_breath_dice
+## Names of the origins with an ability for which [param applies] (taking the [Ability]) holds, to tell what an ability did
+func get_origin_names(_applies: Callable) -> Array[String]: return []
 ## Called as a fight against it starts
 func prepare_for_fight() -> void: pass
 
