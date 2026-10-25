@@ -1,0 +1,75 @@
+name: Unit tests
+
+# Lint + unit tests on every push. Waiting / UI tests live in integration_tests.yml
+
+# Pushes cover the commits of pull requests too, so there is no separate pull_request trigger
+on:
+  push:
+  workflow_dispatch:
+
+# A newer push to the same branch cancels the run still in progress
+concurrency:
+  group: unit-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  # The test report is published as a check run
+  checks: write
+
+jobs:
+  lint:
+    name: gdlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      # Pinned so new lint rules don't break the build unannounced; config in gdlintrc
+      - run: pip install gdtoolkit==4.5.0
+      - run: gdlint .
+
+  # gdUnit can report green while project scripts fail to compile, so check them on their own
+  scripts:
+    name: Script check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Keep in sync with config/features in project.godot
+      GODOT_VERSION: '4.6'
+    steps:
+      - uses: actions/checkout@v5
+      - name: Download Godot
+        run: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
+      # The first editor run imports the assets; its errors are the not yet imported files, so they are not checked
+      - name: Import
+        run: ./godot --headless --path . --editor --quit > /dev/null 2>&1 || true
+      # tests/script_check.tscn compiles every script of ours; the smoke run loads the autoloads and the main scene
+      - name: Script and smoke check
+        run: |
+          ./godot --headless --path . res://tests/script_check.tscn 2>&1 | tee check.log
+          ./godot --headless --path . --quit-after 300 2>&1 | tee smoke.log
+          if grep -E "SCRIPT ERROR|Parse Error|Compile Error" check.log smoke.log; then exit 1; fi
+
+  gdunit:
+    name: gdUnit4 (unit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: godot-gdunit-labs/gdUnit4-action@v1
+        with:
+          # Keep in sync with config/features in project.godot
+          godot-version: '4.6'
+          paths: 'res://tests/unit'
+          # Use the gdUnit4 copy in addons/ instead of downloading another version
+          version: 'installed'
+          timeout: 10
+          # Unique per workflow, or the reports overwrite each other's check run
+          report-name: 'unit-tests.xml'

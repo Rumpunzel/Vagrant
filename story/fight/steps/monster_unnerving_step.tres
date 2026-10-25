@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="UnnervingStep" format=3 uid="uid://bggdqu108t0qf"]
+
+[ext_resource type="Script" uid="uid://d1pna2bw4jc08" path="res://story/fight/steps/unnerving_step.gd" id="1_apalx"]
+
+[resource]
+script = ExtResource("1_apalx")
+side = 1

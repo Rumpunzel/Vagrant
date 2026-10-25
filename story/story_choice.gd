@@ -23,7 +23,7 @@ func _init(adventure_decision: AdventureDecision, protagonist: Character) -> voi
 
 static func from_adventure_decision(adventure_decision: AdventureDecision, protagonist: Character) -> StoryChoice:
 	if adventure_decision is AdventureSaveDecision: return StorySaveDecision.new(adventure_decision, protagonist)
-	elif adventure_decision is AdventureFightDecision: return StoryFightDecision.new(adventure_decision, protagonist)
+	assert(not adventure_decision is AdventureFightDecision, "Fight decisions are created by Story, see StoryFightDecision")
 	return StoryDecision.new(adventure_decision, protagonist)
 
 @abstract func chose() -> void

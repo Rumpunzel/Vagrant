@@ -1,17 +1,12 @@
 @tool
 class_name CharacterProfile
-extends Resource
+extends ActorProfile
 
-signal name_changed(name: String)
 signal title_changed(title: String)
 signal portrait_changed(portrait: Texture2D)
 signal attribute_scores_changed(attribute_scores: Dictionary[CharacterAttribute, RolledAttributeScore])
 signal origins_changed(origins: Array[Origin])
 
-@export_placeholder("Name") var name: String:
-	set(new_name):
-		name = new_name
-		name_changed.emit(name)
 @export_placeholder("Title") var title: String:
 	set(new_title):
 		title = new_title
@@ -55,6 +50,15 @@ signal origins_changed(origins: Array[Origin])
 	set(new_origins):
 		origins = new_origins
 		origins_changed.emit(origins)
+
+## Applied to every weapon when it is handed out, e.g. "battered"
+@export var weapon_modifiers: Array[EquipmentModifier] = []
+## Applied to every piece of armour when it is handed out
+@export var armor_modifiers: Array[EquipmentModifier] = []
+## Applied to every shield when it is handed out
+@export var shield_modifiers: Array[EquipmentModifier] = []
+## Item -> how many are carried
+@export var items: Dictionary[ItemProfile, int] = {}
 
 @export_group("Configuration")
 @export var _portrait_file_name: String = "Fulllength.png"
@@ -102,6 +106,33 @@ func get_available_doubles() -> int:
 	for attribute_score: RolledAttributeScore in attribute_scores.values():
 		if attribute_score and attribute_score.get_type() == AttributeScore.Type.DOUBLE: doubles_rolled += 1
 	return doubles_rolled
+
+func get_abilities() -> Array[Ability]:
+	var abilities: Array[Ability] = []
+	for origin: Origin in origins: if origin: abilities.append_array(origin.abilities)
+	return abilities
+
+func get_weapon_modifiers() -> Array[EquipmentModifier]: return weapon_modifiers
+func get_armor_modifiers() -> Array[EquipmentModifier]: return armor_modifiers
+func get_shield_modifiers() -> Array[EquipmentModifier]: return shield_modifiers
+
+func get_attribute_score(attribute: CharacterAttribute) -> int:
+	var rolled: RolledAttributeScore = attribute_scores.get(attribute)
+	return rolled.get_score() if rolled else 0
+
+## Rolled as two d6 adding up to [param score] (clamped to 2–12); origins still add to it
+func with_attribute_score(attribute: CharacterAttribute, score: int) -> ActorProfile:
+	var copy: CharacterProfile = duplicate()
+	copy.attribute_scores = attribute_scores.duplicate()
+	var first: int = clampi(floori(score / 2.0), 1, 6)
+	# Not Rules.d6: Main reaches this script while Rules is still loading its die types
+	var d6: DieType = load("uid://clrjpyohkfypv")  # d6.tres
+	copy.attribute_scores[attribute] = RolledAttributeScore.new([Die.new(d6, first), Die.new(d6, clampi(score - first, 1, 6))] as Array[Die])
+	return copy
+
+func can_fight() -> bool: return has_valid_attributes()
+
+func get_actor_scene() -> PackedScene: return load("uid://bl0pdxri24fnh")  # character.tscn
 
 func get_attribute_modifiers() -> Array[AttributeScore.Modifier]:
 	var modifiers: Array[AttributeScore.Modifier] = []

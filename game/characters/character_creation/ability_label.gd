@@ -12,8 +12,8 @@ extends PanelContainer
 			_icon.texture = null
 			return
 		_name.text = origin.name
-		for ability: String in origin.abilities:
-			_add(ability)
+		for ability: Ability in origin.abilities:
+			_add(ability.description)
 		_icon.texture = origin.icon
 
 @export_group("Configuration")

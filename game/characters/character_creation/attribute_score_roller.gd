@@ -24,7 +24,7 @@ signal attribute_score_rolled(attribute: CharacterAttribute, attribute_score: Ro
 var score: RolledAttributeScore :
 	set(new_score):
 		score = new_score
-		_button.disabled = true  
+		_button.disabled = true
 		update()
 
 var modifiers: Array[AttributeScore.Modifier] = [] :

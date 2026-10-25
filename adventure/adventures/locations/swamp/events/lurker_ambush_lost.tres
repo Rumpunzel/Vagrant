@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://dgfjjbm210jot"]
+
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="1_page"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_decision"]
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_xsxc4"]
+[ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_2nfov"]
+
+[sub_resource type="Resource" id="Resource_continue"]
+script = ExtResource("2_decision")
+description = "Continue."
+metadata/_custom_type_script = "uid://by3e6dkiypd3j"
+
+[resource]
+script = ExtResource("1_page")
+_description = "Your strength gives out and the Lurker's cold knife finds you. The world goes dark.
+You wake much later at the edge of the swamp, bruised, bleeding, and alone."
+_decisions = Array[ExtResource("2_decision")]([SubResource("Resource_continue")])
+metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

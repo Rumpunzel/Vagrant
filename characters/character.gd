@@ -1,19 +1,18 @@
 class_name Character
-extends Node
+extends Actor
 
-signal lost_breath(lost_breath_dice: Array[Die])
 signal caught_breath(recovered_dice: Dictionary[Die, int])
-signal suffered_injury(injury: Injury)
-
 signal character_profile_changed(character_profile: CharacterProfile)
-signal injuries_changed(injuries: Array[Injury])
-signal breath_dice_changed(breath_dice: Dictionary[Die, int])
 signal exhaustion_changed(exhaustion: Array[DieType])
 
 @export var character_profile: CharacterProfile :
 	set(new_character_profile):
 		if new_character_profile == character_profile: return
 		character_profile = new_character_profile
+		weapons = Weapon.carry(character_profile.weapons, character_profile.get_weapon_modifiers())
+		armor = Armor.carry(character_profile.armor, character_profile.get_armor_modifiers())
+		shields = Shield.carry(character_profile.shields, character_profile.get_shield_modifiers())
+		items = character_profile.items.duplicate()
 		_recover_breath_dice()
 		character_profile_changed.emit(character_profile)
 
@@ -24,36 +23,12 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 		exhaustion.sort_custom(DieType.compare_ascending)
 		exhaustion_changed.emit(exhaustion)
 
-var breath_dice: Dictionary[DieType, int] :
-	set(new_breath_dice):
-		if new_breath_dice == breath_dice: return
-		breath_dice = new_breath_dice
-		breath_dice_changed.emit(breath_dice)
-
 var most_recently_chosen_attribute: CharacterAttribute
-
-# TODO: if you roll under an injury, increase magnitude by 1
-var _injuries: Array[Injury] :
-	set(new_injuries):
-		if new_injuries == _injuries: return
-		_injuries = new_injuries
-		injuries_changed.emit(_injuries)
+## Item -> how many are carried
+var items: Dictionary[ItemProfile, int] = {}
 
 func parse_dice_result(dice_result: DiceRequestResult) -> void:
-	var lost_breath_dice: Array[Die] = dice_result.get_lost_breath_dice()
-	if lost_breath_dice.is_empty(): return
-	var new_breath_dice: Dictionary[DieType, int] = breath_dice.duplicate()
-	for breath_die: Die in lost_breath_dice:
-		new_breath_dice[breath_die.die_type] = new_breath_dice[breath_die.die_type] - 1
-		assert(new_breath_dice[breath_die.die_type] >= 0)
-	breath_dice = new_breath_dice
-	lost_breath.emit(lost_breath_dice)
-
-func suffer_injury(injury: Injury) -> void:
-	assert(injury.magnitude > 0)
-	_injuries.append(injury)
-	injuries_changed.emit(_injuries)
-	suffered_injury.emit(injury)
+	lose_breath_dice(dice_result.get_lost_breath_dice())
 
 func catch_breath(die_to_exhaust: DieType) -> void:
 	assert(die_to_exhaust)
@@ -70,9 +45,6 @@ func catch_breath(die_to_exhaust: DieType) -> void:
 func can_catch_breath(die_to_exhaust: DieType) -> bool:
 	return not get_recoverable_breath_dice(die_to_exhaust).is_empty() and get_available_exhaustion().size() > 1
 
-func get_breath_dice_pool() -> Array[Die]:
-	return DiceRoller.generate_dice_pool(breath_dice)
-
 func get_recoverable_breath_dice(die_to_exhaust: DieType) -> Dictionary[DieType, int]:
 	var recoverable_breath_dice: Dictionary[DieType, int] = {}
 	for die_type: DieType in Rules.BREATH_DICE.keys():
@@ -82,7 +54,7 @@ func get_recoverable_breath_dice(die_to_exhaust: DieType) -> Dictionary[DieType,
 		if recoverable > 0: recoverable_breath_dice[die_type] = recoverable
 	return recoverable_breath_dice
 
-func get_breath_dice_count(breath_die_type: DieType) -> int: return breath_dice[breath_die_type]
+func get_breath_dice_count_for(breath_die_type: DieType) -> int: return breath_dice[breath_die_type]
 
 func get_auto_selected_breath_dice(with_attribute: CharacterAttribute) -> Dictionary[DieType, int]:
 	var attribute_score: AttributeScore = get_attribute_score(with_attribute)
@@ -103,6 +75,24 @@ func get_smallest_exhaustion() -> DieType:
 
 func get_portrait() -> Texture2D:
 	return character_profile.portrait
+
+func get_score(attribute: CharacterAttribute) -> int: return get_attribute_score(attribute).get_score()
+func set_profile(profile: ActorProfile) -> void: character_profile = profile as CharacterProfile
+func get_actor_name() -> String: return character_profile.name
+func get_abilities() -> Array[Ability]: return character_profile.get_abilities()
+
+func get_origin_names(applies: Callable) -> Array[String]:
+	var names: Array[String] = []
+	for origin: Origin in character_profile.origins:
+		if origin and origin.abilities.any(applies): names.append(origin.name)
+	return names
+
+## Origins may spare some of the breath dice an exchange cost
+func get_lost_breath_dice(lost_breath_dice: Array[Die]) -> Array[Die]:
+	var lost: Array[Die] = lost_breath_dice.duplicate()
+	for origin: Origin in character_profile.origins:
+		if origin: lost = origin.get_lost_breath_dice(lost)
+	return lost
 
 func get_attribute_score(attribute: CharacterAttribute) -> AttributeScore:
 	return AttributeScore.new(attribute, character_profile.attribute_scores[attribute], get_internal_attribute_modifiers(), get_external_attribute_modifiers())

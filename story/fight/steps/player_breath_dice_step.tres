@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="BreathDiceStep" format=3 uid="uid://cs2hryv3wrqp"]
+
+[ext_resource type="Script" uid="uid://1kon5tlgcqxj" path="res://story/fight/steps/breath_dice_step.gd" id="1_uc3tg"]
+
+[resource]
+script = ExtResource("1_uc3tg")

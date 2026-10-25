@@ -9,19 +9,37 @@
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="7_6xssx"]
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="8_jukr5"]
 [ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="9_ee4h7"]
+[ext_resource type="Script" uid="uid://dvkbim2cycjxo" path="res://dice/die_types/die_type.gd" id="13_35pvw"]
 [ext_resource type="PackedScene" uid="uid://im1nhm5y1kim" path="res://game/characters/inventory/inventory.tscn" id="15_b7plt"]
 [ext_resource type="PackedScene" uid="uid://p4lx6exsethc" path="res://game/characters/character_creation/bio_editor.tscn" id="15_gqnl0"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="16_gqdoy"]
 [ext_resource type="PackedScene" uid="uid://djjmsn1ujgubu" path="res://game/characters/character_creation/character_confirmation.tscn" id="17_fixuy"]
 [ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="19_vjv61"]
+[ext_resource type="Script" uid="uid://ctyfdlvouya4j" path="res://characters/weapons/weapon_profile.gd" id="20_weapon"]
+[ext_resource type="Resource" uid="uid://bect44b53knlo" path="res://characters/weapons/sword.tres" id="21_sword"]
+[ext_resource type="Script" uid="uid://cswsthfyt60l6" path="res://characters/armor/armor_profile.gd" id="22_armor"]
+[ext_resource type="Resource" uid="uid://cgbwu4wq14rtm" path="res://characters/armor/gambeson.tres" id="23_gambeson"]
+[ext_resource type="Resource" uid="uid://d0vokcalj7e4j" path="res://characters/armor/helmet.tres" id="24_helmet"]
+[ext_resource type="Script" uid="uid://d3lp14tetx78i" path="res://characters/shields/shield_profile.gd" id="25_shield"]
+[ext_resource type="Resource" uid="uid://drsjitqot54x4" path="res://characters/shields/buckler.tres" id="26_buckler"]
+[ext_resource type="Script" uid="uid://b48qg7emmfqry" path="res://characters/items/item_profile.gd" id="27_item"]
+[ext_resource type="Resource" uid="uid://b2g8kvymsuwvd" path="res://characters/items/rations.tres" id="28_rations"]
+[ext_resource type="Resource" uid="uid://mawuoxnjayca" path="res://characters/items/waterskin.tres" id="29_waterskin"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hvcdy"]
 
-[sub_resource type="Resource" id="Resource_e326q"]
+[sub_resource type="Resource" id="Resource_htqj5"]
 script = ExtResource("19_vjv61")
 
 [node name="CharacterCreation" type="Node" unique_id=1431569364 node_paths=PackedStringArray("_attributes_roller", "_origins_picker", "_inventory", "_bio_editor", "_continue", "_character_confirmation")]
 script = ExtResource("1_x4txh")
+_starting_weapons = Array[ExtResource("20_weapon")]([ExtResource("21_sword")])
+_starting_armor = Array[ExtResource("22_armor")]([ExtResource("23_gambeson"), ExtResource("24_helmet")])
+_starting_shields = Array[ExtResource("25_shield")]([ExtResource("26_buckler")])
+_starting_items = Dictionary[ExtResource("27_item"), int]({
+ExtResource("28_rations"): 3,
+ExtResource("29_waterskin"): 1
+})
 _attributes_roller = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/AttributesRoller")
 _origins_picker = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/OriginsPicker")
 _inventory = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats/Inventory")
@@ -74,7 +92,7 @@ fill = true
 
 [node name="OriginsPicker" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" unique_id=1810828075 instance=ExtResource("5_s0bgh")]
 layout_mode = 2
-_character_profile = SubResource("Resource_e326q")
+_character_profile = SubResource("Resource_htqj5")
 
 [node name="Inventory" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Stats" unique_id=755618890 instance=ExtResource("15_b7plt")]
 visible = false

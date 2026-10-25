@@ -33,7 +33,7 @@ func popout() -> void:
 	_close_button.hide()
 	show()
 	if _native_position: position = _native_position
-	else: position += get_tree().root.position 
+	else: position += get_tree().root.position
 	position = position.clamp(Vector2i.ZERO, DisplayServer.screen_get_size(DisplayServer.SCREEN_OF_MAIN_WINDOW) - size)
 	request_attention()
 

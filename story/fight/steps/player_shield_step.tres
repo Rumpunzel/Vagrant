@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="ShieldStep" format=3 uid="uid://ml0w6r86347r"]
+
+[ext_resource type="Script" uid="uid://b46kmjynyiqdj" path="res://story/fight/steps/shield_step.gd" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")

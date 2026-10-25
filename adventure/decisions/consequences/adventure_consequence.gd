@@ -2,4 +2,4 @@
 class_name AdventureConsequence
 extends Resource
 
-@abstract func resolve(protagonist: Character, damage: int) -> void
+@abstract func resolve(story: Story, margin: int) -> void

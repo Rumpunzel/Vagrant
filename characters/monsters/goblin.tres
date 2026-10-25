@@ -7,9 +7,15 @@
 [ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="4_87jrq"]
 [ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="5_fa74d"]
 [ext_resource type="Script" uid="uid://1342yb3eb2bh" path="res://characters/monsters/monster_profile.gd" id="8_5aed7"]
+[ext_resource type="Script" uid="uid://ctyfdlvouya4j" path="res://characters/weapons/weapon_profile.gd" id="9_weapon"]
+[ext_resource type="Resource" uid="uid://be50bgdx1p7g0" path="res://characters/weapons/club.tres" id="10_club"]
+[ext_resource type="Script" uid="uid://dencri8rgegoj" path="res://characters/equipment/modifiers/equipment_modifier.gd" id="11_modifier"]
+[ext_resource type="Resource" uid="uid://cjt8mg5iiet5k" path="res://characters/equipment/modifiers/battered.tres" id="12_battered"]
 
 [resource]
 script = ExtResource("8_5aed7")
 name = "Goblin"
 portrait = ExtResource("2_aqmhw")
+weapons = Array[ExtResource("9_weapon")]([ExtResource("10_club")])
+equipment_modifiers = Array[ExtResource("11_modifier")]([ExtResource("12_battered")])
 metadata/_custom_type_script = "uid://1342yb3eb2bh"

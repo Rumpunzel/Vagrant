@@ -11,6 +11,12 @@ func setup_for_fight(fight_request: FightRequest) -> void:
 	get_panel().setup_for_fight(fight_request)
 	set_selected_attribute(fight_request.attribute)
 
+## Picks the foe attribute a Nerves threat impairs
+func setup_for_nerves_target(fight_request: FightRequest) -> void:
+	var foe_name: String = fight_request.opponent.get_monster_name()
+	get_panel().setup_with_descriptor(fight_request.nerves_target, func(target: CharacterAttribute) -> String: return "Unnerve the %s's %s" % [foe_name, target.descriptor])
+	set_selected_attribute(fight_request.nerves_target)
+
 func set_selected_attribute(attribute: CharacterAttribute) -> void:
 	assert(attribute)
 	var attribute_index: int = Rules.ATTRIBUTES.find(attribute)

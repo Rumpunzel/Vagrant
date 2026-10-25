@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ExchangeSteps" format=3 uid="uid://yydyqypkbn0y"]
+
+[ext_resource type="Script" uid="uid://dwf7sy0jjca68" path="res://story/fight/steps/exchange_steps.gd" id="1_steps"]
+[ext_resource type="Script" uid="uid://d1v2c5m5745qv" path="res://story/fight/steps/resolution_step.gd" id="2_resolution_step"]
+[ext_resource type="Resource" uid="uid://d2rlauk2f1h1h" path="res://story/fight/steps/player_unnerving_step.tres" id="5_ieokv"]
+[ext_resource type="Resource" uid="uid://bggdqu108t0qf" path="res://story/fight/steps/monster_unnerving_step.tres" id="6_b2nqd"]
+[ext_resource type="Resource" uid="uid://bxirwhewqnte0" path="res://story/fight/steps/player_armor_step.tres" id="7_c5lxt"]
+[ext_resource type="Resource" uid="uid://wjavcud6ca1m" path="res://story/fight/steps/monster_weapon_check_step.tres" id="7_sq65b"]
+[ext_resource type="Resource" uid="uid://cf5eg57agn0u" path="res://story/fight/steps/player_weapon_check_step.tres" id="8_eayqi"]
+[ext_resource type="Resource" uid="uid://dvdc07d57r7x6" path="res://story/fight/steps/player_injury_step.tres" id="9_b2nqd"]
+[ext_resource type="Resource" uid="uid://cs2hryv3wrqp" path="res://story/fight/steps/player_breath_dice_step.tres" id="9_kruhm"]
+[ext_resource type="Resource" uid="uid://cfdyeladp1kvv" path="res://story/fight/steps/monster_armor_step.tres" id="10_ieokv"]
+[ext_resource type="Resource" uid="uid://vrtralilmou3" path="res://story/fight/steps/monster_injury_step.tres" id="11_sq65b"]
+[ext_resource type="Resource" uid="uid://df2y74ycwja7k" path="res://story/fight/steps/monster_breath_dice_step.tres" id="16_s16sv"]
+[ext_resource type="Resource" uid="uid://fkykq3xvgcdv" path="res://story/fight/steps/monster_shield_step.tres" id="22_monster_shield"]
+[ext_resource type="Resource" uid="uid://ml0w6r86347r" path="res://story/fight/steps/player_shield_step.tres" id="23_player_shield"]
+[ext_resource type="Resource" uid="uid://d1je7tsli8y5v" path="res://story/fight/steps/monster_vantage_step.tres" id="18_monster_vantage"]
+[ext_resource type="Resource" uid="uid://b57iiou5d3kh0" path="res://story/fight/steps/player_vantage_step.tres" id="19_player_vantage"]
+
+[resource]
+script = ExtResource("1_steps")
+resolution = Array[ExtResource("2_resolution_step")]([ExtResource("5_ieokv"), ExtResource("9_kruhm"), ExtResource("6_b2nqd"), ExtResource("7_sq65b"), ExtResource("8_eayqi"), ExtResource("18_monster_vantage"), ExtResource("19_player_vantage"), ExtResource("22_monster_shield"), ExtResource("23_player_shield"), ExtResource("10_ieokv"), ExtResource("11_sq65b"), ExtResource("7_c5lxt"), ExtResource("9_b2nqd"), ExtResource("16_s16sv")])
+metadata/_custom_type_script = "uid://dwf7sy0jjca68"

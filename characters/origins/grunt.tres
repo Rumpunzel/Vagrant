@@ -1,12 +1,20 @@
 [gd_resource type="Resource" script_class="Origin" format=3 uid="uid://cawcb1f8r3nb8"]
 
 [ext_resource type="Texture2D" uid="uid://d073jvxfp62ln" path="res://characters/origins/icons/barbute.svg" id="1_l3qjt"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_7ebxt"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_j0cvg"]
+[ext_resource type="Script" uid="uid://yfcblst84p4j" path="res://characters/abilities/ability.gd" id="ab_1"]
+
+[sub_resource type="Resource" id="Ability_grunt_0"]
+script = ExtResource("ab_1")
+description = "Feats of strength go unanswered."
+
+[sub_resource type="Resource" id="Ability_grunt_1"]
+script = ExtResource("ab_1")
+description = "When you pass a [b]Guts[/b] save, regain [b]1[/b] breath die."
 
 [resource]
 script = ExtResource("2_j0cvg")
-abilities = Array[String](["Feats of strength go unanswered.", "When you pass a [b]Guts[/b] save, regain [b]1[/b] breath die."])
+abilities = Array[ExtResource("ab_1")]([SubResource("Ability_grunt_0"), SubResource("Ability_grunt_1")])
 name = "Grunt"
 icon = ExtResource("1_l3qjt")
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

@@ -4,7 +4,7 @@ extends CharacterList
 
 signal status_changed(can_catch_breath: bool)
 
-func _create_character_entry(character: Character) -> Control:
+func _create_character_entry(_character: Character) -> Control:
 	#var catch_breath: CatchBreath = _catch_breath.instantiate()
 	#catch_breath.character = character
 	#catch_breath.status_changed.connect(_on_status_changed)

@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bbf411ai5lvqs" path="res://dice/dice_log/dice_log.gd" id="1_yvweo"]
 [ext_resource type="PackedScene" uid="uid://rwckanbyj46r" path="res://dice/dice_log/dice_log_die_entry.tscn" id="2_ybgum"]
-[ext_resource type="PackedScene" uid="uid://s1r1hypfpjyj" path="res://dice/dice_log/dice_log_entry_group.tscn" id="3_2advm"]
 
 [node name="DiceLog" type="PanelContainer" unique_id=1389717109 node_paths=PackedStringArray("_scroll_container", "_log_entries")]
 offset_left = 8.0
@@ -13,7 +12,6 @@ script = ExtResource("1_yvweo")
 _scroll_container = NodePath("ScrollContainer")
 _log_entries = NodePath("ScrollContainer/MarginContainer/LogEntries")
 _dice_log_die_entry = ExtResource("2_ybgum")
-_dice_log_entry_group = ExtResource("3_2advm")
 metadata/_custom_type_script = "uid://bbf411ai5lvqs"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=77206049]

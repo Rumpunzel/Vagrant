@@ -2,11 +2,16 @@
 
 [ext_resource type="Texture2D" uid="uid://iy1in0kd4n2t" path="res://characters/origins/icons/wizard-face.svg" id="1_1fvhu"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_1xadg"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_dhy3k"]
+[ext_resource type="Script" uid="uid://yfcblst84p4j" path="res://characters/abilities/ability.gd" id="ab_1"]
+[ext_resource type="Script" uid="uid://bjrq0ver2ls6s" path="res://characters/abilities/highest_breath_die_loss_ability.gd" id="ab_2"]
 
-[resource]
-script = ExtResource("2_1xadg")
-abilities = Array[String](["Lose at most your [b]1[/b] highest breath die.", "When you lose a breath die, you find [hint=\"1:    something old and powerful
+[sub_resource type="Resource" id="Ability_peasant_0"]
+script = ExtResource("ab_2")
+description = "Lose at most your [b]1[/b] highest breath die."
+
+[sub_resource type="Resource" id="Ability_peasant_1"]
+script = ExtResource("ab_1")
+description = "When you lose a breath die, you find [hint=\"1:    something old and powerful
 2:    a perfectly smooth stone
 3:    a poison mushroom
 4:    a foot of rope
@@ -17,8 +22,11 @@ abilities = Array[String](["Lose at most your [b]1[/b] highest breath die.", "Wh
 9:    bones
 10:  something lost
 11:  an omen
-12: 1 Supply\"][i]something[/i][/hint] based on the result."])
-_ass = true
+12: 1 Supply\"][i]something[/i][/hint] based on the result."
+
+[resource]
+script = ExtResource("2_1xadg")
+abilities = Array[ExtResource("ab_1")]([SubResource("Ability_peasant_0"), SubResource("Ability_peasant_1")])
 name = "Peasant"
 icon = ExtResource("1_1fvhu")
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

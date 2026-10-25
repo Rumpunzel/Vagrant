@@ -66,11 +66,11 @@ class Modifier extends RefCounted:
 	var _modifier: AttributeScoreModifier
 	var _source_icon: Texture2D
 	var _colored_icon: bool
-	
+
 	func _init(modifier: AttributeScoreModifier, source_icon: Texture2D, colored_icon: bool) -> void:
 		_modifier = modifier
 		_source_icon = source_icon
 		_colored_icon =colored_icon
-	
+
 	func get_score(for_attribute: CharacterAttribute) -> int: return _modifier.score_modifiers[for_attribute]
 	func get_details(attribute: CharacterAttribute, icon_size: int) -> String: return _modifier.get_details(attribute, _source_icon, icon_size, _colored_icon)

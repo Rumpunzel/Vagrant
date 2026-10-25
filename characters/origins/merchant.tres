@@ -1,12 +1,20 @@
 [gd_resource type="Resource" script_class="Origin" format=3 uid="uid://1n7f7ltq8e42"]
 
 [ext_resource type="Texture2D" uid="uid://bebxh1esrq3yj" path="res://characters/origins/icons/old-wagon.svg" id="1_6a56u"]
-[ext_resource type="Script" uid="uid://dsrjqjh4js5i5" path="res://characters/abilities/attribute_score_modifier.gd" id="2_4vhpw"]
 [ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="2_p1xni"]
+[ext_resource type="Script" uid="uid://yfcblst84p4j" path="res://characters/abilities/ability.gd" id="ab_1"]
+
+[sub_resource type="Resource" id="Ability_merchant_0"]
+script = ExtResource("ab_1")
+description = "All supplies."
+
+[sub_resource type="Resource" id="Ability_merchant_1"]
+script = ExtResource("ab_1")
+description = "Another ability"
 
 [resource]
 script = ExtResource("2_p1xni")
-abilities = Array[String](["All supplies.", "Another ability"])
+abilities = Array[ExtResource("ab_1")]([SubResource("Ability_merchant_0"), SubResource("Ability_merchant_1")])
 name = "Merchant"
 icon = ExtResource("1_6a56u")
 metadata/_custom_type_script = "uid://cwac8vwsmbyu5"

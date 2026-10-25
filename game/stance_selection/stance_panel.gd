@@ -19,6 +19,11 @@ extends CarouselPanel
 
 var _descriptor_resolver: Callable
 
+## Shows [param target] with a custom label, e.g. as a foe attribute to impair
+func setup_with_descriptor(target: CharacterAttribute, descriptor_resolver: Callable) -> void:
+	_descriptor_resolver = descriptor_resolver
+	attribute = target
+
 func setup_for_fight(fight_request: FightRequest) -> void:
 	if fight_request: _descriptor_resolver = func(selected_attribute: CharacterAttribute) -> String: return fight_request.get_stance_description(selected_attribute)
 	else: _descriptor_resolver = Callable()
