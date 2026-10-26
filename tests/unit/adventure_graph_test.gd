@@ -138,6 +138,12 @@ func test_title_falls_back_to_capitalized_file_name() -> void:
 	var untitled: AdventurePage = _location("", null)
 	untitled.resource_path = "res://somewhere/rocky_shore.tres"
 	assert_str(AdventureGraph.get_title(untitled)).is_equal("Rocky Shore")
+	# Stored inside another file: the start of its text
+	untitled.resource_path = ""
+	untitled.description = "The woman turns around, slowly, as if she had expected you all along."
+	assert_str(AdventureGraph.get_title(untitled)).is_equal("The woman turns around, slowly,…")
+	untitled.description = ""
+	assert_str(AdventureGraph.get_title(untitled)).is_equal("Untitled page")
 
 func _adventure(starting_page: AdventurePage) -> Adventure:
 	var adventure: Adventure = Adventure.new()

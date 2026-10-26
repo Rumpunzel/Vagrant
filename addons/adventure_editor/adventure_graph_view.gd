@@ -124,6 +124,22 @@ func _make_label(text: String) -> Label:
 	label.custom_minimum_size.x = THUMBNAIL_SIZE.x
 	return label
 
+## A node's info line, faded
+func _make_info(text: String) -> Label:
+	var label: Label = _make_label(text)
+	label.modulate = FADED
+	return label
+
+## A page's whole text, with its BBCode
+func _make_text(text: String) -> RichTextLabel:
+	var label: RichTextLabel = RichTextLabel.new()
+	label.bbcode_enabled = true
+	label.fit_content = true
+	label.text = text
+	label.custom_minimum_size.x = THUMBNAIL_SIZE.x
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return label
+
 func _on_node_selected(element: Node) -> void:
 	var resource: Resource = _resources.get(element as GraphElement)
 	if resource != null: EditorInterface.edit_resource(resource)

@@ -1,3 +1,4 @@
+@tool
 class_name AdventureKillMonsterConsequence
 extends AdventureConsequence
 
@@ -6,3 +7,6 @@ extends AdventureConsequence
 
 func resolve(story: Story, _margin: int) -> void:
 	monster.get_monster(story).dead = true
+
+func describe() -> String:
+	return "Kill %s" % (monster.monster.name if monster != null and monster.monster != null else "monster")

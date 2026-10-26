@@ -38,26 +38,48 @@ func test_loops_end() -> void:
 	_link(lost, ambush, "Again")
 	assert_array(AdventureEventGraph.new(ambush).pages).contains_exactly([ambush, lost])
 
-func test_outlets_per_outcome() -> void:
+func test_fights_and_saves_are_checks_with_fixed_outcomes() -> void:
 	var ambush: AdventurePage = _page("Ambush", null)
 	var won: AdventurePage = _page("Won", null)
 	var lost: AdventurePage = _page("Lost", null)
-	var fled: AdventurePage = _page("Fled", null)
 	var fight: AdventureFightDecision = AdventureFightDecision.new()
 	fight.description = "Fight!\nIt hisses."
+	fight.enemies = [TestMonsters.cutthroat()] as Array[MonsterProfile]
 	fight.transition = won
 	fight.failure_transition = lost
-	fight.flee_transition = fled
-	var back: AdventureDecision = AdventureDecision.new()
-	back.description = "Sneak away"
+	var kill: AdventureKillMonsterConsequence = AdventureKillMonsterConsequence.new()
+	kill.monster = AdventureMonsterReference.new()
+	kill.monster.monster = fight.enemies[0]
+	fight.consequences = [kill] as Array[AdventureConsequence]
+	var sneak: AdventureDecision = AdventureDecision.new()
+	sneak.description = "Sneak away"
 	ambush.decisions.append(fight)
-	ambush.decisions.append(back)
+	ambush.decisions.append(sneak)
 	var outlets: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outlets(ambush)
-	var labels: Array[String] = [ ]
-	for outlet: AdventureEventGraph.Outlet in outlets: labels.append(outlet.label)
-	assert_array(labels).contains_exactly_in_any_order(["Fight!", "↳ Failure", "↳ Flee", "Sneak away (back)"])
-	assert_object(outlets[0].target).is_same(won)
-	assert_object(outlets[labels.find("Sneak away (back)")].target).is_null()
+	assert_str(outlets[0].label).is_equal("Fight!")
+	assert_bool(outlets[0].to_check).is_true()
+	assert_bool(outlets[1].goes_back()).is_true()
+	var graph: AdventureEventGraph = AdventureEventGraph.new(ambush)
+	assert_array(graph.checks).contains_exactly([fight])
+	assert_int(graph.depths[fight]).is_equal(1)
+	assert_int(graph.depths[won]).is_equal(2)
+	assert_str(AdventureEventGraph.describe_check(fight)).is_equal("Fight: Cutthroat")
+	var outcomes: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outcomes(fight)
+	assert_array(outcomes.map(func(outcome: AdventureEventGraph.Outlet) -> String: return outcome.label)).contains_exactly(["Won", "Lost", "Fled", "Draw"])
+	assert_object(outcomes[0].target).is_same(won)
+	assert_str(AdventureEventGraph.describe_consequences(outcomes[0].consequences)).is_equal("Kill Cutthroat")
+	# No flee transition: going back
+	assert_bool(outcomes[2].goes_back()).is_true()
+
+func test_save_outcomes() -> void:
+	var save: AdventureSaveDecision = AdventureSaveDecision.new()
+	save.attribute = Rules.AGILITY
+	save.difficulty = 7
+	save.failure_consequences = [AdventureInjuryConsequence.new()] as Array[AdventureConsequence]
+	var outcomes: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outcomes(save)
+	assert_array(outcomes.map(func(outcome: AdventureEventGraph.Outlet) -> String: return outcome.label)).contains_exactly(["Success", "Failure"])
+	assert_str(AdventureEventGraph.describe_check(save)).is_equal("Save: %s 7" % Rules.AGILITY.descriptor)
+	assert_str(AdventureEventGraph.describe_consequences(outcomes[1].consequences)).is_equal("Injury (margin as damage)")
 
 func test_host_reference_is_an_outlet_to_the_host() -> void:
 	var ambush: AdventurePage = _page("Ambush", null)

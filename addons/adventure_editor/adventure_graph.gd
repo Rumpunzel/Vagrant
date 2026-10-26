@@ -16,6 +16,8 @@ class Link:
 		to = to_page
 		through_event = is_through_event
 
+const TITLE_FROM_TEXT_LENGTH: int = 32
+
 var pages: Array[AdventurePage] = [ ]
 var areas: Array[AdventureArea] = [ ]
 var links: Array[Link] = [ ]
@@ -37,8 +39,13 @@ func _init(adventure: Adventure) -> void:
 			_add_link(page, target, true)
 			queue.append(target)
 
+## Its title; untitled: its file name, or for a page stored inside another file (whose name it would share) the start of its text
 static func get_title(page: AdventurePage) -> String:
-	return page.title if not page.title.is_empty() else page.resource_path.get_file().get_basename().capitalize()
+	if not page.title.is_empty(): return page.title
+	if not page.resource_path.is_empty() and not page.resource_path.contains("::"): return page.resource_path.get_file().get_basename().capitalize()
+	var text: String = page.description.strip_edges().get_slice("\n", 0)
+	if text.is_empty(): return "Untitled page"
+	return text if text.length() <= TITLE_FROM_TEXT_LENGTH else text.left(TITLE_FROM_TEXT_LENGTH).strip_edges() + "…"
 
 ## Page references of [param decision] by property name, [code]transition[/code] first.
 ## Every [AdventurePageReference] property counts (failure, flee, draw ...), so new decision kinds need no change here;
