@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://btr84b5ffvx7o" path="res://addons/adventure_editor/adventure_map_view.gd" id="2_map"]
 [ext_resource type="Script" uid="uid://bia748sn01rc2" path="res://addons/adventure_editor/adventure_event_view.gd" id="3_event"]
 
-[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_tabs", "_map", "_events_tab", "_event_list", "_event_view")]
+[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_tabs", "_map", "_events_tab", "_event_list", "_host_picker", "_event_view")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,7 +17,8 @@ _tabs = NodePath("Tabs")
 _map = NodePath("Tabs/Map")
 _events_tab = NodePath("Tabs/Events")
 _event_list = NodePath("Tabs/Events/List")
-_event_view = NodePath("Tabs/Events/Graph")
+_host_picker = NodePath("Tabs/Events/Event/HostPicker")
+_event_view = NodePath("Tabs/Events/Event/Graph")
 
 [node name="Picker" type="EditorResourcePicker" parent="." unique_id=2024756789]
 custom_minimum_size = Vector2(320, 0)
@@ -45,7 +46,15 @@ metadata/_tab_index = 1
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="Graph" type="GraphEdit" parent="Tabs/Events" unique_id=906972324]
+[node name="Event" type="VBoxContainer" parent="Tabs/Events"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="HostPicker" type="OptionButton" parent="Tabs/Events/Event"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="Graph" type="GraphEdit" parent="Tabs/Events/Event" unique_id=906972324]
+layout_mode = 2
+size_flags_vertical = 3
 script = ExtResource("3_event")

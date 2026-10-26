@@ -115,6 +115,24 @@ func test_collects_events_and_their_hosts() -> void:
 	assert_array(graph.get_hosts(nested)).contains_exactly([ambush])
 	assert_array(graph.get_hosts(ruin)).is_empty()
 
+func test_location_hosts_and_top_events() -> void:
+	var ruin: AdventurePage = _location("Ruin", _swamp)
+	var temple: AdventurePage = _location("Temple", _swamp)
+	var scenario: AdventureEventScenario = AdventureEventScenario.new()
+	var ambush: AdventurePage = _location("Ambush", null)
+	scenario.events.append(ambush)
+	ruin.events.append(scenario)
+	temple.events.append(scenario)
+	_link(ruin, temple)
+	var graph: AdventureGraph = AdventureGraph.new(_adventure(ruin))
+	assert_array(graph.get_location_hosts(ambush)).contains_exactly([ruin, temple])
+	assert_array(graph.get_top_events()).contains_exactly([scenario])
+	# A host reference leads to no page on the map
+	var back: AdventureDecision = AdventureDecision.new()
+	back.transition = AdventureHostReference.new()
+	ambush.decisions.append(back)
+	assert_int(AdventureGraph.new(_adventure(ruin)).links.size()).is_equal(1)
+
 func test_title_falls_back_to_capitalized_file_name() -> void:
 	assert_str(AdventureGraph.get_title(_location("Shore", null))).is_equal("Shore")
 	var untitled: AdventurePage = _location("", null)

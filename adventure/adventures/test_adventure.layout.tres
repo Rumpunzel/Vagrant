@@ -6,11 +6,27 @@
 script = ExtResource("1_b0ump")
 positions = Dictionary[String, Vector2]({
 "uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g": Vector2(0, 0),
+"uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g/host": Vector2(340, 860),
+"uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g": Vector2(0, 0),
+"uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g/uid://dgfjjbm210jot": Vector2(340, 680),
+"uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g/uid://dsfrbfoig3deo": Vector2(340, 340),
+"uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(340, 520),
 "uid://bxwqtk0p80o4g/uid://cs40ge42lw0ry": Vector2(280, 60),
 "uid://bxwqtk0p80o4g/uid://dgfjjbm210jot": Vector2(280, 360),
 "uid://bxwqtk0p80o4g/uid://dsfrbfoig3deo": Vector2(280, 260),
 "uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(280, 160),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/host": Vector2(420, 40),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g": Vector2(0, 0),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://dgfjjbm210jot": Vector2(280, 480),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://dsfrbfoig3deo": Vector2(340, 360),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(440, 260),
+"uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/host": Vector2(1160, 100),
+"uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/uid://m4wl5ad8o0i7": Vector2(880, 100),
 "uid://cs40ge42lw0ry": Vector2(20, 300),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_0x8r7": Vector2(280, 480),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_b3ed1": Vector2(280, 240),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_j24m5": Vector2(280, 0),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh": Vector2(0, 0),
 "uid://dk3q4ia5u7q6m": Vector2(720, 220),
 "uid://ycd6xhx346l6": Vector2(720, -20)
 })

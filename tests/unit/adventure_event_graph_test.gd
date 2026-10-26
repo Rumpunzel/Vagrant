@@ -59,6 +59,20 @@ func test_outlets_per_outcome() -> void:
 	assert_object(outlets[0].target).is_same(won)
 	assert_object(outlets[labels.find("Sneak away (back)")].target).is_null()
 
+func test_host_reference_is_an_outlet_to_the_host() -> void:
+	var ambush: AdventurePage = _page("Ambush", null)
+	var decision: AdventureDecision = AdventureDecision.new()
+	decision.description = "Fight"
+	decision.transition = AdventureHostReference.new()
+	ambush.decisions.append(decision)
+	var graph: AdventureEventGraph = AdventureEventGraph.new(ambush)
+	assert_bool(graph.leads_to_host).is_true()
+	var outlet: AdventureEventGraph.Outlet = AdventureEventGraph.get_outlets(ambush)[0]
+	assert_str(outlet.label).is_equal("Fight")
+	assert_bool(outlet.to_host).is_true()
+	assert_object(outlet.target).is_null()
+	assert_array(graph.pages).contains_exactly([ambush])
+
 func _page(title: String, area: AdventureArea) -> AdventurePage:
 	var page: AdventurePage = AdventurePage.new()
 	page.title = title

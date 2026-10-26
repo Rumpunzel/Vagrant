@@ -120,6 +120,8 @@ func _make_label(text: String) -> Label:
 	var label: Label = Label.new()
 	label.text = text
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# Wrapping labels need a width, or they grow as tall as one word per line
+	label.custom_minimum_size.x = THUMBNAIL_SIZE.x
 	return label
 
 func _on_node_selected(element: Node) -> void:
