@@ -8,7 +8,7 @@ var _editor: AdventureEditor
 func _enter_tree() -> void:
 	_editor = AdventureEditorScene.instantiate()
 	EditorInterface.get_editor_main_screen().add_child(_editor)
-	_editor.setup()
+	_editor.setup(get_undo_redo())
 	_make_visible(false)
 	resource_saved.connect(_on_resource_saved)
 
@@ -30,6 +30,12 @@ func _get_window_layout(configuration: ConfigFile) -> void:
 func _set_window_layout(configuration: ConfigFile) -> void:
 	var path: String = configuration.get_value("AdventureEditor", "adventure", "")
 	if ResourceLoader.exists(path): _editor.adventure = load(path) as Adventure
+
+func _get_unsaved_status(for_scene: String) -> String:
+	if not for_scene.is_empty() or not _editor.has_unsaved_changes(): return ""
+	return "Save changes to the adventure before closing?"
+
+func _save_external_data() -> void: _editor.save()
 
 func _on_resource_saved(resource: Resource) -> void:
 	if not resource is AdventureLayout: _editor.rebuild()

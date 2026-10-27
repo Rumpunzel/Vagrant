@@ -3,7 +3,8 @@ class_name AdventureEditor
 extends VBoxContainer
 
 ## Main screen of the adventure editor plugin: one adventure as a map ([AdventureMapView]) and its events ([AdventureEventView]).
-## Only views for now: selecting opens the resource in the Inspector, moving nodes saves the [AdventureLayout].
+## The graphs edit structure (links, new locations, areas) with undo; changes stay unsaved until [method save]. Content is edited in the Inspector.
+## Selecting opens the resource there; moving nodes saves the [AdventureLayout] at once.
 
 const INDENT: String = "    "
 
@@ -20,9 +21,14 @@ var adventure: Adventure : set = set_adventure
 
 var _graph: AdventureGraph
 var _layout: AdventureLayout
+var _undo_redo: EditorUndoRedoManager
+## Resources changed by edits and not saved yet
+var _unsaved: Array[Resource] = [ ]
+var _new_location_dialog: AdventureNewLocationDialog
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
-func setup() -> void:
+func setup(undo_redo: EditorUndoRedoManager) -> void:
+	_undo_redo = undo_redo
 	_map.setup()
 	_event_view.setup()
 	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
@@ -34,6 +40,13 @@ func setup() -> void:
 	_event_list.item_selected.connect(func(index: int) -> void: _show_event(_event_list.get_item_metadata(index) as AdventurePage, null))
 	_host_picker.item_selected.connect(func(index: int) -> void: _event_view.show_event(_event_view.get_event(), _host_picker.get_item_metadata(index) as AdventurePage))
 	EditorInterface.get_inspector().property_edited.connect(_on_property_edited)
+	_map.link_requested.connect(_link)
+	_map.unlink_requested.connect(_unlink)
+	_map.areas_requested.connect(_move_into_areas)
+	_new_location_dialog = AdventureNewLocationDialog.new()
+	_new_location_dialog.location_confirmed.connect(_create_location)
+	add_child(_new_location_dialog)
+	_map.location_requested.connect(_ask_for_location)
 
 func set_adventure(value: Adventure) -> void:
 	adventure = value
@@ -46,7 +59,9 @@ func set_adventure(value: Adventure) -> void:
 	_map.scroll_to_nodes()
 
 func rebuild() -> void:
-	_graph = AdventureGraph.new(adventure)
+	var placed: Array[AdventurePage] = [ ]
+	if _layout != null: placed = _layout.get_placed_pages()
+	_graph = AdventureGraph.new(adventure, placed)
 	_map.show_graph(_graph)
 	_event_list.clear()
 	var listed: Array[AdventurePage] = [ ]
@@ -91,6 +106,77 @@ func _show_event(event: AdventurePage, host: AdventurePage) -> void:
 func _open_location(location: AdventurePage) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_map)
 	_map.focus_page(location)
+
+func has_unsaved_changes() -> bool: return not _unsaved.is_empty()
+
+func save() -> void:
+	for resource: Resource in _unsaved: ResourceSaver.save(resource)
+	_unsaved.clear()
+
+func _shortcut_input(input: InputEvent) -> void:
+	if not is_visible_in_tree() or not has_unsaved_changes(): return
+	var key: InputEventKey = input as InputEventKey
+	if key != null and key.pressed and key.keycode == KEY_S and key.is_command_or_control_pressed() and not key.shift_pressed:
+		save()
+		get_viewport().set_input_as_handled()
+
+func _link(from: AdventurePage, to: AdventurePage) -> void:
+	if from == null or to == null or from == to: return
+	var decisions: Array[AdventureDecision] = from.decisions.duplicate()
+	decisions.append(AdventureMapEditing.make_link(to))
+	_undo_redo.create_action("Link %s to %s" % [AdventureGraph.get_title(from), AdventureGraph.get_title(to)], UndoRedo.MERGE_DISABLE, from)
+	_change(from, &"decisions", decisions)
+	_undo_redo.commit_action()
+
+func _unlink(from: AdventurePage, to: AdventurePage) -> void:
+	if from == null or to == null: return
+	var decisions: Array[AdventureDecision] = AdventureMapEditing.without_links(from, to)
+	if decisions.size() == from.decisions.size():
+		push_warning("%s leads to %s only through a fight or save; change it in the events tab or the Inspector" % [AdventureGraph.get_title(from), AdventureGraph.get_title(to)])
+		return
+	_undo_redo.create_action("Unlink %s from %s" % [AdventureGraph.get_title(from), AdventureGraph.get_title(to)], UndoRedo.MERGE_DISABLE, from)
+	_change(from, &"decisions", decisions)
+	_undo_redo.commit_action()
+
+func _move_into_areas(areas: Dictionary[AdventurePage, AdventureArea]) -> void:
+	_undo_redo.create_action("Change area", UndoRedo.MERGE_DISABLE, areas.keys()[0])
+	for page: AdventurePage in areas: _change(page, &"area", areas[page])
+	_undo_redo.commit_action()
+
+## Adds setting [param property] to the open action, both ways marking [param resource] unsaved and rebuilding
+func _change(resource: Resource, property: StringName, value: Variant) -> void:
+	_undo_redo.add_do_property(resource, property, value)
+	_undo_redo.add_undo_property(resource, property, resource.get(property))
+	_undo_redo.add_do_method(self, &"_changed", resource)
+	_undo_redo.add_undo_method(self, &"_changed", resource)
+
+func _changed(resource: Resource) -> void:
+	if not _unsaved.has(resource): _unsaved.append(resource)
+	rebuild()
+
+func _ask_for_location(at: Vector2) -> void:
+	if adventure != null: _new_location_dialog.open(_graph.areas, at)
+
+## Creates the location's file (and a new area's) right away; Ctrl+Z doesn't delete files
+func _create_location(title: String, area: AdventureArea, new_area_name: String, at: Vector2) -> void:
+	if area == null:
+		area = AdventureMapEditing.make_area(new_area_name)
+		if not _create_file(area, AdventureMapEditing.get_area_path(adventure, new_area_name)): return
+	var page: AdventurePage = AdventureMapEditing.make_location(title, area)
+	if not _create_file(page, AdventureMapEditing.get_location_path(area, title)): return
+	_layout.positions[AdventureLayout.get_key(page)] = at
+	_save_layout()
+	rebuild()
+
+func _create_file(resource: Resource, path: String) -> bool:
+	if FileAccess.file_exists(path):
+		push_error("%s exists already" % path)
+		return false
+	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	resource.take_over_path(path)
+	if ResourceSaver.save(resource) != OK: return false
+	EditorInterface.get_resource_filesystem().update_file(path)
+	return true
 
 func _on_property_edited(_property: String) -> void: rebuild()
 

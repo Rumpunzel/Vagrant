@@ -19,5 +19,14 @@ static func get_key(resource: Resource) -> String:
 	var uid: int = ResourceLoader.get_resource_uid(resource.resource_path)
 	return ResourceUID.id_to_text(uid) if uid != ResourceUID.INVALID_ID else resource.resource_path
 
+## Map pages placed by hand, reachable or not; event views' keys join several keys
+func get_placed_pages() -> Array[AdventurePage]:
+	var placed: Array[AdventurePage] = [ ]
+	for key: String in positions:
+		if key.count("://") != 1 or not ResourceLoader.exists(key): continue
+		var page: AdventurePage = load(key) as AdventurePage
+		if page != null: placed.append(page)
+	return placed
+
 func save_for(adventure: Adventure) -> void:
 	ResourceSaver.save(self, get_path_for(adventure))

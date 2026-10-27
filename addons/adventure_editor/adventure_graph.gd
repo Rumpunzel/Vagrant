@@ -23,10 +23,19 @@ var areas: Array[AdventureArea] = [ ]
 var links: Array[Link] = [ ]
 ## Every event met on the walk (also nested ones and those of pages behind events), in order, with the pages listing it in their events
 var event_hosts: Dictionary[AdventurePage, Array] = {}
+## Pages not reached from the starting page
+var unreachable: Array[AdventurePage] = [ ]
 
-func _init(adventure: Adventure) -> void:
+## [param placed]: pages placed by hand ([method AdventureLayout.get_placed_pages]); those not reached from the start, and what they lead to, are [member unreachable]
+func _init(adventure: Adventure, placed: Array[AdventurePage] = [ ]) -> void:
 	if adventure == null or adventure.starting_page == null: return
-	var queue: Array[AdventurePage] = [adventure.starting_page]
+	_walk([adventure.starting_page])
+	var reached: int = pages.size()
+	_walk(placed)
+	unreachable = pages.slice(reached)
+
+func _walk(queue: Array[AdventurePage]) -> void:
+	queue = queue.duplicate()
 	while not queue.is_empty():
 		var page: AdventurePage = queue.pop_front()
 		if pages.has(page): continue

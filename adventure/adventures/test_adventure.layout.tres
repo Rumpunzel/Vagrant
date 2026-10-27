@@ -23,6 +23,7 @@ positions = Dictionary[String, Vector2]({
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(600, 320),
 "uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/host": Vector2(1340, -140),
 "uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/uid://m4wl5ad8o0i7": Vector2(1060, -140),
+"uid://co2m5ujklmges": Vector2(-200, 140),
 "uid://cs40ge42lw0ry": Vector2(20, 300),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_0x8r7": Vector2(560, 400),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_b3ed1": Vector2(560, 260),
@@ -30,5 +31,6 @@ positions = Dictionary[String, Vector2]({
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_yrhxu": Vector2(260, 260),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh": Vector2(0, 0),
 "uid://dk3q4ia5u7q6m": Vector2(720, 220),
+"uid://vckcly8qpi2j": Vector2(100, 200),
 "uid://ycd6xhx346l6": Vector2(720, -20)
 })

@@ -133,6 +133,16 @@ func test_location_hosts_and_top_events() -> void:
 	ambush.decisions.append(back)
 	assert_int(AdventureGraph.new(_adventure(ruin)).links.size()).is_equal(1)
 
+func test_placed_pages_show_even_if_unreachable() -> void:
+	var shore: AdventurePage = _location("Shore", _beach)
+	var cave: AdventurePage = _location("Cave", _beach)
+	var deeper: AdventurePage = _location("Deeper", _beach)
+	_link(cave, deeper)
+	var placed: Array[AdventurePage] = [shore, cave]
+	var graph: AdventureGraph = AdventureGraph.new(_adventure(shore), placed)
+	assert_array(graph.pages).contains_exactly([shore, cave, deeper])
+	assert_array(graph.unreachable).contains_exactly([cave, deeper])
+
 func test_title_falls_back_to_capitalized_file_name() -> void:
 	assert_str(AdventureGraph.get_title(_location("Shore", null))).is_equal("Shore")
 	var untitled: AdventurePage = _location("", null)
