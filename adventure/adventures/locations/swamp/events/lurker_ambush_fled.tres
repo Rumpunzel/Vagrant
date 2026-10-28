@@ -4,11 +4,16 @@
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_decision"]
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_uv2th"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_mbcnt"]
+[ext_resource type="Script" uid="uid://oybrm82jcppw" path="res://adventure/adventure_previous_location_reference.gd" id="5_previous"]
+
+[sub_resource type="Resource" id="Resource_to_previous"]
+script = ExtResource("5_previous")
+metadata/_custom_type_script = "uid://oybrm82jcppw"
 
 [sub_resource type="Resource" id="Resource_continue"]
 script = ExtResource("2_decision")
 description = "Continue."
-back_steps = 2
+transition = SubResource("Resource_to_previous")
 metadata/_custom_type_script = "uid://by3e6dkiypd3j"
 
 [resource]

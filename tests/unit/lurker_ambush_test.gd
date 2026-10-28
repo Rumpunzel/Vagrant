@@ -41,10 +41,11 @@ func test_ambush_decision() -> void:
 		var outcome_page: AdventurePage = references[outcome].get_adventure_page()
 		assert_object(outcome_page).is_same(load(OUTCOME_PAGES[outcome]))
 		assert_str(outcome_page.description).is_not_empty()
-		# Back to the temple ruin; fleeing goes one page further back, to where the player came from
+		# Back to the host; fleeing goes to where the player was before it
 		var back: AdventureDecision = outcome_page.decisions[0]
-		assert_object(back.transition).is_null()
-		assert_int(back.back_steps).is_equal(2 if outcome == Fight.Outcome.FLED else 1)
+		if outcome == Fight.Outcome.FLED: assert_object(back.transition).is_instanceof(AdventurePreviousLocationReference)
+		else: assert_object(back.transition).is_null()
+		assert_int(back.back_steps).is_equal(1)
 
 func test_ambush_only_while_the_lurker_can_fight() -> void:
 	var ambush: AdventurePage = load(LURKER_AMBUSH)

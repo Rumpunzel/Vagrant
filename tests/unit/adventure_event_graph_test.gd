@@ -38,7 +38,7 @@ func test_loops_end() -> void:
 	_link(lost, ambush, "Again")
 	assert_array(AdventureEventGraph.new(ambush).pages).contains_exactly([ambush, lost])
 
-func test_fights_and_saves_are_checks_with_fixed_outcomes() -> void:
+func test_fights_and_saves_have_fixed_outcomes() -> void:
 	var ambush: AdventurePage = _page("Ambush", null)
 	var won: AdventurePage = _page("Won", null)
 	var lost: AdventurePage = _page("Lost", null)
@@ -60,9 +60,10 @@ func test_fights_and_saves_are_checks_with_fixed_outcomes() -> void:
 	assert_bool(outlets[0].to_check).is_true()
 	assert_bool(outlets[1].goes_back()).is_true()
 	var graph: AdventureEventGraph = AdventureEventGraph.new(ambush)
-	assert_array(graph.checks).contains_exactly([fight])
-	assert_int(graph.depths[fight]).is_equal(1)
-	assert_int(graph.depths[won]).is_equal(2)
+	# The page's ports: the fight's outcomes, then the choice
+	assert_array(AdventureEventGraph.get_ports(ambush).map(func(port: AdventureEventGraph.Outlet) -> String: return port.label)).contains_exactly(["Won", "Lost", "Fled", "Draw", "Sneak away"])
+	assert_array(graph.pages).contains_exactly([ambush, won, lost])
+	assert_int(graph.depths[won]).is_equal(1)
 	assert_str(AdventureEventGraph.describe_check(fight)).is_equal("Fight: Cutthroat")
 	var outcomes: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outcomes(fight)
 	assert_array(outcomes.map(func(outcome: AdventureEventGraph.Outlet) -> String: return outcome.label)).contains_exactly(["Won", "Lost", "Fled", "Draw"])

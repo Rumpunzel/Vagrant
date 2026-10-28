@@ -2,7 +2,7 @@
 class_name AdventureEventGraph
 extends RefCounted
 
-## What happens inside one event: the pages behind it (reached through its decisions; nested events stay cards), its checks (fights, saves)
+## What happens inside one event: the pages behind it (reached through its decisions and the outcomes of its fights and saves; nested events stay cards)
 ## and the locations it leads out to
 
 ## Outcomes of a check by kind: [reference property, label, consequences property]; a fixed order, so the graph reads the same for every check
@@ -13,27 +13,34 @@ const DICE_OUTCOMES: Array[Array] = [[&"transition", "Success", &"consequences"]
 class Outlet:
 	var label: String
 	var decision: AdventureDecision
+	## The decision's property holding the reference
+	var property: StringName = &"transition"
 	## None: goes back, to the host or to a check
 	var target: AdventurePage
 	## "↺ Host": back to the page the event is on
 	var to_host: bool
-	## A page's row for a fight or save: leads to the check's node, whose outcomes lead on
+	## "↶ Previous location": back to before the host
+	var to_previous: bool
+	## A fight or save, whose outcomes lead on
 	var to_check: bool
 	var consequences: Array[AdventureConsequence]
+	## The decision's property holding [member consequences]; empty: this outcome has none
+	var consequences_property: StringName
 
-	func goes_back() -> bool: return target == null and not to_host and not to_check
+	## How many pages going back goes
+	func get_back_steps() -> int: return decision.back_steps
+
+	func goes_back() -> bool: return target == null and not to_host and not to_previous and not to_check
 
 var event: AdventurePage
 ## The event first, then the pages behind it
 var pages: Array[AdventurePage] = [ ]
-## Fights and saves of the pages, in order
-var checks: Array[AdventureDecision] = [ ]
 ## Locations (pages with an area) it leads to
 var exits: Array[AdventurePage] = [ ]
 ## Some outlet leads back to the host
 var leads_to_host: bool = false
-## Steps from the event (pages, checks, exits), for placing nodes
-var depths: Dictionary[Resource, int] = {}
+## Steps from the event (pages, exits), for placing nodes
+var depths: Dictionary[AdventurePage, int] = {}
 
 func _init(root_event: AdventurePage) -> void:
 	event = root_event
@@ -43,14 +50,9 @@ func _init(root_event: AdventurePage) -> void:
 	while index < pages.size():
 		var page: AdventurePage = pages[index]
 		index += 1
-		for outlet: Outlet in get_outlets(page):
-			if outlet.to_check:
-				checks.append(outlet.decision)
-				depths[outlet.decision] = depths[page] + 1
-				for outcome: Outlet in get_outcomes(outlet.decision): _reach(outcome, depths[page] + 2)
-			else: _reach(outlet, depths[page] + 1)
+		for outlet: Outlet in get_ports(page): _reach(outlet, depths[page] + 1)
 
-## One row per decision of [param page]; fights and saves lead to their check
+## One per decision of [param page]; fights and saves ([member Outlet.to_check]) lead on through their outcomes
 static func get_outlets(page: AdventurePage) -> Array[Outlet]:
 	var outlets: Array[Outlet] = [ ]
 	for decision: AdventureDecision in page.decisions:
@@ -62,8 +64,17 @@ static func get_outlets(page: AdventurePage) -> Array[Outlet]:
 		else:
 			_point(outlet, decision.transition)
 			outlet.consequences = decision.consequences
+			outlet.consequences_property = &"consequences"
 		outlets.append(outlet)
 	return outlets
+
+## What a page's output ports lead to, in order: a plain decision's target, then a fight's or save's outcomes
+static func get_ports(page: AdventurePage) -> Array[Outlet]:
+	var ports: Array[Outlet] = [ ]
+	for outlet: Outlet in get_outlets(page):
+		if outlet.to_check: ports.append_array(get_outcomes(outlet.decision))
+		else: ports.append(outlet)
+	return ports
 
 ## The outcomes of a fight or save, in a fixed order per kind; other page references of new kinds of checks follow
 static func get_outcomes(check: AdventureDecision) -> Array[Outlet]:
@@ -75,14 +86,18 @@ static func get_outcomes(check: AdventureDecision) -> Array[Outlet]:
 		var outcome: Outlet = Outlet.new()
 		outcome.label = spec[1]
 		outcome.decision = check
+		outcome.property = spec[0]
 		_point(outcome, check.get(spec[0]) as AdventurePageReference)
-		if spec[2] != &"": outcome.consequences.assign(check.get(spec[2]))
+		if spec[2] != &"":
+			outcome.consequences.assign(check.get(spec[2]))
+			outcome.consequences_property = spec[2]
 		outcomes.append(outcome)
 	for property: StringName in AdventureGraph.get_references(check):
 		if known.has(property): continue
 		var extra: Outlet = Outlet.new()
 		extra.label = String(property).trim_suffix("_transition").capitalize()
 		extra.decision = check
+		extra.property = property
 		_point(extra, AdventureGraph.get_references(check)[property])
 		outcomes.append(extra)
 	return outcomes
@@ -106,6 +121,7 @@ static func describe_consequences(consequences: Array[AdventureConsequence]) -> 
 static func _point(outlet: Outlet, reference: AdventurePageReference) -> void:
 	if reference == null: return
 	outlet.to_host = reference is AdventureHostReference
+	outlet.to_previous = reference is AdventurePreviousLocationReference
 	outlet.target = reference.get_adventure_page()
 
 func _reach(outlet: Outlet, depth: int) -> void:

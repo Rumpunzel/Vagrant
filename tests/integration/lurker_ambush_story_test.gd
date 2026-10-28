@@ -45,3 +45,12 @@ func test_flee_from_ambush_in_story() -> void:
 	var expected: Fight.Outcome = Fight.Outcome.LOST if flee.fight.incapacitated.get(flee.fight.player, false) else Fight.Outcome.FLED
 	assert_object(story._current_story_page.adventure_page).is_same(load(OUTCOME_PAGES[expected]))
 	assert_int(flee.fight.outcome).is_equal(expected)
+	# Nothing before the temple ruin here: continuing goes back to it
+	if expected == Fight.Outcome.FLED:
+		var page: StoryPage = story._current_story_page
+		page.choices[0].chose()
+		waited = 0
+		while story._current_story_page == page and waited < 5000:
+			await await_millis(10)
+			waited += 10
+		assert_object(story._current_story_page.adventure_page).is_same(load(TEMPLE_RUIN))

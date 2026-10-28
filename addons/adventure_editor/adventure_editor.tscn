@@ -3,6 +3,9 @@
 [ext_resource type="Script" uid="uid://mev68l26dpuw" path="res://addons/adventure_editor/adventure_editor.gd" id="1_editor"]
 [ext_resource type="Script" uid="uid://btr84b5ffvx7o" path="res://addons/adventure_editor/adventure_map_view.gd" id="2_map"]
 [ext_resource type="Script" uid="uid://bia748sn01rc2" path="res://addons/adventure_editor/adventure_event_view.gd" id="3_event"]
+[ext_resource type="Script" uid="uid://l0qu2oiqqs0u" path="res://addons/adventure_editor/adventure_special_button.gd" id="4_special"]
+[ext_resource type="Texture2D" uid="uid://bee2desykk34h" path="res://assets/game_icons/delapouite/anticlockwise-rotation.svg" id="5_host"]
+[ext_resource type="Texture2D" uid="uid://dmkjss474288g" path="res://assets/game_icons/delapouite/exit-door.svg" id="6_previous"]
 
 [node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_tabs", "_map", "_events_tab", "_event_list", "_host_picker", "_event_view")]
 anchors_preset = 15
@@ -18,7 +21,7 @@ _map = NodePath("Tabs/Map")
 _events_tab = NodePath("Tabs/Events")
 _event_list = NodePath("Tabs/Events/List")
 _host_picker = NodePath("Tabs/Events/Event/HostPicker")
-_event_view = NodePath("Tabs/Events/Event/Graph")
+_event_view = NodePath("Tabs/Events/Event/Body/Graph")
 
 [node name="Picker" type="EditorResourcePicker" parent="." unique_id=2024756789]
 custom_minimum_size = Vector2(320, 0)
@@ -54,7 +57,39 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="Graph" type="GraphEdit" parent="Tabs/Events/Event" unique_id=906972324]
+[node name="Body" type="HBoxContainer" parent="Tabs/Events/Event"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="Graph" type="GraphEdit" parent="Tabs/Events/Event/Body" unique_id=906972324]
+layout_mode = 2
+size_flags_horizontal = 3
 script = ExtResource("3_event")
+
+[node name="Specials" type="VBoxContainer" parent="Tabs/Events/Event/Body"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Tabs/Events/Event/Body/Specials"]
+layout_mode = 2
+text = "Drag into a frame:"
+
+[node name="Host" type="Button" parent="Tabs/Events/Event/Body/Specials"]
+layout_mode = 2
+tooltip_text = "Back to the page the event is on"
+text = "Host"
+icon = ExtResource("5_host")
+alignment = 0
+expand_icon = true
+script = ExtResource("4_special")
+kind = "host"
+
+[node name="Previous" type="Button" parent="Tabs/Events/Event/Body/Specials"]
+layout_mode = 2
+tooltip_text = "Back to where the player was before the host (fleeing)"
+text = "Previous location"
+icon = ExtResource("6_previous")
+alignment = 0
+expand_icon = true
+script = ExtResource("4_special")
+kind = "previous"

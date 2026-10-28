@@ -120,6 +120,24 @@ func test_host_reference_returns_to_the_page_the_event_was_on() -> void:
 	await _choose(0)
 	assert_object(_story._current_story_page.adventure_page).is_same(_start)
 
+func test_previous_location_is_the_page_before_the_host() -> void:
+	var event: AdventurePage = _page("")
+	var inside: AdventurePage = _page("Inside")
+	var deeper: AdventurePage = _page("Deeper")
+	event.decisions = [_decision("Fight", inside)] as Array[AdventureDecision]
+	inside.decisions = [_decision("Run", deeper)] as Array[AdventureDecision]
+	var flee: AdventureDecision = _decision("Away", null)
+	flee.transition = AdventurePreviousLocationReference.new()
+	deeper.decisions = [flee] as Array[AdventureDecision]
+	_next.events = [event] as Array[AdventurePage]
+	await _choose(0)
+	# On the host: the event's decision first
+	await _choose(0)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(deeper)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(_start)
+
 func test_generic_events_spawn_per_host() -> void:
 	var event: AdventurePage = _page("Ambush")
 	var cutthroat: MonsterProfile = TestMonsters.cutthroat()

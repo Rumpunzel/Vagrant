@@ -3,7 +3,7 @@ class_name AdventureEditor
 extends VBoxContainer
 
 ## Main screen of the adventure editor plugin: one adventure as a map ([AdventureMapView]) and its events ([AdventureEventView]).
-## The graphs edit structure (links, new locations, areas) with undo; changes stay unsaved until [method save]. Content is edited in the Inspector.
+## The graphs edit structure (links, new locations, areas, events, pages and decisions) with undo; changes stay unsaved until [method save]. Content is edited in the Inspector.
 ## Selecting opens the resource there; moving nodes saves the [AdventureLayout] at once.
 
 const INDENT: String = "    "
@@ -25,6 +25,7 @@ var _undo_redo: EditorUndoRedoManager
 ## Resources changed by edits and not saved yet
 var _unsaved: Array[Resource] = [ ]
 var _new_location_dialog: AdventureNewLocationDialog
+var _name_dialog: AdventureNameDialog
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
@@ -47,6 +48,15 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_new_location_dialog.location_confirmed.connect(_create_location)
 	add_child(_new_location_dialog)
 	_map.location_requested.connect(_ask_for_location)
+	_name_dialog = AdventureNameDialog.new()
+	add_child(_name_dialog)
+	_map.event_requested.connect(func(location: AdventurePage, scenario: bool) -> void:
+		_name_dialog.ask("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
+	)
+	_event_view.reference_requested.connect(_set_reference)
+	_event_view.decisions_requested.connect(_set_decisions)
+	_event_view.references_cleared.connect(_clear_references)
+	_event_view.property_requested.connect(_set_property)
 
 func set_adventure(value: Adventure) -> void:
 	adventure = value
@@ -143,12 +153,35 @@ func _move_into_areas(areas: Dictionary[AdventurePage, AdventureArea]) -> void:
 	for page: AdventurePage in areas: _change(page, &"area", areas[page])
 	_undo_redo.commit_action()
 
-## Adds setting [param property] to the open action, both ways marking [param resource] unsaved and rebuilding
-func _change(resource: Resource, property: StringName, value: Variant) -> void:
+## [param reference]: none unlinks
+func _set_reference(decision: AdventureDecision, property: StringName, reference: AdventurePageReference, file: Resource) -> void:
+	_undo_redo.create_action("Unlink" if reference == null else "Link", UndoRedo.MERGE_DISABLE, file)
+	_change(decision, property, reference, file)
+	_undo_redo.commit_action()
+
+## Adding, moving and removing a page's decisions
+func _set_decisions(page: AdventurePage, decisions: Array[AdventureDecision], file: Resource, action: String) -> void:
+	_undo_redo.create_action(action, UndoRedo.MERGE_DISABLE, file)
+	_change(page, &"decisions", decisions, file)
+	_undo_redo.commit_action()
+
+func _set_property(resource: Resource, property: StringName, value: Variant, file: Resource, action: String) -> void:
+	_undo_redo.create_action(action, UndoRedo.MERGE_DISABLE, file)
+	_change(resource, property, value, file)
+	_undo_redo.commit_action()
+
+## Each [decision, property] to none, in one action (deleting a page)
+func _clear_references(references: Array[Array], file: Resource, action: String) -> void:
+	_undo_redo.create_action(action, UndoRedo.MERGE_DISABLE, file)
+	for reference: Array in references: _change(reference[0], reference[1], null, file)
+	_undo_redo.commit_action()
+
+## Adds setting [param property] to the open action, both ways marking [param file] (none: [param resource] itself) unsaved and rebuilding
+func _change(resource: Resource, property: StringName, value: Variant, file: Resource = null) -> void:
 	_undo_redo.add_do_property(resource, property, value)
 	_undo_redo.add_undo_property(resource, property, resource.get(property))
-	_undo_redo.add_do_method(self, &"_changed", resource)
-	_undo_redo.add_undo_method(self, &"_changed", resource)
+	_undo_redo.add_do_method(self, &"_changed", file if file != null else resource)
+	_undo_redo.add_undo_method(self, &"_changed", file if file != null else resource)
 
 func _changed(resource: Resource) -> void:
 	if not _unsaved.has(resource): _unsaved.append(resource)
@@ -167,6 +200,16 @@ func _create_location(title: String, area: AdventureArea, new_area_name: String,
 	_layout.positions[AdventureLayout.get_key(page)] = at
 	_save_layout()
 	rebuild()
+
+## Creates the event's file right away and lists it on [param location] (that part can be undone)
+func _create_event(title: String, location: AdventurePage, scenario: bool) -> void:
+	var event: AdventurePage = AdventureEventEditing.make_event(title, scenario)
+	if not _create_file(event, AdventureEventEditing.get_event_path(location, title)): return
+	var events: Array[AdventurePage] = location.events.duplicate()
+	events.append(event)
+	_undo_redo.create_action("Add %s to %s" % [title, AdventureGraph.get_title(location)], UndoRedo.MERGE_DISABLE, location)
+	_change(location, &"events", events)
+	_undo_redo.commit_action()
 
 func _create_file(resource: Resource, path: String) -> bool:
 	if FileAccess.file_exists(path):

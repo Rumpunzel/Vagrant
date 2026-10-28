@@ -195,11 +195,20 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 	if not consequences.is_empty(): _event_queue.queue_delay(_reveal_delay)
 	_event_queue.queue_callable(func() -> void: _follow(story_choice))
 
-## Enters the choice's transition; without one, goes back as many pages as the decision says
 func _follow(story_choice: StoryChoice) -> void:
-	var transition: AdventurePage = _resolve(story_choice.get_transition_reference())
+	_go(story_choice.get_transition_reference(), story_choice.get_adventure_decision().back_steps)
+
+## Enters the page [param reference] leads to; none: goes back [param back_steps] pages; [AdventurePreviousLocationReference]: back to before the host
+func _go(reference: AdventurePageReference, back_steps: int) -> void:
+	if reference is AdventurePreviousLocationReference:
+		var host_index: int = _page_stack.rfind(_host)
+		if host_index > 0: back_steps = _page_stack.size() - host_index + 1
+		# Nothing before the host (the adventure started there): back to the host
+		elif host_index == 0: back_steps = _page_stack.size()
+		else: back_steps = 1
+	var transition: AdventurePage = _resolve(reference)
 	if not transition:
-		for _step: int in story_choice.get_adventure_decision().back_steps - 1: _page_stack.pop_back()
+		for _step: int in back_steps - 1: _page_stack.pop_back()
 	enter_page(transition)
 
 func _resolve(reference: AdventurePageReference) -> AdventurePage:
@@ -233,7 +242,7 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	for consequence: StoryConsequence in consequences:
 		_event_queue.queue_callable(func() -> void: consequence.resolve(self, dice_result.get_margin()))
 	if not consequences.is_empty(): _event_queue.queue_delay(_reveal_delay)
-	_event_queue.queue_callable(func() -> void: enter_page(_resolve(story_choice.get_transition_reference())))
+	_event_queue.queue_callable(func() -> void: _follow(story_choice))
 
 func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision) -> void:
 	var fight: Fight = story_choice.fight
@@ -282,7 +291,7 @@ func _end_exchange(fight: Fight, fight_result: FightResult, story_choice: StoryF
 			_current_story_page = _create_fight_exchange_page(fight)
 			return
 		for consequence: StoryConsequence in story_choice.get_consequences(): consequence.resolve(self, fight_result.get_margin())
-		enter_page(_resolve(story_choice.get_transition_reference()))
+		_follow(story_choice)
 	)
 
 ## Types the exchange summary if [param told] added to it and queues waiting for that, then the pause if [param pause]

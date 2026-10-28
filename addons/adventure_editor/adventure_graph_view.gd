@@ -27,12 +27,18 @@ var _resources: Dictionary[GraphElement, Resource] = {}
 ## [from, to] node pairs, drawn dashed
 var _dashed: Array[Array] = [ ]
 var _dashed_layer: Control
+var _menu: PopupMenu
+## Item text -> what it does, for the open menu
+var _menu_actions: Dictionary[String, Callable] = {}
 
 ## Called by [AdventureEditor], not in [method Node._ready], so opening the scene in the editor doesn't run it
 func setup() -> void:
 	node_selected.connect(_on_node_selected)
 	end_node_move.connect(_on_end_node_move)
 	_add_dashed_layer()
+	_menu = PopupMenu.new()
+	_menu.index_pressed.connect(func(index: int) -> void: _menu_actions[_menu.get_item_text(index)].call())
+	add_child(_menu, false, Node.INTERNAL_MODE_FRONT)
 	scroll_offset_changed.connect(func(_offset: Vector2) -> void: _dashed_layer.queue_redraw())
 
 ## Puts the top left node near the top left corner
@@ -49,6 +55,30 @@ func focus_node(node: GraphNode) -> void:
 	scroll_offset = (node.position_offset + node.size / 2) * zoom - size / 2
 
 @abstract func _on_event_card_pressed(event: AdventurePage, page: AdventurePage) -> void
+
+## A context menu at the mouse: item text -> what it does (and its icon, if any)
+func _show_menu(actions: Dictionary[String, Callable], icons: Dictionary[String, Texture2D] = {}) -> void:
+	_menu_actions = actions
+	_menu.clear()
+	for text: String in actions:
+		if icons.get(text) != null: _menu.add_icon_item(icons[text], text)
+		else: _menu.add_item(text)
+		_menu.set_item_icon_max_width(_menu.item_count - 1, 16)
+	_menu.position = DisplayServer.mouse_get_position()
+	_menu.reset_size()
+	_menu.popup()
+
+## [param pick] gets the actions when [param node] is right-clicked
+func _on_right_click(node: GraphNode, pick: Callable, icons: Dictionary[String, Texture2D] = {}) -> void:
+	node.gui_input.connect(func(input: InputEvent) -> void:
+		var click: InputEventMouseButton = input as InputEventMouseButton
+		if click != null and click.pressed and click.button_index == MOUSE_BUTTON_RIGHT:
+			_show_menu(pick.call(), icons)
+			accept_event()
+	)
+
+## Where [param at_position] (in this control) is on the graph
+func _to_graph(at_position: Vector2) -> Vector2: return (scroll_offset + at_position) / zoom
 
 func _clear() -> void:
 	clear_connections()
@@ -94,6 +124,8 @@ func _add_dashed(from: GraphNode, to: GraphNode) -> void:
 func _make_page_content(page: AdventurePage) -> VBoxContainer:
 	var content: VBoxContainer = VBoxContainer.new()
 	content.custom_minimum_size.x = THUMBNAIL_SIZE.x
+	# Right-clicks reach the node
+	content.mouse_filter = Control.MOUSE_FILTER_PASS
 	if page.background != null:
 		var thumbnail: TextureRect = _make_texture_rect(page.background)
 		thumbnail.custom_minimum_size = THUMBNAIL_SIZE
