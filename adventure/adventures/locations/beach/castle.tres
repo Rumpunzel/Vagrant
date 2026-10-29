@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://ca3sv437yiklg"]
+
+[ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://adventure/adventures/locations/beach/beach.tres" id="1_f0kk0"]
+[ext_resource type="Texture2D" uid="uid://73v62w6fwsm8" path="res://assets/landscapes/castle.jpg" id="2_4stke"]
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_4wv6j"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="3_4chh7"]
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="4_4stke"]
+[ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="5_ma368"]
+[ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="6_qmyxb"]
+
+[sub_resource type="Resource" id="Resource_d4awh"]
+script = ExtResource("6_qmyxb")
+_leads_to = "uid://dk3q4ia5u7q6m"
+
+[sub_resource type="Resource" id="Resource_6ky3k"]
+script = ExtResource("3_4chh7")
+description = "Go to Castle Ruin."
+transition = SubResource("Resource_d4awh")
+
+[sub_resource type="Resource" id="Resource_0bpb1"]
+script = ExtResource("6_qmyxb")
+_leads_to = "uid://ycd6xhx346l6"
+
+[sub_resource type="Resource" id="Resource_pixvp"]
+script = ExtResource("3_4chh7")
+description = "Go to Rocky Shore."
+transition = SubResource("Resource_0bpb1")
+
+[sub_resource type="Resource" id="Resource_ivrl5"]
+script = ExtResource("6_qmyxb")
+_leads_to = "uid://blk8tjmugvitx"
+
+[sub_resource type="Resource" id="Resource_qsp60"]
+script = ExtResource("3_4chh7")
+description = "Go to Old Tree."
+transition = SubResource("Resource_ivrl5")
+
+[resource]
+script = ExtResource("4_4stke")
+title = "Castle"
+description = "The Castle looks nice."
+area = ExtResource("1_f0kk0")
+background = ExtResource("2_4stke")
+decisions = Array[ExtResource("3_4chh7")]([SubResource("Resource_6ky3k"), SubResource("Resource_pixvp"), SubResource("Resource_qsp60")])

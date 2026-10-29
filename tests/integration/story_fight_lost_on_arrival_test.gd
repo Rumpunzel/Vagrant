@@ -7,7 +7,7 @@ func after_test() -> void:
 
 func test_fight_without_breath_is_lost_on_arrival() -> void:
 	var lost_page: AdventurePage = AdventurePage.new()
-	lost_page._title = "Lost"
+	lost_page.title = "Lost"
 	var fight_decision: AdventureFightDecision = AdventureFightDecision.new()
 	fight_decision.description = "Fight!"
 	fight_decision.enemies = [TestMonsters.cutthroat()] as Array[MonsterProfile]
@@ -15,13 +15,13 @@ func test_fight_without_breath_is_lost_on_arrival() -> void:
 	# Margin 0 must not crash the injury consequence
 	fight_decision.failure_consequences = [load("uid://b2xdmgxkfx8tf")] as Array[AdventureConsequence]  # injury_consequence.tres
 	var fight_page: AdventurePage = AdventurePage.new()
-	fight_page._title = "Ambush"
-	fight_page._decisions = [fight_decision] as Array[AdventureDecision]
+	fight_page.title = "Ambush"
+	fight_page.decisions = [fight_decision] as Array[AdventureDecision]
 	var walk: AdventureDecision = AdventureDecision.new()
 	walk.description = "Walk on"
 	walk.transition = fight_page
 	var start_page: AdventurePage = AdventurePage.new()
-	start_page._decisions = [walk] as Array[AdventureDecision]
+	start_page.decisions = [walk] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = start_page
 

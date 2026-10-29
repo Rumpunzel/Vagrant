@@ -20,8 +20,8 @@ func get_description() -> String:
 	return get_adventure_decision().flee_description if fleeing else super()
 
 ## Only once the fight is over; while it goes on, Story shows the next exchange
-func get_transition() -> AdventurePage:
-	return null if fight.is_ongoing() else fight.get_transition()
+func get_transition_reference() -> AdventurePageReference:
+	return null if fight.is_ongoing() else fight.get_transition_reference()
 
 func get_consequences() -> Array[StoryConsequence]:
 	var story_consequences: Array[StoryConsequence] = []

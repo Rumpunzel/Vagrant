@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 
-## Story bookkeeping with plain decisions: transitions, going back, visit and decision logs.
+## Story bookkeeping with plain decisions: transitions, going back, visit and decision logs, event hosts.
 
 const STORY: String = "uid://db6oui711vqep"  # story.tscn
 
@@ -14,10 +14,10 @@ func before_test() -> void:
 	_start = _page("Start")
 	_next = _page("Next")
 	_to_next = _decision("Go on", _next)
-	_start._decisions = [_to_next] as Array[AdventureDecision]
+	_start.decisions = [_to_next] as Array[AdventureDecision]
 	# No transition: back to the previous page
 	_back = _decision("Go back", null)
-	_next._decisions = [_back] as Array[AdventureDecision]
+	_next.decisions = [_back] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.title = "Test"
 	adventure.starting_page = _start
@@ -50,8 +50,8 @@ func test_decision_can_go_back_several_pages() -> void:
 	var last: AdventurePage = _page("Last")
 	var back_twice: AdventureDecision = _decision("Back twice", null)
 	back_twice.back_steps = 2
-	last._decisions = [back_twice] as Array[AdventureDecision]
-	_next._decisions = [_decision("Go on", last)] as Array[AdventureDecision]
+	last.decisions = [back_twice] as Array[AdventureDecision]
+	_next.decisions = [_decision("Go on", last)] as Array[AdventureDecision]
 	await _choose(0)
 	await _choose(0)
 	await _choose(0)
@@ -83,7 +83,7 @@ func test_killing_a_monster() -> void:
 	assert_bool(_monster_condition(reference, AdventureMonsterCondition.State.DEAD).is_true(_story, _next)).is_true()
 
 func test_dead_end_offers_turn_back() -> void:
-	_next._decisions = [] as Array[AdventureDecision]
+	_next.decisions = [] as Array[AdventureDecision]
 	await _choose(0)
 	var choices: Array[StoryChoice] = _story._current_story_page.choices
 	assert_int(choices.size()).is_equal(1)
@@ -104,6 +104,71 @@ func test_consequences_resolve() -> void:
 	assert_array(injuries).is_empty()
 	assert_object(_story._current_story_page.adventure_page).is_same(_next)
 
+func test_host_reference_returns_to_the_page_the_event_was_on() -> void:
+	var event: AdventurePage = _page("")
+	var inside: AdventurePage = _page("Inside")
+	event.decisions = [_decision("Look closer", inside)] as Array[AdventureDecision]
+	var back_to_host: AdventureDecision = _decision("Return", null)
+	back_to_host.transition = AdventureHostReference.new()
+	inside.decisions = [back_to_host] as Array[AdventureDecision]
+	_start.events = [event] as Array[AdventurePage]
+	_story.enter_page(_start)
+	# The event's decisions come first
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(inside)
+	assert_object(_story.get_host()).is_same(_start)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(_start)
+
+func test_previous_location_is_the_page_before_the_host() -> void:
+	var event: AdventurePage = _page("")
+	var inside: AdventurePage = _page("Inside")
+	var deeper: AdventurePage = _page("Deeper")
+	event.decisions = [_decision("Fight", inside)] as Array[AdventureDecision]
+	inside.decisions = [_decision("Run", deeper)] as Array[AdventureDecision]
+	var flee: AdventureDecision = _decision("Away", null)
+	flee.transition = AdventurePreviousLocationReference.new()
+	deeper.decisions = [flee] as Array[AdventureDecision]
+	_next.events = [event] as Array[AdventurePage]
+	await _choose(0)
+	# On the host: the event's decision first
+	await _choose(0)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(deeper)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(_start)
+
+func test_starts_behind_an_event_on_its_host() -> void:
+	var inside: AdventurePage = _page("Inside")
+	var back_to_host: AdventureDecision = _decision("Return", null)
+	back_to_host.transition = AdventureHostReference.new()
+	inside.decisions = [back_to_host] as Array[AdventureDecision]
+	var adventure: Adventure = Adventure.new()
+	adventure.starting_page = _start
+	# A story of its own: the one of before_test has started already
+	_story = auto_free(load(STORY).instantiate())
+	_story._reveal_delay = 0.01
+	add_child(_story)
+	_story.start_adventure(adventure, TestCharacters.adventurer(), inside, _next)
+	assert_object(_story._current_story_page.adventure_page).is_same(inside)
+	assert_object(_story.get_host()).is_same(_next)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(_next)
+
+func test_generic_events_spawn_per_host() -> void:
+	var event: AdventurePage = _page("Ambush")
+	var cutthroat: MonsterProfile = TestMonsters.cutthroat()
+	_story._host = _start
+	var at_start: Monster = _story.get_monster(event, cutthroat)
+	_story._host = _next
+	# Shared by default: one monster wherever the event is
+	assert_object(_story.get_monster(event, cutthroat)).is_same(at_start)
+	event.generic = true
+	var at_next: Monster = _story.get_monster(event, cutthroat)
+	assert_object(at_next).is_not_same(at_start)
+	_story._host = _start
+	assert_object(_story.get_monster(event, cutthroat)).is_not_same(at_next)
+
 func _choose(index: int) -> void:
 	var page: StoryPage = _story._current_story_page
 	page.choices[index].chose()
@@ -114,7 +179,7 @@ func _choose(index: int) -> void:
 
 func _page(title: String) -> AdventurePage:
 	var page: AdventurePage = AdventurePage.new()
-	page._title = title
+	page.title = title
 	return page
 
 func _decision(description: String, transition: AdventurePage) -> AdventureDecision:

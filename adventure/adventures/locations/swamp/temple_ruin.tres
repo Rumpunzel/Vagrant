@@ -6,8 +6,7 @@
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="3_6p547"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="3_34ol8"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_hij0g"]
-[ext_resource type="Resource" uid="uid://bxwqtk0p80o4g" path="res://adventure/adventures/locations/swamp/events/lurker_ambush.tres" id="6_quuub"]
-[ext_resource type="Resource" uid="uid://m4wl5ad8o0i7" path="res://adventure/adventures/locations/swamp/events/lurker_ambush_won.tres" id="7_won"]
+[ext_resource type="Resource" uid="uid://c16ehct0w6n48" path="res://adventure/adventures/locations/swamp/events/lurker.tres" id="6_lurker"]
 
 [sub_resource type="Resource" id="Resource_vvpox"]
 script = ExtResource("3_34ol8")
@@ -18,11 +17,20 @@ script = ExtResource("2_r3twy")
 description = "Go back to the beach."
 transition = SubResource("Resource_vvpox")
 
+[sub_resource type="Resource" id="Resource_hij0g"]
+script = ExtResource("3_34ol8")
+_leads_to = "uid://blk8tjmugvitx"
+
+[sub_resource type="Resource" id="Resource_n6tfh"]
+script = ExtResource("2_r3twy")
+description = "Go to Old Tree."
+transition = SubResource("Resource_hij0g")
+
 [resource]
 script = ExtResource("3_6p547")
-_title = "Temple Ruin"
-_description = "The air is damp and smells of rotten earth.
+title = "Temple Ruin"
+description = "The air is damp and smells of rotten earth.
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed orci orci. Donec tincidunt arcu viverra, lacinia enim at, pharetra orci. Integer ac neque sit amet nunc venenatis fermentum ut mollis eros. Maecenas egestas tortor at dui mattis pulvinar. Mauris rutrum ligula id massa euismod scelerisque. Cras sed molestie orci. Phasellus non finibus felis. Aenean purus lectus, tempus quis enim in, tincidunt laoreet arcu. Nullam in eleifend purus. Etiam eros lacus, lacinia id metus sed, faucibus viverra tortor. Phasellus sit amet leo sit amet massa consectetur porttitor. Vestibulum in facilisis lorem. Etiam est sapien, condimentum sed convallis vel, auctor in mi. Proin sit amet ornare tortor. Proin commodo quam mi, at placerat dolor cursus faucibus. Ut dictum accumsan neque eget consectetur."
-_area = ExtResource("1_8bxsp")
-_decisions = Array[ExtResource("2_r3twy")]([SubResource("Resource_e22nq")])
-_events = Array[ExtResource("3_6p547")]([ExtResource("6_quuub"), ExtResource("7_won")])
+area = ExtResource("1_8bxsp")
+decisions = Array[ExtResource("2_r3twy")]([SubResource("Resource_e22nq"), SubResource("Resource_n6tfh")])
+events = Array[ExtResource("3_6p547")]([ExtResource("6_lurker")])

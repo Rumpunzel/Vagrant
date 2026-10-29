@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 
-## Monsters: spawning and identity by spawning page, profile and index; runtime state.
+## Monsters: spawning and identity by spawning page, host (generic events), profile and index; runtime state.
 
 var _monsters: Monsters
 var _page: AdventurePage
@@ -32,6 +32,13 @@ func test_index_page_and_profile_tell_monsters_apart() -> void:
 	assert_int(_monsters.get_child_count()).is_equal(4)
 	assert_int(_monsters.get_all_monsters_of_type(_cutthroat).size()).is_equal(3)
 	assert_array(_monsters.get_all_monsters_of_type(MonsterProfile.new())).is_empty()
+
+func test_hosts_tell_monsters_apart() -> void:
+	var shared: Monster = _monsters.get_monster(_page, _cutthroat)
+	var at_host: Monster = _monsters.get_monster(_page, _cutthroat, 0, _other_page)
+	assert_object(at_host).is_not_same(shared)
+	assert_object(_monsters.get_monster(_page, _cutthroat, 0, _other_page)).is_same(at_host)
+	assert_object(at_host.spawned_from).is_same(_page)
 
 func test_injuries_persist_but_breath_recovers() -> void:
 	var cutthroat: Monster = _monsters.get_monster(_page, _cutthroat)

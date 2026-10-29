@@ -16,15 +16,15 @@ func before_test() -> void:
 	_outcome_pages = {}
 	for outcome: Fight.Outcome in [Fight.Outcome.WON, Fight.Outcome.LOST, Fight.Outcome.DRAW, Fight.Outcome.FLED]:
 		var page: AdventurePage = AdventurePage.new()
-		page._title = Fight.Outcome.find_key(outcome)
+		page.title = Fight.Outcome.find_key(outcome)
 		_outcome_pages[page] = outcome
 	decision.transition = _outcome_pages.find_key(Fight.Outcome.WON)
 	decision.failure_transition = _outcome_pages.find_key(Fight.Outcome.LOST)
 	decision.draw_transition = _outcome_pages.find_key(Fight.Outcome.DRAW)
 	decision.flee_transition = _outcome_pages.find_key(Fight.Outcome.FLED)
 	_fight_page = AdventurePage.new()
-	_fight_page._title = "Ambush"
-	_fight_page._decisions = [decision] as Array[AdventureDecision]
+	_fight_page.title = "Ambush"
+	_fight_page.decisions = [decision] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.title = "Test"
 	adventure.starting_page = _fight_page

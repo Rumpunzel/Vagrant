@@ -7,11 +7,14 @@
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_70bai"]
 [ext_resource type="Script" uid="uid://b8exmtc8feoad" path="res://adventure/decisions/adventure_fight_decision.gd" id="5_hg3kg"]
 [ext_resource type="Script" uid="uid://1342yb3eb2bh" path="res://characters/monsters/monster_profile.gd" id="5_rh2nm"]
-[ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="7_3hvfw"]
 [ext_resource type="Resource" uid="uid://d3ytncs0be7oo" path="res://characters/monsters/lurker.tres" id="7_b2xt8"]
-[ext_resource type="Script" uid="uid://do321suuawcvd" path="res://adventure/conditions/adventure_monster_condition.gd" id="9_can_fight"]
-[ext_resource type="Script" uid="uid://bs2whs2eq4xbj" path="res://adventure/adventure_monster_reference.gd" id="10_reference"]
 [ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="8_2rcic"]
+[ext_resource type="Resource" uid="uid://dsfrbfoig3deo" path="res://adventure/adventures/locations/swamp/events/lurker_ambush_draw.tres" id="8_xnwgx"]
+[ext_resource type="Script" uid="uid://do321suuawcvd" path="res://adventure/conditions/adventure_monster_condition.gd" id="9_can_fight"]
+[ext_resource type="Resource" uid="uid://dgfjjbm210jot" path="res://adventure/adventures/locations/swamp/events/lurker_ambush_lost.tres" id="10_4dq5w"]
+[ext_resource type="Script" uid="uid://bs2whs2eq4xbj" path="res://adventure/adventure_monster_reference.gd" id="10_reference"]
+[ext_resource type="Resource" uid="uid://qcl0jfm16ys8" path="res://adventure/adventures/locations/swamp/events/lurker_ambush_fled.tres" id="11_ar80c"]
+[ext_resource type="Script" uid="uid://by4c6kid8h44s" path="res://adventure/adventure_host_reference.gd" id="11_host"]
 
 [sub_resource type="Resource" id="Resource_its_lurker"]
 script = ExtResource("10_reference")
@@ -23,43 +26,27 @@ script = ExtResource("9_can_fight")
 monster = SubResource("Resource_its_lurker")
 metadata/_custom_type_script = "uid://do321suuawcvd"
 
-[sub_resource type="Resource" id="Resource_to_draw"]
-script = ExtResource("7_3hvfw")
-_leads_to = "uid://dsfrbfoig3deo"
-metadata/_custom_type_script = "uid://buhl8mbur0qma"
-
-[sub_resource type="Resource" id="Resource_to_lost"]
-script = ExtResource("7_3hvfw")
-_leads_to = "uid://dgfjjbm210jot"
-metadata/_custom_type_script = "uid://buhl8mbur0qma"
-
-[sub_resource type="Resource" id="Resource_to_fled"]
-script = ExtResource("7_3hvfw")
-_leads_to = "uid://qcl0jfm16ys8"
-metadata/_custom_type_script = "uid://buhl8mbur0qma"
-
-[sub_resource type="Resource" id="Resource_to_won"]
-script = ExtResource("7_3hvfw")
-_leads_to = "uid://cs40ge42lw0ry"
-metadata/_custom_type_script = "uid://buhl8mbur0qma"
+[sub_resource type="Resource" id="Resource_to_host"]
+script = ExtResource("11_host")
+metadata/_custom_type_script = "uid://by4c6kid8h44s"
 
 [sub_resource type="Resource" id="Resource_2rcic"]
 script = ExtResource("5_hg3kg")
 enemies = Array[ExtResource("5_rh2nm")]([ExtResource("7_b2xt8")])
 flee_description = "Wun away!"
-flee_transition = SubResource("Resource_to_fled")
-draw_transition = SubResource("Resource_to_draw")
-failure_transition = SubResource("Resource_to_lost")
+flee_transition = ExtResource("11_ar80c")
+draw_transition = ExtResource("8_xnwgx")
+failure_transition = ExtResource("10_4dq5w")
 description = "Fight!"
-transition = SubResource("Resource_to_won")
+transition = SubResource("Resource_to_host")
 metadata/_custom_type_script = "uid://b8exmtc8feoad"
 
 [resource]
 script = ExtResource("3_1x56p")
-_title = "Lurker Ambush"
-_description = "Something foul and wicked your way comes!"
-_background = ExtResource("1_74683")
-_conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurker_can_fight")])
-_decisions = Array[ExtResource("2_74683")]([SubResource("Resource_2rcic")])
-_exclusivity = 7
+title = "Lurker Ambush"
+description = "Something foul and wicked your way comes!"
+background = ExtResource("1_74683")
+conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurker_can_fight")])
+decisions = Array[ExtResource("2_74683")]([SubResource("Resource_2rcic")])
+exclusivity = 7
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

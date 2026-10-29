@@ -5,4 +5,7 @@ extends Node
 
 func _ready() -> void:
 	await get_tree().process_frame
-	default_adventure.start_adventure()
+	# The adventure editor's "Play from here"
+	var start: Array = AdventurePlayFrom.take() if OS.is_debug_build() else [ ]
+	if not start.is_empty(): (start[0] as Adventure).start_adventure(start[1], start[2])
+	else: default_adventure.start_adventure()

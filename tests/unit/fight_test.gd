@@ -55,7 +55,7 @@ func test_unarmed_example_until_won() -> void:
 	assert_bool(_monster.incapacitated).is_true()
 	assert_bool(_monster.is_out_of_breath()).is_true()
 	assert_int(fight.outcome).is_equal(Fight.Outcome.WON)
-	assert_object(fight.get_transition()).is_same(_won)
+	assert_object(fight.get_transition_reference()).is_same(_won)
 	assert_int(fight.get_exchange_count()).is_equal(2)
 
 func test_player_out_of_breath_loses() -> void:
@@ -63,19 +63,19 @@ func test_player_out_of_breath_loses() -> void:
 	# Every die above Guts 1 is lost; the Cutthroat wins the threat and stays unhurt
 	_apply(fight, [2, 3, 4, 5, 6], 1, [7, 7, 7], 7)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.LOST)
-	assert_object(fight.get_transition()).is_same(_lost)
+	assert_object(fight.get_transition_reference()).is_same(_lost)
 
 func test_both_out_of_breath_is_a_draw() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster, _character)
 	_apply(fight, [2, 3, 4, 5, 6], 1, [2, 2, 2], 1)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.DRAW)
-	assert_object(fight.get_transition()).is_same(_draw)
+	assert_object(fight.get_transition_reference()).is_same(_draw)
 
 func test_fleeing_ends_the_fight() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster, _character)
 	_apply(fight, [1, 1, 2, 2, 7], 7, [3, 4, 5], 5, [Rules.d4, Rules.d6, Rules.d8, Rules.d10, Rules.d12], [Rules.d8, Rules.d8, Rules.d8], true)
 	assert_int(fight.outcome).is_equal(Fight.Outcome.FLED)
-	assert_object(fight.get_transition()).is_same(_fled)
+	assert_object(fight.get_transition_reference()).is_same(_fled)
 	assert_array(fight.get_consequences()).is_empty()
 
 func test_fleeing_out_of_breath_still_flees() -> void:
@@ -154,7 +154,7 @@ func test_summary_tells_who_was_unnerved() -> void:
 func test_find_decision_owner_in_events() -> void:
 	var base: AdventurePage = load("uid://cs40ge42lw0ry")  # temple_ruin.tres
 	var ambush: AdventurePage = load("uid://bxwqtk0p80o4g")  # lurker_ambush.tres
-	for ambush_decision: AdventureDecision in ambush._decisions:
+	for ambush_decision: AdventureDecision in ambush.decisions:
 		assert_object(base.find_decision_owner(ambush_decision)).is_same(ambush)
 	assert_object(base.find_decision_owner(AdventureDecision.new())).is_null()
 

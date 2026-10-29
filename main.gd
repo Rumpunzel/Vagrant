@@ -40,20 +40,20 @@ func enter_character_creation(protagonist: CharacterProfile) -> CharacterCreatio
 	character_creation.character_profile = protagonist
 	return character_creation
 
-func enter_story(adventure: Adventure) -> Story:
+func enter_story(adventure: Adventure, page: AdventurePage = null, host: AdventurePage = null) -> Story:
 	ResourceLoader.load_threaded_request(_story_scene_path)
 	var protagonist: CharacterProfile = adventure.protagonist.duplicate(true) # Duplicate to be able to be reset on restart
 	if not protagonist or not protagonist.is_valid():
 		var character_creation: CharacterCreation = await enter_character_creation(protagonist)
 		await character_creation.character_created
-	return await _enter_story(adventure, protagonist)
+	return await _enter_story(adventure, protagonist, page, host)
 
-func _enter_story(adventure: Adventure, protagonist: CharacterProfile) -> Story:
+func _enter_story(adventure: Adventure, protagonist: CharacterProfile, page: AdventurePage = null, host: AdventurePage = null) -> Story:
 	var scene_tree: SceneTree = get_tree()
 	var story_scene: PackedScene = Files.load_async(_story_scene_path)
 	scene_tree.change_scene_to_packed(story_scene)
 	await scene_tree.scene_changed
 	assert(scene_tree.current_scene is Story)
 	var story: Story = scene_tree.current_scene
-	story.start_adventure(adventure, protagonist)
+	story.start_adventure(adventure, protagonist, page, host)
 	return story

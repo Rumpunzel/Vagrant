@@ -78,10 +78,10 @@ func test_story_decision_follows_outcome() -> void:
 	var result: SaveResult = request.roll()
 	assert_bool(choice.is_chosen()).is_true()
 	result.dice = [Die.new(Rules.d8, 8)] as Array[Die]
-	assert_object(choice.get_transition()).is_same(_success_page)
+	assert_object(choice.get_transition_reference()).is_same(_success_page)
 	assert_object(choice.get_consequences()[0]._adventure_consequence).is_same(_consequence)
 	result.dice = [Die.new(Rules.d4, 1)] as Array[Die]
-	assert_object(choice.get_transition()).is_same(_failure_page)
+	assert_object(choice.get_transition_reference()).is_same(_failure_page)
 	assert_object(choice.get_consequences()[0]._adventure_consequence).is_same(_failure_consequence)
 
 func test_icon_and_color_default_to_attribute() -> void:

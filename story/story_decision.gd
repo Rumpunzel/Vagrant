@@ -16,9 +16,7 @@ func get_adventure_decision() -> AdventureDecision: return _adventure_decision
 func get_dice_request() -> DiceRequest: assert(false, "StoryDecision has no DiceRequest"); return null
 func get_dice_result() -> DiceResult: assert(false, "StoryDecision has no DiceResult"); return null
 
-func get_transition() -> AdventurePage:
-	var transition: AdventurePageReference = get_adventure_decision().transition
-	return transition.get_adventure_page() if transition else null
+func get_transition_reference() -> AdventurePageReference: return get_adventure_decision().transition
 
 func get_consequences() -> Array[StoryConsequence]:
 	var story_consequences: Array[StoryConsequence] = []

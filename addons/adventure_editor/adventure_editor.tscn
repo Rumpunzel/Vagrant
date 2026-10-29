@@ -1,27 +1,134 @@
 [gd_scene format=3 uid="uid://btrr51xe6kwox"]
 
-[node name="AdventureEditor" type="GraphEdit" unique_id=836409515]
+[ext_resource type="Script" uid="uid://mev68l26dpuw" path="res://addons/adventure_editor/adventure_editor.gd" id="1_editor"]
+[ext_resource type="Script" uid="uid://btr84b5ffvx7o" path="res://addons/adventure_editor/adventure_map_view.gd" id="2_map"]
+[ext_resource type="Script" uid="uid://bia748sn01rc2" path="res://addons/adventure_editor/adventure_event_view.gd" id="3_event"]
+[ext_resource type="Script" uid="uid://l0qu2oiqqs0u" path="res://addons/adventure_editor/adventure_special_button.gd" id="4_special"]
+[ext_resource type="Texture2D" uid="uid://bee2desykk34h" path="res://assets/game_icons/delapouite/anticlockwise-rotation.svg" id="5_host"]
+[ext_resource type="Texture2D" uid="uid://dmkjss474288g" path="res://assets/game_icons/delapouite/exit-door.svg" id="6_previous"]
+
+[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_find", "_tabs", "_map_tab", "_map", "_event_shelf", "_problem_list", "_events_tab", "_event_list", "_host_picker", "_event_view")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_vertical = 3
+script = ExtResource("1_editor")
+_picker = NodePath("Top/Picker")
+_find = NodePath("Top/Find")
+_tabs = NodePath("Tabs")
+_map_tab = NodePath("Tabs/Map")
+_map = NodePath("Tabs/Map/Graph")
+_event_shelf = NodePath("Tabs/Map/Shelf/Scroll/Events")
+_problem_list = NodePath("Tabs/Problems")
+_events_tab = NodePath("Tabs/Events")
+_event_list = NodePath("Tabs/Events/List")
+_host_picker = NodePath("Tabs/Events/Event/HostPicker")
+_event_view = NodePath("Tabs/Events/Event/Body/Graph")
 
-[node name="GraphFrame" type="GraphFrame" parent="." unique_id=2074450009]
-layout_mode = 0
-offset_left = 357.0
-offset_top = 118.0
-offset_right = 831.0
-offset_bottom = 362.0
-mouse_filter = 1
-position_offset = Vector2(357, 118)
-title = "Beach"
+[node name="Top" type="HBoxContainer" parent="."]
+layout_mode = 2
 
-[node name="GraphNode" type="GraphNode" parent="." unique_id=1938318692]
-layout_mode = 0
-offset_left = 1093.0
-offset_top = 234.0
-offset_right = 1311.0
-offset_bottom = 386.0
-mouse_filter = 1
-position_offset = Vector2(1093, 234)
+[node name="Picker" type="EditorResourcePicker" parent="Top" unique_id=2024756789]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+base_type = "Adventure"
+
+[node name="Find" type="LineEdit" parent="Top"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+tooltip_text = "Filters the event lists; Enter jumps to the first page or event that fits (Ctrl+F)"
+placeholder_text = "Find…"
+clear_button_enabled = true
+
+[node name="Tabs" type="TabContainer" parent="." unique_id=1445356189]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Map" type="HBoxContainer" parent="Tabs"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Graph" type="GraphEdit" parent="Tabs/Map" unique_id=1590962896]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_map")
+
+[node name="Shelf" type="VBoxContainer" parent="Tabs/Map"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Tabs/Map/Shelf"]
+layout_mode = 2
+text = "Drag onto a location:"
+
+[node name="Scroll" type="ScrollContainer" parent="Tabs/Map/Shelf"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Events" type="VBoxContainer" parent="Tabs/Map/Shelf/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Events" type="HSplitContainer" parent="Tabs" unique_id=844746193]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="List" type="ItemList" parent="Tabs/Events" unique_id=1677729342]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Event" type="VBoxContainer" parent="Tabs/Events"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HostPicker" type="OptionButton" parent="Tabs/Events/Event"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="Body" type="HBoxContainer" parent="Tabs/Events/Event"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Graph" type="GraphEdit" parent="Tabs/Events/Event/Body" unique_id=906972324]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("3_event")
+
+[node name="Specials" type="VBoxContainer" parent="Tabs/Events/Event/Body"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Tabs/Events/Event/Body/Specials"]
+layout_mode = 2
+text = "Drag into a frame:"
+
+[node name="Host" type="Button" parent="Tabs/Events/Event/Body/Specials"]
+layout_mode = 2
+tooltip_text = "Back to the page the event is on"
+text = "Host"
+icon = ExtResource("5_host")
+alignment = 0
+expand_icon = true
+script = ExtResource("4_special")
+kind = "host"
+
+[node name="Previous" type="Button" parent="Tabs/Events/Event/Body/Specials"]
+layout_mode = 2
+tooltip_text = "Back to where the player was before the host (fleeing)"
+text = "Previous location"
+icon = ExtResource("6_previous")
+alignment = 0
+expand_icon = true
+script = ExtResource("4_special")
+kind = "previous"
+
+[node name="Problems" type="ItemList" parent="Tabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
