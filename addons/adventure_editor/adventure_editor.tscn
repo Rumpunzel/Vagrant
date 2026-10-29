@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bee2desykk34h" path="res://assets/game_icons/delapouite/anticlockwise-rotation.svg" id="5_host"]
 [ext_resource type="Texture2D" uid="uid://dmkjss474288g" path="res://assets/game_icons/delapouite/exit-door.svg" id="6_previous"]
 
-[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_tabs", "_map_tab", "_map", "_event_shelf", "_problem_list", "_events_tab", "_event_list", "_host_picker", "_event_view")]
+[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_find", "_tabs", "_map_tab", "_map", "_event_shelf", "_problem_list", "_events_tab", "_event_list", "_host_picker", "_event_view")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,7 +15,8 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 script = ExtResource("1_editor")
-_picker = NodePath("Picker")
+_picker = NodePath("Top/Picker")
+_find = NodePath("Top/Find")
 _tabs = NodePath("Tabs")
 _map_tab = NodePath("Tabs/Map")
 _map = NodePath("Tabs/Map/Graph")
@@ -26,11 +27,21 @@ _event_list = NodePath("Tabs/Events/List")
 _host_picker = NodePath("Tabs/Events/Event/HostPicker")
 _event_view = NodePath("Tabs/Events/Event/Body/Graph")
 
-[node name="Picker" type="EditorResourcePicker" parent="." unique_id=2024756789]
+[node name="Top" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Picker" type="EditorResourcePicker" parent="Top" unique_id=2024756789]
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 base_type = "Adventure"
+
+[node name="Find" type="LineEdit" parent="Top"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+tooltip_text = "Filters the event lists; Enter jumps to the first page or event that fits (Ctrl+F)"
+placeholder_text = "Find…"
+clear_button_enabled = true
 
 [node name="Tabs" type="TabContainer" parent="." unique_id=1445356189]
 layout_mode = 2

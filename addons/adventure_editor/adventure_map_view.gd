@@ -113,16 +113,28 @@ func _on_moved() -> void:
 	# Applying rebuilds the graph, which must not happen while it reports the move
 	if not areas.is_empty(): areas_requested.emit.call_deferred(areas)
 
+## Events from the sidebar or the FileSystem panel onto a location; images onto a location or an area's frame
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
-	return data is Dictionary and (data as Dictionary).has("adventure_event") and _get_location_at(_to_graph(at_position)) != null
+	var at: Vector2 = _to_graph(at_position)
+	if data is Dictionary and (data as Dictionary).has("adventure_event"): return _get_page_at(at) != null
+	for path: String in _get_dropped_files(data):
+		if _is_image(path) and (_get_page_at(at) != null or _get_area_at(at) != null): return true
+		if path.get_extension() == "tres" and _get_page_at(at) != null: return true
+	return false
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
-	event_dropped.emit(_get_location_at(_to_graph(at_position)), (data as Dictionary)["adventure_event"])
-
-func _get_location_at(point: Vector2) -> AdventurePage:
-	for element: GraphElement in _resources:
-		if element is GraphNode and Rect2(element.position_offset, element.size).has_point(point): return _resources[element] as AdventurePage
-	return null
+	var at: Vector2 = _to_graph(at_position)
+	var location: AdventurePage = _get_page_at(at)
+	if data is Dictionary and (data as Dictionary).has("adventure_event"):
+		event_dropped.emit(location, (data as Dictionary)["adventure_event"])
+		return
+	for path: String in _get_dropped_files(data):
+		var dropped: Resource = load(path)
+		if dropped is Texture2D:
+			var target: Resource = location if location != null else _get_area_at(at)
+			background_dropped.emit(target, dropped as Texture2D, target)
+		elif dropped is AdventurePage and location != null: event_dropped.emit(location, dropped as AdventurePage)
+		else: push_warning("%s is no image or event" % path)
 
 func _get_area_at(point: Vector2) -> AdventureArea:
 	for element: GraphElement in _resources:

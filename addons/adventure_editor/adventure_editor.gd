@@ -10,6 +10,8 @@ const INDENT: String = "    "
 
 @export_group("Configuration")
 @export var _picker: EditorResourcePicker
+## Filters the event lists, jumps on Enter
+@export var _find: LineEdit
 @export var _tabs: TabContainer
 @export var _map_tab: Control
 @export var _map: AdventureMapView
@@ -25,6 +27,7 @@ const INDENT: String = "    "
 var adventure: Adventure : set = set_adventure
 
 var _graph: AdventureGraph
+var _problems: Array[AdventureProblems.Problem] = [ ]
 var _layout: AdventureLayout
 var _undo_redo: EditorUndoRedoManager
 ## Resources changed by edits and not saved yet
@@ -63,7 +66,16 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_map.existing_event_requested.connect(_offer_events)
 	_map.event_dropped.connect(_on_event_dropped)
 	_problem_list.item_selected.connect(_show_problem)
+	_find.text_changed.connect(func(_text: String) -> void:
+		_list_events()
+		_fill_event_shelf()
+	)
+	_find.text_submitted.connect(_jump_to)
 	_map.play_requested.connect(_play_from)
+	_map.background_dropped.connect(_set_background)
+	_map.tidied.connect(rebuild)
+	_event_view.tidied.connect(rebuild)
+	_event_view.background_dropped.connect(_set_background)
 	_event_view.play_requested.connect(_play_from)
 	_map.event_removal_requested.connect(_remove_event)
 	_event_view.nearby_event_requested.connect(_offer_nearby_events)
@@ -90,10 +102,12 @@ func rebuild() -> void:
 	var placed: Array[AdventurePage] = [ ]
 	if _layout != null: placed = _layout.get_placed_pages()
 	_graph = AdventureGraph.new(adventure, placed)
+	_problems = [ ]
+	if adventure != null: _problems = AdventureProblems.new(_graph, _get_all_events()).problems
+	_map.problems = _problems
+	_event_view.problems = _problems
 	_map.show_graph(_graph)
-	_event_list.clear()
-	var listed: Array[AdventurePage] = [ ]
-	for event: AdventurePage in _graph.get_top_events(): _list_event(event, 0, listed)
+	var listed: Array[AdventurePage] = _list_events()
 	_fill_event_shelf()
 	_list_problems()
 	var current: AdventurePage = _event_view.get_event()
@@ -107,13 +121,21 @@ func open_event(event: AdventurePage, host: AdventurePage) -> void:
 	_event_view.scroll_to_nodes()
 
 ## Scenarios list their options below them, events the sub-events of their pages
+## Every event met, as a tree; returns them all, shown or filtered out
+func _list_events() -> Array[AdventurePage]:
+	_event_list.clear()
+	var listed: Array[AdventurePage] = [ ]
+	if _graph != null: for event: AdventurePage in _graph.get_top_events(): _list_event(event, 0, listed)
+	return listed
+
+## Those not fitting the find field are left out, their sub-events are still looked at
 func _list_event(event: AdventurePage, depth: int, listed: Array[AdventurePage]) -> void:
 	if listed.has(event): return
 	listed.append(event)
-	var kind: String = " (scenario)" if event is AdventureEventScenario else ""
-	var index: int = _event_list.add_item(INDENT.repeat(depth) + AdventureGraph.get_title(event) + kind)
-	_event_list.set_item_metadata(index, event)
-	_event_list.set_item_tooltip(index, event.resource_path)
+	if _fits(event):
+		var index: int = _event_list.add_item(INDENT.repeat(depth) + _describe_event(event))
+		_event_list.set_item_metadata(index, event)
+		_event_list.set_item_tooltip(index, event.resource_path)
 	var nested: Array[AdventurePage] = event.events.duplicate()
 	nested.append_array(event.nearby_events)
 	if not event is AdventureEventScenario:
@@ -144,12 +166,33 @@ func save() -> void:
 	for resource: Resource in _unsaved: ResourceSaver.save(resource)
 	_unsaved.clear()
 
+## Ctrl+S saves, Ctrl+F finds
 func _shortcut_input(input: InputEvent) -> void:
-	if not is_visible_in_tree() or not has_unsaved_changes(): return
 	var key: InputEventKey = input as InputEventKey
-	if key != null and key.pressed and key.keycode == KEY_S and key.is_command_or_control_pressed() and not key.shift_pressed:
-		save()
-		get_viewport().set_input_as_handled()
+	if not is_visible_in_tree() or key == null or not key.pressed or not key.is_command_or_control_pressed() or key.shift_pressed: return
+	if key.keycode == KEY_S and has_unsaved_changes(): save()
+	elif key.keycode == KEY_F:
+		_find.grab_focus()
+		_find.select_all()
+	else: return
+	get_viewport().set_input_as_handled()
+
+## Whether [param page]'s title fits the find field (everything fits an empty one)
+func _fits(page: AdventurePage) -> bool:
+	return _find.text.strip_edges().is_empty() or AdventureGraph.get_title(page).to_lower().contains(_find.text.strip_edges().to_lower())
+
+## The first location on the map whose title fits, else the first event
+func _jump_to(_text: String) -> void:
+	if _find.text.strip_edges().is_empty() or _graph == null: return
+	for page: AdventurePage in _graph.pages:
+		if _fits(page):
+			_open_location(page)
+			return
+	for event: AdventurePage in _get_all_events():
+		if _fits(event):
+			open_event(event, null)
+			return
+	push_warning("Nothing called \"%s\"" % _find.text)
 
 func _link(from: AdventurePage, to: AdventurePage) -> void:
 	if from == null or to == null or from == to: return
@@ -270,6 +313,7 @@ static func _describe_event(event: AdventurePage) -> String:
 func _fill_event_shelf() -> void:
 	for button: Node in _event_shelf.get_children(): button.queue_free()
 	for event: AdventurePage in _get_all_events():
+		if not _fits(event): continue
 		var button: AdventureEventButton = AdventureEventButton.new()
 		button.event = event
 		button.text = _describe_event(event)
@@ -295,10 +339,12 @@ func _play_from(page: AdventurePage, event: AdventurePage) -> void:
 	AdventurePlayFrom.write(adventure, page, host)
 	EditorInterface.play_main_scene()
 
+func _set_background(resource: Resource, texture: Texture2D, file: Resource) -> void:
+	if resource != null: _set_property(resource, &"background", texture, file, "Set background of %s" % resource.get(&"title" if resource is AdventurePage else &"name"))
+
 func _list_problems() -> void:
 	_problem_list.clear()
-	var problems: Array[AdventureProblems.Problem] = [ ]
-	if adventure != null: problems = AdventureProblems.new(_graph, _get_all_events()).problems
+	var problems: Array[AdventureProblems.Problem] = _problems
 	for problem: AdventureProblems.Problem in problems:
 		_problem_list.set_item_metadata(_problem_list.add_item(problem.text), problem)
 	var index: int = _tabs.get_tab_idx_from_control(_problem_list)

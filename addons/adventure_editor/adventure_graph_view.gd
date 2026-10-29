@@ -11,6 +11,10 @@ signal event_opened(event: AdventurePage, host: AdventurePage)
 signal layout_changed
 ## Start the game at [param page]; [param event]: the event it is part of, none for a location
 signal play_requested(page: AdventurePage, event: AdventurePage)
+## Its nodes' positions were forgotten; showing it again puts them back in their default places
+signal tidied
+## An image from the FileSystem panel let go on a page or area; [param file]: the file the change is stored in
+signal background_dropped(resource: Resource, texture: Texture2D, file: Resource)
 
 const NODE_SPACING: Vector2 = Vector2(280, 240)
 const THUMBNAIL_SIZE: Vector2 = Vector2(220, 124)
@@ -21,6 +25,8 @@ const FRAME_BACKGROUND_ALPHA: float = 0.35
 const DASHED_COLOR: Color = Color(1, 1, 1, 0.6)
 const FADED: Color = Color(1, 1, 1, 0.5)
 const LINE_COLOR: Color = Color(1, 1, 1, 0.8)
+const PROBLEM_COLOR: Color = Color(1, 0.55, 0.5)
+const IMAGE_EXTENSIONS: Array[String] = ["png", "jpg", "jpeg", "webp", "svg"]
 const ARROW_END: int = 1
 const ARROW_START: int = 2
 const ARROW_SIZE: float = 12.0
@@ -32,6 +38,8 @@ const MENU_ICONS: Array[Array] = [
 ]
 
 var layout: AdventureLayout
+## Shown on the nodes of their pages
+var problems: Array[AdventureProblems.Problem] = [ ]
 
 ## By layout key
 var _nodes: Dictionary[String, GraphNode] = {}
@@ -52,6 +60,7 @@ func setup() -> void:
 	_menu.index_pressed.connect(func(index: int) -> void: _menu_actions[_menu.get_item_text(index)].call())
 	add_child(_menu, false, Node.INTERNAL_MODE_FRONT)
 	scroll_offset_changed.connect(func(_offset: Vector2) -> void: _dashed_layer.queue_redraw())
+	_add_tidy_button()
 
 ## Puts the top left node near the top left corner
 func scroll_to_nodes() -> void:
@@ -110,6 +119,45 @@ func _on_right_click(node: GraphNode, pick: Callable) -> void:
 			accept_event()
 	)
 
+## A toolbar button forgetting where this graph's nodes were moved, after asking
+func _add_tidy_button() -> void:
+	var ask: ConfirmationDialog = ConfirmationDialog.new()
+	ask.dialog_text = "Put every node here back in its default place?"
+	ask.confirmed.connect(_tidy)
+	add_child(ask, false, Node.INTERNAL_MODE_FRONT)
+	var button: Button = Button.new()
+	button.flat = true
+	button.icon = _get_editor_icon("Reload")
+	if button.icon == null: button.text = "Tidy"
+	button.tooltip_text = "Tidy: put every node back in its default place"
+	button.pressed.connect(ask.popup_centered)
+	get_menu_hbox().add_child(button)
+
+## Placed special nodes keep their positions: those are all they are
+func _tidy() -> void:
+	if layout == null: return
+	for key: String in _nodes: if not key.contains("/special/"): layout.positions.erase(key)
+	layout_changed.emit()
+	tidied.emit()
+
+## Paths dragged from the FileSystem panel
+static func _get_dropped_files(data: Variant) -> PackedStringArray:
+	if not data is Dictionary or (data as Dictionary).get("type") != "files": return PackedStringArray()
+	return (data as Dictionary)["files"]
+
+static func _is_image(path: String) -> bool: return IMAGE_EXTENSIONS.has(path.get_extension().to_lower())
+
+## The node at [param point] on the graph, if any
+func _get_node_at(point: Vector2) -> GraphNode:
+	for element: GraphElement in _resources:
+		if element is GraphNode and Rect2(element.position_offset, element.size).has_point(point): return element as GraphNode
+	return null
+
+## The page whose node is at [param point] on the graph
+func _get_page_at(point: Vector2) -> AdventurePage:
+	var node: GraphNode = _get_node_at(point)
+	return _resources[node] as AdventurePage if node != null else null
+
 ## Where [param at_position] (in this control) is on the graph
 func _to_graph(at_position: Vector2) -> Vector2: return (scroll_offset + at_position) / zoom
 
@@ -134,7 +182,21 @@ func _add_node(key: String, resource: Resource, title: String, content: Control,
 	add_child(node)
 	_nodes[key] = node
 	_resources[node] = resource
+	_mark_problems(node, resource)
 	return node
+
+## A warning icon in the title bar, a reddish node and the problems as its tooltip
+func _mark_problems(node: GraphNode, resource: Resource) -> void:
+	var texts: Array[String] = [ ]
+	for problem: AdventureProblems.Problem in problems: if problem.page == resource and not texts.has(problem.text): texts.append(problem.text)
+	if texts.is_empty(): return
+	node.self_modulate = PROBLEM_COLOR
+	node.tooltip_text = "\n".join(texts)
+	var icon: TextureRect = _make_texture_rect(_get_editor_icon("StatusWarning"))
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = Vector2.ONE * ICON_SIZE
+	node.get_titlebar_hbox().add_child(icon)
+	node.get_titlebar_hbox().move_child(icon, 0)
 
 func _add_frame(title: String, resource: Resource, background_texture: Texture2D) -> GraphFrame:
 	var frame: GraphFrame = GraphFrame.new()

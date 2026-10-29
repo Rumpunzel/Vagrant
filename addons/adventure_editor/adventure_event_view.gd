@@ -233,11 +233,21 @@ func _get_placed_target(entry: AdventureEventOverview.Entry, outlet: AdventureEv
 	return key if _nodes.has(key) and (_node_targets.get(_nodes[key].name, [ ]) as Array).size() > 0 and _node_targets[_nodes[key].name][0] == kind else ""
 
 ## Special nodes dragged in from the sidebar ([AdventureSpecialButton]) land in the frame under the mouse
-func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	return data is Dictionary and (data as Dictionary).has("adventure_special")
+## Images from the FileSystem panel onto a page become its background
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	if data is Dictionary and (data as Dictionary).has("adventure_special"): return true
+	var files: PackedStringArray = _get_dropped_files(data)
+	return not files.is_empty() and _is_image(files[0]) and _get_page_at(_to_graph(at_position)) != null
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
 	var at: Vector2 = _to_graph(at_position)
+	var files: PackedStringArray = _get_dropped_files(data)
+	if not files.is_empty():
+		var node: GraphNode = _get_node_at(at)
+		var page: AdventurePage = _resources[node] as AdventurePage
+		var texture: Texture2D = load(files[0]) as Texture2D
+		if texture != null and _node_entries.has(node.name): background_dropped.emit(page, texture, _file_for(null, page, _node_entries[node.name]))
+		return
 	for frame: GraphFrame in _frame_entries:
 		if not Rect2(frame.position_offset, frame.size).has_point(at): continue
 		var prefix: String = "%s%s/" % [_placed_prefix(_frame_entries[frame]), (data as Dictionary)["adventure_special"]]
