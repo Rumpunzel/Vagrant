@@ -57,6 +57,7 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_event_view.decisions_requested.connect(_set_decisions)
 	_event_view.references_cleared.connect(_clear_references)
 	_event_view.property_requested.connect(_set_property)
+	_event_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
 
 func set_adventure(value: Adventure) -> void:
 	adventure = value

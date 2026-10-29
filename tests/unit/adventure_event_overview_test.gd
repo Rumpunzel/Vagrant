@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 
-## The adventure editor's overview of one event: an entry per event (a scenario: per option) and per sub-event, and what they say about themselves.
+## The adventure editor's overview of one event: an entry per event, a switch per scenario with an entry per option, the same for sub-events, and what they say about themselves.
 
 var _cutthroat: MonsterProfile
 
@@ -14,12 +14,24 @@ func test_plain_event_is_one_entry() -> void:
 	assert_str(overview.entries[0].label).is_equal("Ambush")
 	assert_object(overview.entries[0].parent).is_null()
 
-func test_scenario_options_in_priority_order() -> void:
+func test_scenario_is_a_switch_over_its_options() -> void:
 	var scenario: AdventureEventScenario = _scenario("Lurker", [_page("Ambush"), _page("Beaten")])
 	var overview: AdventureEventOverview = AdventureEventOverview.new(scenario)
-	assert_array(overview.entries.map(func(entry: AdventureEventOverview.Entry) -> String: return entry.label)).contains_exactly(["Lurker 1 · Ambush", "Lurker 2 · Beaten"])
-	for entry: AdventureEventOverview.Entry in overview.entries: assert_object(entry.listed_as).is_same(scenario)
+	assert_array(overview.entries.map(func(entry: AdventureEventOverview.Entry) -> String: return entry.label)).contains_exactly(["Ambush", "Beaten"])
+	assert_int(overview.switches.size()).is_equal(1)
+	var switch: AdventureEventOverview.Switch = overview.get_switch(scenario)
+	assert_object(switch.outer).is_null()
+	for entry: AdventureEventOverview.Entry in overview.entries:
+		assert_object(entry.listed_as).is_same(scenario)
+		assert_object(entry.switch).is_same(switch)
 	assert_object(overview.get_listed_entry(scenario)).is_same(overview.entries[0])
+
+func test_nested_scenarios_are_switches_inside_switches() -> void:
+	var inner: AdventureEventScenario = _scenario("Inner", [_page("Deep")])
+	var outer: AdventureEventScenario = _scenario("Outer", [inner, _page("Shallow")])
+	var overview: AdventureEventOverview = AdventureEventOverview.new(outer)
+	assert_object(overview.get_switch(inner).outer).is_same(overview.get_switch(outer))
+	assert_object(overview.get_entry(inner.events[0]).switch).is_same(overview.get_switch(inner))
 
 func test_sub_events_of_inner_pages_hang_from_their_page() -> void:
 	var ambush: AdventurePage = _page("Ambush")
@@ -39,13 +51,9 @@ func test_loops_end() -> void:
 	scenario.events = [scenario, _page("Only")] as Array[AdventurePage]
 	assert_int(AdventureEventOverview.new(scenario).entries.size()).is_equal(1)
 
-func test_conditions_include_the_scenarios() -> void:
-	var ambush: AdventurePage = _page("Ambush")
-	ambush.conditions = [_monster_condition(AdventureMonsterCondition.State.CAN_FIGHT)] as Array[AdventureCondition]
-	var scenario: AdventureEventScenario = _scenario("Lurker", [ambush])
-	scenario.conditions = [_monster_condition(AdventureMonsterCondition.State.DEAD), AdventureIsAlwaysTrueCondition.new()] as Array[AdventureCondition]
-	var entry: AdventureEventOverview.Entry = AdventureEventOverview.new(scenario).entries[0]
-	assert_str(AdventureEventOverview.get_condition_text(entry)).is_equal("Cutthroat is dead, Cutthroat can fight")
+func test_condition_text() -> void:
+	var conditions: Array[AdventureCondition] = [_monster_condition(AdventureMonsterCondition.State.DEAD), AdventureIsAlwaysTrueCondition.new(), _monster_condition(AdventureMonsterCondition.State.CAN_FIGHT)]
+	assert_str(AdventureEventOverview.get_condition_text(conditions)).is_equal("Cutthroat is dead, Cutthroat can fight")
 
 func test_hiding_text_names_what_is_hidden_at_the_host() -> void:
 	var ambush: AdventurePage = _page("Ambush")

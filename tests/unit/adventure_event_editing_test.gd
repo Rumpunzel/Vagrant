@@ -75,6 +75,25 @@ func test_new_events() -> void:
 	assert_object(AdventureEventEditing.make_event("Wolves", true)).is_instanceof(AdventureEventScenario)
 	var location: AdventurePage = _page("res://locations/swamp/temple_ruin.tres")
 	assert_str(AdventureEventEditing.get_event_path(location, "Wolf Pack")).is_equal("res://locations/swamp/events/wolf_pack.tres")
+	# A scenario in the events folder already: its options next to it
+	var scenario: AdventurePage = _page("res://locations/swamp/events/lurker.tres")
+	assert_str(AdventureEventEditing.get_event_path(scenario, "Wolf Pack")).is_equal("res://locations/swamp/events/wolf_pack.tres")
+
+func test_monster_conditions_point_at_the_spawning_page() -> void:
+	var lurker: MonsterProfile = TestMonsters.cutthroat()
+	var ambush: AdventurePage = _page("res://events/ambush.tres")
+	var won: AdventurePage = _page("res://events/won.tres")
+	var own: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(AdventureMonsterCondition.State.CAN_FIGHT, lurker, 0, ambush, ambush)
+	assert_object(own.monster.spawned_by).is_null()
+	assert_object(own.monster.monster).is_same(lurker)
+	var other: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(AdventureMonsterCondition.State.INCAPACITATED, lurker, 1, ambush, won)
+	assert_object(other.monster.spawned_by).is_instanceof(AdventureTransition)
+	assert_int(other.monster.index).is_equal(1)
+	assert_int(other.state).is_equal(AdventureMonsterCondition.State.INCAPACITATED)
+	# Inside the file holding it: pointing back would loop
+	var inside: AdventurePage = _page("res://events/ambush.tres::Resource_n1")
+	ambush.events.append(inside)
+	assert_object(AdventureEventEditing.make_monster_condition(AdventureMonsterCondition.State.DEAD, lurker, 0, ambush, inside)).is_null()
 
 func test_special_references() -> void:
 	var host: AdventurePageReference = AdventureEventEditing.make_special_reference(false)
@@ -94,7 +113,10 @@ func test_consequence_types() -> void:
 	var types: Dictionary[String, Script] = AdventureEventEditing.get_consequence_types()
 	assert_array(types.keys()).contains(["AdventureInjuryConsequence", "AdventureKillMonsterConsequence"])
 	assert_array(types.keys()).not_contains(["AdventureConsequence"])
-	assert_str(AdventureEventEditing.get_consequence_type_name("AdventureKillMonsterConsequence")).is_equal("Kill Monster")
+	assert_str(AdventureEventEditing.get_type_name("AdventureKillMonsterConsequence")).is_equal("Kill Monster")
+	assert_str(AdventureEventEditing.get_type_name("AdventureMonsterCondition")).is_equal("Monster")
+	assert_array(AdventureEventEditing.get_condition_types().keys()).contains(["AdventureMonsterCondition", "AdventureIsAlwaysTrueCondition"])
+	assert_array(AdventureEventEditing.get_condition_types().keys()).not_contains(["AdventureCondition"])
 	var injury: AdventureConsequence = AdventureEventEditing.make_consequence(types["AdventureInjuryConsequence"])
 	assert_object(injury).is_instanceof(AdventureInjuryConsequence)
 	assert_str(injury.resource_scene_unique_id).is_not_empty()

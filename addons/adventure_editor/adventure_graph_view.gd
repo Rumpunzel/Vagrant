@@ -24,7 +24,7 @@ var layout: AdventureLayout
 ## By layout key
 var _nodes: Dictionary[String, GraphNode] = {}
 var _resources: Dictionary[GraphElement, Resource] = {}
-## [from, to] node pairs, drawn dashed
+## [from, to, color], drawn dashed between the controls' edges
 var _dashed: Array[Array] = [ ]
 var _dashed_layer: Control
 var _menu: PopupMenu
@@ -116,8 +116,10 @@ func _add_frame(title: String, resource: Resource, background_texture: Texture2D
 	_resources[frame] = resource
 	return frame
 
-func _add_dashed(from: GraphNode, to: GraphNode) -> void:
-	_dashed.append([from, to])
+func _add_dashed(from: Control, to: Control, color: Color = DASHED_COLOR) -> void:
+	_dashed.append([from, to, color])
+	# Ends inside a node move when the node lays itself out
+	for end: Control in [from, to]: if not end is GraphNode: end.item_rect_changed.connect(_dashed_layer.queue_redraw)
 	_dashed_layer.queue_redraw.call_deferred()
 
 ## Background thumbnail and a card per event of [param page]
@@ -181,19 +183,24 @@ func _on_end_node_move() -> void:
 	for key: String in _nodes: layout.positions[key] = _nodes[key].position_offset
 	layout_changed.emit()
 
-## Dashed links: GraphEdit's connections can't be dashed; drawn above the frames, which would hide them
+## Dashed links: GraphEdit's connections can't be dashed; drawn above frames and nodes, which would hide them
 func _add_dashed_layer() -> void:
 	_dashed_layer = Control.new()
 	_dashed_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_dashed_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_dashed_layer.draw.connect(_draw_dashed)
+	# Above the nodes too: GraphEdit draws its elements after its internal children
+	_dashed_layer.z_index = 1
 	add_child(_dashed_layer, false, Node.INTERNAL_MODE_FRONT)
 
 func _draw_dashed() -> void:
 	var to_local: Transform2D = _dashed_layer.get_global_transform().affine_inverse()
-	for pair: Array in _dashed:
-		var from: Rect2 = (pair[0] as GraphNode).get_global_rect()
-		var to: Rect2 = (pair[1] as GraphNode).get_global_rect()
-		var start: Vector2 = to_local * Vector2(from.end.x, from.get_center().y)
-		var end: Vector2 = to_local * Vector2(to.position.x, to.get_center().y)
-		_dashed_layer.draw_dashed_line(start, end, DASHED_COLOR, 2.0 * zoom, 10.0 * zoom)
+	for dashed: Array in _dashed:
+		if not is_instance_valid(dashed[0]) or not is_instance_valid(dashed[1]): continue
+		var from: Rect2 = (dashed[0] as Control).get_global_rect()
+		var to: Rect2 = (dashed[1] as Control).get_global_rect()
+		# From the side facing the target
+		var forward: bool = to.get_center().x >= from.get_center().x
+		var start: Vector2 = to_local * Vector2(from.end.x if forward else from.position.x, from.get_center().y)
+		var end: Vector2 = to_local * Vector2(to.position.x if forward else to.end.x, to.get_center().y)
+		_dashed_layer.draw_dashed_line(start, end, dashed[2], 2.0 * zoom, 10.0 * zoom)

@@ -14,6 +14,8 @@ signal decisions_requested(page: AdventurePage, decisions: Array[AdventureDecisi
 ## Each [decision, property] is set to none
 signal references_cleared(references: Array[Array], file: Resource, action: String)
 signal property_requested(resource: Resource, property: StringName, value: Variant, file: Resource, action: String)
+## A new event as an option of [param scenario]
+signal option_requested(scenario: AdventureEventScenario)
 
 enum Target { PAGE, HOST, PREVIOUS }
 
@@ -55,6 +57,11 @@ var _node_targets: Dictionary[StringName, Array] = {}
 var _selected: AdventureDecision
 var _card_styles: Dictionary[AdventureDecision, StyleBoxFlat] = {}
 var _frame_entries: Dictionary[GraphFrame, AdventureEventOverview.Entry] = {}
+## Tags of conditions and effects, the page or event a condition is on, and the fight cards with their pages, for the dotted lines
+var _tags: Dictionary[Resource, Control] = {}
+var _tag_owners: Dictionary[Resource, AdventurePage] = {}
+var _fight_cards: Dictionary[AdventureDecision, Control] = {}
+var _fight_pages: Dictionary[AdventureDecision, AdventurePage] = {}
 ## [nodes, top] per column placed by default, stacked once laid out; showing again drops them with the nodes
 var _unstacked: Array[Array] = [ ]
 
@@ -73,17 +80,35 @@ func get_host() -> AdventurePage: return _host
 func show_event(event: AdventurePage, host: AdventurePage = null) -> void:
 	_clear()
 	_host = host
-	for nodes: Dictionary in [_node_entries, _node_pages, _node_ports, _node_targets, _card_styles, _frame_entries]: nodes.clear()
+	for nodes: Dictionary in [_node_entries, _node_pages, _node_ports, _node_targets, _card_styles, _frame_entries, _tags, _tag_owners, _fight_cards, _fight_pages]: nodes.clear()
 	_unstacked.clear()
 	_overview = AdventureEventOverview.new(event) if event != null else null
 	if _overview == null: return
+	# Fights first: conditions can offer their monsters
+	for entry: AdventureEventOverview.Entry in _overview.entries:
+		for page: AdventurePage in entry.graph.pages:
+			for decision: AdventureDecision in page.decisions: if decision is AdventureFightDecision: _fight_pages[decision] = page
 	var origin: Vector2 = Vector2.ZERO
 	for entry: AdventureEventOverview.Entry in _overview.entries:
+		# A scenario's switch (and the scenarios around it) before its first option
+		var chain: Array[AdventureEventOverview.Switch] = [ ]
+		var switch: AdventureEventOverview.Switch = entry.switch
+		while switch != null:
+			chain.push_front(switch)
+			switch = switch.outer
+		for outer: AdventureEventOverview.Switch in chain:
+			if _nodes.has(_switch_key(outer.scenario)): continue
+			_add_switch(outer, origin)
+			origin.x += NODE_SPACING.x * 1.25
 		var frame: GraphFrame = _add_frame(entry.label, entry.event, null)
 		_frame_entries[frame] = entry
 		origin.x += (_add_entry(entry, frame, origin) + 1) * NODE_SPACING.x
+	for switch: AdventureEventOverview.Switch in _overview.switches: _connect_switch(switch)
 	for entry: AdventureEventOverview.Entry in _overview.entries:
-		if entry.parent != null: _add_dashed(_nodes[_key(entry.parent, entry.parent_page)], _nodes[_key(entry, entry.event)])
+		if entry.parent != null and entry.switch == null: _add_dashed(_nodes[_key(entry.parent, entry.parent_page)], _nodes[_key(entry, entry.event)])
+	for switch: AdventureEventOverview.Switch in _overview.switches:
+		if switch.parent != null and switch.outer == null: _add_dashed(_nodes[_key(switch.parent, switch.parent_page)], _nodes[_switch_key(switch.scenario)])
+	_add_condition_lines()
 
 ## Adds the entry's nodes to [param frame] from [param origin] on; returns how many columns they take
 func _add_entry(entry: AdventureEventOverview.Entry, frame: GraphFrame, origin: Vector2) -> int:
@@ -126,12 +151,13 @@ func _add_page(entry: AdventureEventOverview.Entry, page: AdventurePage, at: Vec
 	var content: VBoxContainer = _make_page_content(page)
 	if not page.description.is_empty(): content.add_child(_make_text(page.description))
 	if page == entry.event:
-		var when: String = AdventureEventOverview.get_condition_text(entry)
-		if not when.is_empty(): content.add_child(_make_info("When: %s" % when))
+		content.add_child(_make_info("When:"))
+		content.add_child(_make_condition_tags(page, _file_for(null, page, entry)))
 		for text: String in [AdventureEventOverview.get_hiding_text(entry, _host), AdventureEventOverview.get_monster_text(entry)]:
 			if not text.is_empty(): content.add_child(_make_info(text))
 	var node: GraphNode = _add_node(_key(entry, page), page, AdventureGraph.get_title(page), content, at)
-	node.set_slot(0, page != entry.event, 0, Color.WHITE, false, 0, Color.WHITE)
+	# An option's event is linked from its scenario's switch
+	node.set_slot(0, page != entry.event or entry.switch != null, 0, Color.WHITE, false, 0, Color.WHITE)
 	var outlets: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outlets(page)
 	for index: int in outlets.size(): _add_decision_cards(node, entry, page, index, outlets[index])
 	# What the game offers on a page without decisions
@@ -146,7 +172,7 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 	var decision: AdventureDecision = outlet.decision
 	if not outlet.to_check:
 		var card: PanelContainer = _make_card(entry, page, index, _describe_outlet(outlet), Color.TRANSPARENT, null, outlet.goes_back())
-		card.get_child(0).add_child(_make_effects(entry, page, outlet))
+		card.get_child(0).add_child(_make_tags(decision, &"consequences", _file_for(decision, page, entry), "effect", _get_effect_additions))
 		node.add_child(card)
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, Color.WHITE)
 		return
@@ -157,11 +183,13 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 	if attribute != null:
 		color = attribute.color
 		if attribute.icon != null: icon = attribute.icon
-	node.add_child(_make_card(entry, page, index, "%s\n%s" % [AdventureEventGraph.describe_check(decision), decision.description.get_slice("\n", 0)], color, icon, false))
+	var check_card: PanelContainer = _make_card(entry, page, index, "%s\n%s" % [AdventureEventGraph.describe_check(decision), decision.description.get_slice("\n", 0)], color, icon, false)
+	if is_fight: _fight_cards[decision] = check_card
+	node.add_child(check_card)
 	for outcome: AdventureEventGraph.Outlet in AdventureEventGraph.get_outcomes(decision):
 		var row: HBoxContainer = HBoxContainer.new()
 		row.alignment = BoxContainer.ALIGNMENT_END
-		if not outcome.consequences_property.is_empty(): row.add_child(_make_effects(entry, page, outcome))
+		if not outcome.consequences_property.is_empty(): row.add_child(_make_tags(decision, outcome.consequences_property, _file_for(decision, page, entry), "effect", _get_effect_additions))
 		var label: Label = Label.new()
 		label.text = _describe_outlet(outcome)
 		if outcome.goes_back(): label.modulate = FADED
@@ -219,35 +247,72 @@ func _style_card(style: StyleBoxFlat, selected: bool) -> void:
 	style.border_width_left = 3
 	style.border_color = SELECTED_COLOR if selected else style.get_meta(&"border")
 
-## A tag per consequence of [param outlet] (click: Inspector, ✕: removes) and a button adding one
-func _make_effects(entry: AdventureEventOverview.Entry, page: AdventurePage, outlet: AdventureEventGraph.Outlet) -> HFlowContainer:
-	var effects: HFlowContainer = HFlowContainer.new()
-	var file: Resource = _file_for(outlet.decision, page, entry)
-	for index: int in outlet.consequences.size():
-		var consequence: AdventureConsequence = outlet.consequences[index]
-		if consequence == null: continue
+## Tags for the resources in [param resource]'s [param property] (click: Inspector, ✕: removes) and a button adding one of [param get_additions] (text -> a made resource), asked when it is pressed
+func _make_tags(resource: Resource, property: StringName, file: Resource, add_text: String, get_additions: Callable) -> HFlowContainer:
+	var tags: HFlowContainer = HFlowContainer.new()
+	var items: Array = resource.get(property)
+	for index: int in items.size():
+		var item: Resource = items[index]
+		if item == null: continue
 		var tag: Button = Button.new()
-		tag.text = consequence.describe()
+		tag.text = _describe(item)
 		tag.tooltip_text = "Edit in the Inspector"
-		tag.pressed.connect(func() -> void: EditorInterface.edit_resource(consequence))
-		effects.add_child(tag)
-		var without: Array[AdventureConsequence] = outlet.consequences.duplicate()
+		tag.pressed.connect(func() -> void: EditorInterface.edit_resource(item))
+		tags.add_child(tag)
+		_tags[item] = tag
+		var without: Array = items.duplicate()
 		without.remove_at(index)
-		effects.add_child(_make_tool_button("Remove", "✕", "Remove effect", property_requested.emit.bind(outlet.decision, outlet.consequences_property, without, file, "Remove %s" % consequence.describe())))
-	var add: Button = _make_tool_button("Add", "+", "Add an effect", _show_effect_menu.bind(outlet, file))
-	add.text = "effect"
-	effects.add_child(add)
-	return effects
+		tags.add_child(_make_tool_button("Remove", "✕", "Remove", property_requested.emit.bind(resource, property, without, file, "Remove %s" % tag.text)))
+	var add: Button = _make_tool_button("Add", "+", "Add a %s" % add_text, func() -> void:
+		var actions: Dictionary[String, Callable] = {}
+		var additions: Dictionary[String, Resource] = get_additions.call()
+		for text: String in additions:
+			actions[text] = func() -> void:
+				var with: Array = items.duplicate()
+				with.append(additions[text])
+				property_requested.emit(resource, property, with, file, "Add %s" % text)
+		_show_menu(actions)
+	)
+	add.text = add_text
+	tags.add_child(add)
+	return tags
 
-func _show_effect_menu(outlet: AdventureEventGraph.Outlet, file: Resource) -> void:
-	var actions: Dictionary[String, Callable] = {}
+func _get_effect_additions() -> Dictionary[String, Resource]:
+	var additions: Dictionary[String, Resource] = {}
 	var types: Dictionary[String, Script] = AdventureEventEditing.get_consequence_types()
-	for type_name: String in types:
-		actions[AdventureEventEditing.get_consequence_type_name(type_name)] = func() -> void:
-			var with: Array[AdventureConsequence] = outlet.consequences.duplicate()
-			with.append(AdventureEventEditing.make_consequence(types[type_name]))
-			property_requested.emit(outlet.decision, outlet.consequences_property, with, file, "Add %s" % AdventureEventEditing.get_consequence_type_name(type_name))
-	_show_menu(actions)
+	for type_name: String in types: additions[AdventureEventEditing.get_type_name(type_name)] = AdventureEventEditing.make_consequence(types[type_name])
+	return additions
+
+## Every kind of condition, and "can fight / is beaten / is dead" for each monster of the fights shown
+func _get_condition_additions(owner: AdventurePage) -> Dictionary[String, Resource]:
+	var additions: Dictionary[String, Resource] = {}
+	for fight: AdventureDecision in _fight_pages:
+		var enemies: Array = fight.get(&"enemies")
+		for enemy_index: int in enemies.size():
+			var monster: MonsterProfile = enemies[enemy_index]
+			if monster == null: continue
+			var index: int = enemies.slice(0, enemy_index).count(monster)
+			for state: AdventureMonsterCondition.State in AdventureMonsterCondition.STATE_TEXTS:
+				var condition: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(state, monster, index, _fight_pages[fight], owner)
+				if condition != null: additions[condition.describe() + (" %d" % (index + 1) if index > 0 else "")] = condition
+	var types: Dictionary[String, Script] = AdventureEventEditing.get_condition_types()
+	for type_name: String in types: additions[AdventureEventEditing.get_type_name(type_name)] = AdventureEventEditing.make_condition(types[type_name])
+	return additions
+
+## Its own text, or its kind's name when it has none to show
+static func _describe(item: Resource) -> String:
+	var text: String = item.call(&"describe")
+	return text if not text.is_empty() else AdventureEventEditing.get_type_name(item.get_script().get_global_name())
+
+## Monster conditions point dotted at the fight card spawning their monster
+func _add_condition_lines() -> void:
+	for item: Resource in _tags:
+		var condition: AdventureMonsterCondition = item as AdventureMonsterCondition
+		if condition == null or condition.monster == null: continue
+		var owner: AdventurePage = _tag_owners.get(condition)
+		var spawning: AdventurePage = condition.monster.spawned_by.get_adventure_page() if condition.monster.spawned_by != null else owner
+		for fight: AdventureDecision in _fight_pages:
+			if _fight_pages[fight] == spawning and (fight.get(&"enemies") as Array).has(condition.monster.monster): _add_dashed(_tags[item], _fight_cards[fight], FIGHT_COLOR)
 
 ## Buttons for new choices, fights and saves
 func _make_add_bar(entry: AdventureEventOverview.Entry, page: AdventurePage) -> HBoxContainer:
@@ -445,11 +510,73 @@ func _file_for(decision: AdventureDecision, page: AdventurePage, entry: Adventur
 		if resource != null and not resource.resource_path.is_empty(): return load(AdventureEventEditing.get_file_path(resource))
 	return null
 
-## A sub-event's card shows its frame; others open the event
+## A sub-event's card shows its frame (a scenario: its switch); others open the event
 func _on_event_card_pressed(event: AdventurePage, _page: AdventurePage) -> void:
+	if _nodes.has(_switch_key(event)):
+		focus_node(_nodes[_switch_key(event)])
+		return
 	var entry: AdventureEventOverview.Entry = _overview.get_listed_entry(event)
 	if entry != null: focus_node(_nodes[_key(entry, entry.event)])
 	else: event_opened.emit(event, null)
+
+func _make_condition_tags(owner: AdventurePage, file: Resource) -> HFlowContainer:
+	var tags: HFlowContainer = _make_tags(owner, &"conditions", file, "condition", _get_condition_additions.bind(owner))
+	for condition: AdventureCondition in owner.conditions: if condition != null: _tag_owners[condition] = owner
+	return tags
+
+## A scenario picking the first of its options that fits: a row per option in priority order (▲ ▼ ✕), linked to the option, and "+ option"
+func _add_switch(switch: AdventureEventOverview.Switch, at: Vector2) -> void:
+	var scenario: AdventureEventScenario = switch.scenario
+	var file: Resource = load(AdventureEventEditing.get_file_path(scenario))
+	var content: VBoxContainer = VBoxContainer.new()
+	content.custom_minimum_size.x = THUMBNAIL_SIZE.x
+	content.add_child(_make_info("Shows the first option that fits. When:"))
+	content.add_child(_make_condition_tags(scenario, file))
+	var node: GraphNode = _add_node(_switch_key(scenario), scenario, "%s (scenario)" % AdventureGraph.get_title(scenario), content, at)
+	node.set_slot(0, switch.outer != null, 0, Color.WHITE, false, 0, Color.WHITE)
+	var options: Array[AdventurePage] = scenario.events
+	for index: int in options.size():
+		var row: HBoxContainer = HBoxContainer.new()
+		var conditions: String = AdventureEventOverview.get_condition_text(options[index].conditions)
+		var label: Label = _make_label("%d · %s%s" % [index + 1, AdventureGraph.get_title(options[index]), "\nwhen %s" % conditions if not conditions.is_empty() else ""])
+		label.custom_minimum_size.x = THUMBNAIL_SIZE.x - 3 * ICON_SIZE - 24
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(label)
+		if index > 0: row.add_child(_make_tool_button("MoveUp", "▲", "Earlier: checked first", _move_option.bind(scenario, file, index, -1)))
+		if index < options.size() - 1: row.add_child(_make_tool_button("MoveDown", "▼", "Later", _move_option.bind(scenario, file, index, 1)))
+		row.add_child(_make_tool_button("Remove", "✕", "Not an option any more (its file stays)", _remove_option.bind(scenario, file, index)))
+		node.add_child(row)
+		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, Color.WHITE)
+	node.add_child(_make_info("Otherwise: nothing"))
+	var add: Button = _make_tool_button("Add", "+", "A new event as the last option", option_requested.emit.bind(scenario))
+	add.text = "option"
+	node.add_child(add)
+
+## Each option's row to its event (a scenario option: to its switch)
+func _connect_switch(switch: AdventureEventOverview.Switch) -> void:
+	var options: Array[AdventurePage] = switch.scenario.events
+	for index: int in options.size():
+		var target: String = _switch_key(options[index]) if options[index] is AdventureEventScenario else ""
+		var entry: AdventureEventOverview.Entry = _overview.get_entry(options[index])
+		if target.is_empty() and entry != null: target = _key(entry, entry.event)
+		if _nodes.has(target): connect_node(_nodes[_switch_key(switch.scenario)].name, index, _nodes[target].name, 0)
+
+func _move_option(scenario: AdventureEventScenario, file: Resource, index: int, step: int) -> void:
+	var options: Array[AdventurePage] = scenario.events.duplicate()
+	var option: AdventurePage = options.pop_at(index)
+	options.insert(index + step, option)
+	property_requested.emit(scenario, &"events", options, file, "Move %s" % AdventureGraph.get_title(option))
+
+func _remove_option(scenario: AdventureEventScenario, file: Resource, index: int) -> void:
+	var options: Array[AdventurePage] = scenario.events.duplicate()
+	var option: AdventurePage = options.pop_at(index)
+	if AdventureEventEditing.is_inside_file(option):
+		push_warning("%s is stored inside the scenario's file and would be lost" % AdventureGraph.get_title(option))
+		return
+	property_requested.emit(scenario, &"events", options, file, "Remove %s" % AdventureGraph.get_title(option))
+
+func _switch_key(scenario: AdventurePage) -> String:
+	return "%s/switch/%s" % [AdventureLayout.get_key(_overview.root), AdventureLayout.get_key(scenario)]
 
 static func _describe_outlet(outlet: AdventureEventGraph.Outlet) -> String:
 	if not outlet.goes_back(): return outlet.label

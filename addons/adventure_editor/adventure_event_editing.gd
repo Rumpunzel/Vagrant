@@ -87,12 +87,19 @@ static func make_event(title: String, scenario: bool) -> AdventurePage:
 	event.title = title
 	return event
 
-## In the [code]events[/code] folder next to the location's file
-static func get_event_path(location: AdventurePage, title: String) -> String:
-	return get_file_path(location).get_base_dir().path_join("events").path_join(AdventureMapEditing.get_file_name(title))
+## In the [code]events[/code] folder next to [param host]'s file (its own folder, if it is in one already)
+static func get_event_path(host: AdventurePage, title: String) -> String:
+	var folder: String = get_file_path(host).get_base_dir()
+	if folder.get_file() != "events": folder = folder.path_join("events")
+	return folder.path_join(AdventureMapEditing.get_file_name(title))
 
 ## Every kind of consequence there is (scripts extending [AdventureConsequence] that can be made), by class name
-static func get_consequence_types() -> Dictionary[String, Script]:
+static func get_consequence_types() -> Dictionary[String, Script]: return _get_types("AdventureConsequence")
+
+## Every kind of condition there is, by class name
+static func get_condition_types() -> Dictionary[String, Script]: return _get_types("AdventureCondition")
+
+static func _get_types(base_name: String) -> Dictionary[String, Script]:
 	var bases: Dictionary[String, String] = {}
 	var paths: Dictionary[String, String] = {}
 	for entry: Dictionary in ProjectSettings.get_global_class_list():
@@ -101,18 +108,36 @@ static func get_consequence_types() -> Dictionary[String, Script]:
 	var types: Dictionary[String, Script] = {}
 	for type_name: String in bases:
 		var base: String = bases[type_name]
-		while bases.has(base) and base != "AdventureConsequence": base = bases[base]
-		if base != "AdventureConsequence": continue
+		while bases.has(base) and base != base_name: base = bases[base]
+		if base != base_name: continue
 		var script: Script = load(paths[type_name])
 		if script.can_instantiate(): types[type_name] = script
 	return types
 
+## "AdventureKillMonsterConsequence" -> "Kill Monster", "AdventureMonsterCondition" -> "Monster"
+static func get_type_name(type_name: String) -> String:
+	return type_name.trim_prefix("Adventure").trim_suffix("Consequence").trim_suffix("Condition").capitalize()
+
+static func make_condition(type: Script) -> AdventureCondition:
+	return _in_file(type.new() as Resource) as AdventureCondition
+
+## A condition on [param owner] about the [param index]th [param monster] spawned by [param spawning]'s fight; none if [param owner] can't point at it
+## (it would loop: [param spawning] holds [param owner] in the same file)
+static func make_monster_condition(state: AdventureMonsterCondition.State, monster: MonsterProfile, index: int, spawning: AdventurePage, owner: AdventurePage) -> AdventureMonsterCondition:
+	var reference: AdventureMonsterReference = _in_file(AdventureMonsterReference.new()) as AdventureMonsterReference
+	reference.monster = monster
+	reference.index = index
+	if spawning != owner:
+		if get_file_path(spawning) == get_file_path(owner) and would_loop(owner, spawning): return null
+		reference.spawned_by = make_reference(spawning, get_file_path(owner))
+	var condition: AdventureMonsterCondition = _in_file(AdventureMonsterCondition.new()) as AdventureMonsterCondition
+	condition.monster = reference
+	condition.state = state
+	return condition
+
 static func make_consequence(type: Script) -> AdventureConsequence:
 	return _in_file(type.new() as Resource) as AdventureConsequence
 
-## "AdventureKillMonsterConsequence" -> "Kill Monster"
-static func get_consequence_type_name(type_name: String) -> String:
-	return type_name.trim_prefix("Adventure").trim_suffix("Consequence").capitalize()
 
 ## Gives [param resource] its ID inside the file now, so the layout can key it before it is saved
 static func _in_file(resource: Resource) -> Resource:
