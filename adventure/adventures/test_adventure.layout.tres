@@ -31,7 +31,6 @@ positions = Dictionary[String, Vector2]({
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(480, 420),
 "uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/host": Vector2(80, 1420),
 "uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/uid://m4wl5ad8o0i7": Vector2(-240, 1240),
-"uid://co2m5ujklmges": Vector2(-240, 140),
 "uid://cs40ge42lw0ry": Vector2(20, 280),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_0x8r7": Vector2(440, 520),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_b3ed1": Vector2(700, 320),
@@ -47,7 +46,6 @@ positions = Dictionary[String, Vector2]({
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/host": Vector2(-520, 260),
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/uid://dffxphat87a8a": Vector2(-800, 260),
 "uid://dk3q4ia5u7q6m": Vector2(580, 340),
-"uid://vckcly8qpi2j": Vector2(140, 140),
 "uid://ycd6xhx346l6": Vector2(580, 100)
 })
 special_links = Dictionary[String, String]({

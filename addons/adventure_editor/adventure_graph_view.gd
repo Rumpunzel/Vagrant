@@ -22,6 +22,7 @@ const LINE_COLOR: Color = Color(1, 1, 1, 0.8)
 const ARROW_END: int = 1
 const ARROW_START: int = 2
 const ARROW_SIZE: float = 12.0
+const ICON_SIZE: int = 16
 
 var layout: AdventureLayout
 
@@ -194,6 +195,26 @@ func _make_text(text: String) -> RichTextLabel:
 	label.custom_minimum_size.x = THUMBNAIL_SIZE.x
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return label
+
+func _make_icon(texture: Texture2D, color: Color) -> TextureRect:
+	var icon: TextureRect = _make_texture_rect(texture)
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = Vector2.ONE * ICON_SIZE
+	icon.modulate = color
+	return icon
+
+## An editor icon, or [param fallback] text where there is no editor (previews)
+func _make_tool_button(icon_name: String, fallback: String, tooltip: String, on_pressed: Callable) -> Button:
+	var button: Button = Button.new()
+	button.flat = true
+	button.icon = _get_editor_icon(icon_name)
+	if button.icon == null: button.text = fallback
+	button.tooltip_text = tooltip
+	button.pressed.connect(on_pressed)
+	return button
+
+static func _get_editor_icon(icon_name: String) -> Texture2D:
+	return EditorInterface.get_editor_theme().get_icon(icon_name, &"EditorIcons") if Engine.is_editor_hint() else null
 
 func _on_node_selected(element: Node) -> void:
 	var resource: Resource = _resources.get(element as GraphElement)
