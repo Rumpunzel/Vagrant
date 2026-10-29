@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="AdventureArea" format=3 uid="uid://j8p1frkdjxfi"]
+
+[ext_resource type="Texture2D" uid="uid://i10g17t78dnu" path="res://assets/landscapes/wilderness_calm.jpg" id="1_jdyhj"]
+[ext_resource type="Script" uid="uid://bxnu6b86fr1fw" path="res://adventure/adventure_area.gd" id="1_od8fq"]
+
+[resource]
+script = ExtResource("1_od8fq")
+name = "Hills"
+background = ExtResource("1_jdyhj")

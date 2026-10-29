@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_b0ump")
 positions = Dictionary[String, Vector2]({
+"uid://blk8tjmugvitx": Vector2(220, -240),
 "uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g": Vector2(0, 0),
 "uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g/host": Vector2(340, 860),
 "uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g": Vector2(0, 0),
@@ -15,23 +16,24 @@ positions = Dictionary[String, Vector2]({
 "uid://bxwqtk0p80o4g/uid://dgfjjbm210jot": Vector2(280, 360),
 "uid://bxwqtk0p80o4g/uid://dsfrbfoig3deo": Vector2(280, 260),
 "uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(280, 160),
-"uid://c16ehct0w6n48/switch/uid://c16ehct0w6n48": Vector2(-640, 520),
+"uid://c16ehct0w6n48/switch/uid://c16ehct0w6n48": Vector2(0, 0),
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/::37hwi": Vector2(1460, 340),
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/::Resource_2rcic": Vector2(280, 0),
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/::b0ump": Vector2(914.2645, 256.6175),
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/::i1lgh": Vector2(960, 300),
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/::piem0": Vector2(940, 420),
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/::u2wov": Vector2(1172, 311),
-"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/host": Vector2(460, 0),
-"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/previous": Vector2(820, 520),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/host": Vector2(780, -660),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/previous": Vector2(1160, -160),
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/res://adventure/adventures/locations/swamp/events/lurker_ambush.tres::Resource_2rcic": Vector2(280, 140),
-"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g": Vector2(20, 400),
-"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://dgfjjbm210jot": Vector2(460, 120),
-"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://dsfrbfoig3deo": Vector2(440, 700),
-"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(480, 420),
-"uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/host": Vector2(80, 1420),
-"uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/uid://m4wl5ad8o0i7": Vector2(-240, 1240),
-"uid://cs40ge42lw0ry": Vector2(20, 280),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g": Vector2(440, -700),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://dgfjjbm210jot": Vector2(800, -520),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://dsfrbfoig3deo": Vector2(820, 0),
+"uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(820, -260),
+"uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/host": Vector2(780, 580),
+"uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/uid://m4wl5ad8o0i7": Vector2(420, 380),
+"uid://ca3sv437yiklg": Vector2(1060, 60),
+"uid://cs40ge42lw0ry": Vector2(-460, 120),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_0x8r7": Vector2(440, 520),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_b3ed1": Vector2(700, 320),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_j24m5": Vector2(420, 0),
@@ -45,8 +47,8 @@ positions = Dictionary[String, Vector2]({
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh": Vector2(0, 0),
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/host": Vector2(-520, 260),
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/uid://dffxphat87a8a": Vector2(-800, 260),
-"uid://dk3q4ia5u7q6m": Vector2(580, 340),
-"uid://ycd6xhx346l6": Vector2(580, 100)
+"uid://dk3q4ia5u7q6m": Vector2(740, 100),
+"uid://ycd6xhx346l6": Vector2(500, 260)
 })
 special_links = Dictionary[String, String]({
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::i1lgh": "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/special/previous/0",

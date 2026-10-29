@@ -17,10 +17,28 @@ script = ExtResource("1_ctu8i")
 description = "Go back to the rocky shore."
 transition = SubResource("Resource_y5shu")
 
+[sub_resource type="Resource" id="Resource_d00k1"]
+script = ExtResource("2_k7v3r")
+_leads_to = "uid://ca3sv437yiklg"
+
+[sub_resource type="Resource" id="Resource_tyy4w"]
+script = ExtResource("1_ctu8i")
+description = "Go to Castle."
+transition = SubResource("Resource_d00k1")
+
+[sub_resource type="Resource" id="Resource_a75do"]
+script = ExtResource("2_k7v3r")
+_leads_to = "uid://ca3sv437yiklg"
+
+[sub_resource type="Resource" id="Resource_k2otb"]
+script = ExtResource("1_ctu8i")
+description = "Go to Castle."
+transition = SubResource("Resource_a75do")
+
 [resource]
 script = ExtResource("3_gmk2e")
 title = "Castle Ruin"
 description = "The ruined castle towers high above you on the cliff. Behind a cluster of overgrown rocks you spot a hidden gate carved into the cliffside wall."
 area = ExtResource("5_rumxx")
-decisions = Array[ExtResource("1_ctu8i")]([SubResource("Resource_106m3")])
+decisions = Array[ExtResource("1_ctu8i")]([SubResource("Resource_106m3"), SubResource("Resource_tyy4w"), SubResource("Resource_k2otb")])
 events = Array[ExtResource("3_gmk2e")]([ExtResource("6_ct28b")])
