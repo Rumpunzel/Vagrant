@@ -13,8 +13,9 @@ signal layout_changed
 signal play_requested(page: AdventurePage, event: AdventurePage)
 ## Its nodes' positions were forgotten; showing it again puts them back in their default places
 signal tidied
-## An image from the FileSystem panel let go on a page or area; [param file]: the file the change is stored in
-signal background_dropped(resource: Resource, texture: Texture2D, file: Resource)
+## [resource, property, value] changes as one undo step called [param action] ([method AdventureEdits.apply]);
+## [param file]: the file they are stored in (none: each resource is a file of its own)
+signal changes_requested(changes: Array[Array], action: String, file: Resource)
 
 const NODE_SPACING: Vector2 = Vector2(280, 240)
 const THUMBNAIL_SIZE: Vector2 = Vector2(220, 124)
@@ -119,6 +120,11 @@ func _on_right_click(node: GraphNode, pick: Callable) -> void:
 			accept_event()
 	)
 
+## One change as one undo step
+func _request(resource: Resource, property: StringName, value: Variant, action: String, file: Resource) -> void:
+	var changes: Array[Array] = [[resource, property, value]]
+	changes_requested.emit(changes, action, file)
+
 ## A toolbar button forgetting where this graph's nodes were moved, after asking
 func _add_tidy_button() -> void:
 	var ask: ConfirmationDialog = ConfirmationDialog.new()
@@ -136,7 +142,7 @@ func _add_tidy_button() -> void:
 ## Placed special nodes keep their positions: those are all they are
 func _tidy() -> void:
 	if layout == null: return
-	for key: String in _nodes: if not key.contains("/special/"): layout.positions.erase(key)
+	for key: String in _nodes: if not AdventureLayout.is_placed_special(key): layout.positions.erase(key)
 	layout_changed.emit()
 	tidied.emit()
 

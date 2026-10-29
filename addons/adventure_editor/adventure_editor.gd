@@ -3,8 +3,8 @@ class_name AdventureEditor
 extends VBoxContainer
 
 ## Main screen of the adventure editor plugin: one adventure as a map ([AdventureMapView]) and its events ([AdventureEventView]).
-## The graphs edit structure (links, new locations, areas, events, pages and decisions) with undo; changes stay unsaved until [method save]. Content is edited in the Inspector.
-## Selecting opens the resource there; moving nodes saves the [AdventureLayout] at once.
+## The graphs request edits to structure (links, new locations, areas, events, pages and decisions); [AdventureEdits] makes them, with undo,
+## unsaved until [method save]. Content is edited in the Inspector: selecting opens the resource there. Moving nodes saves the [AdventureLayout] at once.
 
 const INDENT: String = "    "
 
@@ -29,64 +29,61 @@ var adventure: Adventure : set = set_adventure
 var _graph: AdventureGraph
 var _problems: Array[AdventureProblems.Problem] = [ ]
 var _layout: AdventureLayout
-var _undo_redo: EditorUndoRedoManager
-## Resources changed by edits and not saved yet
-var _unsaved: Array[Resource] = [ ]
+var _edits: AdventureEdits
+## Every event of the adventure, found once per rebuild ([method _find_all_events])
+var _all_events: Array[AdventurePage] = [ ]
 var _new_location_dialog: AdventureNewLocationDialog
 var _name_dialog: AdventureNameDialog
 var _file_dialog: EditorFileDialog
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
-	_undo_redo = undo_redo
+	_edits = AdventureEdits.new(undo_redo)
+	_edits.changed.connect(rebuild)
 	_map.setup()
 	_event_view.setup()
-	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
-	_map.event_opened.connect(open_event)
-	_event_view.event_opened.connect(open_event)
-	_event_view.exit_opened.connect(_open_location)
-	_map.layout_changed.connect(_save_layout)
-	_event_view.layout_changed.connect(_save_layout)
-	_event_list.item_selected.connect(func(index: int) -> void: _show_event(_event_list.get_item_metadata(index) as AdventurePage, null))
-	_host_picker.item_selected.connect(func(index: int) -> void: _event_view.show_event(_event_view.get_event(), _host_picker.get_item_metadata(index) as AdventurePage))
+	_make_dialogs()
+	_connect_views()
+	_connect_lists()
 	EditorInterface.get_inspector().property_edited.connect(_on_property_edited)
-	_map.link_requested.connect(_link)
-	_map.unlink_requested.connect(_unlink)
-	_map.areas_requested.connect(_move_into_areas)
+
+func _make_dialogs() -> void:
 	_new_location_dialog = AdventureNewLocationDialog.new()
 	_new_location_dialog.location_confirmed.connect(_create_location)
 	add_child(_new_location_dialog)
-	_map.location_requested.connect(_ask_for_location)
 	_name_dialog = AdventureNameDialog.new()
 	add_child(_name_dialog)
+	_file_dialog = EditorFileDialog.new()
+	_file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
+	_file_dialog.add_filter("*.tres", "Events")
+	add_child(_file_dialog)
+
+func _connect_views() -> void:
+	for view: AdventureGraphView in [_map, _event_view]:
+		view.changes_requested.connect(_edits.apply)
+		view.event_opened.connect(open_event)
+		view.layout_changed.connect(_save_layout)
+		view.tidied.connect(rebuild)
+		view.play_requested.connect(_play_from)
+	_map.location_requested.connect(_ask_for_location)
 	_map.event_requested.connect(func(location: AdventurePage, scenario: bool) -> void:
 		_name_dialog.ask("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
 	)
-	_event_view.reference_requested.connect(_set_reference)
 	_map.existing_event_requested.connect(_offer_events)
-	_map.event_dropped.connect(_on_event_dropped)
+	_event_view.exit_opened.connect(_open_location)
+	_event_view.nearby_event_requested.connect(_offer_nearby_events)
+	_event_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
+
+func _connect_lists() -> void:
+	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
+	_event_list.item_selected.connect(func(index: int) -> void: _show_event(_event_list.get_item_metadata(index) as AdventurePage, null))
+	_host_picker.item_selected.connect(func(index: int) -> void: _event_view.show_event(_event_view.get_event(), _host_picker.get_item_metadata(index) as AdventurePage))
 	_problem_list.item_selected.connect(_show_problem)
 	_find.text_changed.connect(func(_text: String) -> void:
 		_list_events()
 		_fill_event_shelf()
 	)
 	_find.text_submitted.connect(_jump_to)
-	_map.play_requested.connect(_play_from)
-	_map.background_dropped.connect(_set_background)
-	_map.tidied.connect(rebuild)
-	_event_view.tidied.connect(rebuild)
-	_event_view.background_dropped.connect(_set_background)
-	_event_view.play_requested.connect(_play_from)
-	_map.event_removal_requested.connect(_remove_event)
-	_event_view.nearby_event_requested.connect(_offer_nearby_events)
-	_file_dialog = EditorFileDialog.new()
-	_file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
-	_file_dialog.add_filter("*.tres", "Events")
-	add_child(_file_dialog)
-	_event_view.decisions_requested.connect(_set_decisions)
-	_event_view.references_cleared.connect(_clear_references)
-	_event_view.property_requested.connect(_set_property)
-	_event_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
 
 func set_adventure(value: Adventure) -> void:
 	adventure = value
@@ -102,8 +99,9 @@ func rebuild() -> void:
 	var placed: Array[AdventurePage] = [ ]
 	if _layout != null: placed = _layout.get_placed_pages()
 	_graph = AdventureGraph.new(adventure, placed)
+	_all_events = _find_all_events()
 	_problems = [ ]
-	if adventure != null: _problems = AdventureProblems.new(_graph, _get_all_events()).problems
+	if adventure != null: _problems = AdventureProblems.new(_graph, _all_events).problems
 	_map.problems = _problems
 	_event_view.problems = _problems
 	_map.show_graph(_graph)
@@ -160,11 +158,9 @@ func _open_location(location: AdventurePage) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_map_tab)
 	_map.focus_page(location)
 
-func has_unsaved_changes() -> bool: return not _unsaved.is_empty()
+func has_unsaved_changes() -> bool: return _edits.has_unsaved_changes()
 
-func save() -> void:
-	for resource: Resource in _unsaved: ResourceSaver.save(resource)
-	_unsaved.clear()
+func save() -> void: _edits.save()
 
 ## Ctrl+S saves, Ctrl+F finds
 func _shortcut_input(input: InputEvent) -> void:
@@ -188,68 +184,11 @@ func _jump_to(_text: String) -> void:
 		if _fits(page):
 			_open_location(page)
 			return
-	for event: AdventurePage in _get_all_events():
+	for event: AdventurePage in _all_events:
 		if _fits(event):
 			open_event(event, null)
 			return
 	push_warning("Nothing called \"%s\"" % _find.text)
-
-func _link(from: AdventurePage, to: AdventurePage) -> void:
-	if from == null or to == null or from == to: return
-	var decisions: Array[AdventureDecision] = from.decisions.duplicate()
-	decisions.append(AdventureMapEditing.make_link(to))
-	_undo_redo.create_action("Link %s to %s" % [AdventureGraph.get_title(from), AdventureGraph.get_title(to)], UndoRedo.MERGE_DISABLE, from)
-	_change(from, &"decisions", decisions)
-	_undo_redo.commit_action()
-
-func _unlink(from: AdventurePage, to: AdventurePage) -> void:
-	if from == null or to == null: return
-	var decisions: Array[AdventureDecision] = AdventureMapEditing.without_links(from, to)
-	if decisions.size() == from.decisions.size():
-		push_warning("%s leads to %s only through a fight or save; change it in the events tab or the Inspector" % [AdventureGraph.get_title(from), AdventureGraph.get_title(to)])
-		return
-	_undo_redo.create_action("Unlink %s from %s" % [AdventureGraph.get_title(from), AdventureGraph.get_title(to)], UndoRedo.MERGE_DISABLE, from)
-	_change(from, &"decisions", decisions)
-	_undo_redo.commit_action()
-
-func _move_into_areas(areas: Dictionary[AdventurePage, AdventureArea]) -> void:
-	_undo_redo.create_action("Change area", UndoRedo.MERGE_DISABLE, areas.keys()[0])
-	for page: AdventurePage in areas: _change(page, &"area", areas[page])
-	_undo_redo.commit_action()
-
-## [param reference]: none unlinks
-func _set_reference(decision: AdventureDecision, property: StringName, reference: AdventurePageReference, file: Resource) -> void:
-	_undo_redo.create_action("Unlink" if reference == null else "Link", UndoRedo.MERGE_DISABLE, file)
-	_change(decision, property, reference, file)
-	_undo_redo.commit_action()
-
-## Adding, moving and removing a page's decisions
-func _set_decisions(page: AdventurePage, decisions: Array[AdventureDecision], file: Resource, action: String) -> void:
-	_undo_redo.create_action(action, UndoRedo.MERGE_DISABLE, file)
-	_change(page, &"decisions", decisions, file)
-	_undo_redo.commit_action()
-
-func _set_property(resource: Resource, property: StringName, value: Variant, file: Resource, action: String) -> void:
-	_undo_redo.create_action(action, UndoRedo.MERGE_DISABLE, file)
-	_change(resource, property, value, file)
-	_undo_redo.commit_action()
-
-## Each [decision, property] to none, in one action (deleting a page)
-func _clear_references(references: Array[Array], file: Resource, action: String) -> void:
-	_undo_redo.create_action(action, UndoRedo.MERGE_DISABLE, file)
-	for reference: Array in references: _change(reference[0], reference[1], null, file)
-	_undo_redo.commit_action()
-
-## Adds setting [param property] to the open action, both ways marking [param file] (none: [param resource] itself) unsaved and rebuilding
-func _change(resource: Resource, property: StringName, value: Variant, file: Resource = null) -> void:
-	_undo_redo.add_do_property(resource, property, value)
-	_undo_redo.add_undo_property(resource, property, resource.get(property))
-	_undo_redo.add_do_method(self, &"_changed", file if file != null else resource)
-	_undo_redo.add_undo_method(self, &"_changed", file if file != null else resource)
-
-func _changed(resource: Resource) -> void:
-	if not _unsaved.has(resource): _unsaved.append(resource)
-	rebuild()
 
 func _ask_for_location(at: Vector2) -> void:
 	if adventure != null: _new_location_dialog.open(_graph.areas, at)
@@ -258,16 +197,16 @@ func _ask_for_location(at: Vector2) -> void:
 func _create_location(title: String, area: AdventureArea, new_area_name: String, at: Vector2) -> void:
 	if area == null:
 		area = AdventureMapEditing.make_area(new_area_name)
-		if not _create_file(area, AdventureMapEditing.get_area_path(adventure, new_area_name)): return
+		if not _edits.create_file(area, AdventureMapEditing.get_area_path(adventure, new_area_name)): return
 	var page: AdventurePage = AdventureMapEditing.make_location(title, area)
-	if not _create_file(page, AdventureMapEditing.get_location_path(area, title)): return
+	if not _edits.create_file(page, AdventureMapEditing.get_location_path(area, title)): return
 	_layout.positions[AdventureLayout.get_key(page)] = at
 	_save_layout()
 	rebuild()
 
 ## The adventure's events (those met and every file in an events folder) not on [param location] yet, and any other file
 func _offer_events(location: AdventurePage) -> void:
-	_offer(location.events, _add_event.bind(location), _map)
+	_offer(location.events, func(event: AdventurePage) -> void: _map.add_event(location, event), _map)
 
 ## For "Add nearby event…": shown around [param event]'s locations
 func _offer_nearby_events(event: AdventurePage) -> void:
@@ -278,11 +217,12 @@ func _offer_nearby_events(event: AdventurePage) -> void:
 func _add_nearby_event(nearby: AdventurePage, event: AdventurePage) -> void:
 	var nearby_events: Array[AdventurePage] = event.nearby_events.duplicate()
 	nearby_events.append(nearby)
-	_set_property(event, &"nearby_events", nearby_events, load(AdventureEventEditing.get_file_path(event)), "Add nearby %s" % AdventureGraph.get_title(nearby))
+	var changes: Array[Array] = [[event, &"nearby_events", nearby_events]]
+	_edits.apply(changes, "Add nearby %s" % AdventureGraph.get_title(nearby), load(AdventureEventEditing.get_file_path(event)))
 
 ## A menu of the adventure's events (those met and every file in an events folder) but [param taken], and any other file; [param on_pick] gets the event
 func _offer(taken: Array, on_pick: Callable, view: AdventureGraphView) -> void:
-	var events: Array[AdventurePage] = _get_all_events()
+	var events: Array[AdventurePage] = _all_events
 	var actions: Dictionary[String, Callable] = {}
 	for event: AdventurePage in events:
 		if not taken.has(event): actions[_describe_event(event)] = on_pick.bind(event)
@@ -297,7 +237,7 @@ func _offer(taken: Array, on_pick: Callable, view: AdventureGraphView) -> void:
 	view.show_actions(actions)
 
 ## The events met on the map and every event file in an events folder under the adventure; not those stored inside other files
-func _get_all_events() -> Array[AdventurePage]:
+func _find_all_events() -> Array[AdventurePage]:
 	var events: Array[AdventurePage] = [ ]
 	events.assign(_graph.event_hosts.keys())
 	if adventure != null:
@@ -312,7 +252,7 @@ static func _describe_event(event: AdventurePage) -> String:
 ## The sidebar's events: drag one onto a location, press one to open it
 func _fill_event_shelf() -> void:
 	for button: Node in _event_shelf.get_children(): button.queue_free()
-	for event: AdventurePage in _get_all_events():
+	for event: AdventurePage in _all_events:
 		if not _fits(event): continue
 		var button: AdventureEventButton = AdventureEventButton.new()
 		button.event = event
@@ -339,9 +279,6 @@ func _play_from(page: AdventurePage, event: AdventurePage) -> void:
 	AdventurePlayFrom.write(adventure, page, host)
 	EditorInterface.play_main_scene()
 
-func _set_background(resource: Resource, texture: Texture2D, file: Resource) -> void:
-	if resource != null: _set_property(resource, &"background", texture, file, "Set background of %s" % resource.get(&"title" if resource is AdventurePage else &"name"))
-
 func _list_problems() -> void:
 	_problem_list.clear()
 	var problems: Array[AdventureProblems.Problem] = _problems
@@ -359,42 +296,14 @@ func _show_problem(index: int) -> void:
 	open_event(problem.event, null)
 	_event_view.focus_resource.call_deferred(problem.page)
 
-func _on_event_dropped(location: AdventurePage, event: AdventurePage) -> void:
-	if location.events.has(event): push_warning("%s is on %s already" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])
-	else: _add_event(event, location)
-
-func _add_event(event: AdventurePage, location: AdventurePage) -> void:
-	var events: Array[AdventurePage] = location.events.duplicate()
-	events.append(event)
-	_undo_redo.create_action("Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], UndoRedo.MERGE_DISABLE, location)
-	_change(location, &"events", events)
-	_undo_redo.commit_action()
-
-## Refused for events stored inside the location's file, which would be lost
-func _remove_event(location: AdventurePage, event: AdventurePage) -> void:
-	if AdventureEventEditing.is_inside_file(event):
-		push_warning("%s is stored inside %s's file and would be lost" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])
-		return
-	var events: Array[AdventurePage] = location.events.duplicate()
-	events.erase(event)
-	_undo_redo.create_action("Remove %s from %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], UndoRedo.MERGE_DISABLE, location)
-	_change(location, &"events", events)
-	_undo_redo.commit_action()
-
 ## Creates the event's file right away and lists it on [param location] (that part can be undone)
 func _create_event(title: String, location: AdventurePage, scenario: bool) -> void:
 	var event: AdventurePage = AdventureEventEditing.make_event(title, scenario)
-	if _create_file(event, AdventureEventEditing.get_event_path(location, title)): _add_event(event, location)
-
-func _create_file(resource: Resource, path: String) -> bool:
-	if FileAccess.file_exists(path):
-		push_error("%s exists already" % path)
-		return false
-	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
-	resource.take_over_path(path)
-	if ResourceSaver.save(resource) != OK: return false
-	EditorInterface.get_resource_filesystem().update_file(path)
-	return true
+	if not _edits.create_file(event, AdventureEventEditing.get_event_path(location, title)): return
+	var events: Array[AdventurePage] = location.events.duplicate()
+	events.append(event)
+	var changes: Array[Array] = [[location, &"events", events]]
+	_edits.apply(changes, "Add %s to %s" % [title, AdventureGraph.get_title(location)], load(AdventureEventEditing.get_file_path(location)))
 
 func _on_property_edited(_property: String) -> void: rebuild()
 

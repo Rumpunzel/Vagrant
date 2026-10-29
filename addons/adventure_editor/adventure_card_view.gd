@@ -6,9 +6,6 @@ extends AdventureGraphView
 ## Cards of the event view: a page's decisions as cards (a choice with its port, a fight or save with a port per outcome; ▲ ▼ ✕, click → Inspector),
 ## the add bar, and tags for conditions and effects. Edits are only requested; [AdventureEditor] makes them. [param file]: the file the change is stored in
 
-signal decisions_requested(page: AdventurePage, decisions: Array[AdventureDecision], file: Resource, action: String)
-signal property_requested(resource: Resource, property: StringName, value: Variant, file: Resource, action: String)
-
 const FIGHT_COLOR: Color = Color(0.85, 0.3, 0.25)
 const SAVE_COLOR: Color = Color(0.45, 0.6, 0.9)
 const HOST_COLOR: Color = Color(0.35, 0.8, 0.7)
@@ -132,7 +129,7 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 		_tags[item] = tag
 		var without: Array = items.duplicate()
 		without.remove_at(index)
-		tags.add_child(_make_tool_button("Remove", "✕", "Remove", property_requested.emit.bind(resource, property, without, file, "Remove %s" % tag.text)))
+		tags.add_child(_make_tool_button("Remove", "✕", "Remove", _request.bind(resource, property, without, "Remove %s" % tag.text, file)))
 	var add: Button = _make_tool_button("Add", "+", "Add a %s" % add_text, func() -> void:
 		var actions: Dictionary[String, Callable] = {}
 		var additions: Dictionary[String, Resource] = get_additions.call()
@@ -140,7 +137,7 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 			actions[text] = func() -> void:
 				var with: Array = items.duplicate()
 				with.append(additions[text])
-				property_requested.emit(resource, property, with, file, "Add %s" % text)
+				_request(resource, property, with, "Add %s" % text, file)
 		_show_menu(actions)
 	)
 	add.text = add_text
@@ -220,13 +217,13 @@ func _add_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, mak
 	var decisions: Array[AdventureDecision] = page.decisions.duplicate()
 	var decision: AdventureDecision = make.call()
 	decisions.append(decision)
-	decisions_requested.emit(page, decisions, _file_for(null, page, entry), "Add %s" % decision.description)
+	_request(page, &"decisions", decisions, "Add %s" % decision.description, _file_for(null, page, entry))
 
 func _move_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, index: int, step: int) -> void:
 	var decisions: Array[AdventureDecision] = page.decisions.duplicate()
 	var decision: AdventureDecision = decisions.pop_at(index)
 	decisions.insert(index + step, decision)
-	decisions_requested.emit(page, decisions, _file_for(decision, page, entry), "Move %s" % decision.description)
+	_request(page, &"decisions", decisions, "Move %s" % decision.description, _file_for(decision, page, entry))
 
 ## Refused if a page stored inside the file would be lost with it
 func _remove_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, index: int) -> void:
@@ -239,7 +236,7 @@ func _remove_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, 
 		return
 	var decisions: Array[AdventureDecision] = page.decisions.duplicate()
 	decisions.remove_at(index)
-	decisions_requested.emit(page, decisions, file, "Remove %s" % decision.description)
+	_request(page, &"decisions", decisions, "Remove %s" % decision.description, file)
 
 ## The file a change of [param decision] (or of [param page]) is stored in: the first of them stored somewhere already, else the event's
 func _file_for(decision: AdventureDecision, page: AdventurePage, entry: AdventureEventOverview.Entry) -> Resource:

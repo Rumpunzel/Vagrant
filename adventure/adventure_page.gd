@@ -120,7 +120,8 @@ func get_held_pages() -> Array[AdventurePage]:
 			for reference: AdventurePageReference in decision.get_page_references(): if reference is AdventurePage: queue.append(reference as AdventurePage)
 	return held
 
-## The locations (pages with an area) this page's decisions lead to
+## The locations (pages with an area) this page's decisions lead to by their plain transition: where one walks to, which is what "nearby" means;
+## where a fight or save ends doesn't count (the map draws those as links too)
 func get_linked_locations() -> Array[AdventurePage]:
 	var linked: Array[AdventurePage] = [ ]
 	for decision: AdventureDecision in decisions:
