@@ -25,6 +25,11 @@ const ARROW_END: int = 1
 const ARROW_START: int = 2
 const ARROW_SIZE: float = 12.0
 const ICON_SIZE: int = 16
+## [words, editor icon] for menu items, the first that fits
+const MENU_ICONS: Array[Array] = [
+	[["play"], "Play"], [["unlink"], "Unlinked"], [["remove", "delete", "not nearby"], "Remove"], [["other file"], "Load"],
+	[["(scenario)"], "GraphEdit"], [["new ", "add "], "Add"],
+]
 
 var layout: AdventureLayout
 
@@ -76,24 +81,32 @@ func _get_event_card_actions(_event: AdventurePage, _page: AdventurePage) -> Dic
 ## A context menu at the mouse, for [AdventureEditor]
 func show_actions(actions: Dictionary[String, Callable]) -> void: _show_menu(actions)
 
-## A context menu at the mouse: item text -> what it does (and its icon, if any)
-func _show_menu(actions: Dictionary[String, Callable], icons: Dictionary[String, Texture2D] = {}) -> void:
+## A context menu at the mouse: item text -> what it does; each item gets an icon by what it does ([method _get_menu_icon])
+func _show_menu(actions: Dictionary[String, Callable]) -> void:
 	_menu_actions = actions
 	_menu.clear()
 	for text: String in actions:
-		if icons.get(text) != null: _menu.add_icon_item(icons[text], text)
+		var icon: Texture2D = _get_menu_icon(text)
+		if icon != null: _menu.add_icon_item(icon, text)
 		else: _menu.add_item(text)
-		_menu.set_item_icon_max_width(_menu.item_count - 1, 16)
+		_menu.set_item_icon_max_width(_menu.item_count - 1, ICON_SIZE)
 	_menu.position = DisplayServer.mouse_get_position()
 	_menu.reset_size()
 	_menu.popup()
 
+## The icon of a menu item, by the words in it; none where there is no editor (previews)
+func _get_menu_icon(text: String) -> Texture2D:
+	var lower: String = text.to_lower()
+	for words: Array in MENU_ICONS:
+		for word: String in words[0]: if lower.contains(word): return _get_editor_icon(words[1])
+	return _get_editor_icon("Object")
+
 ## [param pick] gets the actions when [param node] is right-clicked
-func _on_right_click(node: GraphNode, pick: Callable, icons: Dictionary[String, Texture2D] = {}) -> void:
+func _on_right_click(node: GraphNode, pick: Callable) -> void:
 	node.gui_input.connect(func(input: InputEvent) -> void:
 		var click: InputEventMouseButton = input as InputEventMouseButton
 		if click != null and click.pressed and click.button_index == MOUSE_BUTTON_RIGHT:
-			_show_menu(pick.call(), icons)
+			_show_menu(pick.call())
 			accept_event()
 	)
 

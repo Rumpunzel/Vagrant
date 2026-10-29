@@ -209,11 +209,12 @@ func _get_add_actions(entry: AdventureEventOverview.Entry, page: AdventurePage) 
 func _get_add_icons() -> Dictionary[String, Texture2D]:
 	return {"Add choice": _get_editor_icon("Add"), "Add fight": FIGHT_ICON, "Add save": SAVE_ICON}
 
-func _get_menu_icons() -> Dictionary[String, Texture2D]:
-	var icons: Dictionary[String, Texture2D] = _get_add_icons()
-	icons["Delete page"] = _get_editor_icon("Remove")
-	icons["Play from here"] = _get_editor_icon("Play")
-	return icons
+## Fights, saves and monsters get the game's icons
+func _get_menu_icon(text: String) -> Texture2D:
+	var lower: String = text.to_lower()
+	if lower.contains("fight") or lower.contains("is beaten") or lower.contains("is dead"): return FIGHT_ICON
+	if lower.contains("save"): return SAVE_ICON
+	return super(text)
 
 func _add_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, make: Callable) -> void:
 	var decisions: Array[AdventureDecision] = page.decisions.duplicate()

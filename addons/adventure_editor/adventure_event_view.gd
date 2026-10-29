@@ -156,7 +156,7 @@ func _add_page(entry: AdventureEventOverview.Entry, page: AdventurePage, at: Vec
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, HOST_COLOR)
 	node.add_child(_make_add_bar(entry, page))
 	_remember(node, entry, page, ports, [Target.PAGE, page])
-	_on_right_click(node, func() -> Dictionary[String, Callable]: return _get_page_actions(entry, page), _get_menu_icons())
+	_on_right_click(node, func() -> Dictionary[String, Callable]: return _get_page_actions(entry, page))
 	return node
 
 ## Adding decisions, and deleting pages stored inside the file (nothing else deletes them, so links can't lose them by accident)
@@ -211,7 +211,7 @@ func _add_special(entry: AdventureEventOverview.Entry, kind: Target, key: String
 	node.get_titlebar_hbox().move_child(node.get_titlebar_hbox().get_child(-1), 0)
 	node.set_slot(0, true, 0, special[3], false, 0, Color.WHITE)
 	if kind == Target.HOST: _open_on_double_click(node, _host)
-	if removable: _on_right_click(node, func() -> Dictionary[String, Callable]: return {"Remove": _remove_special.bind(key)}, {"Remove": _get_editor_icon("Remove")})
+	if removable: _on_right_click(node, func() -> Dictionary[String, Callable]: return {"Remove": _remove_special.bind(key)})
 	_remember(node, entry, null, [ ], [kind, null])
 	return node
 
