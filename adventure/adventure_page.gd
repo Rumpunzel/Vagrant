@@ -9,6 +9,9 @@ enum Exclusivity {
 	EXCLUDE_ABOVE = 4,
 }
 
+## How far nearby events are looked for, also for a reach of the whole area
+const MAX_NEARBY_REACH: int = 8
+
 @export_placeholder("Title") var title: String
 @export_multiline var description: String
 @export var area: AdventureArea
@@ -21,6 +24,11 @@ var exclusivity: int = 0
 @export var events: Array[AdventurePage]
 ## Each host gets its own of what this event spawns (monsters); otherwise all hosts share them
 @export var generic: bool = false
+## Events shown around the locations this event is on (Hearing Eleanor around the Eleanor scenario), each within its [member nearby_reach],
+## when their own conditions are met
+@export var nearby_events: Array[AdventurePage]
+## As a nearby event: how many links from its source's locations it shows; 0: anywhere in the same area
+@export_range(0, MAX_NEARBY_REACH) var nearby_reach: int = 1
 
 func are_all_prerequisites_fullfilled(story: Story) -> bool:
 	for condition: AdventureCondition in conditions:
@@ -77,10 +85,47 @@ func get_events(story: Story) -> Array[AdventurePage]:
 ## What a host shows for this event, once its prerequisites are met: the event itself (a scenario: one of its events or none)
 func resolve_event(_story: Story) -> AdventurePage: return self
 
-## Events whose prerequisites are met, scenarios resolved, in order; before Hide Above / Below
+## [event, its source's location] for every nearby event within reach of this location ([member nearby_events]); none for pages without an area
+func find_nearby_events() -> Array[Array]:
+	var found: Array[Array] = [ ]
+	if area == null: return found
+	var distances: Dictionary[AdventurePage, int] = {self: 0}
+	var queue: Array[AdventurePage] = [self]
+	while not queue.is_empty():
+		var location: AdventurePage = queue.pop_front()
+		if distances[location] >= MAX_NEARBY_REACH: continue
+		for linked: AdventurePage in location.get_linked_locations():
+			if distances.has(linked): continue
+			distances[linked] = distances[location] + 1
+			queue.append(linked)
+			for source: AdventurePage in linked.get_listed_events():
+				for nearby: AdventurePage in source.nearby_events:
+					if nearby == null: continue
+					var in_reach: bool = distances[linked] <= nearby.nearby_reach if nearby.nearby_reach > 0 else linked.area == area
+					if in_reach and not events.has(nearby) and not found.any(func(pair: Array) -> bool: return pair[0] == nearby): found.append([nearby, linked])
+	return found
+
+## The locations (pages with an area) this page's decisions lead to
+func get_linked_locations() -> Array[AdventurePage]:
+	var linked: Array[AdventurePage] = [ ]
+	for decision: AdventureDecision in decisions:
+		var page: AdventurePage = decision.transition.load_page() if decision != null and decision.transition != null else null
+		if page != null and page.area != null and not linked.has(page): linked.append(page)
+	return linked
+
+## Its events, a scenario's options included
+func get_listed_events() -> Array[AdventurePage]:
+	var listed: Array[AdventurePage] = [ ]
+	for event: AdventurePage in events:
+		if event == null: continue
+		listed.append(event)
+		if event is AdventureEventScenario: listed.append_array(event.get_listed_events())
+	return listed
+
+## Events whose prerequisites are met, scenarios resolved, in order, then nearby events; before Hide Above / Below
 func _get_candidate_events(story: Story) -> Array[AdventurePage]:
 	var candidates: Array[AdventurePage] = [ ]
-	for event: AdventurePage in events:
+	for event: AdventurePage in events + story.get_nearby_events(self):
 		if not event.are_all_prerequisites_fullfilled(story): continue
 		var shown: AdventurePage = event.resolve_event(story)
 		if shown != null: candidates.append(shown)

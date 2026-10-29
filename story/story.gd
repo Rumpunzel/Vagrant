@@ -76,6 +76,8 @@ var _current_dice_request: DiceRequest :
 var _page_stack: Array[AdventurePage] = []
 ## The page on which an event's decision was last chosen; the pages behind the event keep it
 var _host: AdventurePage
+## Nearby events by page, found once per page built
+var _nearby_events: Dictionary[AdventurePage, Array] = {}
 # StoryPage -> Array[StoryPage]
 var _page_log: Dictionary[AdventurePage, Array] = {}
 # AdventureDecision -> StoryChoice (individual times the decision has been made)
@@ -90,7 +92,15 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	enter_page(_adventure.starting_page)
 
 func enter_page(adventure_page: AdventurePage) -> void:
+	_nearby_events.clear()
 	_current_story_page = _create_story_page(adventure_page) if adventure_page else null
+
+## The nearby events of the events around [param page] ([method AdventurePage.find_nearby_events]); their own conditions are checked like any event's
+func get_nearby_events(page: AdventurePage) -> Array[AdventurePage]:
+	if not _nearby_events.has(page): _nearby_events[page] = page.find_nearby_events().map(func(pair: Array) -> AdventurePage: return pair[0])
+	var nearby: Array[AdventurePage] = [ ]
+	nearby.assign(_nearby_events[page])
+	return nearby
 
 func get_protagonist() -> Character: return _protagonist
 

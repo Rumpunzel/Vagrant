@@ -16,6 +16,8 @@ signal references_cleared(references: Array[Array], file: Resource, action: Stri
 signal property_requested(resource: Resource, property: StringName, value: Variant, file: Resource, action: String)
 ## A new event as an option of [param scenario]
 signal option_requested(scenario: AdventureEventScenario)
+## An event already made, to show around [param event]'s locations
+signal nearby_event_requested(event: AdventurePage)
 
 enum Target { PAGE, HOST, PREVIOUS }
 
@@ -167,8 +169,16 @@ func _add_page(entry: AdventureEventOverview.Entry, page: AdventurePage, at: Vec
 		var automatic: AdventureEventGraph.Outlet = AdventureEventGraph.Outlet.new()
 		automatic.label = "Turn back."
 		ports.append(automatic)
-		node.add_child(_make_info("Turn back. (automatic, back 1; link it to continue elsewhere)"))
-		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, FADED)
+		# Back one page after an event is nearly always the host, so it looks like one
+		var turn_back: HBoxContainer = HBoxContainer.new()
+		turn_back.tooltip_text = "The game's automatic \"Turn back.\" (back 1); link it to continue elsewhere"
+		turn_back.add_child(_make_icon(HOST_ICON, HOST_COLOR))
+		var label: Label = Label.new()
+		label.text = "Turn back (automatic)"
+		label.modulate = HOST_COLOR
+		turn_back.add_child(label)
+		node.add_child(turn_back)
+		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, HOST_COLOR)
 	node.add_child(_make_add_bar(entry, page))
 	_remember(node, entry, page, ports, [Target.PAGE, page])
 	_on_right_click(node, func() -> Dictionary[String, Callable]: return _get_page_actions(entry, page), _get_menu_icons())
@@ -350,6 +360,12 @@ func _get_add_icons() -> Dictionary[String, Texture2D]:
 func _get_page_actions(entry: AdventureEventOverview.Entry, page: AdventurePage) -> Dictionary[String, Callable]:
 	var actions: Dictionary[String, Callable] = _get_add_actions(entry, page)
 	if page != entry.event and AdventureEventEditing.is_inside_file(page): actions["Delete page"] = _delete_page.bind(entry, page)
+	if page == entry.event: actions["Add nearby event…"] = nearby_event_requested.emit.bind(page)
+	if page == entry.event and entry.is_nearby:
+		var source: AdventurePage = entry.parent_page
+		var without: Array[AdventurePage] = source.nearby_events.duplicate()
+		without.erase(page)
+		actions["Not nearby %s any more" % AdventureGraph.get_title(source)] = property_requested.emit.bind(source, &"nearby_events", without, load(AdventureEventEditing.get_file_path(source)), "Not nearby any more")
 	return actions
 
 func _get_menu_icons() -> Dictionary[String, Texture2D]:

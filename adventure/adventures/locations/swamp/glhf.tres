@@ -8,18 +8,27 @@
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="5_o4t3t"]
 [ext_resource type="Resource" uid="uid://xjimvc8fgu8i" path="res://adventure/adventures/locations/swamp/events/dfgh.tres" id="7_o4t3t"]
 
-[sub_resource type="Resource" id="Resource_dif2v"]
+[sub_resource type="Resource" id="Resource_o4t3t"]
 script = ExtResource("5_o4t3t")
 _leads_to = "uid://vckcly8qpi2j"
 
-[sub_resource type="Resource" id="Resource_xoq5j"]
+[sub_resource type="Resource" id="Resource_dif2v"]
 script = ExtResource("3_l7tgs")
 description = "Go to asdf."
-transition = SubResource("Resource_dif2v")
+transition = SubResource("Resource_o4t3t")
+
+[sub_resource type="Resource" id="Resource_xoq5j"]
+script = ExtResource("5_o4t3t")
+_leads_to = "uid://vckcly8qpi2j"
+
+[sub_resource type="Resource" id="Resource_re6wm"]
+script = ExtResource("3_l7tgs")
+description = "Go to asdf."
+transition = SubResource("Resource_xoq5j")
 
 [resource]
 script = ExtResource("4_o4t3t")
 title = "glhf"
 area = ExtResource("1_jh6l7")
-decisions = Array[ExtResource("3_l7tgs")]([SubResource("Resource_xoq5j")])
+decisions = Array[ExtResource("3_l7tgs")]([SubResource("Resource_dif2v"), SubResource("Resource_re6wm")])
 events = Array[ExtResource("4_o4t3t")]([ExtResource("7_o4t3t")])

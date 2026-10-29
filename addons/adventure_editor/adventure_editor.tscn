@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bee2desykk34h" path="res://assets/game_icons/delapouite/anticlockwise-rotation.svg" id="5_host"]
 [ext_resource type="Texture2D" uid="uid://dmkjss474288g" path="res://assets/game_icons/delapouite/exit-door.svg" id="6_previous"]
 
-[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_tabs", "_map", "_events_tab", "_event_list", "_host_picker", "_event_view")]
+[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_tabs", "_map_tab", "_map", "_event_shelf", "_events_tab", "_event_list", "_host_picker", "_event_view")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,7 +17,9 @@ size_flags_vertical = 3
 script = ExtResource("1_editor")
 _picker = NodePath("Picker")
 _tabs = NodePath("Tabs")
-_map = NodePath("Tabs/Map")
+_map_tab = NodePath("Tabs/Map")
+_map = NodePath("Tabs/Map/Graph")
+_event_shelf = NodePath("Tabs/Map/Shelf/Scroll/Events")
 _events_tab = NodePath("Tabs/Events")
 _event_list = NodePath("Tabs/Events/List")
 _host_picker = NodePath("Tabs/Events/Event/HostPicker")
@@ -34,11 +36,31 @@ layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="Map" type="GraphEdit" parent="Tabs" unique_id=1590962896]
+[node name="Map" type="HBoxContainer" parent="Tabs"]
 layout_mode = 2
-scroll_offset = Vector2(0, -31)
-script = ExtResource("2_map")
 metadata/_tab_index = 0
+
+[node name="Graph" type="GraphEdit" parent="Tabs/Map" unique_id=1590962896]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_map")
+
+[node name="Shelf" type="VBoxContainer" parent="Tabs/Map"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Tabs/Map/Shelf"]
+layout_mode = 2
+text = "Drag onto a location:"
+
+[node name="Scroll" type="ScrollContainer" parent="Tabs/Map/Shelf"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Events" type="VBoxContainer" parent="Tabs/Map/Shelf/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Events" type="HSplitContainer" parent="Tabs" unique_id=844746193]
 visible = false

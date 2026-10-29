@@ -41,10 +41,13 @@ func test_ambush_decision() -> void:
 		var outcome_page: AdventurePage = references[outcome].get_adventure_page()
 		assert_object(outcome_page).is_same(load(OUTCOME_PAGES[outcome]))
 		assert_str(outcome_page.description).is_not_empty()
-		# Back to the host; fleeing goes to where the player was before it
+		# Fleeing goes to where the player was before the host; the others back to the host, by a decision or the automatic "Turn back."
+		if outcome == Fight.Outcome.FLED:
+			assert_object(outcome_page.decisions[0].transition).is_instanceof(AdventurePreviousLocationReference)
+			continue
+		if outcome_page.decisions.is_empty(): continue
 		var back: AdventureDecision = outcome_page.decisions[0]
-		if outcome == Fight.Outcome.FLED: assert_object(back.transition).is_instanceof(AdventurePreviousLocationReference)
-		else: assert_object(back.transition).is_null()
+		assert_object(back.transition).is_null()
 		assert_int(back.back_steps).is_equal(1)
 
 func test_ambush_only_while_the_lurker_can_fight() -> void:

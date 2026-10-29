@@ -8,6 +8,7 @@
 [ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="5_k8kem"]
 [ext_resource type="Script" uid="uid://df6f7mcpin5we" path="res://adventure/decisions/adventure_save_decision.gd" id="5_yeb4i"]
 [ext_resource type="Script" uid="uid://oybrm82jcppw" path="res://adventure/adventure_previous_location_reference.gd" id="8_cdjox"]
+[ext_resource type="Resource" uid="uid://dffxphat87a8a" path="res://adventure/adventures/locations/beach/events/hearing_eleanor.tres" id="9_hearing"]
 
 [sub_resource type="Resource" id="Resource_j24m5"]
 script = ExtResource("3_t43k6")
@@ -52,3 +53,4 @@ title = "The Mysterious Woman"
 description = "A young woman knocks her mace against the heavy gate of the ruined keep."
 decisions = Array[ExtResource("1_npy2t")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])
 exclusivity = 7
+nearby_events = Array[ExtResource("3_t43k6")]([ExtResource("9_hearing")])

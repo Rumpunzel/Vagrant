@@ -2,7 +2,7 @@
 class_name AdventureMapView
 extends AdventureGraphView
 
-## The adventure's map ([AdventureGraph]): areas as frames around their locations, links through events dashed.
+## The adventure's map ([AdventureGraph]): areas as frames around their locations, a straight line per linked pair (arrows for the direction, dashed through events).
 ## Edits are only requested here; [AdventureEditor] makes them (undo, saving).
 
 signal link_requested(from: AdventurePage, to: AdventurePage)
@@ -10,6 +10,11 @@ signal unlink_requested(from: AdventurePage, to: AdventurePage)
 ## [param at]: where on the graph
 signal location_requested(at: Vector2)
 signal event_requested(location: AdventurePage, scenario: bool)
+## An event already made, to be listed on [param location] too
+signal existing_event_requested(location: AdventurePage)
+signal event_removal_requested(location: AdventurePage, event: AdventurePage)
+## An event from the sidebar ([AdventureEventButton]) let go on a location
+signal event_dropped(location: AdventurePage, event: AdventurePage)
 ## The new area per moved page; none: no area
 signal areas_requested(areas: Dictionary[AdventurePage, AdventureArea])
 
@@ -37,23 +42,47 @@ func show_graph(graph: AdventureGraph) -> void:
 		var row: int = graph.areas.find(page.area) if page.area != null else graph.areas.size()
 		var column: int = row_sizes.get(row, 0)
 		row_sizes[row] = column + 1
-		var node: GraphNode = _add_node(_key(page), page, AdventureGraph.get_title(page), _make_page_content(page), Vector2(column, row) * NODE_SPACING)
+		var content: VBoxContainer = _make_page_content(page)
+		# Nearby events of the events around, faded, with where they come from
+		for nearby: Array in page.find_nearby_events():
+			var card: Button = _make_event_card(nearby[0], page)
+			card.text = "%s · from %s" % [AdventureGraph.get_title(nearby[0]), AdventureGraph.get_title(nearby[1])]
+			card.modulate = FADED
+			content.add_child(card)
+		var node: GraphNode = _add_node(_key(page), page, AdventureGraph.get_title(page), content, Vector2(column, row) * NODE_SPACING)
 		node.set_slot(0, true, 0, Color.WHITE, true, 0, Color.WHITE)
-		_on_right_click(node, func() -> Dictionary[String, Callable]: return {
-			"New event here": event_requested.emit.bind(page, false),
-			"New scenario here": event_requested.emit.bind(page, true),
-		})
+		_on_right_click(node, func() -> Dictionary[String, Callable]: return _get_location_actions(graph, page))
 		if graph.unreachable.has(page):
 			node.modulate = FADED
 			node.tooltip_text = "Not reached from the starting page"
 		if page.area != null: attach_graph_element_to_frame(node.name, frames[page.area].name)
+	# One line per pair: GraphEdit's curves leave right and enter left, which loops for links going back or both ways
+	var drawn: Array[AdventureGraph.Link] = [ ]
 	for link: AdventureGraph.Link in graph.links:
-		if link.through_event: _add_dashed(_nodes[_key(link.from)], _nodes[_key(link.to)])
-		else: connect_node(_nodes[_key(link.from)].name, 0, _nodes[_key(link.to)].name, 0)
+		var back: AdventureGraph.Link = graph.get_link(link.to, link.from)
+		if drawn.has(back): continue
+		drawn.append(link)
+		var arrows: int = ARROW_END | (ARROW_START if back != null else 0)
+		var dashed: bool = link.through_event and (back == null or back.through_event)
+		_add_line(_nodes[_key(link.from)], _nodes[_key(link.to)], DASHED_COLOR if dashed else LINE_COLOR, dashed, arrows)
+
+func _get_location_actions(graph: AdventureGraph, page: AdventurePage) -> Dictionary[String, Callable]:
+	var actions: Dictionary[String, Callable] = {
+		"New event here": event_requested.emit.bind(page, false),
+		"New scenario here": event_requested.emit.bind(page, true),
+		"Add event…": existing_event_requested.emit.bind(page),
+	}
+	for link: AdventureGraph.Link in graph.links:
+		if link.from == page and not link.through_event: actions["Unlink from %s" % AdventureGraph.get_title(link.to)] = unlink_requested.emit.bind(page, link.to)
+	return actions
 
 func focus_page(page: AdventurePage) -> void: focus_node(_nodes.get(_key(page)))
 
 func _on_event_card_pressed(event: AdventurePage, page: AdventurePage) -> void: event_opened.emit(event, page)
+
+func _get_event_card_actions(event: AdventurePage, page: AdventurePage) -> Dictionary[String, Callable]:
+	if not page.events.has(event): return {}
+	return {"Remove from here (the file stays)": event_removal_requested.emit.bind(page, event)}
 
 ## Frames grow with their locations; Alt while dragging lets them go, so they can leave
 func _on_move_started() -> void:
@@ -82,6 +111,17 @@ func _on_moved() -> void:
 	_detached.clear()
 	# Applying rebuilds the graph, which must not happen while it reports the move
 	if not areas.is_empty(): areas_requested.emit.call_deferred(areas)
+
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	return data is Dictionary and (data as Dictionary).has("adventure_event") and _get_location_at(_to_graph(at_position)) != null
+
+func _drop_data(at_position: Vector2, data: Variant) -> void:
+	event_dropped.emit(_get_location_at(_to_graph(at_position)), (data as Dictionary)["adventure_event"])
+
+func _get_location_at(point: Vector2) -> AdventurePage:
+	for element: GraphElement in _resources:
+		if element is GraphNode and Rect2(element.position_offset, element.size).has_point(point): return _resources[element] as AdventurePage
+	return null
 
 func _get_area_at(point: Vector2) -> AdventureArea:
 	for element: GraphElement in _resources:

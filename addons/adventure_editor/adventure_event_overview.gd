@@ -16,6 +16,8 @@ class Entry:
 	var parent_page: AdventurePage
 	## The scenario it is an option of, if any
 	var switch: Switch
+	## Shown around its parent's locations ([member AdventurePage.nearby_events]); its parent page is the source event
+	var is_nearby: bool
 
 ## A scenario choosing one of its options: the first whose conditions are met
 class Switch:
@@ -58,7 +60,8 @@ static func get_condition_text(conditions: Array[AdventureCondition]) -> String:
 ## What the entry's Hide flags hide where it is listed: on [param host] (none: any host) or, for a sub-event, on its page
 static func get_hiding_text(entry: Entry, host: AdventurePage) -> String:
 	if entry.event.exclusivity == 0: return ""
-	var where: AdventurePage = entry.parent_page if entry.parent_page != null else host
+	# A nearby event shows on other locations than its source's
+	var where: AdventurePage = entry.parent_page if entry.parent_page != null and not entry.is_nearby else host
 	var where_name: String = AdventureGraph.get_title(where) if where != null else "the host"
 	var siblings: Array[AdventurePage] = [ ]
 	if where != null: siblings = where.events
@@ -84,7 +87,7 @@ static func _name_events(text: String, events: Array[AdventurePage], known: bool
 	if not known: return text
 	return "%s (%s)" % [text, ", ".join(events.map(AdventureGraph.get_title)) if not events.is_empty() else "none"]
 
-func _add(event: AdventurePage, listed_as: AdventurePage, parent: Entry, parent_page: AdventurePage, switch: Switch) -> void:
+func _add(event: AdventurePage, listed_as: AdventurePage, parent: Entry, parent_page: AdventurePage, switch: Switch, is_nearby: bool = false) -> void:
 	if event == null or _seen.has(event): return
 	_seen.append(event)
 	if event is AdventureEventScenario:
@@ -99,7 +102,8 @@ func _add(event: AdventurePage, listed_as: AdventurePage, parent: Entry, parent_
 		return
 	var entry: Entry = Entry.new()
 	entry.event = event
-	entry.label = AdventureGraph.get_title(event)
+	entry.label = AdventureGraph.get_title(event) + (" (nearby)" if is_nearby else "")
+	entry.is_nearby = is_nearby
 	entry.graph = AdventureEventGraph.new(event)
 	entry.listed_as = listed_as
 	entry.parent = parent
@@ -108,3 +112,4 @@ func _add(event: AdventurePage, listed_as: AdventurePage, parent: Entry, parent_
 	entries.append(entry)
 	for page: AdventurePage in entry.graph.pages:
 		for nested: AdventurePage in page.events: _add(nested, nested, entry, page, null)
+	for nearby: AdventurePage in event.nearby_events: _add(nearby, nearby, entry, event, null, true)

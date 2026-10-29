@@ -18,13 +18,17 @@ const FRAME_MARGIN: int = 64
 const FRAME_BACKGROUND_ALPHA: float = 0.35
 const DASHED_COLOR: Color = Color(1, 1, 1, 0.6)
 const FADED: Color = Color(1, 1, 1, 0.5)
+const LINE_COLOR: Color = Color(1, 1, 1, 0.8)
+const ARROW_END: int = 1
+const ARROW_START: int = 2
+const ARROW_SIZE: float = 12.0
 
 var layout: AdventureLayout
 
 ## By layout key
 var _nodes: Dictionary[String, GraphNode] = {}
 var _resources: Dictionary[GraphElement, Resource] = {}
-## [from, to, color], drawn dashed between the controls' edges
+## [from, to, color, dashed, arrows] lines drawn above everything ([member ARROW_END], [member ARROW_START])
 var _dashed: Array[Array] = [ ]
 var _dashed_layer: Control
 var _menu: PopupMenu
@@ -55,6 +59,12 @@ func focus_node(node: GraphNode) -> void:
 	scroll_offset = (node.position_offset + node.size / 2) * zoom - size / 2
 
 @abstract func _on_event_card_pressed(event: AdventurePage, page: AdventurePage) -> void
+
+## What right-clicking [param event]'s card on [param page] offers
+func _get_event_card_actions(_event: AdventurePage, _page: AdventurePage) -> Dictionary[String, Callable]: return {}
+
+## A context menu at the mouse, for [AdventureEditor]
+func show_actions(actions: Dictionary[String, Callable]) -> void: _show_menu(actions)
 
 ## A context menu at the mouse: item text -> what it does (and its icon, if any)
 func _show_menu(actions: Dictionary[String, Callable], icons: Dictionary[String, Texture2D] = {}) -> void:
@@ -116,8 +126,11 @@ func _add_frame(title: String, resource: Resource, background_texture: Texture2D
 	_resources[frame] = resource
 	return frame
 
-func _add_dashed(from: Control, to: Control, color: Color = DASHED_COLOR) -> void:
-	_dashed.append([from, to, color])
+func _add_dashed(from: Control, to: Control, color: Color = DASHED_COLOR) -> void: _add_line(from, to, color, true, 0)
+
+## Between two nodes: straight from edge to edge, toward each other's center; otherwise from the sides facing each other
+func _add_line(from: Control, to: Control, color: Color, dashed: bool, arrows: int) -> void:
+	_dashed.append([from, to, color, dashed, arrows])
 	# Ends inside a node move when the node lays itself out
 	for end: Control in [from, to]: if not end is GraphNode: end.item_rect_changed.connect(_dashed_layer.queue_redraw)
 	_dashed_layer.queue_redraw.call_deferred()
@@ -140,6 +153,14 @@ func _make_event_card(event: AdventurePage, page: AdventurePage) -> Button:
 	card.text = AdventureGraph.get_title(event)
 	card.tooltip_text = "%s: %s" % ["Scenario" if event is AdventureEventScenario else "Event", event.resource_path]
 	card.pressed.connect(_on_event_card_pressed.bind(event, page))
+	card.gui_input.connect(func(input: InputEvent) -> void:
+		var click: InputEventMouseButton = input as InputEventMouseButton
+		if click == null or not click.pressed or click.button_index != MOUSE_BUTTON_RIGHT: return
+		var actions: Dictionary[String, Callable] = _get_event_card_actions(event, page)
+		if actions.is_empty(): return
+		_show_menu(actions)
+		card.accept_event()
+	)
 	return card
 
 func _make_texture_rect(texture: Texture2D) -> TextureRect:
@@ -195,12 +216,35 @@ func _add_dashed_layer() -> void:
 
 func _draw_dashed() -> void:
 	var to_local: Transform2D = _dashed_layer.get_global_transform().affine_inverse()
-	for dashed: Array in _dashed:
-		if not is_instance_valid(dashed[0]) or not is_instance_valid(dashed[1]): continue
-		var from: Rect2 = (dashed[0] as Control).get_global_rect()
-		var to: Rect2 = (dashed[1] as Control).get_global_rect()
-		# From the side facing the target
-		var forward: bool = to.get_center().x >= from.get_center().x
-		var start: Vector2 = to_local * Vector2(from.end.x if forward else from.position.x, from.get_center().y)
-		var end: Vector2 = to_local * Vector2(to.position.x if forward else to.end.x, to.get_center().y)
-		_dashed_layer.draw_dashed_line(start, end, dashed[2], 2.0 * zoom, 10.0 * zoom)
+	for line: Array in _dashed:
+		if not is_instance_valid(line[0]) or not is_instance_valid(line[1]): continue
+		var from: Rect2 = (line[0] as Control).get_global_rect()
+		var to: Rect2 = (line[1] as Control).get_global_rect()
+		var start: Vector2
+		var end: Vector2
+		if line[0] is GraphNode and line[1] is GraphNode:
+			start = _get_edge_point(from, to.get_center())
+			end = _get_edge_point(to, from.get_center())
+		else:
+			var forward: bool = to.get_center().x >= from.get_center().x
+			start = Vector2(from.end.x if forward else from.position.x, from.get_center().y)
+			end = Vector2(to.position.x if forward else to.end.x, to.get_center().y)
+		start = to_local * start
+		end = to_local * end
+		if line[3]: _dashed_layer.draw_dashed_line(start, end, line[2], 2.0 * zoom, 10.0 * zoom)
+		else: _dashed_layer.draw_line(start, end, line[2], 2.0 * zoom, true)
+		if line[4] & ARROW_END: _draw_arrow(start, end, line[2])
+		if line[4] & ARROW_START: _draw_arrow(end, start, line[2])
+
+## Where the line from [param rect]'s center toward [param toward] leaves it
+static func _get_edge_point(rect: Rect2, toward: Vector2) -> Vector2:
+	var center: Vector2 = rect.get_center()
+	var direction: Vector2 = toward - center
+	if direction.is_zero_approx(): return center
+	var half: Vector2 = rect.size / 2
+	var factor: float = minf(half.x / absf(direction.x) if direction.x != 0 else INF, half.y / absf(direction.y) if direction.y != 0 else INF)
+	return center + direction * factor
+
+func _draw_arrow(from: Vector2, tip: Vector2, color: Color) -> void:
+	var back: Vector2 = (from - tip).normalized() * ARROW_SIZE * zoom
+	_dashed_layer.draw_colored_polygon(PackedVector2Array([tip, tip + back.rotated(0.45), tip + back.rotated(-0.45)]), color)

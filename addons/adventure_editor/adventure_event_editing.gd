@@ -56,6 +56,17 @@ static func _get_held(root: AdventurePage) -> Array[AdventurePage]:
 				if reference is AdventurePage: queue.append(reference as AdventurePage)
 	return held
 
+## Every event file in an [code]events[/code] folder under [param folder]
+static func find_event_files(folder: String) -> Array[String]:
+	var found: Array[String] = [ ]
+	for sub_folder: String in DirAccess.get_directories_at(folder):
+		var path: String = folder.path_join(sub_folder)
+		if sub_folder == "events":
+			for file: String in DirAccess.get_files_at(path):
+				if file.get_extension() == "tres": found.append(path.path_join(file))
+		found.append_array(find_event_files(path))
+	return found
+
 ## A "↺ Host" or "↶ Previous location" link to be stored inside a file
 static func make_special_reference(previous_location: bool) -> AdventurePageReference:
 	var reference: AdventurePageReference = AdventurePreviousLocationReference.new() if previous_location else AdventureHostReference.new()
