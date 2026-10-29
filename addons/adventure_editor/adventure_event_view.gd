@@ -161,9 +161,16 @@ func _add_page(entry: AdventureEventOverview.Entry, page: AdventurePage, at: Vec
 	var outlets: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outlets(page)
 	for index: int in outlets.size(): _add_decision_cards(node, entry, page, index, outlets[index])
 	# What the game offers on a page without decisions
-	if outlets.is_empty(): node.add_child(_make_info("Turn back. (automatic, back 1)"))
+	var ports: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_ports(page)
+	# What the game offers on a page without decisions; linking it makes it a real choice
+	if outlets.is_empty():
+		var automatic: AdventureEventGraph.Outlet = AdventureEventGraph.Outlet.new()
+		automatic.label = "Turn back."
+		ports.append(automatic)
+		node.add_child(_make_info("Turn back. (automatic, back 1; link it to continue elsewhere)"))
+		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, FADED)
 	node.add_child(_make_add_bar(entry, page))
-	_remember(node, entry, page, AdventureEventGraph.get_ports(page), [Target.PAGE, page])
+	_remember(node, entry, page, ports, [Target.PAGE, page])
 	_on_right_click(node, func() -> Dictionary[String, Callable]: return _get_page_actions(entry, page), _get_menu_icons())
 	return node
 
@@ -493,7 +500,17 @@ func _on_connection_to_empty(from: StringName, port: int, release_position: Vect
 func _request_reference(from: StringName, port: int, reference: AdventurePageReference) -> void:
 	var outlet: AdventureEventGraph.Outlet = _get_port(from, port)
 	if outlet == null: return
-	var file: Resource = _file_for(outlet.decision, _node_pages[from], _node_entries[from])
+	var page: AdventurePage = _node_pages[from]
+	var file: Resource = _file_for(outlet.decision, page, _node_entries[from])
+	# The automatic "Turn back.": a choice leading there takes its place
+	if outlet.decision == null:
+		if reference == null: return
+		var choice: AdventureDecision = AdventureEventEditing.make_choice()
+		choice.description = "Continue."
+		choice.transition = reference
+		var decisions: Array[AdventureDecision] = [choice]
+		decisions_requested.emit(page, decisions, file, "Continue")
+		return
 	var old: AdventurePageReference = outlet.decision.get(outlet.property) as AdventurePageReference
 	if old != null and old != reference and file is AdventurePage and AdventureEventEditing.would_lose_page(file as AdventurePage, [old]):
 		push_warning("Only \"%s\" leads to %s, which is stored in this file; delete that page instead (right-click it)" % [outlet.label, AdventureGraph.get_title(old as AdventurePage)])

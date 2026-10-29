@@ -33,17 +33,22 @@ positions = Dictionary[String, Vector2]({
 "uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/uid://m4wl5ad8o0i7": Vector2(-240, 1240),
 "uid://co2m5ujklmges": Vector2(-200, 140),
 "uid://cs40ge42lw0ry": Vector2(20, 300),
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_0x8r7": Vector2(420, 500),
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_b3ed1": Vector2(400, 320),
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_j24m5": Vector2(380, 0),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_0x8r7": Vector2(440, 520),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_b3ed1": Vector2(700, 320),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_j24m5": Vector2(420, 0),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_yrhxu": Vector2(280, 240),
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/host": Vector2(700, 280),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/host": Vector2(760, 60),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_0x8r7": Vector2(560, 400),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_b3ed1": Vector2(560, 260),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_j24m5": Vector2(280, 0),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/locations/beach/events/meeting_eleanor.tres::Resource_yrhxu": Vector2(260, 260),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/special/previous/0": Vector2(1080, 300),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh": Vector2(0, 0),
 "uid://dk3q4ia5u7q6m": Vector2(720, 220),
 "uid://vckcly8qpi2j": Vector2(80, 140),
 "uid://ycd6xhx346l6": Vector2(720, -20)
+})
+special_links = Dictionary[String, String]({
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::i1lgh": "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/special/previous/0",
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::piem0": "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/special/previous/0"
 })

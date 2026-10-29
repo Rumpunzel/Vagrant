@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="3_t43k6"]
 [ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="5_k8kem"]
 [ext_resource type="Script" uid="uid://df6f7mcpin5we" path="res://adventure/decisions/adventure_save_decision.gd" id="5_yeb4i"]
+[ext_resource type="Script" uid="uid://oybrm82jcppw" path="res://adventure/adventure_previous_location_reference.gd" id="8_cdjox"]
 
 [sub_resource type="Resource" id="Resource_j24m5"]
 script = ExtResource("3_t43k6")
@@ -23,9 +24,18 @@ script = ExtResource("3_t43k6")
 description = "Oops, you accidentaly the claps of your ass cheeks.
 Dummy thicc."
 
+[sub_resource type="Resource" id="piem0"]
+script = ExtResource("8_cdjox")
+
+[sub_resource type="Resource" id="3vgpj"]
+script = ExtResource("1_npy2t")
+description = "Continue."
+transition = SubResource("piem0")
+
 [sub_resource type="Resource" id="Resource_b3ed1"]
 script = ExtResource("3_t43k6")
 description = "You hide among the barnacles and flotsam."
+decisions = Array[ExtResource("1_npy2t")]([SubResource("3vgpj")])
 
 [sub_resource type="Resource" id="Resource_yrhxu"]
 script = ExtResource("5_yeb4i")
