@@ -164,6 +164,7 @@ func _get_page_actions(entry: AdventureEventOverview.Entry, page: AdventurePage)
 	var actions: Dictionary[String, Callable] = _get_add_actions(entry, page)
 	if page != entry.event and AdventureEventEditing.is_inside_file(page): actions["Delete page"] = _delete_page.bind(entry, page)
 	if page == entry.event: actions["Add nearby event…"] = nearby_event_requested.emit.bind(page)
+	actions["Play from here"] = play_requested.emit.bind(page, entry.event)
 	if page == entry.event and entry.is_nearby:
 		var source: AdventurePage = entry.parent_page
 		var without: Array[AdventurePage] = source.nearby_events.duplicate()

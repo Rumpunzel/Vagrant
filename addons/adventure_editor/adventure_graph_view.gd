@@ -9,6 +9,8 @@ extends GraphEdit
 signal event_opened(event: AdventurePage, host: AdventurePage)
 ## Nodes moved; their positions are in [member layout] already
 signal layout_changed
+## Start the game at [param page]; [param event]: the event it is part of, none for a location
+signal play_requested(page: AdventurePage, event: AdventurePage)
 
 const NODE_SPACING: Vector2 = Vector2(280, 240)
 const THUMBNAIL_SIZE: Vector2 = Vector2(220, 124)
@@ -58,6 +60,13 @@ func focus_node(node: GraphNode) -> void:
 	if node == null: return
 	set_selected(node)
 	scroll_offset = (node.position_offset + node.size / 2) * zoom - size / 2
+
+## Shows the node of [param resource] in the middle and selects it, if there is one
+func focus_resource(resource: Resource) -> void:
+	for element: GraphElement in _resources:
+		if _resources[element] == resource and element is GraphNode:
+			focus_node(element as GraphNode)
+			return
 
 @abstract func _on_event_card_pressed(event: AdventurePage, page: AdventurePage) -> void
 

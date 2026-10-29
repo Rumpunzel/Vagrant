@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bee2desykk34h" path="res://assets/game_icons/delapouite/anticlockwise-rotation.svg" id="5_host"]
 [ext_resource type="Texture2D" uid="uid://dmkjss474288g" path="res://assets/game_icons/delapouite/exit-door.svg" id="6_previous"]
 
-[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_tabs", "_map_tab", "_map", "_event_shelf", "_events_tab", "_event_list", "_host_picker", "_event_view")]
+[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_tabs", "_map_tab", "_map", "_event_shelf", "_problem_list", "_events_tab", "_event_list", "_host_picker", "_event_view")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -20,6 +20,7 @@ _tabs = NodePath("Tabs")
 _map_tab = NodePath("Tabs/Map")
 _map = NodePath("Tabs/Map/Graph")
 _event_shelf = NodePath("Tabs/Map/Shelf/Scroll/Events")
+_problem_list = NodePath("Tabs/Problems")
 _events_tab = NodePath("Tabs/Events")
 _event_list = NodePath("Tabs/Events/List")
 _host_picker = NodePath("Tabs/Events/Event/HostPicker")
@@ -115,3 +116,8 @@ alignment = 0
 expand_icon = true
 script = ExtResource("4_special")
 kind = "previous"
+
+[node name="Problems" type="ItemList" parent="Tabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2

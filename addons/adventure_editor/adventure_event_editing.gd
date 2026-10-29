@@ -22,7 +22,7 @@ static func is_inside_file(page: AdventurePage) -> bool:
 ## Every [decision, property] pointing at [param target] directly, among what [param root] holds (its file's contents)
 static func find_references_to(root: AdventurePage, target: AdventurePage) -> Array[Array]:
 	var found: Array[Array] = [ ]
-	for page: AdventurePage in _get_held(root):
+	for page: AdventurePage in root.get_held_pages():
 		for decision: AdventureDecision in page.decisions:
 			if decision == null: continue
 			var references: Dictionary[StringName, AdventurePageReference] = AdventureGraph.get_references(decision)
@@ -39,22 +39,7 @@ static func would_lose_page(root: AdventurePage, references: Array[AdventurePage
 
 ## Whether pointing from [param from] at [param target] closes a cycle: [param target] already reaches [param from] through pages (and events) held directly
 static func would_loop(from: AdventurePage, target: AdventurePage) -> bool:
-	return _get_held(target).has(from)
-
-## [param root] and the pages (and events) it holds directly, not through transitions or host references
-static func _get_held(root: AdventurePage) -> Array[AdventurePage]:
-	var held: Array[AdventurePage] = [ ]
-	var queue: Array[AdventurePage] = [root]
-	while not queue.is_empty():
-		var page: AdventurePage = queue.pop_front()
-		if held.has(page): continue
-		held.append(page)
-		queue.append_array(page.events)
-		for decision: AdventureDecision in page.decisions:
-			if decision == null: continue
-			for reference: AdventurePageReference in AdventureGraph.get_references(decision).values():
-				if reference is AdventurePage: queue.append(reference as AdventurePage)
-	return held
+	return target.get_held_pages().has(from)
 
 ## Every event file in an [code]events[/code] folder under [param folder]
 static func find_event_files(folder: String) -> Array[String]:

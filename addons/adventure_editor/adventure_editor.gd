@@ -15,6 +15,8 @@ const INDENT: String = "    "
 @export var _map: AdventureMapView
 ## The map's sidebar of events to drag onto locations
 @export var _event_shelf: VBoxContainer
+## The "Problems" tab ([AdventureProblems])
+@export var _problem_list: ItemList
 @export var _events_tab: Control
 @export var _event_list: ItemList
 @export var _host_picker: OptionButton
@@ -60,6 +62,9 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_event_view.reference_requested.connect(_set_reference)
 	_map.existing_event_requested.connect(_offer_events)
 	_map.event_dropped.connect(_on_event_dropped)
+	_problem_list.item_selected.connect(_show_problem)
+	_map.play_requested.connect(_play_from)
+	_event_view.play_requested.connect(_play_from)
 	_map.event_removal_requested.connect(_remove_event)
 	_event_view.nearby_event_requested.connect(_offer_nearby_events)
 	_file_dialog = EditorFileDialog.new()
@@ -90,6 +95,7 @@ func rebuild() -> void:
 	var listed: Array[AdventurePage] = [ ]
 	for event: AdventurePage in _graph.get_top_events(): _list_event(event, 0, listed)
 	_fill_event_shelf()
+	_list_problems()
 	var current: AdventurePage = _event_view.get_event()
 	if listed.has(current): _show_event(current, _event_view.get_host())
 	else: _show_event(null, null)
@@ -272,6 +278,40 @@ func _fill_event_shelf() -> void:
 		button.tooltip_text = "%s\nDrag onto a location to list it there; press to open it" % event.resource_path
 		button.pressed.connect(open_event.bind(event, null))
 		_event_shelf.add_child(button)
+
+## Saves, then starts the game at [param page]: a location as it is; an event's own page at its host (the picked one, else the first), so it shows
+## if its conditions fit; a page behind an event on that page, with the host entered before it
+func _play_from(page: AdventurePage, event: AdventurePage) -> void:
+	var host: AdventurePage = null
+	if event != null:
+		host = _event_view.get_host()
+		var hosts: Array[AdventurePage] = _graph.get_location_hosts(event)
+		if host == null and not hosts.is_empty(): host = hosts[0]
+		if host == null:
+			push_warning("%s is listed on no location, so there is nowhere to show it" % AdventureGraph.get_title(event))
+			return
+		if page == event: page = host
+	save()
+	AdventurePlayFrom.write(adventure, page, host)
+	EditorInterface.play_main_scene()
+
+func _list_problems() -> void:
+	_problem_list.clear()
+	var problems: Array[AdventureProblems.Problem] = [ ]
+	if adventure != null: problems = AdventureProblems.new(_graph, _get_all_events()).problems
+	for problem: AdventureProblems.Problem in problems:
+		_problem_list.set_item_metadata(_problem_list.add_item(problem.text), problem)
+	var index: int = _tabs.get_tab_idx_from_control(_problem_list)
+	_tabs.set_tab_title(index, "Problems (%d)" % problems.size() if not problems.is_empty() else "Problems")
+
+## Opens where the problem is: the event (or the map) with its page in the middle
+func _show_problem(index: int) -> void:
+	var problem: AdventureProblems.Problem = _problem_list.get_item_metadata(index)
+	if problem.event == null:
+		_open_location(problem.page)
+		return
+	open_event(problem.event, null)
+	_event_view.focus_resource.call_deferred(problem.page)
 
 func _on_event_dropped(location: AdventurePage, event: AdventurePage) -> void:
 	if location.events.has(event): push_warning("%s is on %s already" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])

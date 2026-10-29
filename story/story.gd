@@ -83,13 +83,17 @@ var _page_log: Dictionary[AdventurePage, Array] = {}
 # AdventureDecision -> StoryChoice (individual times the decision has been made)
 var _decision_log: Dictionary[AdventureDecision, Array] = {}
 
-func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterProfile) -> void:
+## [param page]: start there instead of the starting page; [param host]: the page its event is on, entered first so going back and host links work
+func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterProfile, page: AdventurePage = null, host: AdventurePage = null) -> void:
 	assert(new_adventure)
 	assert(protagonist_profile)
 	assert(protagonist_profile.is_valid())
 	_adventure = new_adventure
 	_protagonist = _party.create_character(protagonist_profile)
-	enter_page(_adventure.starting_page)
+	if host != null and host != page:
+		enter_page(host)
+		_host = host
+	enter_page(page if page != null else _adventure.starting_page)
 
 func enter_page(adventure_page: AdventurePage) -> void:
 	_nearby_events.clear()

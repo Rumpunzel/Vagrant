@@ -138,6 +138,23 @@ func test_previous_location_is_the_page_before_the_host() -> void:
 	await _choose(0)
 	assert_object(_story._current_story_page.adventure_page).is_same(_start)
 
+func test_starts_behind_an_event_on_its_host() -> void:
+	var inside: AdventurePage = _page("Inside")
+	var back_to_host: AdventureDecision = _decision("Return", null)
+	back_to_host.transition = AdventureHostReference.new()
+	inside.decisions = [back_to_host] as Array[AdventureDecision]
+	var adventure: Adventure = Adventure.new()
+	adventure.starting_page = _start
+	# A story of its own: the one of before_test has started already
+	_story = auto_free(load(STORY).instantiate())
+	_story._reveal_delay = 0.01
+	add_child(_story)
+	_story.start_adventure(adventure, TestCharacters.adventurer(), inside, _next)
+	assert_object(_story._current_story_page.adventure_page).is_same(inside)
+	assert_object(_story.get_host()).is_same(_next)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(_next)
+
 func test_generic_events_spawn_per_host() -> void:
 	var event: AdventurePage = _page("Ambush")
 	var cutthroat: MonsterProfile = TestMonsters.cutthroat()

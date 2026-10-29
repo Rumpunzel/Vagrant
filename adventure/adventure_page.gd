@@ -105,6 +105,25 @@ func find_nearby_events() -> Array[Array]:
 					if in_reach and not events.has(nearby) and not found.any(func(pair: Array) -> bool: return pair[0] == nearby): found.append([nearby, linked])
 	return found
 
+## This page and the pages (and events) it holds directly, not through transitions or host links: what its file stores with it
+func get_held_pages() -> Array[AdventurePage]:
+	var held: Array[AdventurePage] = [ ]
+	var queue: Array[AdventurePage] = [self]
+	while not queue.is_empty():
+		var page: AdventurePage = queue.pop_front()
+		if page == null or held.has(page): continue
+		held.append(page)
+		queue.append_array(page.events)
+		queue.append_array(page.nearby_events)
+		for decision: AdventureDecision in page.decisions:
+			if decision == null: continue
+			# Every page property counts (failure, flee, draw ...); read through the property list, which also works on the editor's placeholders
+			for property: Dictionary in decision.get_property_list():
+				if not property.usage & PROPERTY_USAGE_STORAGE: continue
+				var value: Variant = decision.get(property.name)
+				if value is AdventurePage: queue.append(value as AdventurePage)
+	return held
+
 ## The locations (pages with an area) this page's decisions lead to
 func get_linked_locations() -> Array[AdventurePage]:
 	var linked: Array[AdventurePage] = [ ]

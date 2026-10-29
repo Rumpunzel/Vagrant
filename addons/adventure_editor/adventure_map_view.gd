@@ -71,6 +71,7 @@ func _get_location_actions(graph: AdventureGraph, page: AdventurePage) -> Dictio
 		"New event here": event_requested.emit.bind(page, false),
 		"New scenario here": event_requested.emit.bind(page, true),
 		"Add event…": existing_event_requested.emit.bind(page),
+		"Play from here": play_requested.emit.bind(page, null),
 	}
 	for link: AdventureGraph.Link in graph.links:
 		if link.from == page and not link.through_event: actions["Unlink from %s" % AdventureGraph.get_title(link.to)] = unlink_requested.emit.bind(page, link.to)

@@ -14,6 +14,9 @@ static func leading_to(page: AdventurePage) -> AdventureTransition:
 func prepare() -> void:
 	ResourceLoader.load_threaded_request(_leads_to)
 
+## Its file is gone (or none was set)
+func leads_nowhere() -> bool: return not ResourceLoader.exists(_leads_to)
+
 func load_page() -> AdventurePage: return load(_leads_to)
 
 func get_adventure_page() -> AdventurePage:

@@ -5,4 +5,5 @@ extends Resource
 @export var starting_page: AdventurePage
 @export var protagonist: CharacterProfile
 
-func start_adventure() -> void: Main.enter_story(self)
+## [param page]: start there instead of the starting page, its event shown on [param host] ([AdventurePlayFrom])
+func start_adventure(page: AdventurePage = null, host: AdventurePage = null) -> void: Main.enter_story(self, page, host)

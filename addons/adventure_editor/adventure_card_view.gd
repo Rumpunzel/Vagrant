@@ -212,6 +212,7 @@ func _get_add_icons() -> Dictionary[String, Texture2D]:
 func _get_menu_icons() -> Dictionary[String, Texture2D]:
 	var icons: Dictionary[String, Texture2D] = _get_add_icons()
 	icons["Delete page"] = _get_editor_icon("Remove")
+	icons["Play from here"] = _get_editor_icon("Play")
 	return icons
 
 func _add_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, make: Callable) -> void:
