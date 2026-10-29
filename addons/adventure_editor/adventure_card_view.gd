@@ -49,7 +49,7 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 	var is_fight: bool = decision is AdventureFightDecision
 	var color: Color = FIGHT_COLOR if is_fight else SAVE_COLOR
 	var icon: Texture2D = FIGHT_ICON if is_fight else SAVE_ICON
-	var attribute: CharacterAttribute = decision.get(&"attribute") as CharacterAttribute if decision is AdventureSaveDecision else null
+	var attribute: CharacterAttribute = (decision as AdventureSaveDecision).attribute if decision is AdventureSaveDecision else null
 	if attribute != null:
 		color = attribute.color
 		if attribute.icon != null: icon = attribute.icon
@@ -157,7 +157,7 @@ func _get_effect_additions() -> Dictionary[String, Resource]:
 func _get_condition_additions(owner: AdventurePage) -> Dictionary[String, Resource]:
 	var additions: Dictionary[String, Resource] = {}
 	for fight: AdventureDecision in _fight_pages:
-		var enemies: Array = fight.get(&"enemies")
+		var enemies: Array[MonsterProfile] = (fight as AdventureFightDecision).enemies
 		for enemy_index: int in enemies.size():
 			var monster: MonsterProfile = enemies[enemy_index]
 			if monster == null: continue
@@ -182,7 +182,7 @@ func _add_condition_lines() -> void:
 		var owner: AdventurePage = _tag_owners.get(condition)
 		var spawning: AdventurePage = condition.monster.spawned_by.get_adventure_page() if condition.monster.spawned_by != null else owner
 		for fight: AdventureDecision in _fight_pages:
-			if _fight_pages[fight] == spawning and (fight.get(&"enemies") as Array).has(condition.monster.monster): _add_dashed(_tags[item], _fight_cards[fight], FIGHT_COLOR)
+			if _fight_pages[fight] == spawning and (fight as AdventureFightDecision).enemies.has(condition.monster.monster): _add_dashed(_tags[item], _fight_cards[fight], FIGHT_COLOR)
 
 ## Buttons for new choices, fights and saves
 func _make_add_bar(entry: AdventureEventOverview.Entry, page: AdventurePage) -> HBoxContainer:
@@ -233,7 +233,7 @@ func _remove_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, 
 	var decision: AdventureDecision = page.decisions[index]
 	var file: Resource = _file_for(decision, page, entry)
 	var references: Array[AdventurePageReference] = [ ]
-	references.assign(AdventureGraph.get_references(decision).values())
+	references.assign(decision.get_page_references())
 	if file is AdventurePage and AdventureEventEditing.would_lose_page(file as AdventurePage, references):
 		push_warning("\"%s\" is the only way to a page stored in this file; delete that page first (right-click it)" % decision.description)
 		return

@@ -25,9 +25,8 @@ static func find_references_to(root: AdventurePage, target: AdventurePage) -> Ar
 	for page: AdventurePage in root.get_held_pages():
 		for decision: AdventureDecision in page.decisions:
 			if decision == null: continue
-			var references: Dictionary[StringName, AdventurePageReference] = AdventureGraph.get_references(decision)
-			for property: StringName in references:
-				if references[property] == target: found.append([decision, property])
+			for outcome: AdventureDecision.Outcome in decision.get_outcomes():
+				if decision.get_reference(outcome) == target: found.append([decision, outcome.reference_property])
 	return found
 
 ## Whether dropping [param references] (pages they point at) loses a page stored inside [param root]'s file: nothing else there points at it

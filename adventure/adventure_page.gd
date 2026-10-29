@@ -117,11 +117,7 @@ func get_held_pages() -> Array[AdventurePage]:
 		queue.append_array(page.nearby_events)
 		for decision: AdventureDecision in page.decisions:
 			if decision == null: continue
-			# Every page property counts (failure, flee, draw ...); read through the property list, which also works on the editor's placeholders
-			for property: Dictionary in decision.get_property_list():
-				if not property.usage & PROPERTY_USAGE_STORAGE: continue
-				var value: Variant = decision.get(property.name)
-				if value is AdventurePage: queue.append(value as AdventurePage)
+			for reference: AdventurePageReference in decision.get_page_references(): if reference is AdventurePage: queue.append(reference as AdventurePage)
 	return held
 
 ## The locations (pages with an area) this page's decisions lead to

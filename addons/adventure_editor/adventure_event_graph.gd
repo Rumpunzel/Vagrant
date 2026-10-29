@@ -5,10 +5,6 @@ extends RefCounted
 ## What happens inside one event: the pages behind it (reached through its decisions and the outcomes of its fights and saves; nested events stay cards)
 ## and the locations it leads out to
 
-## Outcomes of a check by kind: [reference property, label, consequences property]; a fixed order, so the graph reads the same for every check
-const FIGHT_OUTCOMES: Array[Array] = [[&"transition", "Won", &"consequences"], [&"failure_transition", "Lost", &"failure_consequences"], [&"flee_transition", "Fled", &""], [&"draw_transition", "Draw", &""]]
-const DICE_OUTCOMES: Array[Array] = [[&"transition", "Success", &"consequences"], [&"failure_transition", "Failure", &"failure_consequences"]]
-
 ## Where a decision (or a check's outcome) leads
 class Outlet:
 	var label: String
@@ -76,41 +72,29 @@ static func get_ports(page: AdventurePage) -> Array[Outlet]:
 		else: ports.append(outlet)
 	return ports
 
-## The outcomes of a fight or save, in a fixed order per kind; other page references of new kinds of checks follow
+## The outcomes of a fight or save ([method AdventureDecision.get_outcomes])
 static func get_outcomes(check: AdventureDecision) -> Array[Outlet]:
-	var specs: Array[Array] = FIGHT_OUTCOMES if check is AdventureFightDecision else DICE_OUTCOMES
 	var outcomes: Array[Outlet] = [ ]
-	var known: Array[StringName] = [ ]
-	for spec: Array in specs:
-		known.append(spec[0])
-		var outcome: Outlet = Outlet.new()
-		outcome.label = spec[1]
-		outcome.decision = check
-		outcome.property = spec[0]
-		_point(outcome, check.get(spec[0]) as AdventurePageReference)
-		if spec[2] != &"":
-			outcome.consequences.assign(check.get(spec[2]))
-			outcome.consequences_property = spec[2]
-		outcomes.append(outcome)
-	for property: StringName in AdventureGraph.get_references(check):
-		if known.has(property): continue
-		var extra: Outlet = Outlet.new()
-		extra.label = String(property).trim_suffix("_transition").capitalize()
-		extra.decision = check
-		extra.property = property
-		_point(extra, AdventureGraph.get_references(check)[property])
-		outcomes.append(extra)
+	for outcome: AdventureDecision.Outcome in check.get_outcomes():
+		var outlet: Outlet = Outlet.new()
+		outlet.label = outcome.name
+		outlet.decision = check
+		outlet.property = outcome.reference_property
+		outlet.consequences_property = outcome.consequences_property
+		outlet.consequences = check.get_consequences_of(outcome)
+		_point(outlet, check.get_reference(outcome))
+		outcomes.append(outlet)
 	return outcomes
 
 ## What a check is about: "Fight: Lurker", "Save: Blood 7"
 static func describe_check(check: AdventureDecision) -> String:
 	if check is AdventureFightDecision:
 		var names: Array[String] = [ ]
-		for enemy: MonsterProfile in check.get(&"enemies"): if enemy != null: names.append(enemy.name)
+		for enemy: MonsterProfile in (check as AdventureFightDecision).enemies: if enemy != null: names.append(enemy.name)
 		return "Fight: %s" % ", ".join(names)
 	if check is AdventureSaveDecision:
-		var attribute: CharacterAttribute = check.get(&"attribute")
-		return "Save: %s %d" % [attribute.descriptor if attribute != null else "?", check.get(&"difficulty")]
+		var save: AdventureSaveDecision = check as AdventureSaveDecision
+		return "Save: %s %d" % [save.attribute.descriptor if save.attribute != null else "?", save.difficulty]
 	return "Check"
 
 static func describe_consequences(consequences: Array[AdventureConsequence]) -> String:

@@ -41,8 +41,8 @@ func test_ambush_decision() -> void:
 		var outcome_page: AdventurePage = references[outcome].get_adventure_page()
 		assert_object(outcome_page).is_same(load(OUTCOME_PAGES[outcome]))
 		assert_str(outcome_page.description).is_not_empty()
-		# Fleeing goes to where the player was before the host; the others back to the host, by a decision or the automatic "Turn back."
-		if outcome == Fight.Outcome.FLED:
+		# Fleeing and crawling away from a draw go to where the player was before the host; losing back to the host, by a decision or the automatic "Turn back."
+		if outcome == Fight.Outcome.FLED or outcome == Fight.Outcome.DRAW:
 			assert_object(outcome_page.decisions[0].transition).is_instanceof(AdventurePreviousLocationReference)
 			continue
 		if outcome_page.decisions.is_empty(): continue
