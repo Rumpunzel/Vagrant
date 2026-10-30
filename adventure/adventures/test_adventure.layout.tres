@@ -32,7 +32,7 @@ positions = Dictionary[String, Vector2]({
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/uid://qcl0jfm16ys8": Vector2(820, -260),
 "uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/host": Vector2(780, 580),
 "uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/uid://m4wl5ad8o0i7": Vector2(420, 380),
-"uid://ca3sv437yiklg": Vector2(1060, 60),
+"uid://ca3sv437yiklg": Vector2(560, -200),
 "uid://cs40ge42lw0ry": Vector2(-460, 120),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_0x8r7": Vector2(440, 520),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_b3ed1": Vector2(700, 320),
@@ -47,11 +47,13 @@ positions = Dictionary[String, Vector2]({
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh": Vector2(0, 0),
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/host": Vector2(-520, 260),
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/uid://dffxphat87a8a": Vector2(-800, 260),
-"uid://dk3q4ia5u7q6m": Vector2(740, 100),
-"uid://ycd6xhx346l6": Vector2(500, 260)
+"uid://dk3q4ia5u7q6m": Vector2(620, 300),
+"uid://f7a1x731o4s8": Vector2(80, 240),
+"uid://ycd6xhx346l6": Vector2(160, 380)
 })
 special_links = Dictionary[String, String]({
 "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/::d00k1": "uid://c16ehct0w6n48/uid://bxwqtk0p80o4g/previous",
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::i1lgh": "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/special/previous/0",
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::piem0": "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/special/previous/0"
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::piem0": "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/special/previous/0",
+"uid://d3cv8d5e65vwh/uid://dffxphat87a8a/::d00k1": "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/host"
 })

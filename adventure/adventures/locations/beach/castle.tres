@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://ca3sv437yiklg"]
 
-[ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://adventure/adventures/locations/beach/beach.tres" id="1_f0kk0"]
+[ext_resource type="Resource" uid="uid://j8p1frkdjxfi" path="res://adventure/adventures/locations/hills/hills.tres" id="1_4stke"]
 [ext_resource type="Texture2D" uid="uid://73v62w6fwsm8" path="res://assets/landscapes/castle.jpg" id="2_4stke"]
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_4wv6j"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="3_4chh7"]
@@ -39,6 +39,6 @@ transition = SubResource("Resource_ivrl5")
 script = ExtResource("4_4stke")
 title = "Castle"
 description = "The Castle looks nice."
-area = ExtResource("1_f0kk0")
+area = ExtResource("1_4stke")
 background = ExtResource("2_4stke")
 decisions = Array[ExtResource("3_4chh7")]([SubResource("Resource_6ky3k"), SubResource("Resource_pixvp"), SubResource("Resource_qsp60")])
