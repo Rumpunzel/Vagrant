@@ -125,6 +125,39 @@ func test_the_location_orders_its_own_events_and_encounters() -> void:
 	assert_array(_castle.get_sources(encounters)).contains_exactly([_eleanor, _castle.scenario])
 	assert_str(_castle.get_description(_story)).is_equal("[p]Damp.[/p][p]She knocks.[/p][p]Wind.[/p]")
 
+func test_place_condition() -> void:
+	var here: AdventurePlaceCondition = AdventurePlaceCondition.new()
+	_story._location = _castle
+	assert_bool(here.is_true(_story, _meeting)).is_true()
+	_story._location = _shore
+	assert_bool(here.is_true(_story, _meeting)).is_false()
+	_save(_castle, CASTLE_PATH)
+	var at_castle: AdventurePlaceCondition = AdventurePlaceCondition.new()
+	at_castle.at = CASTLE_PATH
+	assert_bool(at_castle.is_true(_story, _meeting)).is_true()
+	_story.world.move(_eleanor, [_shore] as Array[AdventureLocation])
+	assert_bool(at_castle.is_true(_story, _meeting)).is_false()
+	assert_str(at_castle.describe()).is_equal("It is at Castle")
+
+func test_location_stages_gate_its_own_events() -> void:
+	var state: AdventureStageTrack = AdventureStageTrack.new()
+	state.name = "Temple"
+	state.stages = ["Intact", "Burned"] as Array[String]
+	_shore.tracks = [state] as Array[AdventureStageTrack]
+	var ashes: AdventureEvent = _event("", "Ashes.")
+	var burned: AdventureStageCondition = AdventureStageCondition.new()
+	burned.track = "Temple"
+	burned.stages = ["Burned"] as Array[String]
+	ashes.conditions = [burned] as Array[AdventureCondition]
+	TestAdventures.list(_shore, [ashes] as Array[AdventureEvent])
+	_story._location = _shore
+	assert_array(_shore.get_events(_story)).not_contains([ashes])
+	var burn: AdventureStageConsequence = AdventureStageConsequence.new()
+	burn.track = "Temple"
+	burn.stage = "Burned"
+	burn.resolve(_story, 0)
+	assert_array(_shore.get_events(_story)).contains([ashes])
+
 func _save(resource: Resource, path: String) -> void:
 	ResourceSaver.save(resource, path)
 	resource.take_over_path(path)

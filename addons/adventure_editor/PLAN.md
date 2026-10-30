@@ -206,7 +206,8 @@ Steps:
   fight outcomes set stages through their consequences (agreed: explicit, no automatic track). Without a monster encounter, `enemies` make a one-off
   fight (a fresh monster per page and location) instead of a separate generic monster encounter file. The Lurker moved to `encounters/lurker/`
   (State: Lurking / Beaten / Dead); `generic`, `spawned_by`, monster conditions and the kill consequence are gone
-- [ ] 5. Condition "encounter is here / at …"; location stages in content (the move consequence comes with step 3)
+- [x] 5. `AdventurePlaceCondition` ("encounter is here / at a location or area"); location stages work for a location's own events (subject empty:
+  the current location); no content needs them yet
 - [ ] 6. Editor: "Here" panel per location (everything that can happen there, also "can come here" through move consequences; reordering) and a
   storyline view per encounter (stages as nodes, events between them)
 
@@ -277,3 +278,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-30: step 3 designed with the user: UID back-pointers, encounters in all their possible places until contact, own events as a slot in the location's order, first-visit text, contact by a move consequence
 - 2026-10-30: step 3 built: `AdventureEncounter`, `AdventureStageTrack`, `where` / `only_at`, `order`, `first_description`, stage condition, stage and move consequences, `StoryWorld`; `nearby_events` gone; Eleanor moved to `encounters/eleanor/` (greeting her places her and sets Met); editor: encounters in the event list, faded "could be here" cards on the map; tests: encounters (11), Eleanor content (3), first visit (1)
 - 2026-10-30: step 4 built: fights name encounters, one-off fights for `enemies`, Lurker as an encounter with stages; tests: Lurker content and story reworked, monsters per encounter / per location (1)
+- 2026-10-30: step 5 built: place condition; tests: place condition (1), location stages (1)
