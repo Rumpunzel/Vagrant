@@ -6,9 +6,6 @@ extends AdventureGraphView
 ## Cards of the event view: a page's decisions as cards (a choice with its port, a fight or save with a port per outcome; ▲ ▼ ✕, click → Inspector),
 ## the add bar, and tags for conditions and effects. Edits are only requested; [AdventureEditor] makes them. [param file]: the file the change is stored in
 
-signal decisions_requested(page: AdventurePage, decisions: Array[AdventureDecision], file: Resource, action: String)
-signal property_requested(resource: Resource, property: StringName, value: Variant, file: Resource, action: String)
-
 const FIGHT_COLOR: Color = Color(0.85, 0.3, 0.25)
 const SAVE_COLOR: Color = Color(0.45, 0.6, 0.9)
 const HOST_COLOR: Color = Color(0.35, 0.8, 0.7)
@@ -49,7 +46,7 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 	var is_fight: bool = decision is AdventureFightDecision
 	var color: Color = FIGHT_COLOR if is_fight else SAVE_COLOR
 	var icon: Texture2D = FIGHT_ICON if is_fight else SAVE_ICON
-	var attribute: CharacterAttribute = decision.get(&"attribute") as CharacterAttribute if decision is AdventureSaveDecision else null
+	var attribute: CharacterAttribute = (decision as AdventureSaveDecision).attribute if decision is AdventureSaveDecision else null
 	if attribute != null:
 		color = attribute.color
 		if attribute.icon != null: icon = attribute.icon
@@ -132,7 +129,7 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 		_tags[item] = tag
 		var without: Array = items.duplicate()
 		without.remove_at(index)
-		tags.add_child(_make_tool_button("Remove", "✕", "Remove", property_requested.emit.bind(resource, property, without, file, "Remove %s" % tag.text)))
+		tags.add_child(_make_tool_button("Remove", "✕", "Remove", _request.bind(resource, property, without, "Remove %s" % tag.text, file)))
 	var add: Button = _make_tool_button("Add", "+", "Add a %s" % add_text, func() -> void:
 		var actions: Dictionary[String, Callable] = {}
 		var additions: Dictionary[String, Resource] = get_additions.call()
@@ -140,7 +137,7 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 			actions[text] = func() -> void:
 				var with: Array = items.duplicate()
 				with.append(additions[text])
-				property_requested.emit(resource, property, with, file, "Add %s" % text)
+				_request(resource, property, with, "Add %s" % text, file)
 		_show_menu(actions)
 	)
 	add.text = add_text
@@ -154,16 +151,16 @@ func _get_effect_additions() -> Dictionary[String, Resource]:
 	return additions
 
 ## Every kind of condition, and "can fight / is beaten / is dead" for each monster of the fights shown
-func _get_condition_additions(owner: AdventurePage) -> Dictionary[String, Resource]:
+func _get_condition_additions(holder: AdventurePage) -> Dictionary[String, Resource]:
 	var additions: Dictionary[String, Resource] = {}
 	for fight: AdventureDecision in _fight_pages:
-		var enemies: Array = fight.get(&"enemies")
+		var enemies: Array[MonsterProfile] = (fight as AdventureFightDecision).enemies
 		for enemy_index: int in enemies.size():
 			var monster: MonsterProfile = enemies[enemy_index]
 			if monster == null: continue
 			var index: int = enemies.slice(0, enemy_index).count(monster)
 			for state: AdventureMonsterCondition.State in AdventureMonsterCondition.STATE_TEXTS:
-				var condition: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(state, monster, index, _fight_pages[fight], owner)
+				var condition: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(state, monster, index, _fight_pages[fight], holder)
 				if condition != null: additions[condition.describe() + (" %d" % (index + 1) if index > 0 else "")] = condition
 	var types: Dictionary[String, Script] = AdventureEventEditing.get_condition_types()
 	for type_name: String in types: additions[AdventureEventEditing.get_type_name(type_name)] = AdventureEventEditing.make_condition(types[type_name])
@@ -179,10 +176,10 @@ func _add_condition_lines() -> void:
 	for item: Resource in _tags:
 		var condition: AdventureMonsterCondition = item as AdventureMonsterCondition
 		if condition == null or condition.monster == null: continue
-		var owner: AdventurePage = _tag_owners.get(condition)
-		var spawning: AdventurePage = condition.monster.spawned_by.get_adventure_page() if condition.monster.spawned_by != null else owner
+		var holder: AdventurePage = _tag_owners.get(condition)
+		var spawning: AdventurePage = condition.monster.spawned_by.get_adventure_page() if condition.monster.spawned_by != null else holder
 		for fight: AdventureDecision in _fight_pages:
-			if _fight_pages[fight] == spawning and (fight.get(&"enemies") as Array).has(condition.monster.monster): _add_dashed(_tags[item], _fight_cards[fight], FIGHT_COLOR)
+			if _fight_pages[fight] == spawning and (fight as AdventureFightDecision).enemies.has(condition.monster.monster): _add_dashed(_tags[item], _fight_cards[fight], FIGHT_COLOR)
 
 ## Buttons for new choices, fights and saves
 func _make_add_bar(entry: AdventureEventOverview.Entry, page: AdventurePage) -> HBoxContainer:
@@ -220,26 +217,26 @@ func _add_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, mak
 	var decisions: Array[AdventureDecision] = page.decisions.duplicate()
 	var decision: AdventureDecision = make.call()
 	decisions.append(decision)
-	decisions_requested.emit(page, decisions, _file_for(null, page, entry), "Add %s" % decision.description)
+	_request(page, &"decisions", decisions, "Add %s" % decision.description, _file_for(null, page, entry))
 
 func _move_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, index: int, step: int) -> void:
 	var decisions: Array[AdventureDecision] = page.decisions.duplicate()
 	var decision: AdventureDecision = decisions.pop_at(index)
 	decisions.insert(index + step, decision)
-	decisions_requested.emit(page, decisions, _file_for(decision, page, entry), "Move %s" % decision.description)
+	_request(page, &"decisions", decisions, "Move %s" % decision.description, _file_for(decision, page, entry))
 
 ## Refused if a page stored inside the file would be lost with it
 func _remove_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, index: int) -> void:
 	var decision: AdventureDecision = page.decisions[index]
 	var file: Resource = _file_for(decision, page, entry)
 	var references: Array[AdventurePageReference] = [ ]
-	references.assign(AdventureGraph.get_references(decision).values())
+	references.assign(decision.get_page_references())
 	if file is AdventurePage and AdventureEventEditing.would_lose_page(file as AdventurePage, references):
 		push_warning("\"%s\" is the only way to a page stored in this file; delete that page first (right-click it)" % decision.description)
 		return
 	var decisions: Array[AdventureDecision] = page.decisions.duplicate()
 	decisions.remove_at(index)
-	decisions_requested.emit(page, decisions, file, "Remove %s" % decision.description)
+	_request(page, &"decisions", decisions, "Remove %s" % decision.description, file)
 
 ## The file a change of [param decision] (or of [param page]) is stored in: the first of them stored somewhere already, else the event's
 func _file_for(decision: AdventureDecision, page: AdventurePage, entry: AdventureEventOverview.Entry) -> Resource:
@@ -247,9 +244,9 @@ func _file_for(decision: AdventureDecision, page: AdventurePage, entry: Adventur
 		if resource != null and not resource.resource_path.is_empty(): return load(AdventureEventEditing.get_file_path(resource))
 	return null
 
-func _make_condition_tags(owner: AdventurePage, file: Resource) -> HFlowContainer:
-	var tags: HFlowContainer = _make_tags(owner, &"conditions", file, "condition", _get_condition_additions.bind(owner))
-	for condition: AdventureCondition in owner.conditions: if condition != null: _tag_owners[condition] = owner
+func _make_condition_tags(holder: AdventurePage, file: Resource) -> HFlowContainer:
+	var tags: HFlowContainer = _make_tags(holder, &"conditions", file, "condition", _get_condition_additions.bind(holder))
+	for condition: AdventureCondition in holder.conditions: if condition != null: _tag_owners[condition] = holder
 	return tags
 
 static func _describe_outlet(outlet: AdventureEventGraph.Outlet) -> String:

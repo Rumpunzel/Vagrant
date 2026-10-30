@@ -9,9 +9,6 @@ extends AdventureCardView
 
 ## An exit or the picked host was double-clicked
 signal exit_opened(location: AdventurePage)
-signal reference_requested(decision: AdventureDecision, property: StringName, reference: AdventurePageReference, file: Resource)
-## Each [decision, property] is set to none
-signal references_cleared(references: Array[Array], file: Resource, action: String)
 ## A new event as an option of [param scenario]
 signal option_requested(scenario: AdventureEventScenario)
 ## An event already made, to show around [param event]'s locations
@@ -164,18 +161,22 @@ func _get_page_actions(entry: AdventureEventOverview.Entry, page: AdventurePage)
 	var actions: Dictionary[String, Callable] = _get_add_actions(entry, page)
 	if page != entry.event and AdventureEventEditing.is_inside_file(page): actions["Delete page"] = _delete_page.bind(entry, page)
 	if page == entry.event: actions["Add nearby event…"] = nearby_event_requested.emit.bind(page)
+	if page == entry.event and not AdventureEventEditing.is_inside_file(page): actions["Delete event…"] = deletion_requested.emit.bind(page)
 	actions["Play from here"] = play_requested.emit.bind(page, entry.event)
 	if page == entry.event and entry.is_nearby:
 		var source: AdventurePage = entry.parent_page
 		var without: Array[AdventurePage] = source.nearby_events.duplicate()
 		without.erase(page)
-		actions["Not nearby %s any more" % AdventureGraph.get_title(source)] = property_requested.emit.bind(source, &"nearby_events", without, load(AdventureEventEditing.get_file_path(source)), "Not nearby any more")
+		actions["Not nearby %s any more" % AdventureGraph.get_title(source)] = _request.bind(source, &"nearby_events", without, "Not nearby any more", load(AdventureEventEditing.get_file_path(source)))
 	return actions
 
 ## Everything in the file pointing at the page goes back instead
 func _delete_page(entry: AdventureEventOverview.Entry, page: AdventurePage) -> void:
 	var file: Resource = _file_for(null, page, entry)
-	if file is AdventurePage: references_cleared.emit(AdventureEventEditing.find_references_to(file as AdventurePage, page), file, "Delete %s" % AdventureGraph.get_title(page))
+	if not file is AdventurePage: return
+	var changes: Array[Array] = [ ]
+	for reference: Array in AdventureEventEditing.find_references_to(file as AdventurePage, page): changes.append([reference[0], reference[1], null])
+	changes_requested.emit(changes, "Delete %s" % AdventureGraph.get_title(page), file)
 
 func _add_exit(entry: AdventureEventOverview.Entry, location: AdventurePage, at: Vector2) -> GraphNode:
 	var node: GraphNode = _add_node(_key(entry, location), location, AdventureGraph.get_title(location), _make_label("Location (double-click: map)"), at)
@@ -246,7 +247,7 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 		var node: GraphNode = _get_node_at(at)
 		var page: AdventurePage = _resources[node] as AdventurePage
 		var texture: Texture2D = load(files[0]) as Texture2D
-		if texture != null and _node_entries.has(node.name): background_dropped.emit(page, texture, _file_for(null, page, _node_entries[node.name]))
+		if texture != null and _node_entries.has(node.name): _request(page, &"background", texture, "Set background", _file_for(null, page, _node_entries[node.name]))
 		return
 	for frame: GraphFrame in _frame_entries:
 		if not Rect2(frame.position_offset, frame.size).has_point(at): continue
@@ -309,17 +310,25 @@ func _request_reference(from: StringName, port: int, reference: AdventurePageRef
 		choice.description = "Continue."
 		choice.transition = reference
 		var decisions: Array[AdventureDecision] = [choice]
-		decisions_requested.emit(page, decisions, file, "Continue")
+		_request(page, &"decisions", decisions, "Continue", file)
 		return
 	var old: AdventurePageReference = outlet.decision.get(outlet.property) as AdventurePageReference
 	if old != null and old != reference and file is AdventurePage and AdventureEventEditing.would_lose_page(file as AdventurePage, [old]):
 		push_warning("Only \"%s\" leads to %s, which is stored in this file; delete that page instead (right-click it)" % [outlet.label, AdventureGraph.get_title(old as AdventurePage)])
 		return
-	reference_requested.emit(outlet.decision, outlet.property, reference, file)
+	_request(outlet.decision, outlet.property, reference, "Unlink" if reference == null else "Link", file)
 
 func _get_port(node_name: StringName, port: int) -> AdventureEventGraph.Outlet:
 	var ports: Array = _node_ports.get(node_name, [ ])
 	return ports[port] if port < ports.size() else null
+
+## Pages stored inside a file are deleted as by their menu; events in files of their own are asked about; placed special nodes are removed
+func _on_delete_key(element: GraphElement) -> void:
+	var entry: AdventureEventOverview.Entry = _node_entries.get(element.name)
+	var page: AdventurePage = _resources.get(element) as AdventurePage
+	if entry != null and page != null and page != entry.event and AdventureEventEditing.is_inside_file(page): _delete_page(entry, page)
+	elif AdventureLayout.is_placed_special(_key_of_node(element.name)): _remove_special(_key_of_node(element.name))
+	else: super(element)
 
 ## A sub-event's card shows its frame (a scenario: its switch); others open the event
 func _on_event_card_pressed(event: AdventurePage, _page: AdventurePage) -> void:
@@ -371,7 +380,7 @@ func _move_option(scenario: AdventureEventScenario, file: Resource, index: int, 
 	var options: Array[AdventurePage] = scenario.events.duplicate()
 	var option: AdventurePage = options.pop_at(index)
 	options.insert(index + step, option)
-	property_requested.emit(scenario, &"events", options, file, "Move %s" % AdventureGraph.get_title(option))
+	_request(scenario, &"events", options, "Move %s" % AdventureGraph.get_title(option), file)
 
 func _remove_option(scenario: AdventureEventScenario, file: Resource, index: int) -> void:
 	var options: Array[AdventurePage] = scenario.events.duplicate()
@@ -379,21 +388,21 @@ func _remove_option(scenario: AdventureEventScenario, file: Resource, index: int
 	if AdventureEventEditing.is_inside_file(option):
 		push_warning("%s is stored inside the scenario's file and would be lost" % AdventureGraph.get_title(option))
 		return
-	property_requested.emit(scenario, &"events", options, file, "Remove %s" % AdventureGraph.get_title(option))
+	_request(scenario, &"events", options, "Remove %s" % AdventureGraph.get_title(option), file)
 
 func _switch_key(scenario: AdventurePage) -> String:
-	return "%s/switch/%s" % [AdventureLayout.get_key(_overview.root), AdventureLayout.get_key(scenario)]
+	return AdventureLayout.get_switch_key(_overview.root, scenario)
 
 func _key(entry: AdventureEventOverview.Entry, resource: Resource) -> String:
-	return "%s/%s/%s" % [AdventureLayout.get_key(_overview.root), AdventureLayout.get_key(entry.event), AdventureLayout.get_key(resource)]
+	return AdventureLayout.get_event_key(_overview.root, entry.event, AdventureLayout.get_key(resource))
 
 ## The frame's own special node of [param kind]
 func _special_key(entry: AdventureEventOverview.Entry, kind: Target) -> String:
-	return "%s/%s/%s" % [AdventureLayout.get_key(_overview.root), AdventureLayout.get_key(entry.event), SPECIALS[kind][0]]
+	return AdventureLayout.get_event_key(_overview.root, entry.event, SPECIALS[kind][0])
 
 ## Keys of special nodes placed from the sidebar start with this, then "<kind>/<number>"
 func _placed_prefix(entry: AdventureEventOverview.Entry) -> String:
-	return "%s/%s/special/" % [AdventureLayout.get_key(_overview.root), AdventureLayout.get_key(entry.event)]
+	return AdventureLayout.get_placed_special_prefix(_overview.root, entry.event)
 
 func _key_of_node(node_name: StringName) -> String:
 	for key: String in _nodes: if _nodes[key].name == node_name: return key

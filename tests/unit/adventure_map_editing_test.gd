@@ -47,6 +47,20 @@ func test_file_names() -> void:
 	assert_str(AdventureMapEditing.get_file_name("Brücke 2")).is_equal("brücke_2.tres")
 	assert_str(AdventureMapEditing.get_file_name("?!")).is_equal("untitled.tres")
 
+func test_layout_keys() -> void:
+	var root: AdventurePage = _page("Root", "res://events/lurker.tres")
+	var inside: AdventurePage = _page("Inside", "res://events/lurker.tres::Resource_a1")
+	inside.resource_scene_unique_id = "Resource_a1"
+	assert_str(AdventureLayout.get_key(inside)).is_equal("::Resource_a1")
+	var key: String = AdventureLayout.get_event_key(root, root, AdventureLayout.get_key(inside))
+	assert_str(key).is_equal("res://events/lurker.tres/res://events/lurker.tres/::Resource_a1")
+	assert_bool(AdventureLayout.is_location_key(AdventureLayout.get_key(root))).is_true()
+	assert_bool(AdventureLayout.is_location_key(key)).is_false()
+	var placed: String = AdventureLayout.get_placed_special_prefix(root, root) + "host/0"
+	assert_bool(AdventureLayout.is_placed_special(placed)).is_true()
+	assert_bool(AdventureLayout.is_placed_special(key)).is_false()
+	assert_str(AdventureLayout.get_switch_key(root, root)).is_equal("res://events/lurker.tres/switch/res://events/lurker.tres")
+
 func _page(title: String, path: String) -> AdventurePage:
 	var page: AdventurePage = AdventurePage.new()
 	page.title = title

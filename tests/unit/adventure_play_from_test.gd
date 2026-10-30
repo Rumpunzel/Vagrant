@@ -32,20 +32,20 @@ func after_test() -> void:
 
 func test_takes_what_was_written_once() -> void:
 	AdventurePlayFrom.write(_adventure, _inside, _host)
-	var start: Array = AdventurePlayFrom.take()
-	assert_str((start[0] as Adventure).resource_path).is_equal(ADVENTURE_PATH)
-	assert_str((start[1] as AdventurePage).title).is_equal("Inside")
-	assert_str((start[2] as AdventurePage).title).is_equal("Ambush")
-	assert_array(AdventurePlayFrom.take()).is_empty()
+	var start: AdventurePlayFrom = AdventurePlayFrom.take()
+	assert_str(start.adventure.resource_path).is_equal(ADVENTURE_PATH)
+	assert_str(start.page.title).is_equal("Inside")
+	assert_str(start.host.title).is_equal("Ambush")
+	assert_object(AdventurePlayFrom.take()).is_null()
 
 func test_no_host() -> void:
 	AdventurePlayFrom.write(_adventure, _event, null)
-	var start: Array = AdventurePlayFrom.take()
-	assert_str((start[1] as AdventurePage).title).is_equal("Ambush")
-	assert_object(start[2]).is_null()
+	var start: AdventurePlayFrom = AdventurePlayFrom.take()
+	assert_str(start.page.title).is_equal("Ambush")
+	assert_object(start.host).is_null()
 
 func test_nothing_written() -> void:
-	assert_array(AdventurePlayFrom.take()).is_empty()
+	assert_object(AdventurePlayFrom.take()).is_null()
 
 func test_held_pages() -> void:
 	var nested: AdventurePage = AdventurePage.new()

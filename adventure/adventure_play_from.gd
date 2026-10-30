@@ -5,33 +5,41 @@ extends RefCounted
 
 const PATH: String = "user://adventure_editor_play_from.cfg"
 
-## [param page]: where to start; [param host]: the page its event is on (for pages behind an event), or none
-static func write(adventure: Adventure, page: AdventurePage, host: AdventurePage) -> void:
-	var start: ConfigFile = ConfigFile.new()
-	start.set_value("start", "adventure", adventure.resource_path)
-	start.set_value("start", "page", _locate(page))
-	start.set_value("start", "host", _locate(host) if host != null else [ ])
-	start.save(PATH)
+var adventure: Adventure
+var page: AdventurePage
+## The page [member page]'s event is on, or none
+var host: AdventurePage
 
-## [adventure, page, host] and the file is gone; empty if there was none
-static func take() -> Array:
-	if not FileAccess.file_exists(PATH): return [ ]
-	var start: ConfigFile = ConfigFile.new()
-	start.load(PATH)
+## [param start]: where to start; [param start_host]: the page its event is on (for pages behind an event), or none
+static func write(to_play: Adventure, start: AdventurePage, start_host: AdventurePage) -> void:
+	var file: ConfigFile = ConfigFile.new()
+	file.set_value("start", "adventure", to_play.resource_path)
+	file.set_value("start", "page", _locate(start))
+	file.set_value("start", "host", _locate(start_host) if start_host != null else [ ])
+	file.save(PATH)
+
+## Where to start, and the file is gone; none if there was none
+static func take() -> AdventurePlayFrom:
+	if not FileAccess.file_exists(PATH): return null
+	var file: ConfigFile = ConfigFile.new()
+	file.load(PATH)
 	DirAccess.remove_absolute(PATH)
-	var adventure: Adventure = load(start.get_value("start", "adventure")) as Adventure
-	var page: AdventurePage = _find(start.get_value("start", "page"))
-	if adventure == null or page == null: return [ ]
-	var host: Array = start.get_value("start", "host")
-	return [adventure, page, _find(host) if not host.is_empty() else null]
+	var start: AdventurePlayFrom = AdventurePlayFrom.new()
+	start.adventure = load(file.get_value("start", "adventure") as String) as Adventure
+	start.page = _find(file.get_value("start", "page") as Array)
+	if start.adventure == null or start.page == null: return null
+	var host_location: Array = file.get_value("start", "host") as Array
+	start.host = _find(host_location) if not host_location.is_empty() else null
+	return start
 
 ## [its file, its ID in there (empty: the file itself)]: pages stored inside a file have no path of their own to load
-static func _locate(page: AdventurePage) -> Array:
-	var file: String = page.resource_path.get_slice("::", 0)
-	return [file, page.resource_scene_unique_id if page.resource_path.contains("::") else ""]
+static func _locate(located: AdventurePage) -> Array:
+	var file: String = located.resource_path.get_slice("::", 0)
+	return [file, located.resource_scene_unique_id if located.resource_path.contains("::") else ""]
 
 static func _find(location: Array) -> AdventurePage:
-	var root: AdventurePage = load(location[0]) as AdventurePage
-	if root == null or location[1].is_empty(): return root
-	for page: AdventurePage in root.get_held_pages(): if page.resource_scene_unique_id == location[1]: return page
+	var root: AdventurePage = load(location[0] as String) as AdventurePage
+	var id: String = location[1]
+	if root == null or id.is_empty(): return root
+	for held: AdventurePage in root.get_held_pages(): if held.resource_scene_unique_id == id: return held
 	return null

@@ -29,6 +29,8 @@ var exclusivity: int = 0
 @export var nearby_events: Array[AdventurePage]
 ## As a nearby event: how many links from its source's locations it shows; 0: anywhere in the same area
 @export_range(0, MAX_NEARBY_REACH) var nearby_reach: int = 1
+## As a nearby event: only on locations in the same area as its source's location
+@export var nearby_stays_in_area: bool = false
 
 func are_all_prerequisites_fullfilled(story: Story) -> bool:
 	for condition: AdventureCondition in conditions:
@@ -101,8 +103,9 @@ func find_nearby_events() -> Array[Array]:
 			for source: AdventurePage in linked.get_listed_events():
 				for nearby: AdventurePage in source.nearby_events:
 					if nearby == null: continue
-					var in_reach: bool = distances[linked] <= nearby.nearby_reach if nearby.nearby_reach > 0 else linked.area == area
-					if in_reach and not events.has(nearby) and not found.any(func(pair: Array) -> bool: return pair[0] == nearby): found.append([nearby, linked])
+					if (nearby.nearby_reach == 0 or nearby.nearby_stays_in_area) and linked.area != area: continue
+					if nearby.nearby_reach > 0 and distances[linked] > nearby.nearby_reach: continue
+					if not events.has(nearby) and not found.any(func(pair: Array) -> bool: return pair[0] == nearby): found.append([nearby, linked])
 	return found
 
 ## This page and the pages (and events) it holds directly, not through transitions or host links: what its file stores with it
@@ -117,14 +120,11 @@ func get_held_pages() -> Array[AdventurePage]:
 		queue.append_array(page.nearby_events)
 		for decision: AdventureDecision in page.decisions:
 			if decision == null: continue
-			# Every page property counts (failure, flee, draw ...); read through the property list, which also works on the editor's placeholders
-			for property: Dictionary in decision.get_property_list():
-				if not property.usage & PROPERTY_USAGE_STORAGE: continue
-				var value: Variant = decision.get(property.name)
-				if value is AdventurePage: queue.append(value as AdventurePage)
+			for link: AdventurePageReference in decision.get_page_references(): if link is AdventurePage: queue.append(link as AdventurePage)
 	return held
 
-## The locations (pages with an area) this page's decisions lead to
+## The locations (pages with an area) this page's decisions lead to by their plain transition: where one walks to, which is what "nearby" means;
+## where a fight or save ends doesn't count (the map draws those as links too)
 func get_linked_locations() -> Array[AdventurePage]:
 	var linked: Array[AdventurePage] = [ ]
 	for decision: AdventureDecision in decisions:
@@ -168,8 +168,8 @@ func exclude_above() -> bool:
 func find_decision_owner(decision: AdventureDecision) -> AdventurePage:
 	if decisions.has(decision): return self
 	for event: AdventurePage in events:
-		var owner: AdventurePage = event.find_decision_owner(decision)
-		if owner: return owner
+		var holder: AdventurePage = event.find_decision_owner(decision)
+		if holder: return holder
 	return null
 
 func get_adventure_page() -> AdventurePage:

@@ -109,6 +109,36 @@ func test_special_references() -> void:
 	assert_bool(outlet.to_previous).is_true()
 	assert_bool(outlet.goes_back()).is_false()
 
+func test_forgetting_a_page() -> void:
+	var shore: AdventurePage = _page("res://locations/shore.tres")
+	var ruin: AdventurePage = _page("res://locations/ruin.tres")
+	var doomed: AdventurePage = _page("")
+	var to_doomed: AdventureDecision = AdventureDecision.new()
+	to_doomed.transition = doomed
+	var elsewhere: AdventureDecision = AdventureDecision.new()
+	elsewhere.transition = ruin
+	var fight: AdventureFightDecision = AdventureFightDecision.new()
+	fight.transition = ruin
+	fight.failure_transition = doomed
+	shore.decisions = [to_doomed, elsewhere, fight] as Array[AdventureDecision]
+	shore.events = [doomed] as Array[AdventurePage]
+	ruin.nearby_events = [doomed] as Array[AdventurePage]
+	var roots: Array[AdventurePage] = [shore, ruin]
+	var changes: Array[Array] = AdventureEventEditing.get_changes_forgetting(doomed, roots)
+	assert_array(changes).contains_exactly_in_any_order([
+		[fight, &"failure_transition", null, shore],
+		[shore, &"decisions", [elsewhere, fight], shore],
+		[shore, &"events", [], shore],
+		[ruin, &"nearby_events", [], ruin],
+	])
+
+func test_forgetting_an_area() -> void:
+	var swamp: AdventureArea = AdventureArea.new()
+	var ruin: AdventurePage = _page("res://locations/ruin.tres")
+	ruin.area = swamp
+	var pages: Array[AdventurePage] = [ruin, _page("res://locations/shore.tres")]
+	assert_array(AdventureEventEditing.get_changes_forgetting_area(swamp, pages)).contains_exactly([[ruin, &"area", null, ruin]])
+
 func test_consequence_types() -> void:
 	var types: Dictionary[String, Script] = AdventureEventEditing.get_consequence_types()
 	assert_array(types.keys()).contains(["AdventureInjuryConsequence", "AdventureKillMonsterConsequence"])

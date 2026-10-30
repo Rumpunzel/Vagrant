@@ -4,6 +4,8 @@ extends Resource
 
 ## Where the adventure editor places the pages of one adventure; a file next to the adventure, so moving nodes leaves game data alone
 
+const PLACED_SPECIALS: String = "special"
+
 ## Graph positions by page UID (path for pages without one)
 @export var positions: Dictionary[String, Vector2] = {}
 ## Which special node (host, previous location) a link goes to, by the link's key; event views can show several of each
@@ -27,10 +29,30 @@ static func get_key(resource: Resource) -> String:
 func get_placed_pages() -> Array[AdventurePage]:
 	var placed: Array[AdventurePage] = [ ]
 	for key: String in positions:
-		if key.count("://") != 1 or not ResourceLoader.exists(key): continue
+		if not is_location_key(key) or not _exists(key): continue
 		var page: AdventurePage = load(key) as AdventurePage
 		if page != null: placed.append(page)
 	return placed
+
+## A deleted file's UID is unknown, which [method ResourceLoader.exists] reports as an error
+static func _exists(key: String) -> bool:
+	return (not key.begins_with("uid://") or ResourceUID.has_id(ResourceUID.text_to_id(key))) and ResourceLoader.exists(key)
+
+## A map node's key is one resource's; event view keys join several
+static func is_location_key(key: String) -> bool: return key.count("://") == 1
+
+## A node in an event view: [param part] (a resource's key, or a special node's name) in the frame of [param entry] in the view of [param root]
+static func get_event_key(root: Resource, entry: Resource, part: String) -> String:
+	return "%s/%s/%s" % [get_key(root), get_key(entry), part]
+
+## Special nodes placed from the sidebar: this, then "<kind>/<number>"
+static func get_placed_special_prefix(root: Resource, entry: Resource) -> String: return get_event_key(root, entry, "%s/" % PLACED_SPECIALS)
+
+## Placed special nodes exist only through their position, so tidying keeps it
+static func is_placed_special(key: String) -> bool: return key.contains("/%s/" % PLACED_SPECIALS)
+
+static func get_switch_key(root: Resource, scenario: Resource) -> String:
+	return "%s/switch/%s" % [get_key(root), get_key(scenario)]
 
 func save_for(adventure: Adventure) -> void:
 	ResourceSaver.save(self, get_path_for(adventure))

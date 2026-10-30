@@ -13,8 +13,11 @@ signal layout_changed
 signal play_requested(page: AdventurePage, event: AdventurePage)
 ## Its nodes' positions were forgotten; showing it again puts them back in their default places
 signal tidied
-## An image from the FileSystem panel let go on a page or area; [param file]: the file the change is stored in
-signal background_dropped(resource: Resource, texture: Texture2D, file: Resource)
+## A location, event or area to delete: what points at it goes, its file to the trash ([AdventureEditor] asks first)
+signal deletion_requested(resource: Resource)
+## [resource, property, value] changes as one undo step called [param action] ([method AdventureEdits.apply]);
+## [param file]: the file they are stored in (none: each resource is a file of its own)
+signal changes_requested(changes: Array[Array], action: String, file: Resource)
 
 const NODE_SPACING: Vector2 = Vector2(280, 240)
 const THUMBNAIL_SIZE: Vector2 = Vector2(220, 124)
@@ -54,6 +57,7 @@ var _menu_actions: Dictionary[String, Callable] = {}
 ## Called by [AdventureEditor], not in [method Node._ready], so opening the scene in the editor doesn't run it
 func setup() -> void:
 	node_selected.connect(_on_node_selected)
+	delete_nodes_request.connect(_on_delete_nodes)
 	end_node_move.connect(_on_end_node_move)
 	_add_dashed_layer()
 	_menu = PopupMenu.new()
@@ -111,13 +115,18 @@ func _get_menu_icon(text: String) -> Texture2D:
 	return _get_editor_icon("Object")
 
 ## [param pick] gets the actions when [param node] is right-clicked
-func _on_right_click(node: GraphNode, pick: Callable) -> void:
+func _on_right_click(node: GraphElement, pick: Callable) -> void:
 	node.gui_input.connect(func(input: InputEvent) -> void:
 		var click: InputEventMouseButton = input as InputEventMouseButton
 		if click != null and click.pressed and click.button_index == MOUSE_BUTTON_RIGHT:
 			_show_menu(pick.call())
 			accept_event()
 	)
+
+## One change as one undo step
+func _request(resource: Resource, property: StringName, value: Variant, action: String, file: Resource) -> void:
+	var changes: Array[Array] = [[resource, property, value]]
+	changes_requested.emit(changes, action, file)
 
 ## A toolbar button forgetting where this graph's nodes were moved, after asking
 func _add_tidy_button() -> void:
@@ -136,9 +145,17 @@ func _add_tidy_button() -> void:
 ## Placed special nodes keep their positions: those are all they are
 func _tidy() -> void:
 	if layout == null: return
-	for key: String in _nodes: if not key.contains("/special/"): layout.positions.erase(key)
+	for key: String in _nodes: if not AdventureLayout.is_placed_special(key): layout.positions.erase(key)
 	layout_changed.emit()
 	tidied.emit()
+
+func _on_delete_nodes(names: Array[StringName]) -> void:
+	for node_name: StringName in names: _on_delete_key(get_node(NodePath(node_name)) as GraphElement)
+
+## The Delete key on a selected node: what it shows is deleted, if it can be
+func _on_delete_key(element: GraphElement) -> void:
+	var resource: Resource = _resources.get(element)
+	if resource is AdventureArea or resource is AdventurePage and not AdventureEventEditing.is_inside_file(resource as AdventurePage): deletion_requested.emit(resource)
 
 ## Paths dragged from the FileSystem panel
 static func _get_dropped_files(data: Variant) -> PackedStringArray:

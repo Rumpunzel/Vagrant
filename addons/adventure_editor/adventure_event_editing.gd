@@ -25,21 +25,55 @@ static func find_references_to(root: AdventurePage, target: AdventurePage) -> Ar
 	for page: AdventurePage in root.get_held_pages():
 		for decision: AdventureDecision in page.decisions:
 			if decision == null: continue
-			var references: Dictionary[StringName, AdventurePageReference] = AdventureGraph.get_references(decision)
-			for property: StringName in references:
-				if references[property] == target: found.append([decision, property])
+			for outcome: AdventureDecision.Outcome in decision.get_outcomes():
+				if decision.get_reference(outcome) == target: found.append([decision, outcome.reference_property])
 	return found
 
 ## Whether dropping [param references] (pages they point at) loses a page stored inside [param root]'s file: nothing else there points at it
 static func would_lose_page(root: AdventurePage, references: Array[AdventurePageReference]) -> bool:
-	for reference: AdventurePageReference in references:
-		var page: AdventurePage = reference as AdventurePage
-		if page != null and is_inside_file(page) and find_references_to(root, page).size() <= references.count(reference): return true
+	for link: AdventurePageReference in references:
+		var page: AdventurePage = link as AdventurePage
+		if page != null and is_inside_file(page) and find_references_to(root, page).size() <= references.count(link): return true
 	return false
 
 ## Whether pointing from [param from] at [param target] closes a cycle: [param target] already reaches [param from] through pages (and events) held directly
 static func would_loop(from: AdventurePage, target: AdventurePage) -> bool:
 	return target.get_held_pages().has(from)
+
+## Changes forgetting [param target] everywhere in [param roots] (files) and what they hold, each [resource, property, value, file]:
+## plain decisions leading only there go, fight and save outcomes leading there go back, and it is no event, option or nearby event any more
+static func get_changes_forgetting(target: AdventurePage, roots: Array[AdventurePage]) -> Array[Array]:
+	var changes: Array[Array] = [ ]
+	var seen: Array[AdventurePage] = [ ]
+	for root: AdventurePage in roots:
+		for page: AdventurePage in root.get_held_pages():
+			if seen.has(page) or page == target: continue
+			seen.append(page)
+			var file: Resource = load(get_file_path(page)) if not page.resource_path.is_empty() else root
+			var kept: Array[AdventureDecision] = [ ]
+			for decision: AdventureDecision in page.decisions:
+				if decision != null and not decision is AdventureDiceDecision and _leads_to(decision.transition, target): continue
+				kept.append(decision)
+				if decision == null: continue
+				for outcome: AdventureDecision.Outcome in decision.get_outcomes():
+					if _leads_to(decision.get_reference(outcome), target): changes.append([decision, outcome.reference_property, null, file])
+			if kept.size() != page.decisions.size(): changes.append([page, &"decisions", kept, file])
+			for list: StringName in [&"events", &"nearby_events"]:
+				var listed: Array[AdventurePage] = page.get(list)
+				if not listed.has(target): continue
+				var without: Array[AdventurePage] = listed.duplicate()
+				without.erase(target)
+				changes.append([page, list, without, file])
+	return changes
+
+## Changes taking [param area] off the pages in it
+static func get_changes_forgetting_area(area: AdventureArea, pages: Array[AdventurePage]) -> Array[Array]:
+	var changes: Array[Array] = [ ]
+	for page: AdventurePage in pages: if page.area == area: changes.append([page, &"area", null, page])
+	return changes
+
+static func _leads_to(link: AdventurePageReference, target: AdventurePage) -> bool:
+	return link != null and link.load_page() == target
 
 ## Every event file in an [code]events[/code] folder under [param folder]
 static func find_event_files(folder: String) -> Array[String]:
@@ -54,8 +88,8 @@ static func find_event_files(folder: String) -> Array[String]:
 
 ## A "↺ Host" or "↶ Previous location" link to be stored inside a file
 static func make_special_reference(previous_location: bool) -> AdventurePageReference:
-	var reference: AdventurePageReference = AdventurePreviousLocationReference.new() if previous_location else AdventureHostReference.new()
-	return _in_file(reference) as AdventurePageReference
+	var link: AdventurePageReference = AdventurePreviousLocationReference.new() if previous_location else AdventureHostReference.new()
+	return _in_file(link) as AdventurePageReference
 
 ## A page to be stored inside a file
 static func make_page() -> AdventurePage:
@@ -117,17 +151,17 @@ static func get_type_name(type_name: String) -> String:
 static func make_condition(type: Script) -> AdventureCondition:
 	return _in_file(type.new() as Resource) as AdventureCondition
 
-## A condition on [param owner] about the [param index]th [param monster] spawned by [param spawning]'s fight; none if [param owner] can't point at it
-## (it would loop: [param spawning] holds [param owner] in the same file)
-static func make_monster_condition(state: AdventureMonsterCondition.State, monster: MonsterProfile, index: int, spawning: AdventurePage, owner: AdventurePage) -> AdventureMonsterCondition:
-	var reference: AdventureMonsterReference = _in_file(AdventureMonsterReference.new()) as AdventureMonsterReference
-	reference.monster = monster
-	reference.index = index
-	if spawning != owner:
-		if get_file_path(spawning) == get_file_path(owner) and would_loop(owner, spawning): return null
-		reference.spawned_by = make_reference(spawning, get_file_path(owner))
+## A condition on [param holder] about the [param index]th [param monster] spawned by [param spawning]'s fight; none if [param holder] can't point at it
+## (it would loop: [param spawning] holds [param holder] in the same file)
+static func make_monster_condition(state: AdventureMonsterCondition.State, monster: MonsterProfile, index: int, spawning: AdventurePage, holder: AdventurePage) -> AdventureMonsterCondition:
+	var link: AdventureMonsterReference = _in_file(AdventureMonsterReference.new()) as AdventureMonsterReference
+	link.monster = monster
+	link.index = index
+	if spawning != holder:
+		if get_file_path(spawning) == get_file_path(holder) and would_loop(holder, spawning): return null
+		link.spawned_by = make_reference(spawning, get_file_path(holder))
 	var condition: AdventureMonsterCondition = _in_file(AdventureMonsterCondition.new()) as AdventureMonsterCondition
-	condition.monster = reference
+	condition.monster = link
 	condition.state = state
 	return condition
 

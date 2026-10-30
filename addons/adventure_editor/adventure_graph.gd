@@ -56,25 +56,13 @@ static func get_title(page: AdventurePage) -> String:
 	if text.is_empty(): return "Untitled page"
 	return text if text.length() <= TITLE_FROM_TEXT_LENGTH else text.left(TITLE_FROM_TEXT_LENGTH).strip_edges() + "…"
 
-## Page references of [param decision] by property name, [code]transition[/code] first.
-## Every [AdventurePageReference] property counts (failure, flee, draw ...), so new decision kinds need no change here;
-## read through the property list, since decision scripts aren't @tool and are only placeholders in the editor.
-static func get_references(decision: AdventureDecision) -> Dictionary[StringName, AdventurePageReference]:
-	var references: Dictionary[StringName, AdventurePageReference] = {}
-	if decision.transition != null: references[&"transition"] = decision.transition
-	for property: Dictionary in decision.get_property_list():
-		if not property.usage & PROPERTY_USAGE_STORAGE or property.name == &"transition": continue
-		var value: Variant = decision.get(property.name)
-		if value is AdventurePageReference: references[StringName(property.name)] = value
-	return references
-
 func get_link(from: AdventurePage, to: AdventurePage) -> Link:
 	for link: Link in links: if link.from == from and link.to == to: return link
 	return null
 
 func get_hosts(event: AdventurePage) -> Array[AdventurePage]:
 	var hosts: Array[AdventurePage] = [ ]
-	hosts.assign(event_hosts.get(event, [ ]))
+	hosts.assign(event_hosts.get(event, [ ]) as Array)
 	return hosts
 
 ## The map pages [param event] happens on, also through the events (and scenarios) it is part of
@@ -130,7 +118,7 @@ static func _get_targets(decisions: Array[AdventureDecision]) -> Array[Adventure
 	var targets: Array[AdventurePage] = [ ]
 	for decision: AdventureDecision in decisions:
 		if decision == null: continue
-		for reference: AdventurePageReference in get_references(decision).values():
-			var target: AdventurePage = reference.get_adventure_page()
+		for link: AdventurePageReference in decision.get_page_references():
+			var target: AdventurePage = link.get_adventure_page()
 			if target != null: targets.append(target)
 	return targets
