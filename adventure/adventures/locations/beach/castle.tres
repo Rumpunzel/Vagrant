@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://cmrl4agp3nbt0" path="res://adventure/adventure_location.gd" id="4_4stke_location"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="5_ma368"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="6_qmyxb"]
+[ext_resource type="Script" uid="uid://by0krlemues6g" path="res://adventure/adventure_stage_track.gd" id="7_4stke"]
 
 [sub_resource type="Resource" id="Resource_d4awh"]
 script = ExtResource("6_qmyxb")

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="AdventureEncounter" format=3 uid="uid://c16ehct0w6n48"]
+
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="1_7g7jj"]
+[ext_resource type="Script" uid="uid://elib8bc2fnvu" path="res://adventure/adventure_event.gd" id="1_page_event"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_dc13b"]
+[ext_resource type="Script" uid="uid://jag8exqamilc" path="res://adventure/adventure_encounter.gd" id="2_scenario"]
+[ext_resource type="Script" uid="uid://by0krlemues6g" path="res://adventure/adventure_stage_track.gd" id="5_track"]
+[ext_resource type="Resource" uid="uid://d3ytncs0be7oo" path="res://characters/monsters/lurker.tres" id="6_profile"]
+[ext_resource type="Resource" uid="uid://bxwqtk0p80o4g" path="res://adventure/adventures/encounters/lurker/lurker_ambush.tres" id="3_ambush"]
+[ext_resource type="Resource" uid="uid://m4wl5ad8o0i7" path="res://adventure/adventures/encounters/lurker/lurker_ambush_won.tres" id="4_won"]
+
+[sub_resource type="Resource" id="Resource_state"]
+script = ExtResource("5_track")
+name = "State"
+stages = Array[String](["Lurking", "Beaten", "Dead"])
+
+[resource]
+script = ExtResource("2_scenario")
+title = "Lurker"
+profile = ExtResource("6_profile")
+tracks = Array[ExtResource("5_track")]([SubResource("Resource_state")])
+places = Array[String](["uid://cs40ge42lw0ry"])
+events = Array[ExtResource("1_page_event")]([ExtResource("3_ambush"), ExtResource("4_won")])

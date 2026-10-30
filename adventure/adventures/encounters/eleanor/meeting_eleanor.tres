@@ -13,11 +13,6 @@
 [ext_resource type="Script" uid="uid://cruge2r1dq0e6" path="res://adventure/decisions/consequences/adventure_move_consequence.gd" id="21_move"]
 [ext_resource type="Script" uid="uid://dnag2gmshedq4" path="res://adventure/decisions/consequences/adventure_stage_consequence.gd" id="22_stage"]
 
-[sub_resource type="Resource" id="Resource_j24m5"]
-script = ExtResource("3_t43k6")
-description = "She throws a strange artifact at your head, then dabs on the haters."
-background = ExtResource("3_k8kem")
-
 [sub_resource type="Resource" id="Resource_unmet"]
 script = ExtResource("20_stage_condition")
 track = "Storyline"
@@ -30,6 +25,11 @@ script = ExtResource("21_move")
 script = ExtResource("22_stage")
 track = "Storyline"
 stage = "Met"
+
+[sub_resource type="Resource" id="Resource_j24m5"]
+script = ExtResource("3_t43k6")
+description = "She throws a strange artifact at your head, then dabs on the haters."
+background = ExtResource("3_k8kem")
 
 [sub_resource type="Resource" id="Resource_fqbk4"]
 script = ExtResource("1_npy2t")
@@ -66,8 +66,8 @@ transition = SubResource("Resource_b3ed1")
 
 [resource]
 script = ExtResource("3_t43k6_event")
-exclusivity = 7
 conditions = Array[ExtResource("1_k8kem")]([SubResource("Resource_unmet")])
+exclusivity = 7
 title = "The Mysterious Woman"
 description = "A young woman knocks her mace against the heavy gate of the ruined keep."
 decisions = Array[ExtResource("1_npy2t")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])

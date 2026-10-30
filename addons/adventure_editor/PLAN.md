@@ -202,13 +202,17 @@ Steps:
   - `StoryWorld` in Story: stages per subject and track, places per encounter; Story knows the encounter of the event one is in (also on the
     pages behind it). A "first visit" condition only if something needs it.
   - Eleanor moved to `encounters/eleanor/` (track Unmet / Met; Meeting needs Unmet and places her; Hearing near her, needs Unmet).
-- [ ] 4. Monsters as encounters: fights name an encounter and set its stage; generic monster encounter; the Lurker moved over; `generic`, `spawned_by`,
-  monster conditions and the kill consequence go
+- [x] 4. Monsters as encounters: a fight names an encounter (empty: its event's) and fights its monster, one per encounter for the whole story;
+  fight outcomes set stages through their consequences (agreed: explicit, no automatic track). Without a monster encounter, `enemies` make a one-off
+  fight (a fresh monster per page and location) instead of a separate generic monster encounter file. The Lurker moved to `encounters/lurker/`
+  (State: Lurking / Beaten / Dead); `generic`, `spawned_by`, monster conditions and the kill consequence are gone
 - [ ] 5. Condition "encounter is here / at …"; location stages in content (the move consequence comes with step 3)
 - [ ] 6. Editor: "Here" panel per location (everything that can happen there, also "can come here" through move consequences; reordering) and a
   storyline view per encounter (stages as nodes, events between them)
 
-Later: encounter templates (several wolves), with the party / carried by, item encounters, roaming by itself (random, routes, time of day).
+Later: encounter templates (several wolves; a "new monster encounter" with its State track and the fight outcomes' stage consequences ready),
+with the party / carried by, item encounters, roaming by itself (random, routes, time of day), a separate editor tab for editing locations,
+fights against several opponents (needs the fight UI first).
 
 ## Later
 - Fight decisions (and other checks) with **input ports** for who takes part: link enemies / participants into the fight node instead of picking them in the Inspector (user idea, 2026-10-29; fits the parked participants / cast idea)
@@ -272,3 +276,4 @@ Later: encounter templates (several wolves), with the party / carried by, item e
 - 2026-10-30: step 1 committed; step 2 built: own scenarios on locations, `pick`, `resolve_events`; editor lists events through `AdventureGraph.get_listed_on` and `AdventureEventEditing.get_changes_listing`; tests: `TestAdventures` helper, pick all (1), listing (1)
 - 2026-10-30: step 3 designed with the user: UID back-pointers, encounters in all their possible places until contact, own events as a slot in the location's order, first-visit text, contact by a move consequence
 - 2026-10-30: step 3 built: `AdventureEncounter`, `AdventureStageTrack`, `where` / `only_at`, `order`, `first_description`, stage condition, stage and move consequences, `StoryWorld`; `nearby_events` gone; Eleanor moved to `encounters/eleanor/` (greeting her places her and sets Met); editor: encounters in the event list, faded "could be here" cards on the map; tests: encounters (11), Eleanor content (3), first visit (1)
+- 2026-10-30: step 4 built: fights name encounters, one-off fights for `enemies`, Lurker as an encounter with stages; tests: Lurker content and story reworked, monsters per encounter / per location (1)

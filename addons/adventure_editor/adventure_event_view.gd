@@ -44,6 +44,8 @@ func setup() -> void:
 	disconnection_request.connect(func(from: StringName, port: int, _to: StringName, _to_port: int) -> void: _request_reference(from, port, null))
 	connection_to_empty.connect(_on_connection_to_empty)
 
+func _get_encounter() -> AdventureEncounter: return _overview.root as AdventureEncounter if _overview != null else null
+
 func get_event() -> AdventureEvent: return _overview.root if _overview != null else null
 
 func get_host() -> AdventurePage: return _host
@@ -80,7 +82,6 @@ func show_event(event: AdventureEvent, host: AdventurePage = null) -> void:
 		if entry.parent != null and entry.switch == null: _add_dashed(_nodes[_key(entry.parent, entry.parent_page)], _nodes[_key(entry, entry.event)])
 	for switch: AdventureEventOverview.Switch in _overview.switches:
 		if switch.parent != null and switch.outer == null: _add_dashed(_nodes[_key(switch.parent, switch.parent_page)], _nodes[_switch_key(switch.scenario)])
-	_add_condition_lines()
 
 ## Adds the entry's nodes to [param frame] from [param origin] on; returns how many columns they take
 func _add_entry(entry: AdventureEventOverview.Entry, frame: GraphFrame, origin: Vector2) -> int:
@@ -125,7 +126,7 @@ func _add_page(entry: AdventureEventOverview.Entry, page: AdventurePage, at: Vec
 	if page == entry.event:
 		content.add_child(_make_info("When:"))
 		content.add_child(_make_condition_tags(entry.event, _file_for(null, page, entry)))
-		for text: String in [AdventureEventOverview.get_hiding_text(entry, _host), AdventureEventOverview.get_monster_text(entry)]:
+		for text: String in [AdventureEventOverview.get_hiding_text(entry, _host)]:
 			if not text.is_empty(): content.add_child(_make_info(text))
 	var node: GraphNode = _add_node(_key(entry, page), page, AdventureGraph.get_title(page), content, at)
 	# An option's event is linked from its scenario's switch

@@ -48,10 +48,10 @@ func test_fights_and_saves_have_fixed_outcomes() -> void:
 	fight.enemies = [TestMonsters.cutthroat()] as Array[MonsterProfile]
 	fight.transition = won
 	fight.failure_transition = lost
-	var kill: AdventureKillMonsterConsequence = AdventureKillMonsterConsequence.new()
-	kill.monster = AdventureMonsterReference.new()
-	kill.monster.monster = fight.enemies[0]
-	fight.consequences = [kill] as Array[AdventureConsequence]
+	var beaten: AdventureStageConsequence = AdventureStageConsequence.new()
+	beaten.track = "State"
+	beaten.stage = "Beaten"
+	fight.consequences = [beaten] as Array[AdventureConsequence]
 	var sneak: AdventureDecision = AdventureDecision.new()
 	sneak.description = "Sneak away"
 	ambush.decisions.append(fight)
@@ -69,7 +69,7 @@ func test_fights_and_saves_have_fixed_outcomes() -> void:
 	var outcomes: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outcomes(fight)
 	assert_array(outcomes.map(func(outcome: AdventureEventGraph.Outlet) -> String: return outcome.label)).contains_exactly(["Won", "Lost", "Fled", "Draw"])
 	assert_object(outcomes[0].target).is_same(won)
-	assert_str(AdventureEventGraph.describe_consequences(outcomes[0].consequences)).is_equal("Kill Cutthroat")
+	assert_str(AdventureEventGraph.describe_consequences(outcomes[0].consequences)).is_equal("its own → Beaten")
 	# No flee transition: going back
 	assert_bool(outcomes[2].goes_back()).is_true()
 

@@ -20,9 +20,11 @@ class Problem:
 var problems: Array[Problem] = [ ]
 
 var _checked: Array[AdventureDecision] = [ ]
+var _graph: AdventureGraph
 
 ## [param event_files]: every event there is, to find those listed nowhere
 func _init(graph: AdventureGraph, event_files: Array[AdventureEvent]) -> void:
+	_graph = graph
 	for page: AdventurePage in graph.unreachable: _add("%s can't be reached from the starting page" % AdventureGraph.get_title(page), page, null)
 	for page: AdventurePage in graph.pages: _check_decisions(page, null)
 	var events: Array[AdventureEvent] = [ ]
@@ -45,7 +47,7 @@ func _check_decisions(page: AdventurePage, event: AdventureEvent) -> void:
 		if decision == null or _checked.has(decision): continue
 		_checked.append(decision)
 		var where: String = "%s, \"%s\"" % [AdventureGraph.get_title(page), decision.description.get_slice("\n", 0)]
-		if decision is AdventureFightDecision and (decision as AdventureFightDecision).enemies.is_empty(): _add("%s: the fight has no enemies" % where, page, event)
+		if decision is AdventureFightDecision and not _has_monster(decision as AdventureFightDecision, event): _add("%s: the fight has no monster encounter and no enemies" % where, page, event)
 		if decision is AdventureSaveDecision and (decision as AdventureSaveDecision).attribute == null: _add("%s: the save has no attribute" % where, page, event)
 		for link: AdventurePageReference in decision.get_page_references():
 			if link is AdventureTransition and (link as AdventureTransition).leads_nowhere(): _add("%s leads to a missing file" % where, page, event)
@@ -61,6 +63,12 @@ func _check_options(scenario: AdventureEventScenario) -> void:
 		for later: AdventureEvent in scenario.events.slice(index + 1):
 			if later != null: _add("%s never shows: %s comes first and has no conditions" % [AdventureGraph.get_title(later), AdventureGraph.get_title(option)], later, scenario)
 		return
+
+## A named encounter, enemies, or an event of an encounter with a monster
+func _has_monster(fight: AdventureFightDecision, event: AdventureEvent) -> bool:
+	if not fight.encounter.is_empty() or not fight.enemies.is_empty(): return true
+	var encounter: AdventureEncounter = _graph.get_encounter_of(event) if event != null else null
+	return encounter != null and encounter.profile is MonsterProfile
 
 func _add(text: String, page: AdventurePage, event: AdventureEvent) -> void:
 	problems.append(Problem.new(text, page, event))

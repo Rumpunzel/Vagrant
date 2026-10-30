@@ -89,9 +89,11 @@ static func get_outcomes(check: AdventureDecision) -> Array[Outlet]:
 ## What a check is about: "Fight: Lurker", "Save: Blood 7"
 static func describe_check(check: AdventureDecision) -> String:
 	if check is AdventureFightDecision:
+		var fight: AdventureFightDecision = check as AdventureFightDecision
+		if not fight.encounter.is_empty(): return "Fight: %s" % AdventureStageCondition.name_subject(fight.encounter)
 		var names: Array[String] = [ ]
-		for enemy: MonsterProfile in (check as AdventureFightDecision).enemies: if enemy != null: names.append(enemy.name)
-		return "Fight: %s" % ", ".join(names)
+		for enemy: MonsterProfile in fight.enemies: if enemy != null: names.append(enemy.name)
+		return "Fight: %s" % (", ".join(names) if not names.is_empty() else "its encounter")
 	if check is AdventureSaveDecision:
 		var save: AdventureSaveDecision = check as AdventureSaveDecision
 		return "Save: %s %d" % [save.attribute.descriptor if save.attribute != null else "?", save.difficulty]

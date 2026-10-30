@@ -26,8 +26,6 @@ const MAX_NEARBY_REACH: int = 8
 @export var conditions: Array[AdventureCondition]
 @export_flags("Hide Base:1", "Hide Below:2", "Hide Above:4", "Hide All:7")
 var exclusivity: int = 0
-## Each host gets its own of what this event spawns (monsters); otherwise all hosts share them
-@export var generic: bool = false
 ## For an encounter's events; a location's own events show there
 @export var where: Where = Where.ENCOUNTER
 ## Only on these locations, or locations in these areas (UIDs); none: no such limit

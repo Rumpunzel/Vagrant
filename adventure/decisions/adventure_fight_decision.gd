@@ -2,6 +2,9 @@
 class_name AdventureFightDecision
 extends AdventureDiceDecision
 
+## The encounter whose monster fights, by UID; empty: the encounter of the event it is in
+@export_file("*.tres") var encounter: String
+## A one-off fight, when there is no monster encounter: the first fights, fresh at each location
 @export var enemies: Array[MonsterProfile]
 @export var stance_descriptions: Dictionary[CharacterAttribute, String] = {}
 @export_multiline var flee_description: String = "Flee!"

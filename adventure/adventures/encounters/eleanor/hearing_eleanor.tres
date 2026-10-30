@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://elib8bc2fnvu" path="res://adventure/adventure_event.gd" id="1_3veit_event"]
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="1_ie8jc"]
-[ext_resource type="Script" uid="uid://bva4sh5387lyd" path="res://adventure/conditions/adventure_stage_condition.gd" id="20_stage_condition"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_521mh"]
+[ext_resource type="Script" uid="uid://bva4sh5387lyd" path="res://adventure/conditions/adventure_stage_condition.gd" id="20_stage_condition"]
 
 [sub_resource type="Resource" id="Resource_unmet"]
 script = ExtResource("20_stage_condition")
@@ -12,7 +12,7 @@ stages = Array[String](["Unmet"])
 
 [resource]
 script = ExtResource("1_3veit_event")
-description = "You hear a knocking sound from the castle ruins to the north-east."
 conditions = Array[ExtResource("1_ie8jc")]([SubResource("Resource_unmet")])
 where = 1
 nearby_stays_in_area = true
+description = "You hear a knocking sound from the castle ruins to the north-east."

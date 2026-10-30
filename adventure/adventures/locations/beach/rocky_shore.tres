@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="4_vbvy7"]
 [ext_resource type="Script" uid="uid://cmrl4agp3nbt0" path="res://adventure/adventure_location.gd" id="5_5fv8t_location"]
 [ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://adventure/adventures/locations/beach/beach.tres" id="5_r3xmp"]
+[ext_resource type="Script" uid="uid://by0krlemues6g" path="res://adventure/adventure_stage_track.gd" id="6_u2ksw"]
 
 [sub_resource type="Resource" id="Resource_vfpl1"]
 script = ExtResource("4_vbvy7")

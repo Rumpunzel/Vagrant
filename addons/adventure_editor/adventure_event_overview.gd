@@ -77,12 +77,6 @@ static func get_hiding_text(entry: Entry, host: AdventurePage) -> String:
 	if entry.event.exclude_below(): parts.append(_name_events("events after it", after, index >= 0))
 	return "Hides %s" % ", ".join(parts)
 
-static func get_monster_text(entry: Entry) -> String:
-	if entry.event.generic: return "Monsters: one per host"
-	for page: AdventurePage in entry.graph.pages:
-		if page.decisions.any(func(decision: AdventureDecision) -> bool: return decision is AdventureFightDecision): return "Monsters: shared by all hosts"
-	return ""
-
 static func _name_events(text: String, events: Array[AdventureEvent], known: bool) -> String:
 	if not known: return text
 	return "%s (%s)" % [text, ", ".join(events.map(AdventureGraph.get_title)) if not events.is_empty() else "none"]

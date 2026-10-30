@@ -74,6 +74,12 @@ func get_encounter_locations(encounter: AdventureEncounter) -> Array[AdventureLo
 	locations.assign(encounter_locations.get(encounter, [ ]) as Array)
 	return locations
 
+## The encounter [param event] is (one of the events of), if any
+func get_encounter_of(event: AdventureEvent) -> AdventureEncounter:
+	for encounter: AdventureEncounter in encounter_locations:
+		if encounter == event or encounter.get_listed_events().has(event): return encounter
+	return null
+
 ## The encounters that could show on [param location]
 func get_encounters_at(location: AdventureLocation) -> Array[AdventureEncounter]:
 	var found: Array[AdventureEncounter] = [ ]

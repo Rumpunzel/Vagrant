@@ -4,7 +4,7 @@ extends Node
 @export_group("Configuration")
 @export var _monster_scene: PackedScene = preload("uid://kmifqq0ejuri")
 
-## { [spawning page, host or null] -> Array[Monster] }; a host only for generic events, whose hosts each get their own
+## { [owner (an encounter, or the page of a one-off fight), location or null] -> Array[Monster] }; one-off fights get one per location
 var monsters: Dictionary[Array, Array] = { }
 
 ## { MonsterProfile -> Array[Monster] }

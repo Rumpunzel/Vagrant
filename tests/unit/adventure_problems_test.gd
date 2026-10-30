@@ -34,7 +34,7 @@ func test_empty_fights_and_saves_inside_events() -> void:
 	TestAdventures.add(_ruin, ambush)
 	var problems: Array[AdventureProblems.Problem] = AdventureProblems.new(AdventureGraph.new(_adventure()), [ ] as Array[AdventureEvent]).problems
 	assert_array(problems.map(func(problem: AdventureProblems.Problem) -> String: return problem.text)).contains_exactly([
-		"Ambush, \"Fight!\": the fight has no enemies",
+		"Ambush, \"Fight!\": the fight has no monster encounter and no enemies",
 		"Ambush, \"Hide\": the save has no attribute",
 	])
 	assert_object(problems[0].event).is_same(ambush)

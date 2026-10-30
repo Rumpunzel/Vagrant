@@ -79,21 +79,12 @@ func test_new_events() -> void:
 	var scenario: AdventureEventScenario = _page("res://locations/swamp/events/lurker.tres")
 	assert_str(AdventureEventEditing.get_event_path(scenario, "Wolf Pack")).is_equal("res://locations/swamp/events/wolf_pack.tres")
 
-func test_monster_conditions_point_at_the_spawning_page() -> void:
-	var lurker: MonsterProfile = TestMonsters.cutthroat()
-	var ambush: AdventureEventScenario = _page("res://events/ambush.tres")
-	var won: AdventureEventScenario = _page("res://events/won.tres")
-	var own: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(AdventureMonsterCondition.State.CAN_FIGHT, lurker, 0, ambush, ambush)
-	assert_object(own.monster.spawned_by).is_null()
-	assert_object(own.monster.monster).is_same(lurker)
-	var other: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(AdventureMonsterCondition.State.INCAPACITATED, lurker, 1, ambush, won)
-	assert_object(other.monster.spawned_by).is_instanceof(AdventureTransition)
-	assert_int(other.monster.index).is_equal(1)
-	assert_int(other.state).is_equal(AdventureMonsterCondition.State.INCAPACITATED)
-	# Inside the file holding it: pointing back would loop
-	var inside: AdventureEventScenario = _page("res://events/ambush.tres::Resource_n1")
-	ambush.events.append(inside)
-	assert_object(AdventureEventEditing.make_monster_condition(AdventureMonsterCondition.State.DEAD, lurker, 0, ambush, inside)).is_null()
+func test_stage_conditions_are_about_the_own_encounter() -> void:
+	var condition: AdventureStageCondition = AdventureEventEditing.make_stage_condition("State", "Beaten")
+	assert_str(condition.subject).is_empty()
+	assert_str(condition.track).is_equal("State")
+	assert_array(condition.stages).contains_exactly(["Beaten"])
+	assert_str(condition.resource_scene_unique_id).is_not_empty()
 
 func test_special_references() -> void:
 	var host: AdventurePageReference = AdventureEventEditing.make_special_reference(false)
@@ -157,11 +148,11 @@ func test_forgetting_an_area() -> void:
 
 func test_consequence_types() -> void:
 	var types: Dictionary[String, Script] = AdventureEventEditing.get_consequence_types()
-	assert_array(types.keys()).contains(["AdventureInjuryConsequence", "AdventureKillMonsterConsequence"])
+	assert_array(types.keys()).contains(["AdventureInjuryConsequence", "AdventureStageConsequence", "AdventureMoveConsequence"])
 	assert_array(types.keys()).not_contains(["AdventureConsequence"])
-	assert_str(AdventureEventEditing.get_type_name("AdventureKillMonsterConsequence")).is_equal("Kill Monster")
-	assert_str(AdventureEventEditing.get_type_name("AdventureMonsterCondition")).is_equal("Monster")
-	assert_array(AdventureEventEditing.get_condition_types().keys()).contains(["AdventureMonsterCondition", "AdventureIsAlwaysTrueCondition"])
+	assert_str(AdventureEventEditing.get_type_name("AdventureMoveConsequence")).is_equal("Move")
+	assert_str(AdventureEventEditing.get_type_name("AdventureStageCondition")).is_equal("Stage")
+	assert_array(AdventureEventEditing.get_condition_types().keys()).contains(["AdventureStageCondition", "AdventureIsAlwaysTrueCondition"])
 	assert_array(AdventureEventEditing.get_condition_types().keys()).not_contains(["AdventureCondition"])
 	var injury: AdventureConsequence = AdventureEventEditing.make_consequence(types["AdventureInjuryConsequence"])
 	assert_object(injury).is_instanceof(AdventureInjuryConsequence)

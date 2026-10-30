@@ -150,36 +150,25 @@ func _get_effect_additions() -> Dictionary[String, Resource]:
 	for type_name: String in types: additions[AdventureEventEditing.get_type_name(type_name)] = AdventureEventEditing.make_consequence(types[type_name])
 	return additions
 
-## Every kind of condition, and "can fight / is beaten / is dead" for each monster of the fights shown
-func _get_condition_additions(holder: AdventureEvent) -> Dictionary[String, Resource]:
+## Every kind of condition, and "is …" for each stage of the event's encounter
+func _get_condition_additions(_holder: AdventureEvent) -> Dictionary[String, Resource]:
 	var additions: Dictionary[String, Resource] = {}
-	for fight: AdventureDecision in _fight_pages:
-		var enemies: Array[MonsterProfile] = (fight as AdventureFightDecision).enemies
-		for enemy_index: int in enemies.size():
-			var monster: MonsterProfile = enemies[enemy_index]
-			if monster == null: continue
-			var index: int = enemies.slice(0, enemy_index).count(monster)
-			for state: AdventureMonsterCondition.State in AdventureMonsterCondition.STATE_TEXTS:
-				var condition: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(state, monster, index, _fight_pages[fight], holder)
-				if condition != null: additions[condition.describe() + (" %d" % (index + 1) if index > 0 else "")] = condition
+	var encounter: AdventureEncounter = _get_encounter()
+	if encounter != null:
+		for track: AdventureStageTrack in encounter.tracks:
+			if track == null: continue
+			for stage: String in track.stages: additions["%s is %s" % [track.name, stage]] = AdventureEventEditing.make_stage_condition(track.name, stage)
 	var types: Dictionary[String, Script] = AdventureEventEditing.get_condition_types()
 	for type_name: String in types: additions[AdventureEventEditing.get_type_name(type_name)] = AdventureEventEditing.make_condition(types[type_name])
 	return additions
+
+## The encounter whose events are shown, if any
+func _get_encounter() -> AdventureEncounter: return null
 
 ## Its own text, or its kind's name when it has none to show
 static func _describe(item: Resource) -> String:
 	var text: String = item.call(&"describe")
 	return text if not text.is_empty() else AdventureEventEditing.get_type_name(item.get_script().get_global_name())
-
-## Monster conditions point dotted at the fight card spawning their monster
-func _add_condition_lines() -> void:
-	for item: Resource in _tags:
-		var condition: AdventureMonsterCondition = item as AdventureMonsterCondition
-		if condition == null or condition.monster == null: continue
-		var holder: AdventureEvent = _tag_owners.get(condition)
-		var spawning: AdventurePage = condition.monster.spawned_by.get_adventure_page() if condition.monster.spawned_by != null else holder
-		for fight: AdventureDecision in _fight_pages:
-			if _fight_pages[fight] == spawning and (fight as AdventureFightDecision).enemies.has(condition.monster.monster): _add_dashed(_tags[item], _fight_cards[fight], FIGHT_COLOR)
 
 ## Buttons for new choices, fights and saves
 func _make_add_bar(entry: AdventureEventOverview.Entry, page: AdventurePage) -> HBoxContainer:

@@ -17,7 +17,7 @@ func before_test() -> void:
 
 func test_eleanor_is_an_encounter_at_the_castle_ruin() -> void:
 	var eleanor: AdventureEncounter = load(ELEANOR)
-	assert_array((load(ADVENTURE) as Adventure).encounters).contains_exactly([eleanor])
+	assert_array((load(ADVENTURE) as Adventure).encounters).contains([eleanor])
 	assert_array(eleanor.events).contains_exactly([load(MEETING_ELEANOR), load(HEARING_ELEANOR)])
 	assert_array(eleanor.get_places()).contains_exactly([load(CASTLE_RUIN)])
 	assert_array((load(CASTLE_RUIN) as AdventureLocation).get_own_events()).is_empty()

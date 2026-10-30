@@ -163,25 +163,18 @@ static func _get_types(base_name: String) -> Dictionary[String, Script]:
 		if script.can_instantiate(): types[type_name] = script
 	return types
 
-## "AdventureKillMonsterConsequence" -> "Kill Monster", "AdventureMonsterCondition" -> "Monster"
+## "AdventureStageConsequence" -> "Stage", "AdventureStageCondition" -> "Stage"
 static func get_type_name(type_name: String) -> String:
 	return type_name.trim_prefix("Adventure").trim_suffix("Consequence").trim_suffix("Condition").capitalize()
 
 static func make_condition(type: Script) -> AdventureCondition:
 	return _in_file(type.new() as Resource) as AdventureCondition
 
-## A condition on [param holder] about the [param index]th [param monster] spawned by [param spawning]'s fight; none if [param holder] can't point at it
-## (it would loop: [param spawning] holds [param holder] in the same file)
-static func make_monster_condition(state: AdventureMonsterCondition.State, monster: MonsterProfile, index: int, spawning: AdventurePage, holder: AdventurePage) -> AdventureMonsterCondition:
-	var link: AdventureMonsterReference = _in_file(AdventureMonsterReference.new()) as AdventureMonsterReference
-	link.monster = monster
-	link.index = index
-	if spawning != holder:
-		if get_file_path(spawning) == get_file_path(holder) and would_loop(holder, spawning): return null
-		link.spawned_by = make_reference(spawning, get_file_path(holder))
-	var condition: AdventureMonsterCondition = _in_file(AdventureMonsterCondition.new()) as AdventureMonsterCondition
-	condition.monster = link
-	condition.state = state
+## "[param track] is [param stage]" of the event's own encounter
+static func make_stage_condition(track: String, stage: String) -> AdventureStageCondition:
+	var condition: AdventureStageCondition = _in_file(AdventureStageCondition.new()) as AdventureStageCondition
+	condition.track = track
+	condition.stages = [stage] as Array[String]
 	return condition
 
 static func make_consequence(type: Script) -> AdventureConsequence:
