@@ -185,7 +185,8 @@ The adventure model gets rebuilt around **locations and encounters** (NPCs, mons
 Steps:
 - [x] 1. Split the types: `AdventurePage` (plain), `AdventureEventHost` (abstract, `events`) → `AdventureLocation` / `AdventureEvent` → `AdventureEventScenario`;
   content moved (text edits, UIDs kept); first / all comes with step 2
-- [ ] 2. Locations' events into their own scenario, plus the location's ordered list
+- [x] 2. Locations' events into their own scenario (`AdventureLocation.scenario`, picking all); scenarios pick first / all; plain events hold no events
+  any more (`AdventureEventHost` gone, nesting only through scenarios). The location's ordered list comes with step 3, when there are encounters to order
 - [ ] 3. Encounters with stage tracks, where (base + filter), optional place, "puts the encounter here"; Eleanor moved over
 - [ ] 4. Monsters as encounters: fights name an encounter and set its stage; generic monster encounter; the Lurker moved over; `generic`, `spawned_by`,
   monster conditions and the kill consequence go
@@ -254,3 +255,4 @@ Later: encounter templates (several wolves), with the party / carried by, item e
 - 2026-10-30: editor warnings fixed (`owner` / `reference` locals shadowing Node / RefCounted members renamed to `holder` / `link`, Variant casts; `AdventurePlayFrom.take()` returns an `AdventurePlayFrom` with typed fields instead of an Array); layout keys of deleted files are skipped (unknown UIDs made `ResourceLoader.exists` error) and forgotten on deleting
 - 2026-10-30: model rethought with the user: locations and encounters (stage tracks, where, scenarios first / all, order on the location); steps 1–6 agreed
 - 2026-10-30: step 1 built: the page types split, Story / editor / tests retyped (map nodes that are plain pages get no event actions; event files that are plain pages no longer show as events)
+- 2026-10-30: step 1 committed; step 2 built: own scenarios on locations, `pick`, `resolve_events`; editor lists events through `AdventureGraph.get_listed_on` and `AdventureEventEditing.get_changes_listing`; tests: `TestAdventures` helper, pick all (1), listing (1)

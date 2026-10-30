@@ -68,6 +68,20 @@ static func get_changes_forgetting(target: AdventurePage, roots: Array[Adventure
 				changes.append([page, list, without, file])
 	return changes
 
+## Changes listing [param events] on [param host], each [resource, property, value, file]: a scenario's options, or a location's own events
+## (in its own scenario, made here if it has none, picking all that fit)
+static func get_changes_listing(host: AdventurePage, events: Array[AdventureEvent]) -> Array[Array]:
+	var file: Resource = load(get_file_path(host)) if host.resource_path.contains("::") else host
+	var scenario: AdventureEventScenario = host as AdventureEventScenario
+	var location: AdventureLocation = host as AdventureLocation
+	if location != null: scenario = location.scenario
+	if scenario != null: return [[scenario, &"events", events, file]]
+	if location == null: return [ ]
+	var own: AdventureEventScenario = _in_file(AdventureEventScenario.new()) as AdventureEventScenario
+	own.pick = AdventureEventScenario.Pick.ALL
+	own.events = events
+	return [[location, &"scenario", own, file]]
+
 ## Changes taking [param area] off the pages in it
 static func get_changes_forgetting_area(area: AdventureArea, pages: Array[AdventurePage]) -> Array[Array]:
 	var changes: Array[Array] = [ ]

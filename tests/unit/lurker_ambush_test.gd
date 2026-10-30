@@ -72,7 +72,7 @@ func test_won_event_offers_to_kill_the_beaten_lurker() -> void:
 
 func test_scenario_shows_the_ambush_or_the_beaten_lurker() -> void:
 	var scenario: AdventureEventScenario = load(LURKER_SCENARIO)
-	assert_array((load(TEMPLE_RUIN) as AdventureLocation).events).contains_exactly([scenario])
+	assert_array((load(TEMPLE_RUIN) as AdventureLocation).get_own_events()).contains_exactly([scenario])
 	# The ambush first: while the Lurker can fight, the beaten one isn't there
 	assert_array(scenario.events).contains_exactly([load(LURKER_AMBUSH), load(OUTCOME_PAGES[Fight.Outcome.WON])])
 	assert_array(scenario.conditions).is_empty()

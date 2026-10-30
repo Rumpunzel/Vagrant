@@ -29,7 +29,7 @@ func test_locations_are_exits_and_not_walked() -> void:
 func test_nested_events_are_not_walked() -> void:
 	var ambush: AdventureEvent = _page("Ambush")
 	var nested: AdventureEvent = _page("Nested")
-	ambush.events.append(nested)
+	ambush.nearby_events.append(nested)
 	_link(nested, _page("Behind"), "Go")
 	assert_array(AdventureEventGraph.new(ambush).pages).contains_exactly([ambush])
 

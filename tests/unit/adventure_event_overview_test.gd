@@ -33,10 +33,10 @@ func test_nested_scenarios_are_switches_inside_switches() -> void:
 	assert_object(overview.get_switch(inner).outer).is_same(overview.get_switch(outer))
 	assert_object(overview.get_entry(inner.events[0]).switch).is_same(overview.get_switch(inner))
 
-func test_sub_events_hang_from_their_event() -> void:
+func test_nearby_events_hang_from_their_source() -> void:
 	var ambush: AdventureEvent = _event("Ambush")
 	var nested: AdventureEvent = _event("Nested")
-	ambush.events.append(nested)
+	ambush.nearby_events.append(nested)
 	var overview: AdventureEventOverview = AdventureEventOverview.new(ambush)
 	var entry: AdventureEventOverview.Entry = overview.get_entry(nested)
 	assert_object(entry.parent).is_same(overview.entries[0])
@@ -58,7 +58,7 @@ func test_hiding_text_names_what_is_hidden_at_the_host() -> void:
 	host.title = "Ruin"
 	var before: AdventureEvent = _event("Birds")
 	var scenario: AdventureEventScenario = _scenario("Lurker", [ambush])
-	host.events = [before, scenario] as Array[AdventureEvent]
+	TestAdventures.list(host, [before, scenario] as Array[AdventureEvent])
 	var entry: AdventureEventOverview.Entry = AdventureEventOverview.new(scenario).entries[0]
 	assert_str(AdventureEventOverview.get_hiding_text(entry, host)).is_equal("Hides Ruin's text and decisions, events before it (Birds), events after it (none)")
 	assert_str(AdventureEventOverview.get_hiding_text(entry, null)).is_equal("Hides the host's text and decisions, events before it, events after it")

@@ -24,7 +24,7 @@ func before_test() -> void:
 	_source = _event("Woman", "She knocks.")
 	_heard = _event("", "You hear knocking.")
 	_source.nearby_events = [_heard] as Array[AdventureEvent]
-	_castle.events = [_source] as Array[AdventureEvent]
+	TestAdventures.list(_castle, [_source] as Array[AdventureEvent])
 
 func test_shows_on_linked_locations() -> void:
 	assert_array(_story.get_nearby_events(_shore)).contains_exactly([_heard])
@@ -75,11 +75,11 @@ func test_plain_pages_get_none() -> void:
 func test_scenario_options_are_sources() -> void:
 	var scenario: AdventureEventScenario = AdventureEventScenario.new()
 	scenario.events = [_source] as Array[AdventureEvent]
-	_castle.events = [scenario] as Array[AdventureEvent]
+	TestAdventures.list(_castle, [scenario] as Array[AdventureEvent])
 	assert_array(_story.get_nearby_events(_shore)).contains_exactly([_heard])
 
 func test_not_twice_when_listed_on_the_page() -> void:
-	_shore.events = [_heard] as Array[AdventureEvent]
+	TestAdventures.list(_shore, [_heard] as Array[AdventureEvent])
 	assert_array(_story.get_nearby_events(_shore)).is_empty()
 
 func _location(title: String, area: AdventureArea) -> AdventureLocation:

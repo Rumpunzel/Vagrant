@@ -83,7 +83,7 @@ func focus_page(page: AdventurePage) -> void: focus_node(_nodes.get(_key(page)))
 func _on_event_card_pressed(event: AdventureEvent, page: AdventurePage) -> void: event_opened.emit(event, page)
 
 func _get_event_card_actions(event: AdventureEvent, page: AdventurePage) -> Dictionary[String, Callable]:
-	if not page is AdventureLocation or not (page as AdventureLocation).events.has(event): return {}
+	if not AdventureGraph.get_listed_on(page).has(event): return {}
 	return {"Remove from here (the file stays)": _remove_event.bind(page, event)}
 
 ## Frames grow with their locations; Alt while dragging lets them go, so they can leave
@@ -140,21 +140,21 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 
 ## Lists [param event] on [param location] too
 func add_event(location: AdventureLocation, event: AdventureEvent) -> void:
-	if location.events.has(event):
+	var events: Array[AdventureEvent] = location.get_own_events()
+	if events.has(event):
 		push_warning("%s is on %s already" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])
 		return
-	var events: Array[AdventureEvent] = location.events.duplicate()
 	events.append(event)
-	_request(location, &"events", events, "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], location)
+	changes_requested.emit(AdventureEventEditing.get_changes_listing(location, events), "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], null)
 
 ## Refused for events stored inside the location's file, which would be lost
 func _remove_event(location: AdventureLocation, event: AdventureEvent) -> void:
 	if AdventureEventEditing.is_inside_file(event):
 		push_warning("%s is stored inside %s's file and would be lost" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])
 		return
-	var events: Array[AdventureEvent] = location.events.duplicate()
+	var events: Array[AdventureEvent] = location.get_own_events()
 	events.erase(event)
-	_request(location, &"events", events, "Remove %s from %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], location)
+	changes_requested.emit(AdventureEventEditing.get_changes_listing(location, events), "Remove %s from %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], null)
 
 func _link(from: AdventurePage, to: AdventurePage) -> void:
 	if from == null or to == null or from == to: return

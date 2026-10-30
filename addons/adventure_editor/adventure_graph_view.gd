@@ -247,7 +247,7 @@ func _make_page_content(page: AdventurePage) -> VBoxContainer:
 		var thumbnail: TextureRect = _make_texture_rect(page.background)
 		thumbnail.custom_minimum_size = THUMBNAIL_SIZE
 		content.add_child(thumbnail)
-	if page is AdventureEventHost: for event: AdventureEvent in (page as AdventureEventHost).events: content.add_child(_make_event_card(event, page))
+	for event: AdventureEvent in AdventureGraph.get_listed_on(page): content.add_child(_make_event_card(event, page))
 	return content
 
 func _make_event_card(event: AdventureEvent, page: AdventurePage) -> Button:

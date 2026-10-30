@@ -58,6 +58,7 @@ func _check_decisions(page: AdventurePage, event: AdventureEvent) -> void:
 
 ## An option without conditions always fits, so the ones after it never show
 func _check_options(scenario: AdventureEventScenario) -> void:
+	if scenario.pick != AdventureEventScenario.Pick.FIRST: return
 	for index: int in scenario.events.size() - 1:
 		var option: AdventureEvent = scenario.events[index]
 		if option == null or not option.conditions.is_empty(): continue

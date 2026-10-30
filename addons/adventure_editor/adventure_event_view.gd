@@ -345,7 +345,7 @@ func _add_switch(switch: AdventureEventOverview.Switch, at: Vector2) -> void:
 	var file: Resource = load(AdventureEventEditing.get_file_path(scenario))
 	var content: VBoxContainer = VBoxContainer.new()
 	content.custom_minimum_size.x = THUMBNAIL_SIZE.x
-	content.add_child(_make_info("Shows the first option that fits. When:"))
+	content.add_child(_make_info("Shows %s. When:" % ("the first option that fits" if scenario.pick == AdventureEventScenario.Pick.FIRST else "every option that fits")))
 	content.add_child(_make_condition_tags(scenario, file))
 	var node: GraphNode = _add_node(_switch_key(scenario), scenario, "%s (scenario)" % AdventureGraph.get_title(scenario), content, at)
 	node.set_slot(0, switch.outer != null, 0, Color.WHITE, false, 0, Color.WHITE)

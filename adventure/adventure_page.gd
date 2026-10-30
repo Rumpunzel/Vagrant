@@ -3,7 +3,7 @@ class_name AdventurePage
 extends AdventurePageReference
 
 ## A page of the story: what it says and what one can do there. Pages behind events are plain pages;
-## [AdventureLocation]s and [AdventureEvent]s also show events ([AdventureEventHost]).
+## [AdventureLocation]s also show events, [AdventureEvent]s are what they show.
 
 @export_placeholder("Title") var title: String
 @export_multiline var description: String

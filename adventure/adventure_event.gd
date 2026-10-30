@@ -1,6 +1,6 @@
 @tool
 class_name AdventureEvent
-extends AdventureEventHost
+extends AdventurePage
 
 ## Shown on the locations listing it (and around them, as a nearby event) while its conditions are met; [member exclusivity] decides
 ## what else stays visible
@@ -33,13 +33,13 @@ func are_all_prerequisites_fullfilled(story: Story) -> bool:
 		if not condition.is_true(story, self): return false
 	return true
 
-## What a host shows for this event, once its prerequisites are met: the event itself (a scenario: one of its events or none)
-func resolve_event(_story: Story) -> AdventureEvent: return self
+## What a location shows for this event, once its prerequisites are met: the event itself (a scenario: the ones it picks)
+func resolve_events(_story: Story) -> Array[AdventureEvent]:
+	var shown: Array[AdventureEvent] = [self]
+	return shown
 
 func get_held_events() -> Array[AdventureEvent]:
-	var held: Array[AdventureEvent] = super()
-	held.append_array(nearby_events)
-	return held
+	return nearby_events.duplicate()
 
 func exclude_base() -> bool:
 	return exclusivity & Exclusivity.EXCLUDE_BASE

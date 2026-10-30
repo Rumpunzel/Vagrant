@@ -64,7 +64,7 @@ static func get_hiding_text(entry: Entry, host: AdventurePage) -> String:
 	var where: AdventurePage = entry.parent_page if entry.parent_page != null and not entry.is_nearby else host
 	var where_name: String = AdventureGraph.get_title(where) if where != null else "the host"
 	var siblings: Array[AdventureEvent] = [ ]
-	if where is AdventureEventHost: siblings = (where as AdventureEventHost).events
+	if where != null: siblings = AdventureGraph.get_listed_on(where)
 	var index: int = siblings.find(entry.listed_as)
 	var before: Array[AdventureEvent] = [ ]
 	var after: Array[AdventureEvent] = [ ]
@@ -98,7 +98,7 @@ func _add(event: AdventureEvent, listed_as: AdventureEvent, parent: Entry, paren
 		inner.parent_page = parent_page
 		inner.outer = switch
 		switches.append(inner)
-		for option: AdventureEvent in event.events: _add(option, listed_as, parent, parent_page, inner)
+		for option: AdventureEvent in inner.scenario.events: _add(option, listed_as, parent, parent_page, inner)
 		return
 	var entry: Entry = Entry.new()
 	entry.event = event
@@ -110,6 +110,4 @@ func _add(event: AdventureEvent, listed_as: AdventureEvent, parent: Entry, paren
 	entry.parent_page = parent_page
 	entry.switch = switch
 	entries.append(entry)
-	for page: AdventurePage in entry.graph.pages:
-		if page is AdventureEventHost: for nested: AdventureEvent in (page as AdventureEventHost).events: _add(nested, nested, entry, page, null)
 	for nearby: AdventureEvent in event.nearby_events: _add(nearby, nearby, entry, event, null, true)

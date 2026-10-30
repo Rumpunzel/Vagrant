@@ -111,7 +111,7 @@ func test_host_reference_returns_to_the_page_the_event_was_on() -> void:
 	var back_to_host: AdventureDecision = _decision("Return", null)
 	back_to_host.transition = AdventureHostReference.new()
 	inside.decisions = [back_to_host] as Array[AdventureDecision]
-	_start.events = [event] as Array[AdventureEvent]
+	TestAdventures.list(_start, [event] as Array[AdventureEvent])
 	_story.enter_page(_start)
 	# The event's decisions come first
 	await _choose(0)
@@ -129,7 +129,7 @@ func test_previous_location_is_the_page_before_the_host() -> void:
 	var flee: AdventureDecision = _decision("Away", null)
 	flee.transition = AdventurePreviousLocationReference.new()
 	deeper.decisions = [flee] as Array[AdventureDecision]
-	_next.events = [event] as Array[AdventureEvent]
+	TestAdventures.list(_next, [event] as Array[AdventureEvent])
 	await _choose(0)
 	# On the host: the event's decision first
 	await _choose(0)

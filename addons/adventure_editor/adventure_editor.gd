@@ -139,10 +139,8 @@ func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent
 		var index: int = _event_list.add_item(INDENT.repeat(depth) + _describe_event(event))
 		_event_list.set_item_metadata(index, event)
 		_event_list.set_item_tooltip(index, event.resource_path)
-	var nested: Array[AdventureEvent] = event.events.duplicate()
+	var nested: Array[AdventureEvent] = AdventureGraph.get_listed_on(event)
 	nested.append_array(event.nearby_events)
-	if not event is AdventureEventScenario:
-		for page: AdventurePage in AdventureEventGraph.new(event).pages.slice(1): if page is AdventureEventHost: nested.append_array((page as AdventureEventHost).events)
 	for sub_event: AdventureEvent in nested: _list_event(sub_event, depth + 1, listed)
 
 func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
@@ -217,7 +215,7 @@ func _create_location(title: String, area: AdventureArea, new_area_name: String,
 
 ## The adventure's events (those met and every file in an events folder) not on [param location] yet, and any other file
 func _offer_events(location: AdventureLocation) -> void:
-	_offer(location.events, func(event: AdventureEvent) -> void: _map.add_event(location, event), _map)
+	_offer(location.get_own_events(), func(event: AdventureEvent) -> void: _map.add_event(location, event), _map)
 
 ## For "Add nearby event…": shown around [param event]'s locations
 func _offer_nearby_events(event: AdventureEvent) -> void:
@@ -308,13 +306,12 @@ func _show_problem(index: int) -> void:
 	_event_view.focus_resource.call_deferred(problem.page)
 
 ## Creates the event's file and lists it on [param host] (a location, or a scenario as its last option), as one undo step
-func _create_event(title: String, host: AdventureEventHost, scenario: bool) -> void:
+func _create_event(title: String, host: AdventurePage, scenario: bool) -> void:
 	var event: AdventureEvent = AdventureEventEditing.make_event(title, scenario)
 	var files: Dictionary[String, Resource] = {AdventureEventEditing.get_event_path(host, title): event}
-	var events: Array[AdventureEvent] = host.events.duplicate()
+	var events: Array[AdventureEvent] = AdventureGraph.get_listed_on(host)
 	events.append(event)
-	var changes: Array[Array] = [[host, &"events", events, load(AdventureEventEditing.get_file_path(host))]]
-	_edits.create(files, changes, "New %s on %s" % [title, AdventureGraph.get_title(host)])
+	_edits.create(files, AdventureEventEditing.get_changes_listing(host, events), "New %s on %s" % [title, AdventureGraph.get_title(host)])
 
 ## Asks first; the starting page can't go
 func _ask_to_delete(resource: Resource) -> void:

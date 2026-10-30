@@ -86,6 +86,13 @@ func get_top_events() -> Array[AdventureEvent]:
 		if get_hosts(event).any(func(host: AdventurePage) -> bool: return pages.has(host)): top.append(event)
 	return top
 
+## What [param host] lists: a location its own events (its scenario's), a scenario its options; other pages nothing
+static func get_listed_on(host: AdventurePage) -> Array[AdventureEvent]:
+	if host is AdventureLocation: return (host as AdventureLocation).get_own_events()
+	var listed: Array[AdventureEvent] = [ ]
+	if host is AdventureEventScenario: listed.assign((host as AdventureEventScenario).events)
+	return listed
+
 ## A page linked both directly and through an event counts as linked directly
 func _add_link(from: AdventurePage, to: AdventurePage, through_event: bool) -> void:
 	if from == to: return
@@ -109,8 +116,7 @@ func _get_event_targets(host: AdventurePage) -> Array[AdventurePage]:
 	return targets
 
 func _add_events(host: AdventurePage, hidden: Array[AdventurePage]) -> void:
-	if not host is AdventureEventHost: return
-	for event: AdventureEvent in (host as AdventureEventHost).events:
+	for event: AdventureEvent in get_listed_on(host):
 		if not event_hosts.has(event): event_hosts[event] = [ ]
 		if not event_hosts[event].has(host): event_hosts[event].append(host)
 		if not hidden.has(event): hidden.append(event)

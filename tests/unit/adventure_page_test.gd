@@ -38,21 +38,21 @@ func test_event_adds_to_description_and_decisions() -> void:
 	var event_decision: AdventureDecision = _decision("Fight")
 	page.decisions = [base_decision] as Array[AdventureDecision]
 	event.decisions = [event_decision] as Array[AdventureDecision]
-	page.events = [event] as Array[AdventureEvent]
+	TestAdventures.list(page, [event] as Array[AdventureEvent])
 	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p][p]A hiss![/p]")
 	assert_array(page.get_decisions(_story)).is_equal([event_decision, base_decision])
 	assert_array(page.get_events(_story)).is_equal([event])
 
 func test_event_title_overrides() -> void:
 	var page: AdventureLocation = _location("Ruin", "")
-	page.events = [_event("Ambush", "")] as Array[AdventureEvent]
+	TestAdventures.list(page, [_event("Ambush", "")] as Array[AdventureEvent])
 	assert_str(page.get_page_title(_story)).is_equal("Ambush")
 
 func test_event_with_false_condition_is_ignored() -> void:
 	var page: AdventureLocation = _location("Ruin", "Damp.")
 	var event: AdventureEvent = _event("Ambush", "A hiss!")
 	event.conditions = [FalseCondition.new()] as Array[AdventureCondition]
-	page.events = [event] as Array[AdventureEvent]
+	TestAdventures.list(page, [event] as Array[AdventureEvent])
 	assert_str(page.get_page_title(_story)).is_equal("Ruin")
 	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p]")
 	assert_array(page.get_events(_story)).is_empty()
@@ -69,7 +69,7 @@ func test_exclude_above_drops_earlier_events() -> void:
 	var first: AdventureEvent = _event("", "First.")
 	var second: AdventureEvent = _event("", "Second.")
 	second.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_ABOVE
-	page.events = [first, second] as Array[AdventureEvent]
+	TestAdventures.list(page, [first, second] as Array[AdventureEvent])
 	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p][p]Second.[/p]")
 	assert_array(page.get_events(_story)).is_equal([second])
 
@@ -77,7 +77,7 @@ func test_exclude_below_stops_later_events() -> void:
 	var page: AdventureLocation = _location("Ruin", "Damp.")
 	var first: AdventureEvent = _event("", "First.")
 	first.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BELOW
-	page.events = [first, _event("", "Second.")] as Array[AdventureEvent]
+	TestAdventures.list(page, [first, _event("", "Second.")] as Array[AdventureEvent])
 	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p][p]First.[/p]")
 	assert_array(page.get_events(_story)).is_equal([first])
 
@@ -88,7 +88,7 @@ func test_exclude_base_and_below_hides_the_page_itself() -> void:
 	var event_decision: AdventureDecision = _decision("Fight")
 	event.decisions = [event_decision] as Array[AdventureDecision]
 	event.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BASE | AdventureEvent.Exclusivity.EXCLUDE_BELOW
-	page.events = [event, _event("", "Second.")] as Array[AdventureEvent]
+	TestAdventures.list(page, [event, _event("", "Second.")] as Array[AdventureEvent])
 	assert_str(page.get_description(_story)).is_equal("[p]A hiss![/p]")
 	assert_array(page.get_decisions(_story)).is_equal([event_decision])
 
@@ -98,7 +98,7 @@ func test_exclude_base_alone_hides_the_page_itself() -> void:
 	var event: AdventureEvent = _event("", "A hiss!")
 	event.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BASE
 	var second: AdventureEvent = _event("", "Second.")
-	page.events = [event, second] as Array[AdventureEvent]
+	TestAdventures.list(page, [event, second] as Array[AdventureEvent])
 	# Later events still show, only the page's own part is gone
 	assert_str(page.get_description(_story)).is_equal("[p]A hiss![/p][p]Second.[/p]")
 	assert_array(page.get_decisions(_story)).is_empty()
@@ -109,7 +109,7 @@ func test_dropped_event_does_not_hide_base() -> void:
 	hiding.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BASE
 	var dropping: AdventureEvent = _event("", "Second.")
 	dropping.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_ABOVE
-	page.events = [hiding, dropping] as Array[AdventureEvent]
+	TestAdventures.list(page, [hiding, dropping] as Array[AdventureEvent])
 	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p][p]Second.[/p]")
 
 func test_hide_all_shows_only_the_event() -> void:
@@ -119,7 +119,7 @@ func test_hide_all_shows_only_the_event() -> void:
 	var event_decision: AdventureDecision = _decision("Fight")
 	event.decisions = [event_decision] as Array[AdventureDecision]
 	event.exclusivity = 7
-	page.events = [_event("", "Before."), event, _event("", "After.")] as Array[AdventureEvent]
+	TestAdventures.list(page, [_event("", "Before."), event, _event("", "After.")] as Array[AdventureEvent])
 	assert_str(page.get_description(_story)).is_equal("[p]A hiss![/p]")
 	assert_array(page.get_decisions(_story)).is_equal([event_decision])
 	assert_array(page.get_events(_story)).is_equal([event])
@@ -135,7 +135,7 @@ func test_background_and_ambience_fallbacks() -> void:
 	var event: AdventureEvent = _event("", "")
 	event.background = PlaceholderTexture2D.new()
 	event.ambience = AudioStreamGenerator.new()
-	page.events = [event] as Array[AdventureEvent]
+	TestAdventures.list(page, [event] as Array[AdventureEvent])
 	assert_object(page.get_background(_story)).is_same(event.background)
 	assert_object(page.get_ambience(_story)).is_same(event.ambience)
 

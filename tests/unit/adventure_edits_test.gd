@@ -67,7 +67,7 @@ func test_changes_can_name_their_file() -> void:
 
 func test_new_files_are_part_of_the_step() -> void:
 	var page: AdventureEvent = _page("New")
-	var host: AdventureEvent = _page("Host")
+	var host: AdventureEventScenario = AdventureEventScenario.new()
 	var files: Dictionary[String, Resource] = {NEW_FILE: page}
 	var events: Array[AdventureEvent] = [page]
 	var changes: Array[Array] = [[host, &"events", events]]
@@ -93,7 +93,7 @@ func test_deleting_trashes_the_file_and_undo_restores_the_links() -> void:
 	var files: Dictionary[String, Resource] = {NEW_FILE: page}
 	var changes: Array[Array] = [ ]
 	_edits.create(files, changes, "New")
-	var host: AdventureEvent = _page("Host")
+	var host: AdventureEventScenario = AdventureEventScenario.new()
 	host.events = [page] as Array[AdventureEvent]
 	var forgetting: Array[Array] = [[host, &"events", [] as Array[AdventureEvent]]]
 	_edits.delete(page, forgetting, "Delete")

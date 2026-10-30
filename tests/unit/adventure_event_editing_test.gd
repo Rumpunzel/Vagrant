@@ -27,7 +27,7 @@ func test_cycles_through_held_pages() -> void:
 	assert_bool(AdventureEventEditing.would_loop(deeper, deeper)).is_true()
 	assert_bool(AdventureEventEditing.would_loop(ambush, deeper)).is_false()
 	var nested: AdventureEvent = _page("")
-	deeper.events.append(nested)
+	deeper.nearby_events.append(nested)
 	assert_bool(AdventureEventEditing.would_loop(nested, lost)).is_true()
 
 func test_transitions_and_host_references_break_cycles() -> void:
@@ -92,7 +92,7 @@ func test_monster_conditions_point_at_the_spawning_page() -> void:
 	assert_int(other.state).is_equal(AdventureMonsterCondition.State.INCAPACITATED)
 	# Inside the file holding it: pointing back would loop
 	var inside: AdventureEvent = _page("res://events/ambush.tres::Resource_n1")
-	ambush.events.append(inside)
+	ambush.nearby_events.append(inside)
 	assert_object(AdventureEventEditing.make_monster_condition(AdventureMonsterCondition.State.DEAD, lurker, 0, ambush, inside)).is_null()
 
 func test_special_references() -> void:
@@ -110,7 +110,8 @@ func test_special_references() -> void:
 	assert_bool(outlet.goes_back()).is_false()
 
 func test_forgetting_a_page() -> void:
-	var shore: AdventureEvent = _page("res://locations/shore.tres")
+	var shore: AdventureLocation = AdventureLocation.new()
+	shore.resource_path = "res://locations/shore.tres"
 	var ruin: AdventureEvent = _page("res://locations/ruin.tres")
 	var doomed: AdventureEvent = _page("")
 	var to_doomed: AdventureDecision = AdventureDecision.new()
@@ -121,16 +122,30 @@ func test_forgetting_a_page() -> void:
 	fight.transition = ruin
 	fight.failure_transition = doomed
 	shore.decisions = [to_doomed, elsewhere, fight] as Array[AdventureDecision]
-	shore.events = [doomed] as Array[AdventureEvent]
+	TestAdventures.list(shore, [doomed] as Array[AdventureEvent])
 	ruin.nearby_events = [doomed] as Array[AdventureEvent]
 	var roots: Array[AdventurePage] = [shore, ruin]
 	var changes: Array[Array] = AdventureEventEditing.get_changes_forgetting(doomed, roots)
 	assert_array(changes).contains_exactly_in_any_order([
 		[fight, &"failure_transition", null, shore],
 		[shore, &"decisions", [elsewhere, fight], shore],
-		[shore, &"events", [], shore],
+		[shore.scenario, &"events", [], shore],
 		[ruin, &"nearby_events", [], ruin],
 	])
+
+func test_listing_on_a_location_uses_its_own_scenario() -> void:
+	var ruin: AdventureLocation = AdventureLocation.new()
+	var ambush: AdventureEvent = _page("res://events/ambush.tres")
+	var events: Array[AdventureEvent] = [ambush]
+	var changes: Array[Array] = AdventureEventEditing.get_changes_listing(ruin, events)
+	assert_int(changes.size()).is_equal(1)
+	assert_object(changes[0][0]).is_same(ruin)
+	assert_str(changes[0][1]).is_equal("scenario")
+	var own: AdventureEventScenario = changes[0][2]
+	assert_int(own.pick).is_equal(AdventureEventScenario.Pick.ALL)
+	assert_array(own.events).contains_exactly([ambush])
+	ruin.scenario = own
+	assert_array(AdventureEventEditing.get_changes_listing(ruin, [ ] as Array[AdventureEvent])).is_equal([[own, &"events", [ ], ruin]])
 
 func test_forgetting_an_area() -> void:
 	var swamp: AdventureArea = AdventureArea.new()

@@ -30,7 +30,7 @@ func test_empty_fights_and_saves_inside_events() -> void:
 	var save: AdventureSaveDecision = AdventureSaveDecision.new()
 	save.description = "Hide"
 	ambush.decisions = [fight, save] as Array[AdventureDecision]
-	_ruin.events.append(ambush)
+	TestAdventures.add(_ruin, ambush)
 	var problems: Array[AdventureProblems.Problem] = AdventureProblems.new(AdventureGraph.new(_adventure()), [ ] as Array[AdventureEvent]).problems
 	assert_array(problems.map(func(problem: AdventureProblems.Problem) -> String: return problem.text)).contains_exactly([
 		"Ambush, \"Fight!\": the fight has no enemies",
@@ -59,7 +59,7 @@ func test_options_after_one_without_conditions() -> void:
 	never.conditions = [AdventureIsAlwaysTrueCondition.new()] as Array[AdventureCondition]
 	var scenario: AdventureEventScenario = AdventureEventScenario.new()
 	scenario.events = [always, never] as Array[AdventureEvent]
-	_ruin.events.append(scenario)
+	TestAdventures.add(_ruin, scenario)
 	assert_array(_texts([ ])).contains_exactly(["Never never shows: Always comes first and has no conditions"])
 
 func test_events_listed_nowhere() -> void:
@@ -70,7 +70,7 @@ func test_events_listed_nowhere() -> void:
 	var behind: AdventurePage = AdventurePage.new()
 	behind.title = "Behind"
 	_link(source, behind)
-	_ruin.events.append(source)
+	TestAdventures.add(_ruin, source)
 	assert_array(_texts([lost, heard, source])).contains_exactly(["Forgotten is listed on no location"])
 
 func _texts(event_files: Array[AdventureEvent]) -> Array:

@@ -50,8 +50,7 @@ func test_nothing_written() -> void:
 func test_held_pages() -> void:
 	var nested: AdventureEvent = AdventureEvent.new()
 	var nearby: AdventureEvent = AdventureEvent.new()
-	_inside.events = [nested] as Array[AdventureEvent]
-	_inside.nearby_events = [nearby] as Array[AdventureEvent]
+	_inside.nearby_events = [nested, nearby] as Array[AdventureEvent]
 	var other_file: AdventureDecision = AdventureDecision.new()
 	other_file.transition = AdventureTransition.new()
 	_inside.decisions = [other_file] as Array[AdventureDecision]
