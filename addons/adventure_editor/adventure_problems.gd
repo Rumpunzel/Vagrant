@@ -50,9 +50,9 @@ func _check_decisions(page: AdventurePage, event: AdventurePage) -> void:
 		var where: String = "%s, \"%s\"" % [AdventureGraph.get_title(page), decision.description.get_slice("\n", 0)]
 		if decision is AdventureFightDecision and (decision as AdventureFightDecision).enemies.is_empty(): _add("%s: the fight has no enemies" % where, page, event)
 		if decision is AdventureSaveDecision and (decision as AdventureSaveDecision).attribute == null: _add("%s: the save has no attribute" % where, page, event)
-		for reference: AdventurePageReference in decision.get_page_references():
-			if reference is AdventureTransition and (reference as AdventureTransition).leads_nowhere(): _add("%s leads to a missing file" % where, page, event)
-			if event == null and (reference is AdventureHostReference or reference is AdventurePreviousLocationReference):
+		for link: AdventurePageReference in decision.get_page_references():
+			if link is AdventureTransition and (link as AdventureTransition).leads_nowhere(): _add("%s leads to a missing file" % where, page, event)
+			if event == null and (link is AdventureHostReference or link is AdventurePreviousLocationReference):
 				_add("%s: \"Host\" and \"Previous location\" only work inside events" % where, page, event)
 
 ## An option without conditions always fits, so the ones after it never show

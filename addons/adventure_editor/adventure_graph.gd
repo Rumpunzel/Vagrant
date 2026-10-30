@@ -62,7 +62,7 @@ func get_link(from: AdventurePage, to: AdventurePage) -> Link:
 
 func get_hosts(event: AdventurePage) -> Array[AdventurePage]:
 	var hosts: Array[AdventurePage] = [ ]
-	hosts.assign(event_hosts.get(event, [ ]))
+	hosts.assign(event_hosts.get(event, [ ]) as Array)
 	return hosts
 
 ## The map pages [param event] happens on, also through the events (and scenarios) it is part of
@@ -118,7 +118,7 @@ static func _get_targets(decisions: Array[AdventureDecision]) -> Array[Adventure
 	var targets: Array[AdventurePage] = [ ]
 	for decision: AdventureDecision in decisions:
 		if decision == null: continue
-		for reference: AdventurePageReference in decision.get_page_references():
-			var target: AdventurePage = reference.get_adventure_page()
+		for link: AdventurePageReference in decision.get_page_references():
+			var target: AdventurePage = link.get_adventure_page()
 			if target != null: targets.append(target)
 	return targets

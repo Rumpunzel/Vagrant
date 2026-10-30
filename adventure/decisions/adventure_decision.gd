@@ -10,9 +10,9 @@ class Outcome:
 	## Empty: this outcome does nothing
 	var consequences_property: StringName
 
-	func _init(outcome_name: String, reference: StringName, effects: StringName) -> void:
+	func _init(outcome_name: String, reference_name: StringName, effects: StringName) -> void:
 		name = outcome_name
-		reference_property = reference
+		reference_property = reference_name
 		consequences_property = effects
 
 @export_multiline var description: String
@@ -36,15 +36,15 @@ func get_reference(outcome: Outcome) -> AdventurePageReference: return get(outco
 
 func get_consequences_of(outcome: Outcome) -> Array[AdventureConsequence]:
 	var effects: Array[AdventureConsequence] = [ ]
-	if not outcome.consequences_property.is_empty(): effects.assign(get(outcome.consequences_property))
+	if not outcome.consequences_property.is_empty(): effects.assign(get(outcome.consequences_property) as Array)
 	return effects
 
 ## Where its outcomes lead, those that lead somewhere
 func get_page_references() -> Array[AdventurePageReference]:
 	var references: Array[AdventurePageReference] = [ ]
 	for outcome: Outcome in get_outcomes():
-		var reference: AdventurePageReference = get_reference(outcome)
-		if reference != null: references.append(reference)
+		var link: AdventurePageReference = get_reference(outcome)
+		if link != null: references.append(link)
 	return references
 
 func get_icon() -> Texture2D: return _icon

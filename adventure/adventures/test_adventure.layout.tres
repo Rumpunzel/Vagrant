@@ -48,7 +48,6 @@ positions = Dictionary[String, Vector2]({
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/host": Vector2(-520, 260),
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/uid://dffxphat87a8a": Vector2(-800, 260),
 "uid://dk3q4ia5u7q6m": Vector2(620, 300),
-"uid://f7a1x731o4s8": Vector2(80, 240),
 "uid://ycd6xhx346l6": Vector2(160, 380)
 })
 special_links = Dictionary[String, String]({

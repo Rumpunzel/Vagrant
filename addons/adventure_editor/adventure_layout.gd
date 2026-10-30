@@ -29,10 +29,14 @@ static func get_key(resource: Resource) -> String:
 func get_placed_pages() -> Array[AdventurePage]:
 	var placed: Array[AdventurePage] = [ ]
 	for key: String in positions:
-		if not is_location_key(key) or not ResourceLoader.exists(key): continue
+		if not is_location_key(key) or not _exists(key): continue
 		var page: AdventurePage = load(key) as AdventurePage
 		if page != null: placed.append(page)
 	return placed
+
+## A deleted file's UID is unknown, which [method ResourceLoader.exists] reports as an error
+static func _exists(key: String) -> bool:
+	return (not key.begins_with("uid://") or ResourceUID.has_id(ResourceUID.text_to_id(key))) and ResourceLoader.exists(key)
 
 ## A map node's key is one resource's; event view keys join several
 static func is_location_key(key: String) -> bool: return key.count("://") == 1

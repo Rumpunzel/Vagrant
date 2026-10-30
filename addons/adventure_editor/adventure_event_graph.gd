@@ -102,11 +102,11 @@ static func describe_consequences(consequences: Array[AdventureConsequence]) -> 
 	for consequence: AdventureConsequence in consequences: if consequence != null: texts.append(consequence.describe())
 	return ", ".join(texts)
 
-static func _point(outlet: Outlet, reference: AdventurePageReference) -> void:
-	if reference == null: return
-	outlet.to_host = reference is AdventureHostReference
-	outlet.to_previous = reference is AdventurePreviousLocationReference
-	outlet.target = reference.get_adventure_page()
+static func _point(outlet: Outlet, link: AdventurePageReference) -> void:
+	if link == null: return
+	outlet.to_host = link is AdventureHostReference
+	outlet.to_previous = link is AdventurePreviousLocationReference
+	outlet.target = link.get_adventure_page()
 
 func _reach(outlet: Outlet, depth: int) -> void:
 	if outlet.to_host: leads_to_host = true

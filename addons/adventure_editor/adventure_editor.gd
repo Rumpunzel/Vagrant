@@ -334,7 +334,10 @@ func _delete(resource: Resource, title: String) -> void:
 		var roots: Array[AdventurePage] = _graph.pages.duplicate()
 		for event: AdventurePage in _all_events: if not roots.has(event): roots.append(event)
 		changes = AdventureEventEditing.get_changes_forgetting(resource as AdventurePage, roots)
+	var key: String = AdventureLayout.get_key(resource)
 	_edits.delete(resource, changes, "Delete %s" % title)
+	_layout.positions.erase(key)
+	_save_layout()
 
 func _on_property_edited(_property: String) -> void: rebuild()
 

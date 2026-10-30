@@ -197,8 +197,8 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 		return
 	var story_decision: AdventureDecision = story_choice.get_adventure_decision()
 	var shown_on: AdventurePage = _current_story_page.adventure_page
-	var owner: AdventurePage = shown_on.find_decision_owner(story_decision)
-	if owner != null and owner != shown_on: _host = shown_on
+	var holder: AdventurePage = shown_on.find_decision_owner(story_decision)
+	if holder != null and holder != shown_on: _host = shown_on
 	if story_decision != AdventureDecision.get_turn_back():
 		var decision_log: Array[StoryChoice] = _decision_log.get_or_add(story_decision, [] as Array[StoryChoice])
 		decision_log.append(story_choice)

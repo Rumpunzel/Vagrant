@@ -120,7 +120,7 @@ func get_held_pages() -> Array[AdventurePage]:
 		queue.append_array(page.nearby_events)
 		for decision: AdventureDecision in page.decisions:
 			if decision == null: continue
-			for reference: AdventurePageReference in decision.get_page_references(): if reference is AdventurePage: queue.append(reference as AdventurePage)
+			for link: AdventurePageReference in decision.get_page_references(): if link is AdventurePage: queue.append(link as AdventurePage)
 	return held
 
 ## The locations (pages with an area) this page's decisions lead to by their plain transition: where one walks to, which is what "nearby" means;
@@ -168,8 +168,8 @@ func exclude_above() -> bool:
 func find_decision_owner(decision: AdventureDecision) -> AdventurePage:
 	if decisions.has(decision): return self
 	for event: AdventurePage in events:
-		var owner: AdventurePage = event.find_decision_owner(decision)
-		if owner: return owner
+		var holder: AdventurePage = event.find_decision_owner(decision)
+		if holder: return holder
 	return null
 
 func get_adventure_page() -> AdventurePage:
