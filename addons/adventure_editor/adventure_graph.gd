@@ -22,7 +22,7 @@ var pages: Array[AdventurePage] = [ ]
 var areas: Array[AdventureArea] = [ ]
 var links: Array[Link] = [ ]
 ## Every event met on the walk (also nested ones and those of pages behind events), in order, with the pages listing it in their events
-var event_hosts: Dictionary[AdventurePage, Array] = {}
+var event_hosts: Dictionary[AdventureEvent, Array] = {}
 ## Pages not reached from the starting page
 var unreachable: Array[AdventurePage] = [ ]
 
@@ -40,7 +40,8 @@ func _walk(queue: Array[AdventurePage]) -> void:
 		var page: AdventurePage = queue.pop_front()
 		if pages.has(page): continue
 		pages.append(page)
-		if page.area != null and not areas.has(page.area): areas.append(page.area)
+		var area: AdventureArea = page.area if page is AdventureLocation else null
+		if area != null and not areas.has(area): areas.append(area)
 		for target: AdventurePage in _get_targets(page.decisions):
 			_add_link(page, target, false)
 			queue.append(target)
@@ -60,28 +61,28 @@ func get_link(from: AdventurePage, to: AdventurePage) -> Link:
 	for link: Link in links: if link.from == from and link.to == to: return link
 	return null
 
-func get_hosts(event: AdventurePage) -> Array[AdventurePage]:
+func get_hosts(event: AdventureEvent) -> Array[AdventurePage]:
 	var hosts: Array[AdventurePage] = [ ]
 	hosts.assign(event_hosts.get(event, [ ]) as Array)
 	return hosts
 
 ## The map pages [param event] happens on, also through the events (and scenarios) it is part of
-func get_location_hosts(event: AdventurePage) -> Array[AdventurePage]:
-	var locations: Array[AdventurePage] = [ ]
+func get_location_hosts(event: AdventureEvent) -> Array[AdventureLocation]:
+	var locations: Array[AdventureLocation] = [ ]
 	var queue: Array[AdventurePage] = get_hosts(event)
 	var seen: Array[AdventurePage] = [ ]
 	while not queue.is_empty():
 		var host: AdventurePage = queue.pop_front()
 		if seen.has(host): continue
 		seen.append(host)
-		if pages.has(host): locations.append(host)
-		else: queue.append_array(get_hosts(host))
+		if host is AdventureLocation and pages.has(host): locations.append(host as AdventureLocation)
+		elif host is AdventureEvent: queue.append_array(get_hosts(host as AdventureEvent))
 	return locations
 
 ## Events listed on map pages, in the order met
-func get_top_events() -> Array[AdventurePage]:
-	var top: Array[AdventurePage] = [ ]
-	for event: AdventurePage in event_hosts:
+func get_top_events() -> Array[AdventureEvent]:
+	var top: Array[AdventureEvent] = [ ]
+	for event: AdventureEvent in event_hosts:
 		if get_hosts(event).any(func(host: AdventurePage) -> bool: return pages.has(host)): top.append(event)
 	return top
 
@@ -103,12 +104,13 @@ func _get_event_targets(host: AdventurePage) -> Array[AdventurePage]:
 		index += 1
 		_add_events(page, hidden)
 		for target: AdventurePage in _get_targets(page.decisions):
-			if target.area != null: targets.append(target)
+			if target is AdventureLocation: targets.append(target)
 			elif not hidden.has(target): hidden.append(target)
 	return targets
 
 func _add_events(host: AdventurePage, hidden: Array[AdventurePage]) -> void:
-	for event: AdventurePage in host.events:
+	if not host is AdventureEventHost: return
+	for event: AdventureEvent in (host as AdventureEventHost).events:
 		if not event_hosts.has(event): event_hosts[event] = [ ]
 		if not event_hosts[event].has(host): event_hosts[event].append(host)
 		if not hidden.has(event): hidden.append(event)

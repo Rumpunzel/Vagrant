@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://bxwqtk0p80o4g"]
+[gd_resource type="Resource" script_class="AdventureEvent" format=3 uid="uid://bxwqtk0p80o4g"]
 
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="1_6v84y"]
 [ext_resource type="Texture2D" uid="uid://bc6smekfx7nam" path="res://assets/monster_portraits/lurker.jpg" id="1_74683"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_74683"]
-[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="3_1x56p"]
+[ext_resource type="Script" uid="uid://elib8bc2fnvu" path="res://adventure/adventure_event.gd" id="3_1x56p_event"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_70bai"]
 [ext_resource type="Script" uid="uid://b8exmtc8feoad" path="res://adventure/decisions/adventure_fight_decision.gd" id="5_hg3kg"]
 [ext_resource type="Script" uid="uid://1342yb3eb2bh" path="res://characters/monsters/monster_profile.gd" id="5_rh2nm"]
@@ -42,11 +42,11 @@ transition = SubResource("Resource_to_host")
 metadata/_custom_type_script = "uid://b8exmtc8feoad"
 
 [resource]
-script = ExtResource("3_1x56p")
+script = ExtResource("3_1x56p_event")
+conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurker_can_fight")])
+exclusivity = 7
 title = "Lurker Ambush"
 description = "Something foul and wicked your way comes!"
 background = ExtResource("1_74683")
-conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurker_can_fight")])
 decisions = Array[ExtResource("2_74683")]([SubResource("Resource_2rcic")])
-exclusivity = 7
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

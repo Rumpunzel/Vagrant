@@ -6,11 +6,11 @@ extends GraphEdit
 ## Shared by the adventure editor's graphs: page nodes (background, event cards), frames, dashed links, selection to the Inspector, positions in the [AdventureLayout]
 
 ## [param host]: the page whose card was clicked, if any
-signal event_opened(event: AdventurePage, host: AdventurePage)
+signal event_opened(event: AdventureEvent, host: AdventurePage)
 ## Nodes moved; their positions are in [member layout] already
 signal layout_changed
 ## Start the game at [param page]; [param event]: the event it is part of, none for a location
-signal play_requested(page: AdventurePage, event: AdventurePage)
+signal play_requested(page: AdventurePage, event: AdventureEvent)
 ## Its nodes' positions were forgotten; showing it again puts them back in their default places
 signal tidied
 ## A location, event or area to delete: what points at it goes, its file to the trash ([AdventureEditor] asks first)
@@ -86,10 +86,10 @@ func focus_resource(resource: Resource) -> void:
 			focus_node(element as GraphNode)
 			return
 
-@abstract func _on_event_card_pressed(event: AdventurePage, page: AdventurePage) -> void
+@abstract func _on_event_card_pressed(event: AdventureEvent, page: AdventurePage) -> void
 
 ## What right-clicking [param event]'s card on [param page] offers
-func _get_event_card_actions(_event: AdventurePage, _page: AdventurePage) -> Dictionary[String, Callable]: return {}
+func _get_event_card_actions(_event: AdventureEvent, _page: AdventurePage) -> Dictionary[String, Callable]: return {}
 
 ## A context menu at the mouse, for [AdventureEditor]
 func show_actions(actions: Dictionary[String, Callable]) -> void: _show_menu(actions)
@@ -247,10 +247,10 @@ func _make_page_content(page: AdventurePage) -> VBoxContainer:
 		var thumbnail: TextureRect = _make_texture_rect(page.background)
 		thumbnail.custom_minimum_size = THUMBNAIL_SIZE
 		content.add_child(thumbnail)
-	for event: AdventurePage in page.events: content.add_child(_make_event_card(event, page))
+	if page is AdventureEventHost: for event: AdventureEvent in (page as AdventureEventHost).events: content.add_child(_make_event_card(event, page))
 	return content
 
-func _make_event_card(event: AdventurePage, page: AdventurePage) -> Button:
+func _make_event_card(event: AdventureEvent, page: AdventurePage) -> Button:
 	var card: Button = Button.new()
 	card.text = AdventureGraph.get_title(event)
 	card.tooltip_text = "%s: %s" % ["Scenario" if event is AdventureEventScenario else "Event", event.resource_path]

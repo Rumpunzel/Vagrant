@@ -28,7 +28,7 @@ class Outlet:
 
 	func goes_back() -> bool: return target == null and not to_host and not to_previous and not to_check
 
-var event: AdventurePage
+var event: AdventureEvent
 ## The event first, then the pages behind it
 var pages: Array[AdventurePage] = [ ]
 ## Locations (pages with an area) it leads to
@@ -38,7 +38,7 @@ var leads_to_host: bool = false
 ## Steps from the event (pages, exits), for placing nodes
 var depths: Dictionary[AdventurePage, int] = {}
 
-func _init(root_event: AdventurePage) -> void:
+func _init(root_event: AdventureEvent) -> void:
 	event = root_event
 	pages.append(root_event)
 	depths[root_event] = 0
@@ -112,5 +112,5 @@ func _reach(outlet: Outlet, depth: int) -> void:
 	if outlet.to_host: leads_to_host = true
 	if outlet.target == null or depths.has(outlet.target): return
 	depths[outlet.target] = depth
-	if outlet.target.area != null: exits.append(outlet.target)
+	if outlet.target is AdventureLocation: exits.append(outlet.target)
 	else: pages.append(outlet.target)

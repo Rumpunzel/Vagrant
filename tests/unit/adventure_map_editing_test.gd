@@ -30,7 +30,7 @@ func test_unlink_keeps_fights_saves_and_other_links() -> void:
 func test_new_location_and_area() -> void:
 	var area: AdventureArea = AdventureMapEditing.make_area("Swamp")
 	assert_str(area.name).is_equal("Swamp")
-	var page: AdventurePage = AdventureMapEditing.make_location("Temple Ruin", area)
+	var page: AdventureLocation = AdventureMapEditing.make_location("Temple Ruin", area)
 	assert_str(page.title).is_equal("Temple Ruin")
 	assert_object(page.area).is_same(area)
 

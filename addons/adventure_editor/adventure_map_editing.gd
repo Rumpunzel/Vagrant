@@ -19,11 +19,11 @@ static func without_links(page: AdventurePage, to: AdventurePage) -> Array[Adven
 		if not leads_there or decision is AdventureDiceDecision: kept.append(decision)
 	return kept
 
-static func make_location(title: String, area: AdventureArea) -> AdventurePage:
-	var page: AdventurePage = AdventurePage.new()
-	page.title = title
-	page.area = area
-	return page
+static func make_location(title: String, area: AdventureArea) -> AdventureLocation:
+	var location: AdventureLocation = AdventureLocation.new()
+	location.title = title
+	location.area = area
+	return location
 
 static func make_area(area_name: String) -> AdventureArea:
 	var area: AdventureArea = AdventureArea.new()

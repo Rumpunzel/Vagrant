@@ -4,7 +4,7 @@ extends Button
 
 ## An event in the map's sidebar; dragged onto a location, lists it there ([AdventureMapView]); pressed, opens it in the events tab
 
-var event: AdventurePage
+var event: AdventureEvent
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	var preview: Button = Button.new()

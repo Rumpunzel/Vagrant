@@ -162,6 +162,39 @@ The graph edits structure (links, new things, order), the Inspector edits conten
 - Changes may name the file they are stored in ([resource, property, value, file]).
 - **Nearby events can stay in their source's area** (`AdventurePage.nearby_stays_in_area`).
 
+## Encounters (agreed 2026-10-30, branch `refactor/encounters`)
+The adventure model gets rebuilt around **locations and encounters** (NPCs, monsters, items) instead of pages that host events.
+- **Page:** title, text, background, ambience, decisions. Pages behind events have no events of their own.
+- **Event:** page + conditions + the stages it needs + **where** + the Hide flags (kept as they are).
+  - Where = base (where its encounter is / near it, with reach and "stays in area" / anywhere) + optional filter (only at these locations or areas).
+    In a location's own scenario: here.
+  - An event can **put its encounter here** (Eleanor has no place until her first meeting).
+- **Scenario:** events (or nested scenarios) and how it picks: **first** that fits or **all** that fit. Replaces both `events` lists and `AdventureEventScenario`.
+- **Encounter** = scenario + identity: name, profile (monster, NPC, later item), **stage tracks**, an optional place.
+  - Stages are free (they branch: Unmet, Met at the beach, Met at the castle, …); an encounter or location can have several independent **tracks**
+    (the temple: intact / burned; door closed / open), each with its current stage.
+  - Place: none / a location (later: with the party, carried by another encounter, e.g. loot on a dead monster).
+- **Location:** page + area + its own scenario + stage tracks + an **ordered list** of what can happen there (its own events and the encounters);
+  Hide Below / Above go by that order; encounters not listed come after. A burned temple stays the same location: a Hide Base event on its own scenario
+  needing "burned" changes its text, background and decisions.
+- **Adventure:** its locations (through links) and its encounters.
+- **Stages replace** the monster conditions (alive / dead) and the kill-monster consequence: one stage condition, one stage consequence.
+- **Fights only through encounters** (texts per monster later); a **generic monster encounter** takes monster profiles on the spot and has no lasting stage.
+- **Runtime:** one world-state object in Story with all stages and places (later what a save game stores).
+
+Steps:
+- [x] 1. Split the types: `AdventurePage` (plain), `AdventureEventHost` (abstract, `events`) → `AdventureLocation` / `AdventureEvent` → `AdventureEventScenario`;
+  content moved (text edits, UIDs kept); first / all comes with step 2
+- [ ] 2. Locations' events into their own scenario, plus the location's ordered list
+- [ ] 3. Encounters with stage tracks, where (base + filter), optional place, "puts the encounter here"; Eleanor moved over
+- [ ] 4. Monsters as encounters: fights name an encounter and set its stage; generic monster encounter; the Lurker moved over; `generic`, `spawned_by`,
+  monster conditions and the kill consequence go
+- [ ] 5. Move consequence; condition "encounter is here / at …"; location stages
+- [ ] 6. Editor: "Here" panel per location (everything that can happen there, also "can come here" through move consequences; reordering) and a
+  storyline view per encounter (stages as nodes, events between them)
+
+Later: encounter templates (several wolves), with the party / carried by, item encounters, roaming by itself (random, routes, time of day).
+
 ## Later
 - Fight decisions (and other checks) with **input ports** for who takes part: link enemies / participants into the fight node instead of picking them in the Inspector (user idea, 2026-10-29; fits the parked participants / cast idea)
 - **v2 map editing:** create areas and locations, connect two locations (plain decision "Go to X" + `AdventureTransition`), delete links, move events between hosts by dragging cards, **moving a location into an area frame sets its `area`** (`GraphEdit.graph_elements_linked_to_frame_request`)
@@ -219,3 +252,5 @@ The graph edits structure (links, new things, order), the Inspector edits conten
 - 2026-10-29: B + C + E done: `AdventureEdits` (5 tests; caught `UndoRedo.add_do_method` taking a Callable where the editor's takes object + method), one `changes_requested` signal on all views (the map builds link / unlink / area / event / background changes itself), root wiring grouped, keys in `AdventureLayout` (1 test), event files scanned once per rebuild, `AdventureTransition` uses `load_page()` in the editor, nearby = plain links documented
 - 2026-10-30: user tried undo (works, not for moving / adding); built deleting with the system trash, undoable adding, nearby `stays in area`; tests: edits (4 more), forgetting (2), nearby (1)
 - 2026-10-30: editor warnings fixed (`owner` / `reference` locals shadowing Node / RefCounted members renamed to `holder` / `link`, Variant casts; `AdventurePlayFrom.take()` returns an `AdventurePlayFrom` with typed fields instead of an Array); layout keys of deleted files are skipped (unknown UIDs made `ResourceLoader.exists` error) and forgotten on deleting
+- 2026-10-30: model rethought with the user: locations and encounters (stage tracks, where, scenarios first / all, order on the location); steps 1–6 agreed
+- 2026-10-30: step 1 built: the page types split, Story / editor / tests retyped (map nodes that are plain pages get no event actions; event files that are plain pages no longer show as events)

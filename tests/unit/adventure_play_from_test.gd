@@ -6,16 +6,16 @@ const EVENT_PATH: String = "user://play_from_test_event.tres"
 const ADVENTURE_PATH: String = "user://play_from_test_adventure.tres"
 
 var _adventure: Adventure
-var _event: AdventurePage
-var _inside: AdventurePage
+var _event: AdventureEvent
+var _inside: AdventureEvent
 var _host: AdventurePage
 
 func before_test() -> void:
-	_inside = AdventurePage.new()
+	_inside = AdventureEvent.new()
 	_inside.title = "Inside"
 	var decision: AdventureDecision = AdventureDecision.new()
 	decision.transition = _inside
-	_event = AdventurePage.new()
+	_event = AdventureEvent.new()
 	_event.title = "Ambush"
 	_event.decisions = [decision] as Array[AdventureDecision]
 	ResourceSaver.save(_event, EVENT_PATH)
@@ -48,10 +48,10 @@ func test_nothing_written() -> void:
 	assert_object(AdventurePlayFrom.take()).is_null()
 
 func test_held_pages() -> void:
-	var nested: AdventurePage = AdventurePage.new()
-	var nearby: AdventurePage = AdventurePage.new()
-	_inside.events = [nested] as Array[AdventurePage]
-	_inside.nearby_events = [nearby] as Array[AdventurePage]
+	var nested: AdventureEvent = AdventureEvent.new()
+	var nearby: AdventureEvent = AdventureEvent.new()
+	_inside.events = [nested] as Array[AdventureEvent]
+	_inside.nearby_events = [nearby] as Array[AdventureEvent]
 	var other_file: AdventureDecision = AdventureDecision.new()
 	other_file.transition = AdventureTransition.new()
 	_inside.decisions = [other_file] as Array[AdventureDecision]

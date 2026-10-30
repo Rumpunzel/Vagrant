@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="1_page"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_decision"]
-[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_mdvf4"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="3_70ch2"]
 [ext_resource type="Script" uid="uid://oybrm82jcppw" path="res://adventure/adventure_previous_location_reference.gd" id="4_mdvf4"]
 

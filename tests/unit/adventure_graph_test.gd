@@ -15,9 +15,9 @@ func test_no_adventure_is_empty() -> void:
 	assert_array(graph.links).is_empty()
 
 func test_walks_links_from_the_starting_page() -> void:
-	var shore: AdventurePage = _location("Shore", _beach)
-	var ruin: AdventurePage = _location("Ruin", _beach)
-	var temple: AdventurePage = _location("Temple", _swamp)
+	var shore: AdventureLocation = _location("Shore", _beach)
+	var ruin: AdventureLocation = _location("Ruin", _beach)
+	var temple: AdventureLocation = _location("Temple", _swamp)
 	_link(shore, ruin)
 	_link(ruin, temple)
 	_link(ruin, shore)
@@ -28,12 +28,12 @@ func test_walks_links_from_the_starting_page() -> void:
 	assert_bool(graph.get_link(ruin, shore).through_event).is_false()
 
 func test_unreachable_pages_are_left_out() -> void:
-	var shore: AdventurePage = _location("Shore", _beach)
+	var shore: AdventureLocation = _location("Shore", _beach)
 	_link(_location("Ruin", _beach), shore)
 	assert_array(AdventureGraph.new(_adventure(shore)).pages).contains_exactly([shore])
 
 func test_turn_back_and_self_links_draw_nothing() -> void:
-	var shore: AdventurePage = _location("Shore", _beach)
+	var shore: AdventureLocation = _location("Shore", _beach)
 	shore.decisions.append(AdventureDecision.new())
 	_link(shore, shore)
 	var graph: AdventureGraph = AdventureGraph.new(_adventure(shore))
@@ -41,28 +41,28 @@ func test_turn_back_and_self_links_draw_nothing() -> void:
 	assert_array(graph.links).is_empty()
 
 func test_every_transition_of_a_decision_links() -> void:
-	var ruin: AdventurePage = _location("Ruin", _beach)
-	var won: AdventurePage = _location("Won", _beach)
-	var lost: AdventurePage = _location("Lost", _beach)
+	var ruin: AdventureLocation = _location("Ruin", _beach)
+	var won: AdventureLocation = _location("Won", _beach)
+	var lost: AdventureLocation = _location("Lost", _beach)
 	var save: AdventureSaveDecision = AdventureSaveDecision.new()
 	save.transition = won
 	save.failure_transition = lost
 	ruin.decisions.append(save)
 	assert_array(AdventureGraph.new(_adventure(ruin)).pages).contains_exactly_in_any_order([ruin, won, lost])
 
-func test_pages_without_area_linked_directly_are_nodes() -> void:
-	var shore: AdventurePage = _location("Shore", _beach)
-	var cave: AdventurePage = _location("Cave", null)
+func test_plain_pages_linked_directly_are_nodes() -> void:
+	var shore: AdventureLocation = _location("Shore", _beach)
+	var cave: AdventurePage = _plain("Cave")
 	_link(shore, cave)
 	var graph: AdventureGraph = AdventureGraph.new(_adventure(shore))
 	assert_array(graph.pages).contains_exactly([shore, cave])
 	assert_array(graph.areas).contains_exactly([_beach])
 
 func test_location_behind_an_event_links_from_the_host() -> void:
-	var ruin: AdventurePage = _location("Ruin", _swamp)
-	var temple: AdventurePage = _location("Temple", _swamp)
-	var ambush: AdventurePage = _location("Ambush", null)
-	var won: AdventurePage = _location("Won", null)
+	var ruin: AdventureLocation = _location("Ruin", _swamp)
+	var temple: AdventureLocation = _location("Temple", _swamp)
+	var ambush: AdventureEvent = _event("Ambush")
+	var won: AdventurePage = _plain("Won")
 	ruin.events.append(ambush)
 	_link(ambush, won)
 	_link(won, temple)
@@ -71,19 +71,19 @@ func test_location_behind_an_event_links_from_the_host() -> void:
 	assert_bool(graph.get_link(ruin, temple).through_event).is_true()
 
 func test_nested_events_are_walked() -> void:
-	var ruin: AdventurePage = _location("Ruin", _swamp)
-	var temple: AdventurePage = _location("Temple", _swamp)
-	var ambush: AdventurePage = _location("Ambush", null)
-	var inner: AdventurePage = _location("Inner", null)
+	var ruin: AdventureLocation = _location("Ruin", _swamp)
+	var temple: AdventureLocation = _location("Temple", _swamp)
+	var ambush: AdventureEvent = _event("Ambush")
+	var inner: AdventureEvent = _event("Inner")
 	ruin.events.append(ambush)
 	ambush.events.append(inner)
 	_link(inner, temple)
 	assert_bool(AdventureGraph.new(_adventure(ruin)).get_link(ruin, temple).through_event).is_true()
 
 func test_direct_link_wins_over_one_through_an_event() -> void:
-	var ruin: AdventurePage = _location("Ruin", _swamp)
-	var temple: AdventurePage = _location("Temple", _swamp)
-	var ambush: AdventurePage = _location("Ambush", null)
+	var ruin: AdventureLocation = _location("Ruin", _swamp)
+	var temple: AdventureLocation = _location("Temple", _swamp)
+	var ambush: AdventureEvent = _event("Ambush")
 	ruin.events.append(ambush)
 	_link(ambush, temple)
 	_link(ruin, temple)
@@ -92,19 +92,19 @@ func test_direct_link_wins_over_one_through_an_event() -> void:
 	assert_bool(graph.get_link(ruin, temple).through_event).is_false()
 
 func test_event_loops_end() -> void:
-	var ruin: AdventurePage = _location("Ruin", _swamp)
-	var ambush: AdventurePage = _location("Ambush", null)
-	var lost: AdventurePage = _location("Lost", null)
+	var ruin: AdventureLocation = _location("Ruin", _swamp)
+	var ambush: AdventureEvent = _event("Ambush")
+	var lost: AdventurePage = _plain("Lost")
 	ruin.events.append(ambush)
 	_link(ambush, lost)
 	_link(lost, ambush)
 	assert_array(AdventureGraph.new(_adventure(ruin)).pages).contains_exactly([ruin])
 
 func test_collects_events_and_their_hosts() -> void:
-	var ruin: AdventurePage = _location("Ruin", _swamp)
-	var temple: AdventurePage = _location("Temple", _swamp)
-	var ambush: AdventurePage = _location("Ambush", null)
-	var nested: AdventurePage = _location("Nested", null)
+	var ruin: AdventureLocation = _location("Ruin", _swamp)
+	var temple: AdventureLocation = _location("Temple", _swamp)
+	var ambush: AdventureEvent = _event("Ambush")
+	var nested: AdventureEvent = _event("Nested")
 	ruin.events.append(ambush)
 	temple.events.append(ambush)
 	ambush.events.append(nested)
@@ -113,13 +113,13 @@ func test_collects_events_and_their_hosts() -> void:
 	assert_array(graph.event_hosts.keys()).contains_exactly([ambush, nested])
 	assert_array(graph.get_hosts(ambush)).contains_exactly([ruin, temple])
 	assert_array(graph.get_hosts(nested)).contains_exactly([ambush])
-	assert_array(graph.get_hosts(ruin)).is_empty()
+	assert_bool(graph.event_hosts.has(ruin)).is_false()
 
 func test_location_hosts_and_top_events() -> void:
-	var ruin: AdventurePage = _location("Ruin", _swamp)
-	var temple: AdventurePage = _location("Temple", _swamp)
+	var ruin: AdventureLocation = _location("Ruin", _swamp)
+	var temple: AdventureLocation = _location("Temple", _swamp)
 	var scenario: AdventureEventScenario = AdventureEventScenario.new()
-	var ambush: AdventurePage = _location("Ambush", null)
+	var ambush: AdventureEvent = _event("Ambush")
 	scenario.events.append(ambush)
 	ruin.events.append(scenario)
 	temple.events.append(scenario)
@@ -134,9 +134,9 @@ func test_location_hosts_and_top_events() -> void:
 	assert_int(AdventureGraph.new(_adventure(ruin)).links.size()).is_equal(1)
 
 func test_placed_pages_show_even_if_unreachable() -> void:
-	var shore: AdventurePage = _location("Shore", _beach)
-	var cave: AdventurePage = _location("Cave", _beach)
-	var deeper: AdventurePage = _location("Deeper", _beach)
+	var shore: AdventureLocation = _location("Shore", _beach)
+	var cave: AdventureLocation = _location("Cave", _beach)
+	var deeper: AdventureLocation = _location("Deeper", _beach)
 	_link(cave, deeper)
 	var placed: Array[AdventurePage] = [shore, cave]
 	var graph: AdventureGraph = AdventureGraph.new(_adventure(shore), placed)
@@ -145,7 +145,7 @@ func test_placed_pages_show_even_if_unreachable() -> void:
 
 func test_title_falls_back_to_capitalized_file_name() -> void:
 	assert_str(AdventureGraph.get_title(_location("Shore", null))).is_equal("Shore")
-	var untitled: AdventurePage = _location("", null)
+	var untitled: AdventureLocation = _location("", null)
 	untitled.resource_path = "res://somewhere/rocky_shore.tres"
 	assert_str(AdventureGraph.get_title(untitled)).is_equal("Rocky Shore")
 	# Stored inside another file: the start of its text
@@ -160,10 +160,20 @@ func _adventure(starting_page: AdventurePage) -> Adventure:
 	adventure.starting_page = starting_page
 	return adventure
 
-func _location(title: String, area: AdventureArea) -> AdventurePage:
+func _location(title: String, area: AdventureArea) -> AdventureLocation:
+	var location: AdventureLocation = AdventureLocation.new()
+	location.title = title
+	location.area = area
+	return location
+
+func _event(title: String) -> AdventureEvent:
+	var event: AdventureEvent = AdventureEvent.new()
+	event.title = title
+	return event
+
+func _plain(title: String) -> AdventurePage:
 	var page: AdventurePage = AdventurePage.new()
 	page.title = title
-	page.area = area
 	return page
 
 func _link(from: AdventurePage, to: AdventurePage) -> void:

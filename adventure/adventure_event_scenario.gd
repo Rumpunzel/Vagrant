@@ -1,17 +1,17 @@
 @tool
 class_name AdventureEventScenario
-extends AdventurePage
+extends AdventureEvent
 
-## Groups events and shows at most one of them: the first of its [member AdventurePage.events] whose prerequisites are met (list order is priority).
+## Groups events and shows at most one of them: the first of its [member AdventureEventHost.events] whose prerequisites are met (list order is priority).
 ## Its own conditions gate the whole group; the chosen event acts on the host as if it were listed there (also its Hide flags).
 ## Its title only names it in the editor; the other page fields are unused.
 
-const UNUSED: Array[StringName] = [&"description", &"area", &"background", &"ambience", &"decisions", &"exclusivity"]
+const UNUSED: Array[StringName] = [&"description", &"background", &"ambience", &"decisions", &"exclusivity"]
 
-func resolve_event(story: Story) -> AdventurePage:
-	for event: AdventurePage in events:
+func resolve_event(story: Story) -> AdventureEvent:
+	for event: AdventureEvent in events:
 		if not event.are_all_prerequisites_fullfilled(story): continue
-		var shown: AdventurePage = event.resolve_event(story)
+		var shown: AdventureEvent = event.resolve_event(story)
 		if shown != null: return shown
 	return null
 

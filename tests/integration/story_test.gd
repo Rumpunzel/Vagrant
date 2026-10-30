@@ -5,14 +5,14 @@ extends GdUnitTestSuite
 const STORY: String = "uid://db6oui711vqep"  # story.tscn
 
 var _story: Story
-var _start: AdventurePage
-var _next: AdventurePage
+var _start: AdventureLocation
+var _next: AdventureLocation
 var _to_next: AdventureDecision
 var _back: AdventureDecision
 
 func before_test() -> void:
-	_start = _page("Start")
-	_next = _page("Next")
+	_start = _location("Start")
+	_next = _location("Next")
 	_to_next = _decision("Go on", _next)
 	_start.decisions = [_to_next] as Array[AdventureDecision]
 	# No transition: back to the previous page
@@ -105,13 +105,13 @@ func test_consequences_resolve() -> void:
 	assert_object(_story._current_story_page.adventure_page).is_same(_next)
 
 func test_host_reference_returns_to_the_page_the_event_was_on() -> void:
-	var event: AdventurePage = _page("")
+	var event: AdventureEvent = _page("")
 	var inside: AdventurePage = _page("Inside")
 	event.decisions = [_decision("Look closer", inside)] as Array[AdventureDecision]
 	var back_to_host: AdventureDecision = _decision("Return", null)
 	back_to_host.transition = AdventureHostReference.new()
 	inside.decisions = [back_to_host] as Array[AdventureDecision]
-	_start.events = [event] as Array[AdventurePage]
+	_start.events = [event] as Array[AdventureEvent]
 	_story.enter_page(_start)
 	# The event's decisions come first
 	await _choose(0)
@@ -121,7 +121,7 @@ func test_host_reference_returns_to_the_page_the_event_was_on() -> void:
 	assert_object(_story._current_story_page.adventure_page).is_same(_start)
 
 func test_previous_location_is_the_page_before_the_host() -> void:
-	var event: AdventurePage = _page("")
+	var event: AdventureEvent = _page("")
 	var inside: AdventurePage = _page("Inside")
 	var deeper: AdventurePage = _page("Deeper")
 	event.decisions = [_decision("Fight", inside)] as Array[AdventureDecision]
@@ -129,7 +129,7 @@ func test_previous_location_is_the_page_before_the_host() -> void:
 	var flee: AdventureDecision = _decision("Away", null)
 	flee.transition = AdventurePreviousLocationReference.new()
 	deeper.decisions = [flee] as Array[AdventureDecision]
-	_next.events = [event] as Array[AdventurePage]
+	_next.events = [event] as Array[AdventureEvent]
 	await _choose(0)
 	# On the host: the event's decision first
 	await _choose(0)
@@ -156,7 +156,7 @@ func test_starts_behind_an_event_on_its_host() -> void:
 	assert_object(_story._current_story_page.adventure_page).is_same(_next)
 
 func test_generic_events_spawn_per_host() -> void:
-	var event: AdventurePage = _page("Ambush")
+	var event: AdventureEvent = _page("Ambush")
 	var cutthroat: MonsterProfile = TestMonsters.cutthroat()
 	_story._host = _start
 	var at_start: Monster = _story.get_monster(event, cutthroat)
@@ -177,8 +177,14 @@ func _choose(index: int) -> void:
 		await await_millis(10)
 		waited += 10
 
-func _page(title: String) -> AdventurePage:
-	var page: AdventurePage = AdventurePage.new()
+func _location(title: String) -> AdventureLocation:
+	var location: AdventureLocation = AdventureLocation.new()
+	location.title = title
+	return location
+
+## An event, also usable as a plain page
+func _page(title: String) -> AdventureEvent:
+	var page: AdventureEvent = AdventureEvent.new()
 	page.title = title
 	return page
 

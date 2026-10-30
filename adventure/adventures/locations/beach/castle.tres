@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://ca3sv437yiklg"]
+[gd_resource type="Resource" script_class="AdventureLocation" format=3 uid="uid://ca3sv437yiklg"]
 
 [ext_resource type="Resource" uid="uid://j8p1frkdjxfi" path="res://adventure/adventures/locations/hills/hills.tres" id="1_4stke"]
 [ext_resource type="Texture2D" uid="uid://73v62w6fwsm8" path="res://assets/landscapes/castle.jpg" id="2_4stke"]
-[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_4wv6j"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="3_4chh7"]
-[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="4_4stke"]
+[ext_resource type="Script" uid="uid://cmrl4agp3nbt0" path="res://adventure/adventure_location.gd" id="4_4stke_location"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="5_ma368"]
+[ext_resource type="Script" uid="uid://elib8bc2fnvu" path="res://adventure/adventure_event.gd" id="6_4stke"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="6_qmyxb"]
 
 [sub_resource type="Resource" id="Resource_d4awh"]
@@ -36,9 +36,9 @@ description = "Go to Old Tree."
 transition = SubResource("Resource_ivrl5")
 
 [resource]
-script = ExtResource("4_4stke")
+script = ExtResource("4_4stke_location")
+area = ExtResource("1_4stke")
 title = "Castle"
 description = "The Castle looks nice."
-area = ExtResource("1_4stke")
 background = ExtResource("2_4stke")
 decisions = Array[ExtResource("3_4chh7")]([SubResource("Resource_6ky3k"), SubResource("Resource_pixvp"), SubResource("Resource_qsp60")])

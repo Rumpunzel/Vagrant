@@ -31,7 +31,7 @@ var _problems: Array[AdventureProblems.Problem] = [ ]
 var _layout: AdventureLayout
 var _edits: AdventureEdits
 ## Every event of the adventure, found once per rebuild ([method _find_all_events])
-var _all_events: Array[AdventurePage] = [ ]
+var _all_events: Array[AdventureEvent] = [ ]
 var _new_location_dialog: AdventureNewLocationDialog
 var _name_dialog: AdventureNameDialog
 var _file_dialog: EditorFileDialog
@@ -71,7 +71,7 @@ func _connect_views() -> void:
 		view.play_requested.connect(_play_from)
 		view.deletion_requested.connect(_ask_to_delete)
 	_map.location_requested.connect(_ask_for_location)
-	_map.event_requested.connect(func(location: AdventurePage, scenario: bool) -> void:
+	_map.event_requested.connect(func(location: AdventureLocation, scenario: bool) -> void:
 		_name_dialog.ask("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
 	)
 	_map.existing_event_requested.connect(_offer_events)
@@ -81,7 +81,7 @@ func _connect_views() -> void:
 
 func _connect_lists() -> void:
 	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
-	_event_list.item_selected.connect(func(index: int) -> void: _show_event(_event_list.get_item_metadata(index) as AdventurePage, null))
+	_event_list.item_selected.connect(func(index: int) -> void: _show_event(_event_list.get_item_metadata(index) as AdventureEvent, null))
 	_host_picker.item_selected.connect(func(index: int) -> void: _event_view.show_event(_event_view.get_event(), _host_picker.get_item_metadata(index) as AdventurePage))
 	_problem_list.item_selected.connect(_show_problem)
 	_find.text_changed.connect(func(_text: String) -> void:
@@ -110,42 +110,42 @@ func rebuild() -> void:
 	_map.problems = _problems
 	_event_view.problems = _problems
 	_map.show_graph(_graph)
-	var listed: Array[AdventurePage] = _list_events()
+	var listed: Array[AdventureEvent] = _list_events()
 	_fill_event_shelf()
 	_list_problems()
-	var current: AdventurePage = _event_view.get_event()
+	var current: AdventureEvent = _event_view.get_event()
 	if listed.has(current): _show_event(current, _event_view.get_host())
 	else: _show_event(null, null)
 
 ## Shows [param event] in the events tab, at [param host] if given
-func open_event(event: AdventurePage, host: AdventurePage) -> void:
+func open_event(event: AdventureEvent, host: AdventurePage) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_events_tab)
 	_show_event(event, host)
 	_event_view.scroll_to_nodes()
 
 ## Scenarios list their options below them, events the sub-events of their pages
 ## Every event met, as a tree; returns them all, shown or filtered out
-func _list_events() -> Array[AdventurePage]:
+func _list_events() -> Array[AdventureEvent]:
 	_event_list.clear()
-	var listed: Array[AdventurePage] = [ ]
-	if _graph != null: for event: AdventurePage in _graph.get_top_events(): _list_event(event, 0, listed)
+	var listed: Array[AdventureEvent] = [ ]
+	if _graph != null: for event: AdventureEvent in _graph.get_top_events(): _list_event(event, 0, listed)
 	return listed
 
 ## Those not fitting the find field are left out, their sub-events are still looked at
-func _list_event(event: AdventurePage, depth: int, listed: Array[AdventurePage]) -> void:
+func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent]) -> void:
 	if listed.has(event): return
 	listed.append(event)
 	if _fits(event):
 		var index: int = _event_list.add_item(INDENT.repeat(depth) + _describe_event(event))
 		_event_list.set_item_metadata(index, event)
 		_event_list.set_item_tooltip(index, event.resource_path)
-	var nested: Array[AdventurePage] = event.events.duplicate()
+	var nested: Array[AdventureEvent] = event.events.duplicate()
 	nested.append_array(event.nearby_events)
 	if not event is AdventureEventScenario:
-		for page: AdventurePage in AdventureEventGraph.new(event).pages.slice(1): nested.append_array(page.events)
-	for sub_event: AdventurePage in nested: _list_event(sub_event, depth + 1, listed)
+		for page: AdventurePage in AdventureEventGraph.new(event).pages.slice(1): if page is AdventureEventHost: nested.append_array((page as AdventureEventHost).events)
+	for sub_event: AdventureEvent in nested: _list_event(sub_event, depth + 1, listed)
 
-func _show_event(event: AdventurePage, host: AdventurePage) -> void:
+func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
 	_event_view.show_event(event, host)
 	_event_list.deselect_all()
 	for index: int in _event_list.item_count:
@@ -154,7 +154,7 @@ func _show_event(event: AdventurePage, host: AdventurePage) -> void:
 	_host_picker.add_item("At any host")
 	_host_picker.set_item_metadata(0, null)
 	if event == null: return
-	for location: AdventurePage in _graph.get_location_hosts(event):
+	for location: AdventureLocation in _graph.get_location_hosts(event):
 		_host_picker.add_item("At %s" % AdventureGraph.get_title(location))
 		_host_picker.set_item_metadata(_host_picker.item_count - 1, location)
 		if location == host: _host_picker.select(_host_picker.item_count - 1)
@@ -189,7 +189,7 @@ func _jump_to(_text: String) -> void:
 		if _fits(page):
 			_open_location(page)
 			return
-	for event: AdventurePage in _all_events:
+	for event: AdventureEvent in _all_events:
 		if _fits(event):
 			open_event(event, null)
 			return
@@ -216,54 +216,54 @@ func _create_location(title: String, area: AdventureArea, new_area_name: String,
 	rebuild()
 
 ## The adventure's events (those met and every file in an events folder) not on [param location] yet, and any other file
-func _offer_events(location: AdventurePage) -> void:
-	_offer(location.events, func(event: AdventurePage) -> void: _map.add_event(location, event), _map)
+func _offer_events(location: AdventureLocation) -> void:
+	_offer(location.events, func(event: AdventureEvent) -> void: _map.add_event(location, event), _map)
 
 ## For "Add nearby event…": shown around [param event]'s locations
-func _offer_nearby_events(event: AdventurePage) -> void:
-	var taken: Array[AdventurePage] = event.nearby_events.duplicate()
+func _offer_nearby_events(event: AdventureEvent) -> void:
+	var taken: Array[AdventureEvent] = event.nearby_events.duplicate()
 	taken.append(event)
 	_offer(taken, _add_nearby_event.bind(event), _event_view)
 
-func _add_nearby_event(nearby: AdventurePage, event: AdventurePage) -> void:
-	var nearby_events: Array[AdventurePage] = event.nearby_events.duplicate()
+func _add_nearby_event(nearby: AdventureEvent, event: AdventureEvent) -> void:
+	var nearby_events: Array[AdventureEvent] = event.nearby_events.duplicate()
 	nearby_events.append(nearby)
 	var changes: Array[Array] = [[event, &"nearby_events", nearby_events]]
 	_edits.apply(changes, "Add nearby %s" % AdventureGraph.get_title(nearby), load(AdventureEventEditing.get_file_path(event)))
 
 ## A menu of the adventure's events (those met and every file in an events folder) but [param taken], and any other file; [param on_pick] gets the event
 func _offer(taken: Array, on_pick: Callable, view: AdventureGraphView) -> void:
-	var events: Array[AdventurePage] = _all_events
+	var events: Array[AdventureEvent] = _all_events
 	var actions: Dictionary[String, Callable] = {}
-	for event: AdventurePage in events:
+	for event: AdventureEvent in events:
 		if not taken.has(event): actions[_describe_event(event)] = on_pick.bind(event)
 	actions["Other file…"] = func() -> void:
 		for connection: Dictionary in _file_dialog.file_selected.get_connections(): _file_dialog.file_selected.disconnect(connection["callable"])
 		_file_dialog.file_selected.connect(func(path: String) -> void:
-			var event: AdventurePage = load(path) as AdventurePage
+			var event: AdventureEvent = load(path) as AdventureEvent
 			if event != null: on_pick.call(event)
-			else: push_warning("%s is no page or event" % path)
+			else: push_warning("%s is no event" % path)
 		)
 		_file_dialog.popup_file_dialog()
 	view.show_actions(actions)
 
 ## The events met on the map and every event file in an events folder under the adventure; not those stored inside other files
-func _find_all_events() -> Array[AdventurePage]:
-	var events: Array[AdventurePage] = [ ]
+func _find_all_events() -> Array[AdventureEvent]:
+	var events: Array[AdventureEvent] = [ ]
 	events.assign(_graph.event_hosts.keys())
 	if adventure != null:
 		for path: String in AdventureEventEditing.find_event_files(adventure.resource_path.get_base_dir()):
-			var event: AdventurePage = load(path) as AdventurePage
+			var event: AdventureEvent = load(path) as AdventureEvent
 			if event != null and not events.has(event): events.append(event)
-	return events.filter(func(event: AdventurePage) -> bool: return not AdventureEventEditing.is_inside_file(event))
+	return events.filter(func(event: AdventureEvent) -> bool: return not AdventureEventEditing.is_inside_file(event))
 
-static func _describe_event(event: AdventurePage) -> String:
+static func _describe_event(event: AdventureEvent) -> String:
 	return AdventureGraph.get_title(event) + (" (scenario)" if event is AdventureEventScenario else "")
 
 ## The sidebar's events: drag one onto a location, press one to open it
 func _fill_event_shelf() -> void:
 	for button: Node in _event_shelf.get_children(): button.queue_free()
-	for event: AdventurePage in _all_events:
+	for event: AdventureEvent in _all_events:
 		if not _fits(event): continue
 		var button: AdventureEventButton = AdventureEventButton.new()
 		button.event = event
@@ -276,11 +276,11 @@ func _fill_event_shelf() -> void:
 
 ## Saves, then starts the game at [param page]: a location as it is; an event's own page at its host (the picked one, else the first), so it shows
 ## if its conditions fit; a page behind an event on that page, with the host entered before it
-func _play_from(page: AdventurePage, event: AdventurePage) -> void:
+func _play_from(page: AdventurePage, event: AdventureEvent) -> void:
 	var host: AdventurePage = null
 	if event != null:
 		host = _event_view.get_host()
-		var hosts: Array[AdventurePage] = _graph.get_location_hosts(event)
+		var hosts: Array[AdventureLocation] = _graph.get_location_hosts(event)
 		if host == null and not hosts.is_empty(): host = hosts[0]
 		if host == null:
 			push_warning("%s is listed on no location, so there is nowhere to show it" % AdventureGraph.get_title(event))
@@ -307,14 +307,14 @@ func _show_problem(index: int) -> void:
 	open_event(problem.event, null)
 	_event_view.focus_resource.call_deferred(problem.page)
 
-## Creates the event's file right away and lists it on [param location] (that part can be undone)
-func _create_event(title: String, location: AdventurePage, scenario: bool) -> void:
-	var event: AdventurePage = AdventureEventEditing.make_event(title, scenario)
-	var files: Dictionary[String, Resource] = {AdventureEventEditing.get_event_path(location, title): event}
-	var events: Array[AdventurePage] = location.events.duplicate()
+## Creates the event's file and lists it on [param host] (a location, or a scenario as its last option), as one undo step
+func _create_event(title: String, host: AdventureEventHost, scenario: bool) -> void:
+	var event: AdventureEvent = AdventureEventEditing.make_event(title, scenario)
+	var files: Dictionary[String, Resource] = {AdventureEventEditing.get_event_path(host, title): event}
+	var events: Array[AdventureEvent] = host.events.duplicate()
 	events.append(event)
-	var changes: Array[Array] = [[location, &"events", events, load(AdventureEventEditing.get_file_path(location))]]
-	_edits.create(files, changes, "New %s on %s" % [title, AdventureGraph.get_title(location)])
+	var changes: Array[Array] = [[host, &"events", events, load(AdventureEventEditing.get_file_path(host))]]
+	_edits.create(files, changes, "New %s on %s" % [title, AdventureGraph.get_title(host)])
 
 ## Asks first; the starting page can't go
 func _ask_to_delete(resource: Resource) -> void:
@@ -332,7 +332,7 @@ func _delete(resource: Resource, title: String) -> void:
 	if resource is AdventureArea: changes = AdventureEventEditing.get_changes_forgetting_area(resource as AdventureArea, _graph.pages)
 	else:
 		var roots: Array[AdventurePage] = _graph.pages.duplicate()
-		for event: AdventurePage in _all_events: if not roots.has(event): roots.append(event)
+		for event: AdventureEvent in _all_events: if not roots.has(event): roots.append(event)
 		changes = AdventureEventEditing.get_changes_forgetting(resource as AdventurePage, roots)
 	var key: String = AdventureLayout.get_key(resource)
 	_edits.delete(resource, changes, "Delete %s" % title)

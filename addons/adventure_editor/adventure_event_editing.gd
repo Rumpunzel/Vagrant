@@ -59,9 +59,11 @@ static func get_changes_forgetting(target: AdventurePage, roots: Array[Adventure
 					if _leads_to(decision.get_reference(outcome), target): changes.append([decision, outcome.reference_property, null, file])
 			if kept.size() != page.decisions.size(): changes.append([page, &"decisions", kept, file])
 			for list: StringName in [&"events", &"nearby_events"]:
-				var listed: Array[AdventurePage] = page.get(list)
+				if not list in page: continue
+				var listed: Array[AdventureEvent] = [ ]
+				listed.assign(page.get(list) as Array)
 				if not listed.has(target): continue
-				var without: Array[AdventurePage] = listed.duplicate()
+				var without: Array[AdventureEvent] = listed.duplicate()
 				without.erase(target)
 				changes.append([page, list, without, file])
 	return changes
@@ -69,7 +71,7 @@ static func get_changes_forgetting(target: AdventurePage, roots: Array[Adventure
 ## Changes taking [param area] off the pages in it
 static func get_changes_forgetting_area(area: AdventureArea, pages: Array[AdventurePage]) -> Array[Array]:
 	var changes: Array[Array] = [ ]
-	for page: AdventurePage in pages: if page.area == area: changes.append([page, &"area", null, page])
+	for page: AdventurePage in pages: if page is AdventureLocation and (page as AdventureLocation).area == area: changes.append([page, &"area", null, page])
 	return changes
 
 static func _leads_to(link: AdventurePageReference, target: AdventurePage) -> bool:
@@ -112,8 +114,8 @@ static func make_save() -> AdventureSaveDecision:
 	save.description = "New save."
 	return save
 
-static func make_event(title: String, scenario: bool) -> AdventurePage:
-	var event: AdventurePage = AdventureEventScenario.new() if scenario else AdventurePage.new()
+static func make_event(title: String, scenario: bool) -> AdventureEvent:
+	var event: AdventureEvent = AdventureEventScenario.new() if scenario else AdventureEvent.new()
 	event.title = title
 	return event
 

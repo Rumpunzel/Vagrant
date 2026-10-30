@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://ycd6xhx346l6"]
+[gd_resource type="Resource" script_class="AdventureLocation" format=3 uid="uid://ycd6xhx346l6"]
 
-[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_u2ksw"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="3_jui2c"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_jui2c"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="4_vbvy7"]
-[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="5_5fv8t"]
+[ext_resource type="Script" uid="uid://cmrl4agp3nbt0" path="res://adventure/adventure_location.gd" id="5_5fv8t_location"]
 [ext_resource type="Resource" uid="uid://dvme5kc8jejul" path="res://adventure/adventures/locations/beach/beach.tres" id="5_r3xmp"]
+[ext_resource type="Script" uid="uid://elib8bc2fnvu" path="res://adventure/adventure_event.gd" id="5_u2ksw"]
 
 [sub_resource type="Resource" id="Resource_vfpl1"]
 script = ExtResource("4_vbvy7")
@@ -26,8 +26,8 @@ description = "Go to the swamp."
 transition = SubResource("Resource_bjlpt")
 
 [resource]
-script = ExtResource("5_5fv8t")
+script = ExtResource("5_5fv8t_location")
+area = ExtResource("5_r3xmp")
 title = "Rocky Shore"
 description = "The cold waves roll across the ragged shorelines."
-area = ExtResource("5_r3xmp")
 decisions = Array[ExtResource("3_jui2c")]([SubResource("Resource_c1yb7"), SubResource("Resource_025i5")])

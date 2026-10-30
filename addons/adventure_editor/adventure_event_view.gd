@@ -12,7 +12,7 @@ signal exit_opened(location: AdventurePage)
 ## A new event as an option of [param scenario]
 signal option_requested(scenario: AdventureEventScenario)
 ## An event already made, to show around [param event]'s locations
-signal nearby_event_requested(event: AdventurePage)
+signal nearby_event_requested(event: AdventureEvent)
 
 enum Target { PAGE, HOST, PREVIOUS }
 
@@ -46,12 +46,12 @@ func setup() -> void:
 	disconnection_request.connect(func(from: StringName, port: int, _to: StringName, _to_port: int) -> void: _request_reference(from, port, null))
 	connection_to_empty.connect(_on_connection_to_empty)
 
-func get_event() -> AdventurePage: return _overview.root if _overview != null else null
+func get_event() -> AdventureEvent: return _overview.root if _overview != null else null
 
 func get_host() -> AdventurePage: return _host
 
 ## No event: empty
-func show_event(event: AdventurePage, host: AdventurePage = null) -> void:
+func show_event(event: AdventureEvent, host: AdventurePage = null) -> void:
 	_clear()
 	_host = host
 	for nodes: Dictionary in [_node_entries, _node_pages, _node_ports, _node_targets, _card_styles, _frame_entries, _tags, _tag_owners, _fight_cards, _fight_pages]: nodes.clear()
@@ -93,7 +93,7 @@ func _add_entry(entry: AdventureEventOverview.Entry, frame: GraphFrame, origin: 
 		var depth: int = graph.depths[page]
 		var at: Vector2 = origin + Vector2(depth * NODE_SPACING.x, 0)
 		var placed: bool = layout != null and layout.positions.has(_key(entry, page))
-		var node: GraphNode = _add_exit(entry, page, at) if graph.exits.has(page) else _add_page(entry, page, at)
+		var node: GraphNode = _add_exit(entry, page as AdventureLocation, at) if graph.exits.has(page) else _add_page(entry, page, at)
 		if not placed: columns.get_or_add(depth, [ ]).append(node)
 		attach_graph_element_to_frame(node.name, frame.name)
 	for column: Array in columns.values(): _unstacked.append([column, origin.y])
@@ -126,7 +126,7 @@ func _add_page(entry: AdventureEventOverview.Entry, page: AdventurePage, at: Vec
 	if not page.description.is_empty(): content.add_child(_make_text(page.description))
 	if page == entry.event:
 		content.add_child(_make_info("When:"))
-		content.add_child(_make_condition_tags(page, _file_for(null, page, entry)))
+		content.add_child(_make_condition_tags(entry.event, _file_for(null, page, entry)))
 		for text: String in [AdventureEventOverview.get_hiding_text(entry, _host), AdventureEventOverview.get_monster_text(entry)]:
 			if not text.is_empty(): content.add_child(_make_info(text))
 	var node: GraphNode = _add_node(_key(entry, page), page, AdventureGraph.get_title(page), content, at)
@@ -164,8 +164,8 @@ func _get_page_actions(entry: AdventureEventOverview.Entry, page: AdventurePage)
 	if page == entry.event and not AdventureEventEditing.is_inside_file(page): actions["Delete event…"] = deletion_requested.emit.bind(page)
 	actions["Play from here"] = play_requested.emit.bind(page, entry.event)
 	if page == entry.event and entry.is_nearby:
-		var source: AdventurePage = entry.parent_page
-		var without: Array[AdventurePage] = source.nearby_events.duplicate()
+		var source: AdventureEvent = entry.parent_page as AdventureEvent
+		var without: Array[AdventureEvent] = source.nearby_events.duplicate()
 		without.erase(page)
 		actions["Not nearby %s any more" % AdventureGraph.get_title(source)] = _request.bind(source, &"nearby_events", without, "Not nearby any more", load(AdventureEventEditing.get_file_path(source)))
 	return actions
@@ -178,7 +178,7 @@ func _delete_page(entry: AdventureEventOverview.Entry, page: AdventurePage) -> v
 	for reference: Array in AdventureEventEditing.find_references_to(file as AdventurePage, page): changes.append([reference[0], reference[1], null])
 	changes_requested.emit(changes, "Delete %s" % AdventureGraph.get_title(page), file)
 
-func _add_exit(entry: AdventureEventOverview.Entry, location: AdventurePage, at: Vector2) -> GraphNode:
+func _add_exit(entry: AdventureEventOverview.Entry, location: AdventureLocation, at: Vector2) -> GraphNode:
 	var node: GraphNode = _add_node(_key(entry, location), location, AdventureGraph.get_title(location), _make_label("Location (double-click: map)"), at)
 	node.modulate = FADED
 	node.set_slot(0, true, 0, Color.WHITE, false, 0, Color.WHITE)
@@ -331,7 +331,7 @@ func _on_delete_key(element: GraphElement) -> void:
 	else: super(element)
 
 ## A sub-event's card shows its frame (a scenario: its switch); others open the event
-func _on_event_card_pressed(event: AdventurePage, _page: AdventurePage) -> void:
+func _on_event_card_pressed(event: AdventureEvent, _page: AdventurePage) -> void:
 	if _nodes.has(_switch_key(event)):
 		focus_node(_nodes[_switch_key(event)])
 		return
@@ -349,7 +349,7 @@ func _add_switch(switch: AdventureEventOverview.Switch, at: Vector2) -> void:
 	content.add_child(_make_condition_tags(scenario, file))
 	var node: GraphNode = _add_node(_switch_key(scenario), scenario, "%s (scenario)" % AdventureGraph.get_title(scenario), content, at)
 	node.set_slot(0, switch.outer != null, 0, Color.WHITE, false, 0, Color.WHITE)
-	var options: Array[AdventurePage] = scenario.events
+	var options: Array[AdventureEvent] = scenario.events
 	for index: int in options.size():
 		var row: HBoxContainer = HBoxContainer.new()
 		var conditions: String = AdventureEventOverview.get_condition_text(options[index].conditions)
@@ -369,7 +369,7 @@ func _add_switch(switch: AdventureEventOverview.Switch, at: Vector2) -> void:
 
 ## Each option's row to its event (a scenario option: to its switch)
 func _connect_switch(switch: AdventureEventOverview.Switch) -> void:
-	var options: Array[AdventurePage] = switch.scenario.events
+	var options: Array[AdventureEvent] = switch.scenario.events
 	for index: int in options.size():
 		var target: String = _switch_key(options[index]) if options[index] is AdventureEventScenario else ""
 		var entry: AdventureEventOverview.Entry = _overview.get_entry(options[index])
@@ -377,14 +377,14 @@ func _connect_switch(switch: AdventureEventOverview.Switch) -> void:
 		if _nodes.has(target): connect_node(_nodes[_switch_key(switch.scenario)].name, index, _nodes[target].name, 0)
 
 func _move_option(scenario: AdventureEventScenario, file: Resource, index: int, step: int) -> void:
-	var options: Array[AdventurePage] = scenario.events.duplicate()
-	var option: AdventurePage = options.pop_at(index)
+	var options: Array[AdventureEvent] = scenario.events.duplicate()
+	var option: AdventureEvent = options.pop_at(index)
 	options.insert(index + step, option)
 	_request(scenario, &"events", options, "Move %s" % AdventureGraph.get_title(option), file)
 
 func _remove_option(scenario: AdventureEventScenario, file: Resource, index: int) -> void:
-	var options: Array[AdventurePage] = scenario.events.duplicate()
-	var option: AdventurePage = options.pop_at(index)
+	var options: Array[AdventureEvent] = scenario.events.duplicate()
+	var option: AdventureEvent = options.pop_at(index)
 	if AdventureEventEditing.is_inside_file(option):
 		push_warning("%s is stored inside the scenario's file and would be lost" % AdventureGraph.get_title(option))
 		return

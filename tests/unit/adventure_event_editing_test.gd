@@ -8,31 +8,31 @@ func test_file_path() -> void:
 	assert_str(AdventureEventEditing.get_file_path(_page(""))).is_empty()
 
 func test_reference_by_file() -> void:
-	var inside: AdventurePage = _page("res://events/ambush.tres::Resource_a1")
+	var inside: AdventureEvent = _page("res://events/ambush.tres::Resource_a1")
 	assert_object(AdventureEventEditing.make_reference(inside, "res://events/ambush.tres")).is_same(inside)
-	var unsaved: AdventurePage = _page("")
+	var unsaved: AdventureEvent = _page("")
 	assert_object(AdventureEventEditing.make_reference(unsaved, "res://events/ambush.tres")).is_same(unsaved)
-	var elsewhere: AdventurePage = _page("res://locations/ruin.tres")
+	var elsewhere: AdventureEvent = _page("res://locations/ruin.tres")
 	var reference: AdventurePageReference = AdventureEventEditing.make_reference(elsewhere, "res://events/ambush.tres")
 	assert_object(reference).is_instanceof(AdventureTransition)
 	assert_str((reference as AdventureTransition)._leads_to).is_equal("res://locations/ruin.tres")
 
 func test_cycles_through_held_pages() -> void:
-	var ambush: AdventurePage = _page("")
-	var lost: AdventurePage = _page("")
-	var deeper: AdventurePage = _page("")
+	var ambush: AdventureEvent = _page("")
+	var lost: AdventureEvent = _page("")
+	var deeper: AdventureEvent = _page("")
 	_link(ambush, lost)
 	_link(lost, deeper)
 	assert_bool(AdventureEventEditing.would_loop(deeper, ambush)).is_true()
 	assert_bool(AdventureEventEditing.would_loop(deeper, deeper)).is_true()
 	assert_bool(AdventureEventEditing.would_loop(ambush, deeper)).is_false()
-	var nested: AdventurePage = _page("")
+	var nested: AdventureEvent = _page("")
 	deeper.events.append(nested)
 	assert_bool(AdventureEventEditing.would_loop(nested, lost)).is_true()
 
 func test_transitions_and_host_references_break_cycles() -> void:
-	var ambush: AdventurePage = _page("res://events/ambush.tres")
-	var lost: AdventurePage = _page("")
+	var ambush: AdventureEvent = _page("res://events/ambush.tres")
+	var lost: AdventureEvent = _page("")
 	var decision: AdventureDecision = AdventureDecision.new()
 	decision.transition = AdventureTransition.leading_to(lost)
 	ambush.decisions.append(decision)
@@ -42,9 +42,9 @@ func test_transitions_and_host_references_break_cycles() -> void:
 	assert_bool(AdventureEventEditing.would_loop(lost, ambush)).is_false()
 
 func test_pages_inside_the_file_are_not_lost_by_relinking() -> void:
-	var ambush: AdventurePage = _page("res://events/ambush.tres")
-	var lost: AdventurePage = _page("")
-	var on_its_own: AdventurePage = _page("res://events/lost.tres")
+	var ambush: AdventureEvent = _page("res://events/ambush.tres")
+	var lost: AdventureEvent = _page("")
+	var on_its_own: AdventureEvent = _page("res://events/lost.tres")
 	_link(ambush, lost)
 	_link(ambush, on_its_own)
 	assert_array(AdventureEventEditing.find_references_to(ambush, lost)).contains_exactly([[ambush.decisions[0], &"transition"]])
@@ -73,16 +73,16 @@ func test_new_events() -> void:
 	assert_str(event.title).is_equal("Wolves")
 	assert_bool(event is AdventureEventScenario).is_false()
 	assert_object(AdventureEventEditing.make_event("Wolves", true)).is_instanceof(AdventureEventScenario)
-	var location: AdventurePage = _page("res://locations/swamp/temple_ruin.tres")
+	var location: AdventureEvent = _page("res://locations/swamp/temple_ruin.tres")
 	assert_str(AdventureEventEditing.get_event_path(location, "Wolf Pack")).is_equal("res://locations/swamp/events/wolf_pack.tres")
 	# A scenario in the events folder already: its options next to it
-	var scenario: AdventurePage = _page("res://locations/swamp/events/lurker.tres")
+	var scenario: AdventureEvent = _page("res://locations/swamp/events/lurker.tres")
 	assert_str(AdventureEventEditing.get_event_path(scenario, "Wolf Pack")).is_equal("res://locations/swamp/events/wolf_pack.tres")
 
 func test_monster_conditions_point_at_the_spawning_page() -> void:
 	var lurker: MonsterProfile = TestMonsters.cutthroat()
-	var ambush: AdventurePage = _page("res://events/ambush.tres")
-	var won: AdventurePage = _page("res://events/won.tres")
+	var ambush: AdventureEvent = _page("res://events/ambush.tres")
+	var won: AdventureEvent = _page("res://events/won.tres")
 	var own: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(AdventureMonsterCondition.State.CAN_FIGHT, lurker, 0, ambush, ambush)
 	assert_object(own.monster.spawned_by).is_null()
 	assert_object(own.monster.monster).is_same(lurker)
@@ -91,7 +91,7 @@ func test_monster_conditions_point_at_the_spawning_page() -> void:
 	assert_int(other.monster.index).is_equal(1)
 	assert_int(other.state).is_equal(AdventureMonsterCondition.State.INCAPACITATED)
 	# Inside the file holding it: pointing back would loop
-	var inside: AdventurePage = _page("res://events/ambush.tres::Resource_n1")
+	var inside: AdventureEvent = _page("res://events/ambush.tres::Resource_n1")
 	ambush.events.append(inside)
 	assert_object(AdventureEventEditing.make_monster_condition(AdventureMonsterCondition.State.DEAD, lurker, 0, ambush, inside)).is_null()
 
@@ -103,16 +103,16 @@ func test_special_references() -> void:
 	assert_str(previous.resource_scene_unique_id).is_not_empty()
 	var decision: AdventureDecision = AdventureDecision.new()
 	decision.transition = previous
-	var page: AdventurePage = _page("")
+	var page: AdventureEvent = _page("")
 	page.decisions.append(decision)
 	var outlet: AdventureEventGraph.Outlet = AdventureEventGraph.get_outlets(page)[0]
 	assert_bool(outlet.to_previous).is_true()
 	assert_bool(outlet.goes_back()).is_false()
 
 func test_forgetting_a_page() -> void:
-	var shore: AdventurePage = _page("res://locations/shore.tres")
-	var ruin: AdventurePage = _page("res://locations/ruin.tres")
-	var doomed: AdventurePage = _page("")
+	var shore: AdventureEvent = _page("res://locations/shore.tres")
+	var ruin: AdventureEvent = _page("res://locations/ruin.tres")
+	var doomed: AdventureEvent = _page("")
 	var to_doomed: AdventureDecision = AdventureDecision.new()
 	to_doomed.transition = doomed
 	var elsewhere: AdventureDecision = AdventureDecision.new()
@@ -121,8 +121,8 @@ func test_forgetting_a_page() -> void:
 	fight.transition = ruin
 	fight.failure_transition = doomed
 	shore.decisions = [to_doomed, elsewhere, fight] as Array[AdventureDecision]
-	shore.events = [doomed] as Array[AdventurePage]
-	ruin.nearby_events = [doomed] as Array[AdventurePage]
+	shore.events = [doomed] as Array[AdventureEvent]
+	ruin.nearby_events = [doomed] as Array[AdventureEvent]
 	var roots: Array[AdventurePage] = [shore, ruin]
 	var changes: Array[Array] = AdventureEventEditing.get_changes_forgetting(doomed, roots)
 	assert_array(changes).contains_exactly_in_any_order([
@@ -134,7 +134,8 @@ func test_forgetting_a_page() -> void:
 
 func test_forgetting_an_area() -> void:
 	var swamp: AdventureArea = AdventureArea.new()
-	var ruin: AdventurePage = _page("res://locations/ruin.tres")
+	var ruin: AdventureLocation = AdventureLocation.new()
+	ruin.resource_path = "res://locations/ruin.tres"
 	ruin.area = swamp
 	var pages: Array[AdventurePage] = [ruin, _page("res://locations/shore.tres")]
 	assert_array(AdventureEventEditing.get_changes_forgetting_area(swamp, pages)).contains_exactly([[ruin, &"area", null, ruin]])
@@ -163,8 +164,9 @@ func test_outlets_name_their_property() -> void:
 	assert_str(fled.consequences_property).is_empty()
 	assert_int(fled.get_back_steps()).is_equal(2)
 
-func _page(path: String) -> AdventurePage:
-	var page: AdventurePage = AdventurePage.new()
+## An event, which can also hold events
+func _page(path: String) -> AdventureEvent:
+	var page: AdventureEvent = AdventureEvent.new()
 	if path.contains("::"): page.resource_scene_unique_id = path.get_slice("::", 1)
 	if not path.is_empty(): page.resource_path = path
 	return page

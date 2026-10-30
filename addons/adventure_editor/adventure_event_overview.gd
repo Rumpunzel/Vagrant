@@ -6,44 +6,44 @@ extends RefCounted
 ## and the same again for every sub-event of the pages inside, recursively
 
 class Entry:
-	var event: AdventurePage
+	var event: AdventureEvent
 	var label: String
 	var graph: AdventureEventGraph
 	## What the page above lists for it: the event, or the outermost scenario it is an option of
-	var listed_as: AdventurePage
+	var listed_as: AdventureEvent
 	## The entry and page whose events list it; none for the overview's own event
 	var parent: Entry
 	var parent_page: AdventurePage
 	## The scenario it is an option of, if any
 	var switch: Switch
-	## Shown around its parent's locations ([member AdventurePage.nearby_events]); its parent page is the source event
+	## Shown around its parent's locations ([member AdventureEvent.nearby_events]); its parent page is the source event
 	var is_nearby: bool
 
 ## A scenario choosing one of its options: the first whose conditions are met
 class Switch:
 	var scenario: AdventureEventScenario
-	var listed_as: AdventurePage
+	var listed_as: AdventureEvent
 	var parent: Entry
 	var parent_page: AdventurePage
 	## The scenario this one is an option of, if any
 	var outer: Switch
 
-var root: AdventurePage
+var root: AdventureEvent
 var entries: Array[Entry] = [ ]
 var switches: Array[Switch] = [ ]
 
-var _seen: Array[AdventurePage] = [ ]
+var _seen: Array[AdventureEvent] = [ ]
 
-func _init(event: AdventurePage) -> void:
+func _init(event: AdventureEvent) -> void:
 	root = event
 	_add(event, event, null, null, null)
 
-func get_entry(event: AdventurePage) -> Entry:
+func get_entry(event: AdventureEvent) -> Entry:
 	for entry: Entry in entries: if entry.event == event: return entry
 	return null
 
 ## The first entry for what a page lists as [param event] (a scenario: its first option)
-func get_listed_entry(event: AdventurePage) -> Entry:
+func get_listed_entry(event: AdventureEvent) -> Entry:
 	for entry: Entry in entries: if entry.listed_as == event or entry.event == event: return entry
 	return null
 
@@ -63,11 +63,11 @@ static func get_hiding_text(entry: Entry, host: AdventurePage) -> String:
 	# A nearby event shows on other locations than its source's
 	var where: AdventurePage = entry.parent_page if entry.parent_page != null and not entry.is_nearby else host
 	var where_name: String = AdventureGraph.get_title(where) if where != null else "the host"
-	var siblings: Array[AdventurePage] = [ ]
-	if where != null: siblings = where.events
+	var siblings: Array[AdventureEvent] = [ ]
+	if where is AdventureEventHost: siblings = (where as AdventureEventHost).events
 	var index: int = siblings.find(entry.listed_as)
-	var before: Array[AdventurePage] = [ ]
-	var after: Array[AdventurePage] = [ ]
+	var before: Array[AdventureEvent] = [ ]
+	var after: Array[AdventureEvent] = [ ]
 	if index >= 0:
 		before = siblings.slice(0, index)
 		after = siblings.slice(index + 1)
@@ -83,11 +83,11 @@ static func get_monster_text(entry: Entry) -> String:
 		if page.decisions.any(func(decision: AdventureDecision) -> bool: return decision is AdventureFightDecision): return "Monsters: shared by all hosts"
 	return ""
 
-static func _name_events(text: String, events: Array[AdventurePage], known: bool) -> String:
+static func _name_events(text: String, events: Array[AdventureEvent], known: bool) -> String:
 	if not known: return text
 	return "%s (%s)" % [text, ", ".join(events.map(AdventureGraph.get_title)) if not events.is_empty() else "none"]
 
-func _add(event: AdventurePage, listed_as: AdventurePage, parent: Entry, parent_page: AdventurePage, switch: Switch, is_nearby: bool = false) -> void:
+func _add(event: AdventureEvent, listed_as: AdventureEvent, parent: Entry, parent_page: AdventurePage, switch: Switch, is_nearby: bool = false) -> void:
 	if event == null or _seen.has(event): return
 	_seen.append(event)
 	if event is AdventureEventScenario:
@@ -98,7 +98,7 @@ func _add(event: AdventurePage, listed_as: AdventurePage, parent: Entry, parent_
 		inner.parent_page = parent_page
 		inner.outer = switch
 		switches.append(inner)
-		for option: AdventurePage in event.events: _add(option, listed_as, parent, parent_page, inner)
+		for option: AdventureEvent in event.events: _add(option, listed_as, parent, parent_page, inner)
 		return
 	var entry: Entry = Entry.new()
 	entry.event = event
@@ -111,5 +111,5 @@ func _add(event: AdventurePage, listed_as: AdventurePage, parent: Entry, parent_
 	entry.switch = switch
 	entries.append(entry)
 	for page: AdventurePage in entry.graph.pages:
-		for nested: AdventurePage in page.events: _add(nested, nested, entry, page, null)
-	for nearby: AdventurePage in event.nearby_events: _add(nearby, nearby, entry, event, null, true)
+		if page is AdventureEventHost: for nested: AdventureEvent in (page as AdventureEventHost).events: _add(nested, nested, entry, page, null)
+	for nearby: AdventureEvent in event.nearby_events: _add(nearby, nearby, entry, event, null, true)

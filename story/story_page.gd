@@ -9,7 +9,7 @@ var background: Texture2D
 var area_background: Texture2D
 var ambience: AudioStream
 var choices: Array[StoryChoice]
-var events: Array[AdventurePage]
+var events: Array[AdventureEvent]
 ## Set on fight exchange pages, which are not adventure pages of their own
 var fight: Fight
 ## Taken right away instead of showing the page, e.g. a fight lost on arrival
@@ -22,7 +22,7 @@ func _init(
 	from_background: Texture2D,
 	from_ambience: AudioStream,
 	from_choices: Array[StoryChoice],
-	from_events: Array[AdventurePage],
+	from_events: Array[AdventureEvent],
 ) -> void:
 	adventure_page = from_adventure_page
 	page_title = from_page_title

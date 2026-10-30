@@ -10,7 +10,7 @@ class Problem:
 	## The page to show (the one holding the decision)
 	var page: AdventurePage
 	## The event to open it in; none: on the map
-	var event: AdventurePage
+	var event: AdventureEvent
 
 	func _init(problem_text: String, problem_page: AdventurePage, problem_event: AdventurePage) -> void:
 		text = problem_text
@@ -22,28 +22,29 @@ var problems: Array[Problem] = [ ]
 var _checked: Array[AdventureDecision] = [ ]
 
 ## [param event_files]: every event there is, to find those listed nowhere
-func _init(graph: AdventureGraph, event_files: Array[AdventurePage]) -> void:
+func _init(graph: AdventureGraph, event_files: Array[AdventureEvent]) -> void:
 	for page: AdventurePage in graph.unreachable: _add("%s can't be reached from the starting page" % AdventureGraph.get_title(page), page, null)
 	for page: AdventurePage in graph.pages: _check_decisions(page, null)
-	var events: Array[AdventurePage] = [ ]
+	var events: Array[AdventureEvent] = [ ]
 	events.assign(graph.event_hosts.keys())
 	var index: int = 0
 	while index < events.size():
-		for nearby: AdventurePage in events[index].nearby_events: if nearby != null and not events.has(nearby): events.append(nearby)
+		for nearby: AdventureEvent in events[index].nearby_events: if nearby != null and not events.has(nearby): events.append(nearby)
 		index += 1
-	# Pages behind events often sit in the events folders too; they are reached, not listed
-	var reached: Array[AdventurePage] = events.duplicate()
-	for event: AdventurePage in events:
+	# Events listed only on pages behind other events are reached, not listed on a location
+	var reached: Array[AdventurePage] = [ ]
+	reached.assign(events)
+	for event: AdventureEvent in events:
 		if event is AdventureEventScenario:
 			_check_options(event as AdventureEventScenario)
 			continue
 		for page: AdventurePage in AdventureEventGraph.new(event).pages:
 			_check_decisions(page, event)
 			if not reached.has(page): reached.append(page)
-	for event: AdventurePage in event_files:
+	for event: AdventureEvent in event_files:
 		if not reached.has(event): _add("%s is listed on no location" % AdventureGraph.get_title(event), event, event)
 
-func _check_decisions(page: AdventurePage, event: AdventurePage) -> void:
+func _check_decisions(page: AdventurePage, event: AdventureEvent) -> void:
 	for decision: AdventureDecision in page.decisions:
 		if decision == null or _checked.has(decision): continue
 		_checked.append(decision)
@@ -58,11 +59,11 @@ func _check_decisions(page: AdventurePage, event: AdventurePage) -> void:
 ## An option without conditions always fits, so the ones after it never show
 func _check_options(scenario: AdventureEventScenario) -> void:
 	for index: int in scenario.events.size() - 1:
-		var option: AdventurePage = scenario.events[index]
+		var option: AdventureEvent = scenario.events[index]
 		if option == null or not option.conditions.is_empty(): continue
-		for later: AdventurePage in scenario.events.slice(index + 1):
+		for later: AdventureEvent in scenario.events.slice(index + 1):
 			if later != null: _add("%s never shows: %s comes first and has no conditions" % [AdventureGraph.get_title(later), AdventureGraph.get_title(option)], later, scenario)
 		return
 
-func _add(text: String, page: AdventurePage, event: AdventurePage) -> void:
+func _add(text: String, page: AdventurePage, event: AdventureEvent) -> void:
 	problems.append(Problem.new(text, page, event))

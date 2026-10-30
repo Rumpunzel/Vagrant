@@ -8,9 +8,9 @@ const MEETING_ELEANOR: String = "uid://d3cv8d5e65vwh"  # meeting_eleanor.tres
 const HEARING_ELEANOR: String = "uid://dffxphat87a8a"  # hearing_eleanor.tres
 
 func test_hearing_eleanor_is_nearby_the_woman() -> void:
-	var meeting: AdventurePage = load(MEETING_ELEANOR)
+	var meeting: AdventureEvent = load(MEETING_ELEANOR)
 	assert_array(meeting.nearby_events).contains_exactly([load(HEARING_ELEANOR)])
-	assert_bool((load(CASTLE_RUIN) as AdventurePage).events.has(meeting)).is_true()
-	var rocky_shore: AdventurePage = load(ROCKY_SHORE)
+	assert_bool((load(CASTLE_RUIN) as AdventureLocation).events.has(meeting)).is_true()
+	var rocky_shore: AdventureLocation = load(ROCKY_SHORE)
 	assert_bool(rocky_shore.events.has(load(HEARING_ELEANOR))).is_false()
 	assert_array(rocky_shore.find_nearby_events()).contains_exactly([[load(HEARING_ELEANOR), load(CASTLE_RUIN)]])

@@ -9,22 +9,22 @@ class Switch extends AdventureCondition:
 	func is_true(_story: Story, _page: AdventurePage) -> bool: return on
 
 var _story: Story
-var _host: AdventurePage
+var _host: AdventureLocation
 var _scenario: AdventureEventScenario
-var _first: AdventurePage
-var _second: AdventurePage
+var _first: AdventureEvent
+var _second: AdventureEvent
 
 func before_test() -> void:
 	_story = auto_free(Story.new())
-	_host = _page("Ruin", "Damp.")
+	_host = _location("Ruin", "Damp.")
 	_host.decisions = [_decision("Leave")] as Array[AdventureDecision]
-	_first = _page("Ambush", "A hiss!")
+	_first = _event("Ambush", "A hiss!")
 	_first.conditions = [Switch.new(true)] as Array[AdventureCondition]
-	_second = _page("", "It lies still.")
+	_second = _event("", "It lies still.")
 	_second.decisions = [_decision("Kill it")] as Array[AdventureDecision]
 	_scenario = AdventureEventScenario.new()
-	_scenario.events = [_first, _second] as Array[AdventurePage]
-	_host.events = [_scenario] as Array[AdventurePage]
+	_scenario.events = [_first, _second] as Array[AdventureEvent]
+	_host.events = [_scenario] as Array[AdventureEvent]
 
 func test_shows_the_first_event_whose_prerequisites_are_met() -> void:
 	assert_object(_scenario.resolve_event(_story)).is_same(_first)
@@ -51,7 +51,7 @@ func test_own_conditions_gate_the_whole_scenario() -> void:
 
 func test_hide_flags_of_the_shown_event_act_on_the_host() -> void:
 	_first.exclusivity = 7
-	var later: AdventurePage = _page("", "Birds sing.")
+	var later: AdventureEvent = _event("", "Birds sing.")
 	_host.events.append(later)
 	assert_str(_host.get_description(_story)).is_equal("[p]A hiss![/p]")
 	assert_array(_host.get_decisions(_story)).is_empty()
@@ -61,7 +61,7 @@ func test_hide_flags_of_the_shown_event_act_on_the_host() -> void:
 func test_nested_scenarios_resolve() -> void:
 	var outer: AdventureEventScenario = AdventureEventScenario.new()
 	var empty: AdventureEventScenario = AdventureEventScenario.new()
-	outer.events = [empty, _scenario] as Array[AdventurePage]
+	outer.events = [empty, _scenario] as Array[AdventureEvent]
 	assert_object(outer.resolve_event(_story)).is_same(_first)
 
 func test_decision_owner_is_the_event_inside() -> void:
@@ -73,11 +73,17 @@ func test_host_reference_leads_to_the_story_host() -> void:
 	_story._host = _host
 	assert_object(reference.resolve(_story)).is_same(_host)
 
-func _page(title: String, description: String) -> AdventurePage:
-	var page: AdventurePage = AdventurePage.new()
-	page.title = title
-	page.description = description
-	return page
+func _location(title: String, description: String) -> AdventureLocation:
+	var location: AdventureLocation = AdventureLocation.new()
+	location.title = title
+	location.description = description
+	return location
+
+func _event(title: String, description: String) -> AdventureEvent:
+	var event: AdventureEvent = AdventureEvent.new()
+	event.title = title
+	event.description = description
+	return event
 
 func _decision(description: String) -> AdventureDecision:
 	var decision: AdventureDecision = AdventureDecision.new()

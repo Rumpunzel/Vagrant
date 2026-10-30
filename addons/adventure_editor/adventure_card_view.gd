@@ -26,7 +26,7 @@ var _selected: AdventureDecision
 var _card_styles: Dictionary[AdventureDecision, StyleBoxFlat] = {}
 ## Tags of conditions and effects, the page or event a condition is on, and the fight cards with their pages, for the dotted lines
 var _tags: Dictionary[Resource, Control] = {}
-var _tag_owners: Dictionary[Resource, AdventurePage] = {}
+var _tag_owners: Dictionary[Resource, AdventureEvent] = {}
 var _fight_cards: Dictionary[AdventureDecision, Control] = {}
 var _fight_pages: Dictionary[AdventureDecision, AdventurePage] = {}
 
@@ -151,7 +151,7 @@ func _get_effect_additions() -> Dictionary[String, Resource]:
 	return additions
 
 ## Every kind of condition, and "can fight / is beaten / is dead" for each monster of the fights shown
-func _get_condition_additions(holder: AdventurePage) -> Dictionary[String, Resource]:
+func _get_condition_additions(holder: AdventureEvent) -> Dictionary[String, Resource]:
 	var additions: Dictionary[String, Resource] = {}
 	for fight: AdventureDecision in _fight_pages:
 		var enemies: Array[MonsterProfile] = (fight as AdventureFightDecision).enemies
@@ -176,7 +176,7 @@ func _add_condition_lines() -> void:
 	for item: Resource in _tags:
 		var condition: AdventureMonsterCondition = item as AdventureMonsterCondition
 		if condition == null or condition.monster == null: continue
-		var holder: AdventurePage = _tag_owners.get(condition)
+		var holder: AdventureEvent = _tag_owners.get(condition)
 		var spawning: AdventurePage = condition.monster.spawned_by.get_adventure_page() if condition.monster.spawned_by != null else holder
 		for fight: AdventureDecision in _fight_pages:
 			if _fight_pages[fight] == spawning and (fight as AdventureFightDecision).enemies.has(condition.monster.monster): _add_dashed(_tags[item], _fight_cards[fight], FIGHT_COLOR)
@@ -244,7 +244,7 @@ func _file_for(decision: AdventureDecision, page: AdventurePage, entry: Adventur
 		if resource != null and not resource.resource_path.is_empty(): return load(AdventureEventEditing.get_file_path(resource))
 	return null
 
-func _make_condition_tags(holder: AdventurePage, file: Resource) -> HFlowContainer:
+func _make_condition_tags(holder: AdventureEvent, file: Resource) -> HFlowContainer:
 	var tags: HFlowContainer = _make_tags(holder, &"conditions", file, "condition", _get_condition_additions.bind(holder))
 	for condition: AdventureCondition in holder.conditions: if condition != null: _tag_owners[condition] = holder
 	return tags

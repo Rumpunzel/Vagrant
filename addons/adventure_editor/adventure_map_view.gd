@@ -7,9 +7,9 @@ extends AdventureGraphView
 
 ## [param at]: where on the graph
 signal location_requested(at: Vector2)
-signal event_requested(location: AdventurePage, scenario: bool)
+signal event_requested(location: AdventureLocation, scenario: bool)
 ## An event already made, to be listed on [param location] too
-signal existing_event_requested(location: AdventurePage)
+signal existing_event_requested(location: AdventureLocation)
 
 ## Locations let go of their frame during the current drag, with that frame
 var _detached: Dictionary[GraphElement, GraphFrame] = {}
@@ -34,13 +34,17 @@ func show_graph(graph: AdventureGraph) -> void:
 		_on_right_click(frames[area], func() -> Dictionary[String, Callable]: return {"Delete area…": deletion_requested.emit.bind(area)})
 	var row_sizes: Dictionary[int, int] = {}
 	for page: AdventurePage in graph.pages:
-		var row: int = graph.areas.find(page.area) if page.area != null else graph.areas.size()
+		var location: AdventureLocation = page as AdventureLocation
+		var area: AdventureArea = location.area if location != null else null
+		var row: int = graph.areas.find(area) if area != null else graph.areas.size()
 		var column: int = row_sizes.get(row, 0)
 		row_sizes[row] = column + 1
 		var content: VBoxContainer = _make_page_content(page)
 		# Nearby events of the events around, faded, with where they come from
-		for nearby: Array in page.find_nearby_events():
-			var card: Button = _make_event_card(nearby[0], page)
+		var nearby_events: Array[Array] = [ ]
+		if location != null: nearby_events = location.find_nearby_events()
+		for nearby: Array in nearby_events:
+			var card: Button = _make_event_card(nearby[0] as AdventureEvent, page)
 			card.text = "%s · from %s" % [AdventureGraph.get_title(nearby[0]), AdventureGraph.get_title(nearby[1])]
 			card.modulate = FADED
 			content.add_child(card)
@@ -50,7 +54,7 @@ func show_graph(graph: AdventureGraph) -> void:
 		if graph.unreachable.has(page):
 			node.modulate = FADED
 			node.tooltip_text = "Not reached from the starting page"
-		if page.area != null: attach_graph_element_to_frame(node.name, frames[page.area].name)
+		if area != null: attach_graph_element_to_frame(node.name, frames[area].name)
 	# One line per pair: GraphEdit's curves leave right and enter left, which loops for links going back or both ways
 	var drawn: Array[AdventureGraph.Link] = [ ]
 	for link: AdventureGraph.Link in graph.links:
@@ -61,24 +65,25 @@ func show_graph(graph: AdventureGraph) -> void:
 		var dashed: bool = link.through_event and (back == null or back.through_event)
 		_add_line(_nodes[_key(link.from)], _nodes[_key(link.to)], DASHED_COLOR if dashed else LINE_COLOR, dashed, arrows)
 
+## Only locations get events
 func _get_location_actions(graph: AdventureGraph, page: AdventurePage) -> Dictionary[String, Callable]:
-	var actions: Dictionary[String, Callable] = {
-		"New event here": event_requested.emit.bind(page, false),
-		"New scenario here": event_requested.emit.bind(page, true),
-		"Add event…": existing_event_requested.emit.bind(page),
-		"Play from here": play_requested.emit.bind(page, null),
-		"Delete location…": deletion_requested.emit.bind(page),
-	}
+	var actions: Dictionary[String, Callable] = { }
+	if page is AdventureLocation:
+		actions["New event here"] = event_requested.emit.bind(page, false)
+		actions["New scenario here"] = event_requested.emit.bind(page, true)
+		actions["Add event…"] = existing_event_requested.emit.bind(page)
+	actions["Play from here"] = play_requested.emit.bind(page, null)
+	actions["Delete location…" if page is AdventureLocation else "Delete page…"] = deletion_requested.emit.bind(page)
 	for link: AdventureGraph.Link in graph.links:
 		if link.from == page and not link.through_event: actions["Unlink from %s" % AdventureGraph.get_title(link.to)] = _unlink.bind(page, link.to)
 	return actions
 
 func focus_page(page: AdventurePage) -> void: focus_node(_nodes.get(_key(page)))
 
-func _on_event_card_pressed(event: AdventurePage, page: AdventurePage) -> void: event_opened.emit(event, page)
+func _on_event_card_pressed(event: AdventureEvent, page: AdventurePage) -> void: event_opened.emit(event, page)
 
-func _get_event_card_actions(event: AdventurePage, page: AdventurePage) -> Dictionary[String, Callable]:
-	if not page.events.has(event): return {}
+func _get_event_card_actions(event: AdventureEvent, page: AdventurePage) -> Dictionary[String, Callable]:
+	if not page is AdventureLocation or not (page as AdventureLocation).events.has(event): return {}
 	return {"Remove from here (the file stays)": _remove_event.bind(page, event)}
 
 ## Frames grow with their locations; Alt while dragging lets them go, so they can leave
@@ -95,16 +100,16 @@ func _on_move_started() -> void:
 func _on_moved() -> void:
 	var changes: Array[Array] = [ ]
 	for element: GraphElement in _detached:
-		var page: AdventurePage = _resources[element] as AdventurePage
+		var location: AdventureLocation = _resources[element] as AdventureLocation
 		var area: AdventureArea = _get_area_at(element.position_offset + element.size / 2)
-		if area != page.area: changes.append([page, &"area", area])
+		if location != null and area != location.area: changes.append([location, &"area", area])
 		else: attach_graph_element_to_frame(element.name, _detached[element].name)
 	# Locations without an area are in no frame; dropped into one, they join it
 	for element: GraphElement in _resources:
-		var page: AdventurePage = _resources[element] as AdventurePage
-		if page == null or page.area != null or not element.selected: continue
+		var location: AdventureLocation = _resources[element] as AdventureLocation
+		if location == null or location.area != null or not element.selected: continue
 		var area: AdventureArea = _get_area_at(element.position_offset + element.size / 2)
-		if area != null: changes.append([page, &"area", area])
+		if area != null: changes.append([location, &"area", area])
 	_detached.clear()
 	# Applying rebuilds the graph, which must not happen while it reports the move
 	if not changes.is_empty(): changes_requested.emit.call_deferred(changes, "Change area", null)
@@ -112,41 +117,42 @@ func _on_moved() -> void:
 ## Events from the sidebar or the FileSystem panel onto a location; images onto a location or an area's frame
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	var at: Vector2 = _to_graph(at_position)
-	if data is Dictionary and (data as Dictionary).has("adventure_event"): return _get_page_at(at) != null
+	if data is Dictionary and (data as Dictionary).has("adventure_event"): return _get_page_at(at) is AdventureLocation
 	for path: String in _get_dropped_files(data):
 		if _is_image(path) and (_get_page_at(at) != null or _get_area_at(at) != null): return true
-		if path.get_extension() == "tres" and _get_page_at(at) != null: return true
+		if path.get_extension() == "tres" and _get_page_at(at) is AdventureLocation: return true
 	return false
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
 	var at: Vector2 = _to_graph(at_position)
-	var location: AdventurePage = _get_page_at(at)
+	var page: AdventurePage = _get_page_at(at)
+	var location: AdventureLocation = page as AdventureLocation
 	if data is Dictionary and (data as Dictionary).has("adventure_event"):
-		add_event(location, (data as Dictionary)["adventure_event"])
+		add_event(location, (data as Dictionary)["adventure_event"] as AdventureEvent)
 		return
 	for path: String in _get_dropped_files(data):
 		var dropped: Resource = load(path)
 		if dropped is Texture2D:
-			var target: Resource = location if location != null else _get_area_at(at)
+			var target: Resource = page if page != null else _get_area_at(at)
 			if target != null: _request(target, &"background", dropped, "Set background", target)
-		elif dropped is AdventurePage and location != null: add_event(location, dropped as AdventurePage)
+		elif dropped is AdventureEvent and location != null: add_event(location, dropped as AdventureEvent)
 		else: push_warning("%s is no image or event" % path)
 
 ## Lists [param event] on [param location] too
-func add_event(location: AdventurePage, event: AdventurePage) -> void:
+func add_event(location: AdventureLocation, event: AdventureEvent) -> void:
 	if location.events.has(event):
 		push_warning("%s is on %s already" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])
 		return
-	var events: Array[AdventurePage] = location.events.duplicate()
+	var events: Array[AdventureEvent] = location.events.duplicate()
 	events.append(event)
 	_request(location, &"events", events, "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], location)
 
 ## Refused for events stored inside the location's file, which would be lost
-func _remove_event(location: AdventurePage, event: AdventurePage) -> void:
+func _remove_event(location: AdventureLocation, event: AdventureEvent) -> void:
 	if AdventureEventEditing.is_inside_file(event):
 		push_warning("%s is stored inside %s's file and would be lost" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])
 		return
-	var events: Array[AdventurePage] = location.events.duplicate()
+	var events: Array[AdventureEvent] = location.events.duplicate()
 	events.erase(event)
 	_request(location, &"events", events, "Remove %s from %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], location)
 

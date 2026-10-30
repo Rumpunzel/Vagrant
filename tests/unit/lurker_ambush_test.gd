@@ -25,7 +25,7 @@ func test_lurker_profile() -> void:
 	assert_object((lurker.attack as NervesAttack).target).is_same(Rules.AGILITY)
 
 func test_ambush_decision() -> void:
-	var ambush: AdventurePage = load(LURKER_AMBUSH)
+	var ambush: AdventureEvent = load(LURKER_AMBUSH)
 	assert_int(ambush.decisions.size()).is_equal(1)
 	var decision: AdventureFightDecision = ambush.decisions[0]
 	assert_str(decision.flee_description).is_equal("Wun away!")
@@ -51,7 +51,7 @@ func test_ambush_decision() -> void:
 		assert_int(back.back_steps).is_equal(1)
 
 func test_ambush_only_while_the_lurker_can_fight() -> void:
-	var ambush: AdventurePage = load(LURKER_AMBUSH)
+	var ambush: AdventureEvent = load(LURKER_AMBUSH)
 	var condition: AdventureMonsterCondition = ambush.conditions[0]
 	assert_int(condition.state).is_equal(AdventureMonsterCondition.State.CAN_FIGHT)
 	assert_object(condition.monster.monster).is_same(load(LURKER))
@@ -59,7 +59,7 @@ func test_ambush_only_while_the_lurker_can_fight() -> void:
 	assert_object(condition.monster.spawned_by).is_null()
 
 func test_won_event_offers_to_kill_the_beaten_lurker() -> void:
-	var won: AdventurePage = load(OUTCOME_PAGES[Fight.Outcome.WON])
+	var won: AdventureEvent = load(OUTCOME_PAGES[Fight.Outcome.WON])
 	assert_int(won.exclusivity).is_equal(0)
 	var condition: AdventureMonsterCondition = won.conditions[0]
 	assert_int(condition.state).is_equal(AdventureMonsterCondition.State.INCAPACITATED)
@@ -72,9 +72,9 @@ func test_won_event_offers_to_kill_the_beaten_lurker() -> void:
 
 func test_scenario_shows_the_ambush_or_the_beaten_lurker() -> void:
 	var scenario: AdventureEventScenario = load(LURKER_SCENARIO)
-	assert_array((load(TEMPLE_RUIN) as AdventurePage).events).contains_exactly([scenario])
+	assert_array((load(TEMPLE_RUIN) as AdventureLocation).events).contains_exactly([scenario])
 	# The ambush first: while the Lurker can fight, the beaten one isn't there
 	assert_array(scenario.events).contains_exactly([load(LURKER_AMBUSH), load(OUTCOME_PAGES[Fight.Outcome.WON])])
 	assert_array(scenario.conditions).is_empty()
 	# One Lurker, wherever the scenario is placed
-	assert_bool((load(LURKER_AMBUSH) as AdventurePage).generic).is_false()
+	assert_bool((load(LURKER_AMBUSH) as AdventureEvent).generic).is_false()

@@ -77,7 +77,7 @@ var _page_stack: Array[AdventurePage] = []
 ## The page on which an event's decision was last chosen; the pages behind the event keep it
 var _host: AdventurePage
 ## Nearby events by page, found once per page built
-var _nearby_events: Dictionary[AdventurePage, Array] = {}
+var _nearby_events: Dictionary[AdventureLocation, Array] = {}
 # StoryPage -> Array[StoryPage]
 var _page_log: Dictionary[AdventurePage, Array] = {}
 # AdventureDecision -> StoryChoice (individual times the decision has been made)
@@ -99,18 +99,19 @@ func enter_page(adventure_page: AdventurePage) -> void:
 	_nearby_events.clear()
 	_current_story_page = _create_story_page(adventure_page) if adventure_page else null
 
-## The nearby events of the events around [param page] ([method AdventurePage.find_nearby_events]); their own conditions are checked like any event's
-func get_nearby_events(page: AdventurePage) -> Array[AdventurePage]:
-	if not _nearby_events.has(page): _nearby_events[page] = page.find_nearby_events().map(func(pair: Array) -> AdventurePage: return pair[0])
-	var nearby: Array[AdventurePage] = [ ]
-	nearby.assign(_nearby_events[page])
+## The nearby events of the events around [param location] ([method AdventureLocation.find_nearby_events]); their own conditions are checked like any event's
+func get_nearby_events(location: AdventureLocation) -> Array[AdventureEvent]:
+	if not _nearby_events.has(location): _nearby_events[location] = location.find_nearby_events().map(func(pair: Array) -> AdventureEvent: return pair[0])
+	var nearby: Array[AdventureEvent] = [ ]
+	nearby.assign(_nearby_events[location])
 	return nearby
 
 func get_protagonist() -> Character: return _protagonist
 
 ## The monster [param monster_profile] spawned by [param spawning_page] (spawned now if it wasn't yet); a generic event's at the current host
 func get_monster(spawning_page: AdventurePage, monster_profile: MonsterProfile, index: int = 0) -> Monster:
-	return _monsters.get_monster(spawning_page, monster_profile, index, _host if spawning_page.generic else null)
+	var generic: bool = spawning_page is AdventureEvent and (spawning_page as AdventureEvent).generic
+	return _monsters.get_monster(spawning_page, monster_profile, index, _host if generic else null)
 
 ## The page the current event is shown on ([AdventureHostReference])
 func get_host() -> AdventurePage: return _host

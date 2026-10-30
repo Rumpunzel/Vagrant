@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://m4wl5ad8o0i7"]
+[gd_resource type="Resource" script_class="AdventureEvent" format=3 uid="uid://m4wl5ad8o0i7"]
 
-[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="1_page"]
+[ext_resource type="Script" uid="uid://elib8bc2fnvu" path="res://adventure/adventure_event.gd" id="1_page_event"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_decision"]
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_r0x4r"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_b35qd"]
@@ -45,8 +45,8 @@ consequences = Array[ExtResource("4_b35qd")]([SubResource("Resource_kill_lurker"
 metadata/_custom_type_script = "uid://by3e6dkiypd3j"
 
 [resource]
-script = ExtResource("1_page")
-description = "The Lurker lies in the black water, too spent to rise. Its breath bubbles weakly at the surface."
+script = ExtResource("1_page_event")
 conditions = Array[ExtResource("2_r0x4r")]([SubResource("Resource_lurker_beaten")])
+description = "The Lurker lies in the black water, too spent to rise. Its breath bubbles weakly at the surface."
 decisions = Array[ExtResource("2_decision")]([SubResource("Resource_kill")])
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"
