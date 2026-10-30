@@ -36,8 +36,8 @@ const ARROW_SIZE: float = 12.0
 const ICON_SIZE: int = 16
 ## [words, editor icon] for menu items, the first that fits
 const MENU_ICONS: Array[Array] = [
-	[["play"], "Play"], [["unlink"], "Unlinked"], [["remove", "delete", "not nearby"], "Remove"], [["other file"], "Load"],
-	[["(scenario)"], "GraphEdit"], [["new ", "add "], "Add"],
+	[["play"], "Play"], [["unlink"], "Unlinked"], [["remove", "delete", "not nearby", "not here"], "Remove"], [["other file"], "Load"],
+	[["(scenario)"], "GraphEdit"], [["monster"], "Skeleton2D"], [["encounter"], "CharacterBody2D"], [["new ", "add "], "Add"],
 ]
 
 var layout: AdventureLayout

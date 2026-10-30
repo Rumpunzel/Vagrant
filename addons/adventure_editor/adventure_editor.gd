@@ -36,6 +36,7 @@ var _new_location_dialog: AdventureNewLocationDialog
 var _name_dialog: AdventureNameDialog
 var _file_dialog: EditorFileDialog
 var _delete_dialog: ConfirmationDialog
+var _profile_dialog: EditorFileDialog
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
@@ -58,6 +59,12 @@ func _make_dialogs() -> void:
 	_file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
 	_file_dialog.add_filter("*.tres", "Events")
 	add_child(_file_dialog)
+	_profile_dialog = EditorFileDialog.new()
+	_profile_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
+	_profile_dialog.title = "Monster profile"
+	_profile_dialog.add_filter("*.tres", "Monster profiles")
+	_profile_dialog.current_dir = "res://characters/monsters"
+	add_child(_profile_dialog)
 	_delete_dialog = ConfirmationDialog.new()
 	_delete_dialog.ok_button_text = "Delete"
 	add_child(_delete_dialog)
@@ -75,6 +82,7 @@ func _connect_views() -> void:
 		_name_dialog.ask("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
 	)
 	_map.existing_event_requested.connect(_offer_events)
+	_map.encounter_requested.connect(_ask_for_encounter)
 	_event_view.exit_opened.connect(_open_location)
 	_event_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
 
@@ -213,7 +221,7 @@ func _create_location(title: String, area: AdventureArea, new_area_name: String,
 
 ## The adventure's events (those met and every file in an events folder) not on [param location] yet, and any other file
 func _offer_events(location: AdventureLocation) -> void:
-	_offer(location.get_own_events(), func(event: AdventureEvent) -> void: _map.add_event(location, event), _map)
+	_offer(location.get_own_events(), func(event: AdventureEvent) -> void: _map.put_event(location, event), _map)
 
 ## A menu of the adventure's events (those met and every file in an events folder) but [param taken], and any other file; [param on_pick] gets the event
 func _offer(taken: Array, on_pick: Callable, view: AdventureGraphView) -> void:
@@ -299,6 +307,29 @@ func _create_event(title: String, host: AdventurePage, scenario: bool) -> void:
 	var events: Array[AdventureEvent] = AdventureGraph.get_listed_on(host)
 	events.append(event)
 	_edits.create(files, AdventureEventEditing.get_changes_listing(host, events), "New %s on %s" % [title, AdventureGraph.get_title(host)])
+
+## An NPC is named in a dialog; a monster is named after its profile (asked for if not given)
+func _ask_for_encounter(location: AdventureLocation, monster: bool, profile: MonsterProfile) -> void:
+	if not monster:
+		_name_dialog.ask("New encounter", "Name", func(title: String) -> void: _create_encounter(title, location, null))
+		return
+	if profile != null:
+		_create_encounter(profile.name, location, profile)
+		return
+	for connection: Dictionary in _profile_dialog.file_selected.get_connections(): _profile_dialog.file_selected.disconnect(connection["callable"])
+	_profile_dialog.file_selected.connect(func(path: String) -> void:
+		var picked: MonsterProfile = load(path) as MonsterProfile
+		if picked != null: _create_encounter(picked.name, location, picked)
+		else: push_warning("%s is no monster profile" % path)
+	)
+	_profile_dialog.popup_file_dialog()
+
+## Its files and its place in the adventure's encounters, as one undo step
+func _create_encounter(title: String, location: AdventureLocation, profile: MonsterProfile) -> void:
+	var files: Dictionary[String, Resource] = AdventureEventEditing.make_encounter_files(adventure, title, location, profile)
+	var encounters: Array[AdventureEncounter] = adventure.encounters.duplicate()
+	encounters.append(files.values().back() as AdventureEncounter)
+	_edits.create(files, [[adventure, &"encounters", encounters, adventure]] as Array[Array], "New encounter %s" % title)
 
 ## Asks first; the starting page can't go
 func _ask_to_delete(resource: Resource) -> void:

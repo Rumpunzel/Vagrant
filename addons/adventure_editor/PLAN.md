@@ -208,7 +208,13 @@ Steps:
   (State: Lurking / Beaten / Dead); `generic`, `spawned_by`, monster conditions and the kill consequence are gone
 - [x] 5. `AdventurePlaceCondition` ("encounter is here / at a location or area"); location stages work for a location's own events (subject empty:
   the current location); no content needs them yet
-- [ ] 6. Editor: "Here" panel per location (everything that can happen there, also "can come here" through move consequences; reordering) and a
+- [ ] 6. Editor (sketch agreed 2026-10-30; monster stage names to revisit later):
+  - [x] 6a. Location menu "New encounter here…" (NPC: Storyline Unmet / Met) and "New monster encounter here…" (profile picked or dropped from the
+    FileSystem; State Lurking / Beaten / Dead and an ambush whose won fight sets Beaten), files in `encounters/<name>/`, added to the adventure, one
+    undo step (`AdventureEventEditing.make_encounter_files`). Dropping an encounter on a location adds it to its places; its faded card: "Not here any more"
+  - [ ] 6b. A Location tab (double-click a location): everything that can happen there in its order, "can come here", reordering
+  - [ ] 6c. Storyline view per encounter (read-only first)
+  - Originally: "Here" panel per location (everything that can happen there, also "can come here" through move consequences; reordering) and a
   storyline view per encounter (stages as nodes, events between them)
 
 Later: encounter templates (several wolves; a "new monster encounter" with its State track and the fight outcomes' stage consequences ready),
@@ -279,3 +285,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-30: step 3 built: `AdventureEncounter`, `AdventureStageTrack`, `where` / `only_at`, `order`, `first_description`, stage condition, stage and move consequences, `StoryWorld`; `nearby_events` gone; Eleanor moved to `encounters/eleanor/` (greeting her places her and sets Met); editor: encounters in the event list, faded "could be here" cards on the map; tests: encounters (11), Eleanor content (3), first visit (1)
 - 2026-10-30: step 4 built: fights name encounters, one-off fights for `enemies`, Lurker as an encounter with stages; tests: Lurker content and story reworked, monsters per encounter / per location (1)
 - 2026-10-30: step 5 built: place condition; tests: place condition (1), location stages (1)
+- 2026-10-30: step 5 committed; 6a built: making and placing encounters; test: new encounters (1)

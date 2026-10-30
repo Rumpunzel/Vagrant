@@ -10,6 +10,8 @@ signal location_requested(at: Vector2)
 signal event_requested(location: AdventureLocation, scenario: bool)
 ## An event already made, to be listed on [param location] too
 signal existing_event_requested(location: AdventureLocation)
+## A new encounter that could be at [param location]: an NPC, or (with [param profile], none: ask for one) a monster
+signal encounter_requested(location: AdventureLocation, monster: bool, profile: MonsterProfile)
 
 ## Locations let go of their frame during the current drag, with that frame
 var _detached: Dictionary[GraphElement, GraphFrame] = {}
@@ -71,6 +73,8 @@ func _get_location_actions(graph: AdventureGraph, page: AdventurePage) -> Dictio
 		actions["New event here"] = event_requested.emit.bind(page, false)
 		actions["New scenario here"] = event_requested.emit.bind(page, true)
 		actions["Add event…"] = existing_event_requested.emit.bind(page)
+		actions["New encounter here…"] = encounter_requested.emit.bind(page, false, null)
+		actions["New monster encounter here…"] = encounter_requested.emit.bind(page, true, null)
 	actions["Play from here"] = play_requested.emit.bind(page, null)
 	actions["Delete location…" if page is AdventureLocation else "Delete page…"] = deletion_requested.emit.bind(page)
 	for link: AdventureGraph.Link in graph.links:
@@ -82,8 +86,21 @@ func focus_page(page: AdventurePage) -> void: focus_node(_nodes.get(_key(page)))
 func _on_event_card_pressed(event: AdventureEvent, page: AdventurePage) -> void: event_opened.emit(event, page)
 
 func _get_event_card_actions(event: AdventureEvent, page: AdventurePage) -> Dictionary[String, Callable]:
+	var encounter: AdventureEncounter = event as AdventureEncounter
+	if encounter != null and page is AdventureLocation and encounter.places.has(AdventureLayout.get_key(page)):
+		return {"Not here any more (it stays)": set_place.bind(encounter, page, false)}
 	if not AdventureGraph.get_listed_on(page).has(event): return {}
 	return {"Remove from here (the file stays)": _remove_event.bind(page, event)}
+
+## Whether [param encounter] could be at [param location] (its [member AdventureEncounter.places])
+func set_place(encounter: AdventureEncounter, location: AdventureLocation, here: bool) -> void:
+	var key: String = AdventureLayout.get_key(location)
+	var places: Array[String] = encounter.places.duplicate()
+	if here == places.has(key): return
+	if here: places.append(key)
+	else: places.erase(key)
+	var action: String = ("%s could be at %s" if here else "%s not at %s any more") % [AdventureGraph.get_title(encounter), AdventureGraph.get_title(location)]
+	_request(encounter, &"places", places, action, encounter)
 
 ## Frames grow with their locations; Alt while dragging lets them go, so they can leave
 func _on_move_started() -> void:
@@ -127,15 +144,21 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 	var page: AdventurePage = _get_page_at(at)
 	var location: AdventureLocation = page as AdventureLocation
 	if data is Dictionary and (data as Dictionary).has("adventure_event"):
-		add_event(location, (data as Dictionary)["adventure_event"] as AdventureEvent)
+		put_event(location, (data as Dictionary)["adventure_event"] as AdventureEvent)
 		return
 	for path: String in _get_dropped_files(data):
 		var dropped: Resource = load(path)
 		if dropped is Texture2D:
 			var target: Resource = page if page != null else _get_area_at(at)
 			if target != null: _request(target, &"background", dropped, "Set background", target)
-		elif dropped is AdventureEvent and location != null: add_event(location, dropped as AdventureEvent)
-		else: push_warning("%s is no image or event" % path)
+		elif dropped is AdventureEvent and location != null: put_event(location, dropped as AdventureEvent)
+		elif dropped is MonsterProfile and location != null: encounter_requested.emit(location, true, dropped as MonsterProfile)
+		else: push_warning("%s is no image, event, encounter or monster" % path)
+
+## Dropped or picked for [param location]: an encounter could be there from now on, another event is listed there
+func put_event(location: AdventureLocation, event: AdventureEvent) -> void:
+	if event is AdventureEncounter: set_place(event as AdventureEncounter, location, true)
+	else: add_event(location, event)
 
 ## Lists [param event] on [param location] too
 func add_event(location: AdventureLocation, event: AdventureEvent) -> void:

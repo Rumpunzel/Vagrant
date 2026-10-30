@@ -138,6 +138,31 @@ func test_listing_on_a_location_uses_its_own_scenario() -> void:
 	ruin.scenario = own
 	assert_array(AdventureEventEditing.get_changes_listing(ruin, [ ] as Array[AdventureEvent])).is_equal([[own, &"events", [ ], ruin]])
 
+func test_new_encounters() -> void:
+	var adventure: Adventure = Adventure.new()
+	adventure.resource_path = "res://adventures/test.tres"
+	var ruin: AdventureLocation = AdventureLocation.new()
+	ruin.resource_path = "res://adventures/locations/ruin.tres"
+	var npc: Dictionary[String, Resource] = AdventureEventEditing.make_encounter_files(adventure, "Old Man", ruin)
+	assert_array(npc.keys()).contains_exactly(["res://adventures/encounters/old_man/old_man.tres"])
+	var old_man: AdventureEncounter = npc.values()[0]
+	assert_array(old_man.places).contains_exactly(["res://adventures/locations/ruin.tres"])
+	assert_array(old_man.tracks[0].stages).contains_exactly(["Unmet", "Met"])
+	assert_array(old_man.events).is_empty()
+	var cutthroat: MonsterProfile = TestMonsters.cutthroat()
+	var monster: Dictionary[String, Resource] = AdventureEventEditing.make_encounter_files(adventure, "Cutthroat", ruin, cutthroat)
+	# The ambush first, so the encounter points at its file once both are saved
+	assert_array(monster.keys()).contains_exactly(["res://adventures/encounters/cutthroat/cutthroat_ambush.tres", "res://adventures/encounters/cutthroat/cutthroat.tres"])
+	var encounter: AdventureEncounter = monster.values()[1]
+	var ambush: AdventureEvent = monster.values()[0]
+	assert_object(encounter.profile).is_same(cutthroat)
+	assert_array(encounter.tracks[0].stages).contains_exactly(["Lurking", "Beaten", "Dead"])
+	assert_array(encounter.events).contains_exactly([ambush])
+	assert_array((ambush.conditions[0] as AdventureStageCondition).stages).contains_exactly(["Lurking"])
+	var fight: AdventureFightDecision = ambush.decisions[0]
+	assert_str((fight.consequences[0] as AdventureStageConsequence).stage).is_equal("Beaten")
+	assert_object(fight.transition).is_instanceof(AdventureHostReference)
+
 func test_forgetting_an_area() -> void:
 	var swamp: AdventureArea = AdventureArea.new()
 	var ruin: AdventureLocation = AdventureLocation.new()
