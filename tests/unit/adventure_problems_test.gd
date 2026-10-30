@@ -5,6 +5,7 @@ extends GdUnitTestSuite
 var _beach: AdventureArea
 var _shore: AdventureLocation
 var _ruin: AdventureLocation
+var _encounters: Array[AdventureEncounter] = [ ]
 
 func before_test() -> void:
 	_beach = AdventureArea.new()
@@ -66,7 +67,9 @@ func test_events_listed_nowhere() -> void:
 	var lost: AdventureEvent = _event("Forgotten")
 	var heard: AdventureEvent = _event("Heard")
 	var source: AdventureEvent = _event("Source")
-	source.nearby_events = [heard] as Array[AdventureEvent]
+	var eleanor: AdventureEncounter = AdventureEncounter.new()
+	eleanor.events = [heard] as Array[AdventureEvent]
+	_encounters = [eleanor] as Array[AdventureEncounter]
 	var behind: AdventurePage = AdventurePage.new()
 	behind.title = "Behind"
 	_link(source, behind)
@@ -79,6 +82,7 @@ func _texts(event_files: Array[AdventureEvent]) -> Array:
 func _adventure() -> Adventure:
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = _shore
+	adventure.encounters = _encounters
 	return adventure
 
 func _location(title: String, area: AdventureArea) -> AdventureLocation:

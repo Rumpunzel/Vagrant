@@ -9,17 +9,33 @@
 [ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="5_k8kem"]
 [ext_resource type="Script" uid="uid://df6f7mcpin5we" path="res://adventure/decisions/adventure_save_decision.gd" id="5_yeb4i"]
 [ext_resource type="Script" uid="uid://oybrm82jcppw" path="res://adventure/adventure_previous_location_reference.gd" id="8_cdjox"]
-[ext_resource type="Resource" uid="uid://dffxphat87a8a" path="res://adventure/adventures/locations/beach/events/hearing_eleanor.tres" id="9_hearing"]
+[ext_resource type="Script" uid="uid://bva4sh5387lyd" path="res://adventure/conditions/adventure_stage_condition.gd" id="20_stage_condition"]
+[ext_resource type="Script" uid="uid://cruge2r1dq0e6" path="res://adventure/decisions/consequences/adventure_move_consequence.gd" id="21_move"]
+[ext_resource type="Script" uid="uid://dnag2gmshedq4" path="res://adventure/decisions/consequences/adventure_stage_consequence.gd" id="22_stage"]
 
 [sub_resource type="Resource" id="Resource_j24m5"]
 script = ExtResource("3_t43k6")
 description = "She throws a strange artifact at your head, then dabs on the haters."
 background = ExtResource("3_k8kem")
 
+[sub_resource type="Resource" id="Resource_unmet"]
+script = ExtResource("20_stage_condition")
+track = "Storyline"
+stages = Array[String](["Unmet"])
+
+[sub_resource type="Resource" id="Resource_here"]
+script = ExtResource("21_move")
+
+[sub_resource type="Resource" id="Resource_met"]
+script = ExtResource("22_stage")
+track = "Storyline"
+stage = "Met"
+
 [sub_resource type="Resource" id="Resource_fqbk4"]
 script = ExtResource("1_npy2t")
 description = "Approach and greet her."
 transition = SubResource("Resource_j24m5")
+consequences = Array[ExtResource("3_0imj5")]([SubResource("Resource_here"), SubResource("Resource_met")])
 
 [sub_resource type="Resource" id="Resource_0x8r7"]
 script = ExtResource("3_t43k6")
@@ -51,7 +67,7 @@ transition = SubResource("Resource_b3ed1")
 [resource]
 script = ExtResource("3_t43k6_event")
 exclusivity = 7
-nearby_events = Array[ExtResource("3_t43k6_event")]([ExtResource("9_hearing")])
+conditions = Array[ExtResource("1_k8kem")]([SubResource("Resource_unmet")])
 title = "The Mysterious Woman"
 description = "A young woman knocks her mace against the heavy gate of the ruined keep."
 decisions = Array[ExtResource("1_npy2t")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])

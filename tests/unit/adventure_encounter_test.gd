@@ -1,0 +1,148 @@
+extends GdUnitTestSuite
+
+## Encounters: their events show where they could be, near it or anywhere, gated by their stages; moves and stage changes.
+
+const CASTLE_PATH: String = "user://encounter_test_castle.tres"
+const ENCOUNTER_PATH: String = "user://encounter_test_eleanor.tres"
+
+var _story: Story
+var _beach: AdventureArea
+var _shore: AdventureLocation
+var _castle: AdventureLocation
+var _eleanor: AdventureEncounter
+var _meeting: AdventureEvent
+var _hearing: AdventureEvent
+
+func before_test() -> void:
+	_story = auto_free(Story.new())
+	_beach = AdventureArea.new()
+	_shore = _location("Shore", _beach)
+	_castle = _location("Castle", _beach)
+	_link(_shore, _castle)
+	_link(_castle, _shore)
+	_meeting = _event("Meeting", "She knocks.")
+	_hearing = _event("", "You hear knocking.")
+	_hearing.where = AdventureEvent.Where.NEAR
+	var storyline: AdventureStageTrack = AdventureStageTrack.new()
+	storyline.name = "Storyline"
+	storyline.stages = ["Unmet", "Met"] as Array[String]
+	_eleanor = AdventureEncounter.new()
+	_eleanor.title = "Eleanor"
+	_eleanor.tracks = [storyline] as Array[AdventureStageTrack]
+	_eleanor.events = [_meeting, _hearing] as Array[AdventureEvent]
+	_story.world = StoryWorld.new([_eleanor] as Array[AdventureEncounter])
+	_story.world.move(_eleanor, [_castle] as Array[AdventureLocation])
+
+func after_test() -> void:
+	for path: String in [CASTLE_PATH, ENCOUNTER_PATH]: if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
+
+func test_shows_where_it_is_and_near_it() -> void:
+	assert_array(_castle.get_events(_story)).contains_exactly([_meeting])
+	assert_array(_shore.get_events(_story)).contains_exactly([_hearing])
+	assert_str(_shore.get_description(_story)).is_equal("[p]Damp.[/p][p]You hear knocking.[/p]")
+
+func test_could_be_in_several_places() -> void:
+	var far: AdventureLocation = _location("Far", _beach)
+	_link(_shore, far)
+	_story.world.move(_eleanor, [_castle, _shore] as Array[AdventureLocation])
+	assert_array(_shore.get_events(_story)).contains_exactly([_meeting])
+	assert_array(_castle.get_events(_story)).contains_exactly([_meeting])
+	assert_array(far.get_events(_story)).contains_exactly([_hearing])
+
+func test_nowhere_until_placed() -> void:
+	_story.world.move(_eleanor, [ ] as Array[AdventureLocation])
+	assert_array(_castle.get_events(_story)).is_empty()
+	_meeting.where = AdventureEvent.Where.ANYWHERE
+	assert_array(_shore.get_events(_story)).contains_exactly([_meeting])
+
+func test_reach_counts_links() -> void:
+	var far: AdventureLocation = _location("Far", _beach)
+	_link(_shore, far)
+	assert_array(far.get_events(_story)).is_empty()
+	_hearing.nearby_reach = 2
+	_story.world = StoryWorld.new([_eleanor] as Array[AdventureEncounter])
+	_story.world.move(_eleanor, [_castle] as Array[AdventureLocation])
+	assert_array(far.get_events(_story)).contains_exactly([_hearing])
+
+func test_reach_zero_is_the_whole_area() -> void:
+	var swamp: AdventureLocation = _location("Swamp", AdventureArea.new())
+	var far: AdventureLocation = _location("Far", _beach)
+	_link(_castle, swamp)
+	_link(swamp, far)
+	_hearing.nearby_reach = 0
+	assert_array(swamp.get_events(_story)).is_empty()
+	assert_array(far.get_events(_story)).contains_exactly([_hearing])
+
+func test_staying_in_the_area() -> void:
+	var swamp: AdventureLocation = _location("Swamp", AdventureArea.new())
+	_link(_castle, swamp)
+	assert_array(swamp.get_events(_story)).contains_exactly([_hearing])
+	_hearing.nearby_stays_in_area = true
+	assert_array(swamp.get_events(_story)).is_empty()
+
+func test_only_at_limits_where() -> void:
+	_save(_castle, CASTLE_PATH)
+	_meeting.where = AdventureEvent.Where.ANYWHERE
+	_meeting.only_at = [CASTLE_PATH] as Array[String]
+	assert_array(_castle.get_events(_story)).contains_exactly([_meeting])
+	assert_array(_shore.get_events(_story)).not_contains([_meeting])
+
+func test_stages_gate_events() -> void:
+	assert_str(_story.world.get_stage(_eleanor, "Storyline")).is_equal("Unmet")
+	var unmet: AdventureStageCondition = AdventureStageCondition.new()
+	unmet.track = "Storyline"
+	unmet.stages = ["Unmet"] as Array[String]
+	_meeting.conditions = [unmet] as Array[AdventureCondition]
+	assert_array(_castle.get_events(_story)).contains_exactly([_meeting])
+	_story.world.set_stage(_eleanor, "Storyline", "Met")
+	assert_array(_castle.get_events(_story)).is_empty()
+
+func test_consequences_act_on_the_own_encounter_here() -> void:
+	_story._encounter = _eleanor
+	_story._location = _shore
+	AdventureMoveConsequence.new().resolve(_story, 0)
+	assert_array(_story.world.get_places(_eleanor)).contains_exactly([_shore])
+	var met: AdventureStageConsequence = AdventureStageConsequence.new()
+	met.track = "Storyline"
+	met.stage = "Met"
+	met.resolve(_story, 0)
+	assert_str(_story.world.get_stage(_eleanor, "Storyline")).is_equal("Met")
+
+func test_decisions_of_shown_encounter_events_belong_to_them() -> void:
+	var greet: AdventureDecision = AdventureDecision.new()
+	_meeting.decisions = [greet] as Array[AdventureDecision]
+	assert_object(_story._find_decision_owner(_castle, greet)).is_same(_meeting)
+	assert_object(_story.world.get_encounter_of(_meeting)).is_same(_eleanor)
+
+func test_the_location_orders_its_own_events_and_encounters() -> void:
+	var own: AdventureEvent = _event("", "Wind.")
+	TestAdventures.list(_castle, [own] as Array[AdventureEvent])
+	var encounters: Array[AdventureEncounter] = [_eleanor]
+	assert_array(_castle.get_sources(encounters)).contains_exactly([_castle.scenario, _eleanor])
+	_save(_castle, CASTLE_PATH)
+	_save(_eleanor, ENCOUNTER_PATH)
+	_castle.order = [ENCOUNTER_PATH, CASTLE_PATH] as Array[String]
+	assert_array(_castle.get_sources(encounters)).contains_exactly([_eleanor, _castle.scenario])
+	assert_str(_castle.get_description(_story)).is_equal("[p]Damp.[/p][p]She knocks.[/p][p]Wind.[/p]")
+
+func _save(resource: Resource, path: String) -> void:
+	ResourceSaver.save(resource, path)
+	resource.take_over_path(path)
+
+func _location(title: String, area: AdventureArea) -> AdventureLocation:
+	var location: AdventureLocation = AdventureLocation.new()
+	location.title = title
+	location.description = "Damp."
+	location.area = area
+	return location
+
+func _event(title: String, description: String) -> AdventureEvent:
+	var event: AdventureEvent = AdventureEvent.new()
+	event.title = title
+	event.description = description
+	return event
+
+func _link(from: AdventurePage, to: AdventurePage) -> void:
+	var decision: AdventureDecision = AdventureDecision.new()
+	decision.transition = to
+	from.decisions.append(decision)

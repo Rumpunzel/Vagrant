@@ -27,7 +27,7 @@ func before_test() -> void:
 	TestAdventures.list(_host, [_scenario] as Array[AdventureEvent])
 
 func test_shows_the_first_event_whose_prerequisites_are_met() -> void:
-	assert_array(_scenario.resolve_events(_story)).contains_exactly([_first])
+	assert_array(_scenario.resolve_events(_story, _host, null)).contains_exactly([_first])
 	assert_array(_host.get_events(_story)).contains_exactly([_first])
 	assert_str(_host.get_page_title(_story)).is_equal("Ambush")
 	assert_str(_host.get_description(_story)).is_equal("[p]Damp.[/p][p]A hiss![/p]")
@@ -41,7 +41,7 @@ func test_falls_through_to_the_next_event() -> void:
 func test_shows_nothing_if_no_event_fits() -> void:
 	(_first.conditions[0] as Switch).on = false
 	_second.conditions = [Switch.new(false)] as Array[AdventureCondition]
-	assert_array(_scenario.resolve_events(_story)).is_empty()
+	assert_array(_scenario.resolve_events(_story, _host, null)).is_empty()
 	assert_array(_host.get_events(_story)).is_empty()
 	assert_str(_host.get_description(_story)).is_equal("[p]Damp.[/p]")
 
@@ -60,7 +60,7 @@ func test_hide_flags_of_the_shown_event_act_on_the_host() -> void:
 
 func test_picking_all_shows_every_event_that_fits() -> void:
 	_scenario.pick = AdventureEventScenario.Pick.ALL
-	assert_array(_scenario.resolve_events(_story)).contains_exactly([_first, _second])
+	assert_array(_scenario.resolve_events(_story, _host, null)).contains_exactly([_first, _second])
 	assert_str(_host.get_description(_story)).is_equal("[p]Damp.[/p][p]A hiss![/p][p]It lies still.[/p]")
 	(_first.conditions[0] as Switch).on = false
 	assert_array(_host.get_events(_story)).contains_exactly([_second])
@@ -69,7 +69,7 @@ func test_nested_scenarios_resolve() -> void:
 	var outer: AdventureEventScenario = AdventureEventScenario.new()
 	var empty: AdventureEventScenario = AdventureEventScenario.new()
 	outer.events = [empty, _scenario] as Array[AdventureEvent]
-	assert_array(outer.resolve_events(_story)).contains_exactly([_first])
+	assert_array(outer.resolve_events(_story, _host, null)).contains_exactly([_first])
 
 func test_decision_owner_is_the_event_inside() -> void:
 	assert_object(_host.find_decision_owner(_second.decisions[0])).is_same(_second)

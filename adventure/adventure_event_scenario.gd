@@ -4,6 +4,7 @@ extends AdventureEvent
 
 ## Groups events: shows the first of them whose prerequisites are met (list order is priority), or all of them that are.
 ## Its own conditions gate the whole group; the events shown act on the location as if they were listed there (also their Hide flags).
+## Only the events inside go by [member AdventureEvent.where], not the scenario itself.
 ## Its title only names it in the editor; the other page fields are unused.
 
 enum Pick {
@@ -18,11 +19,11 @@ const UNUSED: Array[StringName] = [&"description", &"background", &"ambience", &
 @export var pick: Pick = Pick.FIRST
 @export var events: Array[AdventureEvent]
 
-func resolve_events(story: Story) -> Array[AdventureEvent]:
+func resolve_events(story: Story, location: AdventureLocation, encounter: AdventureEncounter) -> Array[AdventureEvent]:
 	var shown: Array[AdventureEvent] = [ ]
 	for event: AdventureEvent in events:
 		if event == null or not event.are_all_prerequisites_fullfilled(story): continue
-		shown.append_array(event.resolve_events(story))
+		shown.append_array(event.resolve_events(story, location, encounter))
 		if pick == Pick.FIRST and not shown.is_empty(): break
 	return shown
 
@@ -35,10 +36,7 @@ func get_listed_events() -> Array[AdventureEvent]:
 		if event is AdventureEventScenario: listed.append_array((event as AdventureEventScenario).get_listed_events())
 	return listed
 
-func get_held_events() -> Array[AdventureEvent]:
-	var held: Array[AdventureEvent] = super()
-	held.append_array(events)
-	return held
+func get_held_events() -> Array[AdventureEvent]: return events.duplicate()
 
 func find_decision_owner(decision: AdventureDecision) -> AdventurePage:
 	for event: AdventureEvent in events:

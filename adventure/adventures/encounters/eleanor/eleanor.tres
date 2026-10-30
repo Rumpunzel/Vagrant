@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="AdventureEncounter" format=3 uid="uid://dkfro0d37xt6n"]
+
+[ext_resource type="Script" uid="uid://jag8exqamilc" path="res://adventure/adventure_encounter.gd" id="1_encounter"]
+[ext_resource type="Script" uid="uid://by0krlemues6g" path="res://adventure/adventure_stage_track.gd" id="2_track"]
+[ext_resource type="Script" uid="uid://elib8bc2fnvu" path="res://adventure/adventure_event.gd" id="3_event"]
+[ext_resource type="Resource" uid="uid://d3cv8d5e65vwh" path="res://adventure/adventures/encounters/eleanor/meeting_eleanor.tres" id="4_meeting"]
+[ext_resource type="Resource" uid="uid://dffxphat87a8a" path="res://adventure/adventures/encounters/eleanor/hearing_eleanor.tres" id="5_hearing"]
+
+[sub_resource type="Resource" id="Resource_storyline"]
+script = ExtResource("2_track")
+name = "Storyline"
+stages = Array[String](["Unmet", "Met"])
+
+[resource]
+script = ExtResource("1_encounter")
+title = "Eleanor"
+tracks = Array[ExtResource("2_track")]([SubResource("Resource_storyline")])
+places = Array[String](["uid://dk3q4ia5u7q6m"])
+events = Array[ExtResource("3_event")]([ExtResource("4_meeting"), ExtResource("5_hearing")])

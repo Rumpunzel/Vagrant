@@ -27,10 +27,6 @@ func _init(graph: AdventureGraph, event_files: Array[AdventureEvent]) -> void:
 	for page: AdventurePage in graph.pages: _check_decisions(page, null)
 	var events: Array[AdventureEvent] = [ ]
 	events.assign(graph.event_hosts.keys())
-	var index: int = 0
-	while index < events.size():
-		for nearby: AdventureEvent in events[index].nearby_events: if nearby != null and not events.has(nearby): events.append(nearby)
-		index += 1
 	# Events listed only on pages behind other events are reached, not listed on a location
 	var reached: Array[AdventurePage] = [ ]
 	reached.assign(events)

@@ -187,10 +187,24 @@ Steps:
   content moved (text edits, UIDs kept); first / all comes with step 2
 - [x] 2. Locations' events into their own scenario (`AdventureLocation.scenario`, picking all); scenarios pick first / all; plain events hold no events
   any more (`AdventureEventHost` gone, nesting only through scenarios). The location's ordered list comes with step 3, when there are encounters to order
-- [ ] 3. Encounters with stage tracks, where (base + filter), optional place, "puts the encounter here"; Eleanor moved over
+- [x] 3. Encounters (design agreed 2026-10-30, built):
+  - Back-pointers (to encounters and locations from conditions, consequences, filters, the order list) go by **file UID**, loaded when needed
+    (like `AdventureTransition`); files can't load each other in a circle, and nothing can point inside another file.
+  - `AdventureEncounter` (an `AdventureEventScenario`: its events, pick first): title, optional profile, `tracks` (`AdventureStageTrack`: name +
+    stages, the first is the start), `places`: where it **could be** (UIDs); first contact (a move consequence) narrows them to one.
+  - `AdventureEvent`: `where` (where its encounter is / near it, with reach and "stays in area" / anywhere), `only_at` (locations or areas by UID);
+    `nearby_events` goes (Hearing Eleanor is Eleanor's "near" event).
+  - `AdventureLocation`: `tracks`, `order` (encounters by UID; the location itself = its own events; unlisted: own events first, other encounters
+    after, in the adventure's order), `first_description` (shown instead on the first visit).
+  - `Adventure.encounters`.
+  - Stage condition (subject by UID, empty: own encounter or the current location; track; one of a set of stages), stage consequence (sets one),
+    move consequence (encounter, empty: own; to a location, empty: here).
+  - `StoryWorld` in Story: stages per subject and track, places per encounter; Story knows the encounter of the event one is in (also on the
+    pages behind it). A "first visit" condition only if something needs it.
+  - Eleanor moved to `encounters/eleanor/` (track Unmet / Met; Meeting needs Unmet and places her; Hearing near her, needs Unmet).
 - [ ] 4. Monsters as encounters: fights name an encounter and set its stage; generic monster encounter; the Lurker moved over; `generic`, `spawned_by`,
   monster conditions and the kill consequence go
-- [ ] 5. Move consequence; condition "encounter is here / at …"; location stages
+- [ ] 5. Condition "encounter is here / at …"; location stages in content (the move consequence comes with step 3)
 - [ ] 6. Editor: "Here" panel per location (everything that can happen there, also "can come here" through move consequences; reordering) and a
   storyline view per encounter (stages as nodes, events between them)
 
@@ -256,3 +270,5 @@ Later: encounter templates (several wolves), with the party / carried by, item e
 - 2026-10-30: model rethought with the user: locations and encounters (stage tracks, where, scenarios first / all, order on the location); steps 1–6 agreed
 - 2026-10-30: step 1 built: the page types split, Story / editor / tests retyped (map nodes that are plain pages get no event actions; event files that are plain pages no longer show as events)
 - 2026-10-30: step 1 committed; step 2 built: own scenarios on locations, `pick`, `resolve_events`; editor lists events through `AdventureGraph.get_listed_on` and `AdventureEventEditing.get_changes_listing`; tests: `TestAdventures` helper, pick all (1), listing (1)
+- 2026-10-30: step 3 designed with the user: UID back-pointers, encounters in all their possible places until contact, own events as a slot in the location's order, first-visit text, contact by a move consequence
+- 2026-10-30: step 3 built: `AdventureEncounter`, `AdventureStageTrack`, `where` / `only_at`, `order`, `first_description`, stage condition, stage and move consequences, `StoryWorld`; `nearby_events` gone; Eleanor moved to `encounters/eleanor/` (greeting her places her and sets Met); editor: encounters in the event list, faded "could be here" cards on the map; tests: encounters (11), Eleanor content (3), first visit (1)

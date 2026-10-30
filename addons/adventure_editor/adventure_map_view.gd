@@ -40,14 +40,13 @@ func show_graph(graph: AdventureGraph) -> void:
 		var column: int = row_sizes.get(row, 0)
 		row_sizes[row] = column + 1
 		var content: VBoxContainer = _make_page_content(page)
-		# Nearby events of the events around, faded, with where they come from
-		var nearby_events: Array[Array] = [ ]
-		if location != null: nearby_events = location.find_nearby_events()
-		for nearby: Array in nearby_events:
-			var card: Button = _make_event_card(nearby[0] as AdventureEvent, page)
-			card.text = "%s · from %s" % [AdventureGraph.get_title(nearby[0]), AdventureGraph.get_title(nearby[1])]
-			card.modulate = FADED
-			content.add_child(card)
+		# Encounters that could show here, faded
+		if location != null:
+			for encounter: AdventureEncounter in graph.get_encounters_at(location):
+				var card: Button = _make_event_card(encounter, page)
+				card.text = "%s (could be here)" % AdventureGraph.get_title(encounter)
+				card.modulate = FADED
+				content.add_child(card)
 		var node: GraphNode = _add_node(_key(page), page, AdventureGraph.get_title(page), content, Vector2(column, row) * NODE_SPACING)
 		node.set_slot(0, true, 0, Color.WHITE, true, 0, Color.WHITE)
 		_on_right_click(node, func() -> Dictionary[String, Callable]: return _get_location_actions(graph, page))

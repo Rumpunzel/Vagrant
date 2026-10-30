@@ -11,8 +11,6 @@ extends AdventureCardView
 signal exit_opened(location: AdventurePage)
 ## A new event as an option of [param scenario]
 signal option_requested(scenario: AdventureEventScenario)
-## An event already made, to show around [param event]'s locations
-signal nearby_event_requested(event: AdventureEvent)
 
 enum Target { PAGE, HOST, PREVIOUS }
 
@@ -160,14 +158,8 @@ func _add_page(entry: AdventureEventOverview.Entry, page: AdventurePage, at: Vec
 func _get_page_actions(entry: AdventureEventOverview.Entry, page: AdventurePage) -> Dictionary[String, Callable]:
 	var actions: Dictionary[String, Callable] = _get_add_actions(entry, page)
 	if page != entry.event and AdventureEventEditing.is_inside_file(page): actions["Delete page"] = _delete_page.bind(entry, page)
-	if page == entry.event: actions["Add nearby event…"] = nearby_event_requested.emit.bind(page)
 	if page == entry.event and not AdventureEventEditing.is_inside_file(page): actions["Delete event…"] = deletion_requested.emit.bind(page)
 	actions["Play from here"] = play_requested.emit.bind(page, entry.event)
-	if page == entry.event and entry.is_nearby:
-		var source: AdventureEvent = entry.parent_page as AdventureEvent
-		var without: Array[AdventureEvent] = source.nearby_events.duplicate()
-		without.erase(page)
-		actions["Not nearby %s any more" % AdventureGraph.get_title(source)] = _request.bind(source, &"nearby_events", without, "Not nearby any more", load(AdventureEventEditing.get_file_path(source)))
 	return actions
 
 ## Everything in the file pointing at the page goes back instead

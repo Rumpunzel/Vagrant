@@ -33,14 +33,14 @@ func test_nested_scenarios_are_switches_inside_switches() -> void:
 	assert_object(overview.get_switch(inner).outer).is_same(overview.get_switch(outer))
 	assert_object(overview.get_entry(inner.events[0]).switch).is_same(overview.get_switch(inner))
 
-func test_nearby_events_hang_from_their_source() -> void:
-	var ambush: AdventureEvent = _event("Ambush")
-	var nested: AdventureEvent = _event("Nested")
-	ambush.nearby_events.append(nested)
-	var overview: AdventureEventOverview = AdventureEventOverview.new(ambush)
-	var entry: AdventureEventOverview.Entry = overview.get_entry(nested)
-	assert_object(entry.parent).is_same(overview.entries[0])
-	assert_object(entry.parent_page).is_same(ambush)
+func test_near_events_say_so() -> void:
+	var hearing: AdventureEvent = _event("Hearing")
+	hearing.where = AdventureEvent.Where.NEAR
+	var encounter: AdventureEncounter = AdventureEncounter.new()
+	encounter.events = [_event("Meeting"), hearing] as Array[AdventureEvent]
+	var overview: AdventureEventOverview = AdventureEventOverview.new(encounter)
+	assert_array(overview.entries.map(func(entry: AdventureEventOverview.Entry) -> String: return entry.label)).contains_exactly(["Meeting", "Hearing (near)"])
+	assert_bool(overview.get_entry(hearing).is_nearby).is_true()
 
 func test_loops_end() -> void:
 	var scenario: AdventureEventScenario = _scenario("Loop", [ ])

@@ -139,6 +139,14 @@ func test_background_and_ambience_fallbacks() -> void:
 	assert_object(page.get_background(_story)).is_same(event.background)
 	assert_object(page.get_ambience(_story)).is_same(event.ambience)
 
+func test_first_visit_text() -> void:
+	var page: AdventureLocation = _location("Ruin", "Damp.")
+	page.first_description = "You have never seen it before."
+	assert_str(page.get_description(_story)).is_equal("[p]You have never seen it before.[/p]")
+	var visits: Array[StoryPage] = [null]
+	_story._page_log[page] = visits
+	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p]")
+
 func test_transition_loads_its_page() -> void:
 	var transition: AdventureTransition = AdventureTransition.new()
 	transition._leads_to = "uid://ycd6xhx346l6"  # rocky_shore.tres

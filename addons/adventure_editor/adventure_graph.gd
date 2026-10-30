@@ -25,6 +25,8 @@ var links: Array[Link] = [ ]
 var event_hosts: Dictionary[AdventureEvent, Array] = {}
 ## Pages not reached from the starting page
 var unreachable: Array[AdventurePage] = [ ]
+## The adventure's encounters, with the map's locations each could show on (its places, and where its events' "only at" lists allow)
+var encounter_locations: Dictionary[AdventureEncounter, Array] = {}
 
 ## [param placed]: pages placed by hand ([method AdventureLayout.get_placed_pages]); those not reached from the start, and what they lead to, are [member unreachable]
 func _init(adventure: Adventure, placed: Array[AdventurePage] = [ ]) -> void:
@@ -33,6 +35,12 @@ func _init(adventure: Adventure, placed: Array[AdventurePage] = [ ]) -> void:
 	var reached: int = pages.size()
 	_walk(placed)
 	unreachable = pages.slice(reached)
+	for encounter: AdventureEncounter in adventure.encounters:
+		if encounter == null: continue
+		if not event_hosts.has(encounter): event_hosts[encounter] = [ ]
+		encounter_locations[encounter] = _find_encounter_locations(encounter)
+		for target: AdventurePage in _get_event_targets(encounter):
+			for location: AdventureLocation in get_encounter_locations(encounter): _add_link(location, target, true)
 
 func _walk(queue: Array[AdventurePage]) -> void:
 	queue = queue.duplicate()
@@ -61,27 +69,42 @@ func get_link(from: AdventurePage, to: AdventurePage) -> Link:
 	for link: Link in links: if link.from == from and link.to == to: return link
 	return null
 
+func get_encounter_locations(encounter: AdventureEncounter) -> Array[AdventureLocation]:
+	var locations: Array[AdventureLocation] = [ ]
+	locations.assign(encounter_locations.get(encounter, [ ]) as Array)
+	return locations
+
+## The encounters that could show on [param location]
+func get_encounters_at(location: AdventureLocation) -> Array[AdventureEncounter]:
+	var found: Array[AdventureEncounter] = [ ]
+	for encounter: AdventureEncounter in encounter_locations: if encounter_locations[encounter].has(location): found.append(encounter)
+	return found
+
 func get_hosts(event: AdventureEvent) -> Array[AdventurePage]:
 	var hosts: Array[AdventurePage] = [ ]
 	hosts.assign(event_hosts.get(event, [ ]) as Array)
 	return hosts
 
-## The map pages [param event] happens on, also through the events (and scenarios) it is part of
+## The map locations [param event] happens on, also through the scenarios and encounters it is part of
 func get_location_hosts(event: AdventureEvent) -> Array[AdventureLocation]:
 	var locations: Array[AdventureLocation] = [ ]
-	var queue: Array[AdventurePage] = get_hosts(event)
+	var queue: Array[AdventurePage] = [event]
 	var seen: Array[AdventurePage] = [ ]
 	while not queue.is_empty():
 		var host: AdventurePage = queue.pop_front()
 		if seen.has(host): continue
 		seen.append(host)
-		if host is AdventureLocation and pages.has(host): locations.append(host as AdventureLocation)
-		elif host is AdventureEvent: queue.append_array(get_hosts(host as AdventureEvent))
+		if host is AdventureLocation:
+			if pages.has(host) and not locations.has(host): locations.append(host as AdventureLocation)
+		elif host is AdventureEvent:
+			if host is AdventureEncounter: queue.append_array(get_encounter_locations(host as AdventureEncounter))
+			queue.append_array(get_hosts(host as AdventureEvent))
 	return locations
 
-## Events listed on map pages, in the order met
+## The adventure's encounters, then the events listed on map pages, in the order met
 func get_top_events() -> Array[AdventureEvent]:
 	var top: Array[AdventureEvent] = [ ]
+	top.append_array(encounter_locations.keys())
 	for event: AdventureEvent in event_hosts:
 		if get_hosts(event).any(func(host: AdventurePage) -> bool: return pages.has(host)): top.append(event)
 	return top
@@ -92,6 +115,14 @@ static func get_listed_on(host: AdventurePage) -> Array[AdventureEvent]:
 	var listed: Array[AdventureEvent] = [ ]
 	if host is AdventureEventScenario: listed.assign((host as AdventureEventScenario).events)
 	return listed
+
+func _find_encounter_locations(encounter: AdventureEncounter) -> Array[AdventureLocation]:
+	var locations: Array[AdventureLocation] = encounter.get_places()
+	for event: AdventureEvent in encounter.get_listed_events():
+		for page: AdventurePage in pages:
+			if page is AdventureLocation and not event.only_at.is_empty() and event.is_allowed_at(page as AdventureLocation) and not locations.has(page):
+				locations.append(page as AdventureLocation)
+	return locations.filter(func(location: AdventureLocation) -> bool: return pages.has(location))
 
 ## A page linked both directly and through an event counts as linked directly
 func _add_link(from: AdventurePage, to: AdventurePage, through_event: bool) -> void:

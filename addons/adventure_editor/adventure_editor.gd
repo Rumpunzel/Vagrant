@@ -76,7 +76,6 @@ func _connect_views() -> void:
 	)
 	_map.existing_event_requested.connect(_offer_events)
 	_event_view.exit_opened.connect(_open_location)
-	_event_view.nearby_event_requested.connect(_offer_nearby_events)
 	_event_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
 
 func _connect_lists() -> void:
@@ -140,7 +139,6 @@ func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent
 		_event_list.set_item_metadata(index, event)
 		_event_list.set_item_tooltip(index, event.resource_path)
 	var nested: Array[AdventureEvent] = AdventureGraph.get_listed_on(event)
-	nested.append_array(event.nearby_events)
 	for sub_event: AdventureEvent in nested: _list_event(sub_event, depth + 1, listed)
 
 func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
@@ -217,18 +215,6 @@ func _create_location(title: String, area: AdventureArea, new_area_name: String,
 func _offer_events(location: AdventureLocation) -> void:
 	_offer(location.get_own_events(), func(event: AdventureEvent) -> void: _map.add_event(location, event), _map)
 
-## For "Add nearby event…": shown around [param event]'s locations
-func _offer_nearby_events(event: AdventureEvent) -> void:
-	var taken: Array[AdventureEvent] = event.nearby_events.duplicate()
-	taken.append(event)
-	_offer(taken, _add_nearby_event.bind(event), _event_view)
-
-func _add_nearby_event(nearby: AdventureEvent, event: AdventureEvent) -> void:
-	var nearby_events: Array[AdventureEvent] = event.nearby_events.duplicate()
-	nearby_events.append(nearby)
-	var changes: Array[Array] = [[event, &"nearby_events", nearby_events]]
-	_edits.apply(changes, "Add nearby %s" % AdventureGraph.get_title(nearby), load(AdventureEventEditing.get_file_path(event)))
-
 ## A menu of the adventure's events (those met and every file in an events folder) but [param taken], and any other file; [param on_pick] gets the event
 func _offer(taken: Array, on_pick: Callable, view: AdventureGraphView) -> void:
 	var events: Array[AdventureEvent] = _all_events
@@ -256,7 +242,8 @@ func _find_all_events() -> Array[AdventureEvent]:
 	return events.filter(func(event: AdventureEvent) -> bool: return not AdventureEventEditing.is_inside_file(event))
 
 static func _describe_event(event: AdventureEvent) -> String:
-	return AdventureGraph.get_title(event) + (" (scenario)" if event is AdventureEventScenario else "")
+	var kind: String = " (encounter)" if event is AdventureEncounter else " (scenario)" if event is AdventureEventScenario else ""
+	return AdventureGraph.get_title(event) + kind
 
 ## The sidebar's events: drag one onto a location, press one to open it
 func _fill_event_shelf() -> void:
@@ -332,6 +319,10 @@ func _delete(resource: Resource, title: String) -> void:
 		for event: AdventureEvent in _all_events: if not roots.has(event): roots.append(event)
 		changes = AdventureEventEditing.get_changes_forgetting(resource as AdventurePage, roots)
 	var key: String = AdventureLayout.get_key(resource)
+	if adventure.encounters.has(resource):
+		var encounters: Array[AdventureEncounter] = adventure.encounters.duplicate()
+		encounters.erase(resource)
+		changes.append([adventure, &"encounters", encounters, adventure])
 	_edits.delete(resource, changes, "Delete %s" % title)
 	_layout.positions.erase(key)
 	_save_layout()

@@ -41,10 +41,11 @@ static func would_loop(from: AdventurePage, target: AdventurePage) -> bool:
 	return target.get_held_pages().has(from)
 
 ## Changes forgetting [param target] everywhere in [param roots] (files) and what they hold, each [resource, property, value, file]:
-## plain decisions leading only there go, fight and save outcomes leading there go back, and it is no event, option or nearby event any more
+## plain decisions leading only there go, fight and save outcomes leading there go back, it is no event or option any more, and UID lists forget it
 static func get_changes_forgetting(target: AdventurePage, roots: Array[AdventurePage]) -> Array[Array]:
 	var changes: Array[Array] = [ ]
 	var seen: Array[AdventurePage] = [ ]
+	var target_uid: String = AdventureLayout.get_key(target) if not is_inside_file(target) else ""
 	for root: AdventurePage in roots:
 		for page: AdventurePage in root.get_held_pages():
 			if seen.has(page) or page == target: continue
@@ -58,14 +59,16 @@ static func get_changes_forgetting(target: AdventurePage, roots: Array[Adventure
 				for outcome: AdventureDecision.Outcome in decision.get_outcomes():
 					if _leads_to(decision.get_reference(outcome), target): changes.append([decision, outcome.reference_property, null, file])
 			if kept.size() != page.decisions.size(): changes.append([page, &"decisions", kept, file])
-			for list: StringName in [&"events", &"nearby_events"]:
-				if not list in page: continue
-				var listed: Array[AdventureEvent] = [ ]
-				listed.assign(page.get(list) as Array)
-				if not listed.has(target): continue
-				var without: Array[AdventureEvent] = listed.duplicate()
+			if page is AdventureEventScenario and (page as AdventureEventScenario).events.has(target):
+				var without: Array[AdventureEvent] = (page as AdventureEventScenario).events.duplicate()
 				without.erase(target)
-				changes.append([page, list, without, file])
+				changes.append([page, &"events", without, file])
+			# Back-pointers by UID: where encounters could be, where events may show, a location's order
+			for list: StringName in [&"places", &"only_at", &"order"]:
+				if not list in page or target_uid.is_empty(): continue
+				var paths: Array[String] = [ ]
+				paths.assign(page.get(list) as Array)
+				if paths.has(target_uid): changes.append([page, list, paths.filter(func(path: String) -> bool: return path != target_uid), file])
 	return changes
 
 ## Changes listing [param events] on [param host], each [resource, property, value, file]: a scenario's options, or a location's own events

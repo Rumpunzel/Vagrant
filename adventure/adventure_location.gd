@@ -8,6 +8,12 @@ extends AdventurePage
 @export var area: AdventureArea
 ## Its own events (usually picking all that fit); stored inside its file
 @export var scenario: AdventureEventScenario
+## Shown instead of [member AdventurePage.description] on the first visit
+@export_multiline var first_description: String
+@export var tracks: Array[AdventureStageTrack]
+## What shows first (Hide Above / Below go by it): encounters by UID, and this location itself for its own events;
+## unlisted, its own events come first and other encounters last, in the adventure's order
+@export_file("*.tres") var order: Array[String]
 
 func get_page_title(story: Story) -> String:
 	for event: AdventureEvent in _get_candidate_events(story):
@@ -17,7 +23,8 @@ func get_page_title(story: Story) -> String:
 
 func get_description(story: Story) -> String:
 	var active_events: Array[AdventureEvent] = get_events(story)
-	var text: String = "" if _is_base_hidden(active_events) else super(story)
+	var own: String = first_description if not first_description.is_empty() and story.get_how_often_page_has_been_entered(self) == 0 else description
+	var text: String = "" if _is_base_hidden(active_events) else "[p]%s[/p]" % own
 	for event: AdventureEvent in active_events: text += event.get_description(story)
 	return text
 
@@ -74,10 +81,8 @@ func find_decision_owner(decision: AdventureDecision) -> AdventurePage:
 	if decisions.has(decision): return self
 	return scenario.find_decision_owner(decision) if scenario != null else null
 
-## [event, its source's location] for every nearby event within reach of this location ([member AdventureEvent.nearby_events])
-func find_nearby_events() -> Array[Array]:
-	var found: Array[Array] = [ ]
-	var own: Array[AdventureEvent] = get_listed_events()
+## Links from here to the locations within [constant AdventureEvent.MAX_NEARBY_REACH] links of plain transitions
+func get_distances() -> Dictionary[AdventureLocation, int]:
 	var distances: Dictionary[AdventureLocation, int] = {self: 0}
 	var queue: Array[AdventureLocation] = [self]
 	while not queue.is_empty():
@@ -87,13 +92,21 @@ func find_nearby_events() -> Array[Array]:
 			if distances.has(linked): continue
 			distances[linked] = distances[location] + 1
 			queue.append(linked)
-			for source: AdventureEvent in linked.get_listed_events():
-				for nearby: AdventureEvent in source.nearby_events:
-					if nearby == null: continue
-					if (nearby.nearby_reach == 0 or nearby.nearby_stays_in_area) and linked.area != area: continue
-					if nearby.nearby_reach > 0 and distances[linked] > nearby.nearby_reach: continue
-					if not own.has(nearby) and not found.any(func(pair: Array) -> bool: return pair[0] == nearby): found.append([nearby, linked])
-	return found
+	return distances
+
+## Its own scenario and [param encounters], in its [member order]
+func get_sources(encounters: Array[AdventureEncounter]) -> Array[AdventureEvent]:
+	var sources: Array[AdventureEvent] = [ ]
+	var own_listed: bool = false
+	for entry: String in order:
+		var source: Resource = Files.load_existing(entry)
+		if source == self:
+			own_listed = true
+			if scenario != null: sources.append(scenario)
+		elif source is AdventureEncounter and encounters.has(source) and not sources.has(source): sources.append(source as AdventureEncounter)
+	if not own_listed and scenario != null: sources.push_front(scenario)
+	for encounter: AdventureEncounter in encounters: if not sources.has(encounter): sources.append(encounter)
+	return sources
 
 ## The locations this page's decisions lead to by their plain transition: where one walks to, which is what "nearby" means;
 ## where a fight or save ends doesn't count (the map draws those as links too)
@@ -104,13 +117,11 @@ func get_linked_locations() -> Array[AdventureLocation]:
 		if page is AdventureLocation and not linked.has(page): linked.append(page as AdventureLocation)
 	return linked
 
-## What its own scenario shows (if its conditions are met), then the nearby events that fit; before Hide Above / Below
+## What its own scenario and the encounters show here (each if its conditions are met), in its order; before Hide Above / Below
 func _get_candidate_events(story: Story) -> Array[AdventureEvent]:
 	var candidates: Array[AdventureEvent] = [ ]
-	var sources: Array[AdventureEvent] = story.get_nearby_events(self)
-	if scenario != null: sources.push_front(scenario)
-	for event: AdventureEvent in sources:
-		if event.are_all_prerequisites_fullfilled(story): candidates.append_array(event.resolve_events(story))
+	for source: AdventureEvent in get_sources(story.world.get_encounters()):
+		if source.are_all_prerequisites_fullfilled(story): candidates.append_array(source.resolve_events(story, self, null))
 	return candidates
 
 ## Hide Base on any active event drops this page's own description and decisions

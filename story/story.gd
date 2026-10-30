@@ -16,6 +16,9 @@ signal dice_requested(dice_request: DiceRequest)
 @export var _title: TypingLabel
 @export var _story_book: StoryBook
 
+## Where the story stands (stages, where encounters are)
+var world: StoryWorld = StoryWorld.new()
+
 var _adventure: Adventure:
 	set(new_adventure):
 		assert(not _adventure or Engine.is_editor_hint())
@@ -76,8 +79,10 @@ var _current_dice_request: DiceRequest :
 var _page_stack: Array[AdventurePage] = []
 ## The page on which an event's decision was last chosen; the pages behind the event keep it
 var _host: AdventurePage
-## Nearby events by page, found once per page built
-var _nearby_events: Dictionary[AdventureLocation, Array] = {}
+## The last location entered: "here"
+var _location: AdventureLocation
+## The encounter of the event one is in (also on the pages behind it); none at a location's own decisions
+var _encounter: AdventureEncounter
 # StoryPage -> Array[StoryPage]
 var _page_log: Dictionary[AdventurePage, Array] = {}
 # AdventureDecision -> StoryChoice (individual times the decision has been made)
@@ -89,6 +94,7 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	assert(protagonist_profile)
 	assert(protagonist_profile.is_valid())
 	_adventure = new_adventure
+	world = StoryWorld.new(new_adventure.encounters)
 	_protagonist = _party.create_character(protagonist_profile)
 	if host != null and host != page:
 		enter_page(host)
@@ -96,15 +102,17 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	enter_page(page if page != null else _adventure.starting_page)
 
 func enter_page(adventure_page: AdventurePage) -> void:
-	_nearby_events.clear()
+	if adventure_page is AdventureLocation: _location = adventure_page as AdventureLocation
 	_current_story_page = _create_story_page(adventure_page) if adventure_page else null
 
-## The nearby events of the events around [param location] ([method AdventureLocation.find_nearby_events]); their own conditions are checked like any event's
-func get_nearby_events(location: AdventureLocation) -> Array[AdventureEvent]:
-	if not _nearby_events.has(location): _nearby_events[location] = location.find_nearby_events().map(func(pair: Array) -> AdventureEvent: return pair[0])
-	var nearby: Array[AdventureEvent] = [ ]
-	nearby.assign(_nearby_events[location])
-	return nearby
+func get_location() -> AdventureLocation: return _location
+
+## The encounter or location [param path] (a UID) names; empty: the encounter of [param event] (none given: of the event one is in), else the
+## current location
+func get_subject(path: String, event: AdventurePage = null) -> Resource:
+	if not path.is_empty(): return Files.load_existing(path)
+	var encounter: AdventureEncounter = world.get_encounter_of(event as AdventureEvent) if event is AdventureEvent else _encounter
+	return encounter if encounter != null else _location
 
 func get_protagonist() -> Character: return _protagonist
 
@@ -158,9 +166,17 @@ func _create_story_choices(adventure_page: AdventurePage, decisions: Array[Adven
 func _create_fight(adventure_page: AdventurePage, decision: AdventureFightDecision) -> Fight:
 	assert(not decision.enemies.is_empty(), "Fight decision \"%s\" has no enemies" % decision.description)
 	# The monster belongs to the page (or event) that defines the fight, not the page it is shown on
-	var spawning_page: AdventurePage = adventure_page.find_decision_owner(decision)
+	var spawning_page: AdventurePage = _find_decision_owner(adventure_page, decision)
 	if not spawning_page: spawning_page = adventure_page
 	return Fight.new(decision, _protagonist, get_monster(spawning_page, decision.enemies[0]), _protagonist)
+
+## The page (it, or one of the events shown on it) that defines [param decision]
+func _find_decision_owner(page: AdventurePage, decision: AdventureDecision) -> AdventurePage:
+	if page.decisions.has(decision): return page
+	for event: AdventureEvent in page.get_events(self):
+		var holder: AdventurePage = event.find_decision_owner(decision)
+		if holder != null: return holder
+	return null
 
 ## A fight already lost on arrival (no breath dice to resist with) only offers its failure path
 func _create_lost_fight_decision(fight: Fight) -> AdventureDecision:
@@ -198,8 +214,10 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 		return
 	var story_decision: AdventureDecision = story_choice.get_adventure_decision()
 	var shown_on: AdventurePage = _current_story_page.adventure_page
-	var holder: AdventurePage = shown_on.find_decision_owner(story_decision)
+	var holder: AdventurePage = _find_decision_owner(shown_on, story_decision)
 	if holder != null and holder != shown_on: _host = shown_on
+	if holder is AdventureEvent: _encounter = world.get_encounter_of(holder as AdventureEvent)
+	elif holder is AdventureLocation: _encounter = null
 	if story_decision != AdventureDecision.get_turn_back():
 		var decision_log: Array[StoryChoice] = _decision_log.get_or_add(story_decision, [] as Array[StoryChoice])
 		decision_log.append(story_choice)

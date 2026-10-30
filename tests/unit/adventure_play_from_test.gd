@@ -11,7 +11,7 @@ var _inside: AdventureEvent
 var _host: AdventurePage
 
 func before_test() -> void:
-	_inside = AdventureEvent.new()
+	_inside = AdventureEventScenario.new()
 	_inside.title = "Inside"
 	var decision: AdventureDecision = AdventureDecision.new()
 	decision.transition = _inside
@@ -50,7 +50,7 @@ func test_nothing_written() -> void:
 func test_held_pages() -> void:
 	var nested: AdventureEvent = AdventureEvent.new()
 	var nearby: AdventureEvent = AdventureEvent.new()
-	_inside.nearby_events = [nested, nearby] as Array[AdventureEvent]
+	(_inside as AdventureEventScenario).events = [nested, nearby] as Array[AdventureEvent]
 	var other_file: AdventureDecision = AdventureDecision.new()
 	other_file.transition = AdventureTransition.new()
 	_inside.decisions = [other_file] as Array[AdventureDecision]
