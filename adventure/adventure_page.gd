@@ -29,6 +29,8 @@ var exclusivity: int = 0
 @export var nearby_events: Array[AdventurePage]
 ## As a nearby event: how many links from its source's locations it shows; 0: anywhere in the same area
 @export_range(0, MAX_NEARBY_REACH) var nearby_reach: int = 1
+## As a nearby event: only on locations in the same area as its source's location
+@export var nearby_stays_in_area: bool = false
 
 func are_all_prerequisites_fullfilled(story: Story) -> bool:
 	for condition: AdventureCondition in conditions:
@@ -101,8 +103,9 @@ func find_nearby_events() -> Array[Array]:
 			for source: AdventurePage in linked.get_listed_events():
 				for nearby: AdventurePage in source.nearby_events:
 					if nearby == null: continue
-					var in_reach: bool = distances[linked] <= nearby.nearby_reach if nearby.nearby_reach > 0 else linked.area == area
-					if in_reach and not events.has(nearby) and not found.any(func(pair: Array) -> bool: return pair[0] == nearby): found.append([nearby, linked])
+					if (nearby.nearby_reach == 0 or nearby.nearby_stays_in_area) and linked.area != area: continue
+					if nearby.nearby_reach > 0 and distances[linked] > nearby.nearby_reach: continue
+					if not events.has(nearby) and not found.any(func(pair: Array) -> bool: return pair[0] == nearby): found.append([nearby, linked])
 	return found
 
 ## This page and the pages (and events) it holds directly, not through transitions or host links: what its file stores with it

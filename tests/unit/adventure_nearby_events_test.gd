@@ -58,6 +58,15 @@ func test_reach_zero_is_the_whole_area() -> void:
 	# The same area: also two links away, even through another area
 	assert_array(_story.get_nearby_events(far)).contains_exactly([_heard])
 
+func test_staying_in_the_area() -> void:
+	var swamp: AdventurePage = _location("Swamp", AdventureArea.new())
+	_link(swamp, _castle)
+	assert_array(_story.get_nearby_events(swamp)).contains_exactly([_heard])
+	_heard.nearby_stays_in_area = true
+	_story._nearby_events.clear()
+	assert_array(_story.get_nearby_events(swamp)).is_empty()
+	assert_array(_story.get_nearby_events(_shore)).contains_exactly([_heard])
+
 func test_pages_without_area_get_none() -> void:
 	var inside: AdventurePage = _page("Inside", "")
 	_link(inside, _castle)
