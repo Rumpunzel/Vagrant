@@ -37,6 +37,7 @@ var _name_dialog: AdventureNameDialog
 var _file_dialog: EditorFileDialog
 var _delete_dialog: ConfirmationDialog
 var _profile_dialog: EditorFileDialog
+var _location_view: AdventureLocationView
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
@@ -44,6 +45,7 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_edits.changed.connect(rebuild)
 	_map.setup()
 	_event_view.setup()
+	_make_location_tab()
 	_make_dialogs()
 	_connect_views()
 	_connect_lists()
@@ -69,6 +71,23 @@ func _make_dialogs() -> void:
 	_delete_dialog.ok_button_text = "Delete"
 	add_child(_delete_dialog)
 
+## Built here rather than in the scene: a tab after the map
+func _make_location_tab() -> void:
+	_location_view = AdventureLocationView.new()
+	_location_view.name = "Location"
+	_location_view.setup()
+	_tabs.add_child(_location_view)
+	_tabs.move_child(_location_view, _map_tab.get_index() + 1)
+
+func _show_location(location: AdventureLocation) -> void:
+	_tabs.current_tab = _tabs.get_tab_idx_from_control(_location_view)
+	_location_view.show_location(location, _get_encounters(), _graph.pages)
+
+func _get_encounters() -> Array[AdventureEncounter]:
+	var encounters: Array[AdventureEncounter] = [ ]
+	if adventure != null: for encounter: AdventureEncounter in adventure.encounters: if encounter != null: encounters.append(encounter)
+	return encounters
+
 func _connect_views() -> void:
 	for view: AdventureGraphView in [_map, _event_view]:
 		view.changes_requested.connect(_edits.apply)
@@ -83,6 +102,9 @@ func _connect_views() -> void:
 	)
 	_map.existing_event_requested.connect(_offer_events)
 	_map.encounter_requested.connect(_ask_for_encounter)
+	_map.location_opened.connect(_show_location)
+	_location_view.event_opened.connect(open_event)
+	_location_view.changes_requested.connect(_edits.apply)
 	_event_view.exit_opened.connect(_open_location)
 	_event_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
 
@@ -120,6 +142,8 @@ func rebuild() -> void:
 	var listed: Array[AdventureEvent] = _list_events()
 	_fill_event_shelf()
 	_list_problems()
+	var shown: AdventureLocation = _location_view.get_location()
+	_location_view.show_location(shown if _graph.pages.has(shown) else null, _get_encounters(), _graph.pages)
 	var current: AdventureEvent = _event_view.get_event()
 	if listed.has(current): _show_event(current, _event_view.get_host())
 	else: _show_event(null, null)

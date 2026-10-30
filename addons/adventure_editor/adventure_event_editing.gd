@@ -68,7 +68,9 @@ static func get_changes_forgetting(target: AdventurePage, roots: Array[Adventure
 				if not list in page or target_uid.is_empty(): continue
 				var paths: Array[String] = [ ]
 				paths.assign(page.get(list) as Array)
-				if paths.has(target_uid): changes.append([page, list, paths.filter(func(path: String) -> bool: return path != target_uid), file])
+				if not paths.has(target_uid): continue
+				paths.erase(target_uid)
+				changes.append([page, list, paths, file])
 	return changes
 
 ## Changes listing [param events] on [param host], each [resource, property, value, file]: a scenario's options, or a location's own events

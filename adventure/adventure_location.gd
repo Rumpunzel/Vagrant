@@ -94,18 +94,26 @@ func get_distances() -> Dictionary[AdventureLocation, int]:
 			queue.append(linked)
 	return distances
 
-## Its own scenario and [param encounters], in its [member order]
-func get_sources(encounters: Array[AdventureEncounter]) -> Array[AdventureEvent]:
-	var sources: Array[AdventureEvent] = [ ]
+## [param encounters] in its [member order], with none in the slot of its own events
+func get_slots(encounters: Array[AdventureEncounter]) -> Array[AdventureEncounter]:
+	var slots: Array[AdventureEncounter] = [ ]
 	var own_listed: bool = false
 	for entry: String in order:
 		var source: Resource = Files.load_existing(entry)
-		if source == self:
+		if source == self and not own_listed:
 			own_listed = true
-			if scenario != null: sources.append(scenario)
-		elif source is AdventureEncounter and encounters.has(source) and not sources.has(source): sources.append(source as AdventureEncounter)
-	if not own_listed and scenario != null: sources.push_front(scenario)
-	for encounter: AdventureEncounter in encounters: if not sources.has(encounter): sources.append(encounter)
+			slots.append(null)
+		elif source is AdventureEncounter and encounters.has(source) and not slots.has(source): slots.append(source as AdventureEncounter)
+	if not own_listed: slots.push_front(null)
+	for encounter: AdventureEncounter in encounters: if not slots.has(encounter): slots.append(encounter)
+	return slots
+
+## Its own scenario and [param encounters], in its [member order]
+func get_sources(encounters: Array[AdventureEncounter]) -> Array[AdventureEvent]:
+	var sources: Array[AdventureEvent] = [ ]
+	for slot: AdventureEncounter in get_slots(encounters):
+		if slot != null: sources.append(slot)
+		elif scenario != null: sources.append(scenario)
 	return sources
 
 ## The locations this page's decisions lead to by their plain transition: where one walks to, which is what "nearby" means;

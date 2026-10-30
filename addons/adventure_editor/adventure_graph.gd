@@ -128,7 +128,9 @@ func _find_encounter_locations(encounter: AdventureEncounter) -> Array[Adventure
 		for page: AdventurePage in pages:
 			if page is AdventureLocation and not event.only_at.is_empty() and event.is_allowed_at(page as AdventureLocation) and not locations.has(page):
 				locations.append(page as AdventureLocation)
-	return locations.filter(func(location: AdventureLocation) -> bool: return pages.has(location))
+	var on_map: Array[AdventureLocation] = [ ]
+	for location: AdventureLocation in locations: if pages.has(location): on_map.append(location)
+	return on_map
 
 ## A page linked both directly and through an event counts as linked directly
 func _add_link(from: AdventurePage, to: AdventurePage, through_event: bool) -> void:

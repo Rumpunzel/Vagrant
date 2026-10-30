@@ -10,6 +10,8 @@ signal location_requested(at: Vector2)
 signal event_requested(location: AdventureLocation, scenario: bool)
 ## An event already made, to be listed on [param location] too
 signal existing_event_requested(location: AdventureLocation)
+## Double-clicked: show it in the location tab
+signal location_opened(location: AdventureLocation)
 ## A new encounter that could be at [param location]: an NPC, or (with [param profile], none: ask for one) a monster
 signal encounter_requested(location: AdventureLocation, monster: bool, profile: MonsterProfile)
 
@@ -52,6 +54,11 @@ func show_graph(graph: AdventureGraph) -> void:
 		var node: GraphNode = _add_node(_key(page), page, AdventureGraph.get_title(page), content, Vector2(column, row) * NODE_SPACING)
 		node.set_slot(0, true, 0, Color.WHITE, true, 0, Color.WHITE)
 		_on_right_click(node, func() -> Dictionary[String, Callable]: return _get_location_actions(graph, page))
+		if location != null:
+			node.gui_input.connect(func(input: InputEvent) -> void:
+				var click: InputEventMouseButton = input as InputEventMouseButton
+				if click != null and click.double_click: location_opened.emit(location)
+			)
 		if graph.unreachable.has(page):
 			node.modulate = FADED
 			node.tooltip_text = "Not reached from the starting page"
