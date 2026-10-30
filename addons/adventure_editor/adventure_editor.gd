@@ -35,6 +35,7 @@ var _all_events: Array[AdventurePage] = [ ]
 var _new_location_dialog: AdventureNewLocationDialog
 var _name_dialog: AdventureNameDialog
 var _file_dialog: EditorFileDialog
+var _delete_dialog: ConfirmationDialog
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
@@ -57,6 +58,9 @@ func _make_dialogs() -> void:
 	_file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
 	_file_dialog.add_filter("*.tres", "Events")
 	add_child(_file_dialog)
+	_delete_dialog = ConfirmationDialog.new()
+	_delete_dialog.ok_button_text = "Delete"
+	add_child(_delete_dialog)
 
 func _connect_views() -> void:
 	for view: AdventureGraphView in [_map, _event_view]:
@@ -65,6 +69,7 @@ func _connect_views() -> void:
 		view.layout_changed.connect(_save_layout)
 		view.tidied.connect(rebuild)
 		view.play_requested.connect(_play_from)
+		view.deletion_requested.connect(_ask_to_delete)
 	_map.location_requested.connect(_ask_for_location)
 	_map.event_requested.connect(func(location: AdventurePage, scenario: bool) -> void:
 		_name_dialog.ask("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
@@ -194,12 +199,18 @@ func _ask_for_location(at: Vector2) -> void:
 	if adventure != null: _new_location_dialog.open(_graph.areas, at)
 
 ## Creates the location's file (and a new area's) right away; Ctrl+Z doesn't delete files
+## Its file (and a new area's) is part of the undo step
 func _create_location(title: String, area: AdventureArea, new_area_name: String, at: Vector2) -> void:
+	var files: Dictionary[String, Resource] = {}
 	if area == null:
 		area = AdventureMapEditing.make_area(new_area_name)
-		if not _edits.create_file(area, AdventureMapEditing.get_area_path(adventure, new_area_name)): return
+		area.resource_path = AdventureMapEditing.get_area_path(adventure, new_area_name)
+		files[area.resource_path] = area
 	var page: AdventurePage = AdventureMapEditing.make_location(title, area)
-	if not _edits.create_file(page, AdventureMapEditing.get_location_path(area, title)): return
+	var path: String = AdventureMapEditing.get_location_path(area, title)
+	files[path] = page
+	var changes: Array[Array] = [ ]
+	if not _edits.create(files, changes, "New location %s" % title): return
 	_layout.positions[AdventureLayout.get_key(page)] = at
 	_save_layout()
 	rebuild()
@@ -299,11 +310,31 @@ func _show_problem(index: int) -> void:
 ## Creates the event's file right away and lists it on [param location] (that part can be undone)
 func _create_event(title: String, location: AdventurePage, scenario: bool) -> void:
 	var event: AdventurePage = AdventureEventEditing.make_event(title, scenario)
-	if not _edits.create_file(event, AdventureEventEditing.get_event_path(location, title)): return
+	var files: Dictionary[String, Resource] = {AdventureEventEditing.get_event_path(location, title): event}
 	var events: Array[AdventurePage] = location.events.duplicate()
 	events.append(event)
-	var changes: Array[Array] = [[location, &"events", events]]
-	_edits.apply(changes, "Add %s to %s" % [title, AdventureGraph.get_title(location)], load(AdventureEventEditing.get_file_path(location)))
+	var changes: Array[Array] = [[location, &"events", events, load(AdventureEventEditing.get_file_path(location))]]
+	_edits.create(files, changes, "New %s on %s" % [title, AdventureGraph.get_title(location)])
+
+## Asks first; the starting page can't go
+func _ask_to_delete(resource: Resource) -> void:
+	if resource == adventure.starting_page:
+		push_warning("The starting page can't be deleted; set another one on the adventure first")
+		return
+	var title: String = AdventureGraph.get_title(resource as AdventurePage) if resource is AdventurePage else (resource as AdventureArea).name
+	_delete_dialog.dialog_text = "Delete %s?\nWhat points to it is removed (Ctrl+Z brings that back); its file goes to the system trash." % title
+	for connection: Dictionary in _delete_dialog.confirmed.get_connections(): _delete_dialog.confirmed.disconnect(connection["callable"])
+	_delete_dialog.confirmed.connect(_delete.bind(resource, title))
+	_delete_dialog.popup_centered()
+
+func _delete(resource: Resource, title: String) -> void:
+	var changes: Array[Array] = [ ]
+	if resource is AdventureArea: changes = AdventureEventEditing.get_changes_forgetting_area(resource as AdventureArea, _graph.pages)
+	else:
+		var roots: Array[AdventurePage] = _graph.pages.duplicate()
+		for event: AdventurePage in _all_events: if not roots.has(event): roots.append(event)
+		changes = AdventureEventEditing.get_changes_forgetting(resource as AdventurePage, roots)
+	_edits.delete(resource, changes, "Delete %s" % title)
 
 func _on_property_edited(_property: String) -> void: rebuild()
 

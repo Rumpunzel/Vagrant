@@ -161,6 +161,7 @@ func _get_page_actions(entry: AdventureEventOverview.Entry, page: AdventurePage)
 	var actions: Dictionary[String, Callable] = _get_add_actions(entry, page)
 	if page != entry.event and AdventureEventEditing.is_inside_file(page): actions["Delete page"] = _delete_page.bind(entry, page)
 	if page == entry.event: actions["Add nearby event…"] = nearby_event_requested.emit.bind(page)
+	if page == entry.event and not AdventureEventEditing.is_inside_file(page): actions["Delete event…"] = deletion_requested.emit.bind(page)
 	actions["Play from here"] = play_requested.emit.bind(page, entry.event)
 	if page == entry.event and entry.is_nearby:
 		var source: AdventurePage = entry.parent_page
@@ -320,6 +321,14 @@ func _request_reference(from: StringName, port: int, reference: AdventurePageRef
 func _get_port(node_name: StringName, port: int) -> AdventureEventGraph.Outlet:
 	var ports: Array = _node_ports.get(node_name, [ ])
 	return ports[port] if port < ports.size() else null
+
+## Pages stored inside a file are deleted as by their menu; events in files of their own are asked about; placed special nodes are removed
+func _on_delete_key(element: GraphElement) -> void:
+	var entry: AdventureEventOverview.Entry = _node_entries.get(element.name)
+	var page: AdventurePage = _resources.get(element) as AdventurePage
+	if entry != null and page != null and page != entry.event and AdventureEventEditing.is_inside_file(page): _delete_page(entry, page)
+	elif AdventureLayout.is_placed_special(_key_of_node(element.name)): _remove_special(_key_of_node(element.name))
+	else: super(element)
 
 ## A sub-event's card shows its frame (a scenario: its switch); others open the event
 func _on_event_card_pressed(event: AdventurePage, _page: AdventurePage) -> void:

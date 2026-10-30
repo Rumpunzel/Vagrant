@@ -11,6 +11,8 @@ var _changes: int
 func before_test() -> void:
 	_history = auto_free(UndoRedo.new())
 	_edits = AdventureEdits.new(_history)
+	# Not the system trash in tests
+	_edits.trash = func(path: String) -> void: DirAccess.remove_absolute(path)
 	_changes = 0
 	_edits.changed.connect(func() -> void: _changes += 1)
 
@@ -55,13 +57,52 @@ func test_nothing_to_apply() -> void:
 	assert_bool(_history.has_undo()).is_false()
 	assert_bool(_edits.has_unsaved_changes()).is_false()
 
-func test_creates_files_once() -> void:
+func test_changes_can_name_their_file() -> void:
+	var file: AdventurePage = _page("File")
+	var inside: AdventurePage = _page("Inside")
+	var changes: Array[Array] = [[inside, &"title", "Changed", file]]
+	_edits.apply(changes, "Rename")
+	assert_bool(_edits.is_unsaved(file)).is_true()
+	assert_bool(_edits.is_unsaved(inside)).is_false()
+
+func test_new_files_are_part_of_the_step() -> void:
 	var page: AdventurePage = _page("New")
-	assert_bool(_edits.create_file(page, NEW_FILE)).is_true()
-	assert_str(page.resource_path).is_equal(NEW_FILE)
+	var host: AdventurePage = _page("Host")
+	var files: Dictionary[String, Resource] = {NEW_FILE: page}
+	var events: Array[AdventurePage] = [page]
+	var changes: Array[Array] = [[host, &"events", events]]
+	assert_bool(_edits.create(files, changes, "New")).is_true()
 	assert_bool(FileAccess.file_exists(NEW_FILE)).is_true()
-	assert_bool(_edits.create_file(_page("Again"), NEW_FILE)).is_false()
-	await assert_error(func() -> void: _edits.create_file(_page("Again"), NEW_FILE)).is_push_error("%s exists already" % NEW_FILE)
+	assert_str(page.resource_path).is_equal(NEW_FILE)
+	assert_array(host.events).contains_exactly([page])
+	_history.undo()
+	assert_bool(FileAccess.file_exists(NEW_FILE)).is_false()
+	assert_array(host.events).is_empty()
+	_history.redo()
+	assert_bool(FileAccess.file_exists(NEW_FILE)).is_true()
+
+func test_no_new_file_over_an_old_one() -> void:
+	var files: Dictionary[String, Resource] = {NEW_FILE: _page("New")}
+	var changes: Array[Array] = [ ]
+	_edits.create(files, changes, "New")
+	assert_bool(_edits.create(files, changes, "Again")).is_false()
+	assert_str(_history.get_current_action_name()).is_equal("New")
+
+func test_deleting_trashes_the_file_and_undo_restores_the_links() -> void:
+	var page: AdventurePage = _page("Doomed")
+	var files: Dictionary[String, Resource] = {NEW_FILE: page}
+	var changes: Array[Array] = [ ]
+	_edits.create(files, changes, "New")
+	var host: AdventurePage = _page("Host")
+	host.events = [page] as Array[AdventurePage]
+	var forgetting: Array[Array] = [[host, &"events", [] as Array[AdventurePage]]]
+	_edits.delete(page, forgetting, "Delete")
+	assert_bool(FileAccess.file_exists(NEW_FILE)).is_false()
+	assert_array(host.events).is_empty()
+	_history.undo()
+	assert_array(host.events).contains_exactly([page])
+	# The file stays in the trash
+	assert_bool(FileAccess.file_exists(NEW_FILE)).is_false()
 
 func _page(title: String) -> AdventurePage:
 	var page: AdventurePage = AdventurePage.new()

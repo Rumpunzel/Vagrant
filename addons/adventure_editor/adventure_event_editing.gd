@@ -40,6 +40,41 @@ static func would_lose_page(root: AdventurePage, references: Array[AdventurePage
 static func would_loop(from: AdventurePage, target: AdventurePage) -> bool:
 	return target.get_held_pages().has(from)
 
+## Changes forgetting [param target] everywhere in [param roots] (files) and what they hold, each [resource, property, value, file]:
+## plain decisions leading only there go, fight and save outcomes leading there go back, and it is no event, option or nearby event any more
+static func get_changes_forgetting(target: AdventurePage, roots: Array[AdventurePage]) -> Array[Array]:
+	var changes: Array[Array] = [ ]
+	var seen: Array[AdventurePage] = [ ]
+	for root: AdventurePage in roots:
+		for page: AdventurePage in root.get_held_pages():
+			if seen.has(page) or page == target: continue
+			seen.append(page)
+			var file: Resource = load(get_file_path(page)) if not page.resource_path.is_empty() else root
+			var kept: Array[AdventureDecision] = [ ]
+			for decision: AdventureDecision in page.decisions:
+				if decision != null and not decision is AdventureDiceDecision and _leads_to(decision.transition, target): continue
+				kept.append(decision)
+				if decision == null: continue
+				for outcome: AdventureDecision.Outcome in decision.get_outcomes():
+					if _leads_to(decision.get_reference(outcome), target): changes.append([decision, outcome.reference_property, null, file])
+			if kept.size() != page.decisions.size(): changes.append([page, &"decisions", kept, file])
+			for list: StringName in [&"events", &"nearby_events"]:
+				var listed: Array[AdventurePage] = page.get(list)
+				if not listed.has(target): continue
+				var without: Array[AdventurePage] = listed.duplicate()
+				without.erase(target)
+				changes.append([page, list, without, file])
+	return changes
+
+## Changes taking [param area] off the pages in it
+static func get_changes_forgetting_area(area: AdventureArea, pages: Array[AdventurePage]) -> Array[Array]:
+	var changes: Array[Array] = [ ]
+	for page: AdventurePage in pages: if page.area == area: changes.append([page, &"area", null, page])
+	return changes
+
+static func _leads_to(reference: AdventurePageReference, target: AdventurePage) -> bool:
+	return reference != null and reference.load_page() == target
+
 ## Every event file in an [code]events[/code] folder under [param folder]
 static func find_event_files(folder: String) -> Array[String]:
 	var found: Array[String] = [ ]

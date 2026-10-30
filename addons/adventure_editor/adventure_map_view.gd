@@ -29,7 +29,9 @@ func setup() -> void:
 func show_graph(graph: AdventureGraph) -> void:
 	_clear()
 	var frames: Dictionary[AdventureArea, GraphFrame] = {}
-	for area: AdventureArea in graph.areas: frames[area] = _add_frame(area.name, area, area.background)
+	for area: AdventureArea in graph.areas:
+		frames[area] = _add_frame(area.name, area, area.background)
+		_on_right_click(frames[area], func() -> Dictionary[String, Callable]: return {"Delete area…": deletion_requested.emit.bind(area)})
 	var row_sizes: Dictionary[int, int] = {}
 	for page: AdventurePage in graph.pages:
 		var row: int = graph.areas.find(page.area) if page.area != null else graph.areas.size()
@@ -65,6 +67,7 @@ func _get_location_actions(graph: AdventureGraph, page: AdventurePage) -> Dictio
 		"New scenario here": event_requested.emit.bind(page, true),
 		"Add event…": existing_event_requested.emit.bind(page),
 		"Play from here": play_requested.emit.bind(page, null),
+		"Delete location…": deletion_requested.emit.bind(page),
 	}
 	for link: AdventureGraph.Link in graph.links:
 		if link.from == page and not link.through_event: actions["Unlink from %s" % AdventureGraph.get_title(link.to)] = _unlink.bind(page, link.to)
