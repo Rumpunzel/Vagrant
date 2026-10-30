@@ -257,7 +257,7 @@ func _open_on_double_click(node: GraphNode, location: AdventurePage) -> void:
 	if location == null: return
 	node.gui_input.connect(func(input: InputEvent) -> void:
 		var click: InputEventMouseButton = input as InputEventMouseButton
-		if click != null and click.double_click: exit_opened.emit(location)
+		if click != null and click.double_click: call_after_release(exit_opened.emit.bind(location))
 	)
 
 func _remember(node: GraphNode, entry: AdventureEventOverview.Entry, page: AdventurePage, ports: Array[AdventureEventGraph.Outlet], target: Array) -> void:

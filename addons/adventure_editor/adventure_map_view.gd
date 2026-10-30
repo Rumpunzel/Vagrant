@@ -57,7 +57,7 @@ func show_graph(graph: AdventureGraph) -> void:
 		if location != null:
 			node.gui_input.connect(func(input: InputEvent) -> void:
 				var click: InputEventMouseButton = input as InputEventMouseButton
-				if click != null and click.double_click: location_opened.emit(location)
+				if click != null and click.double_click: call_after_release(location_opened.emit.bind(location))
 			)
 		if graph.unreachable.has(page):
 			node.modulate = FADED

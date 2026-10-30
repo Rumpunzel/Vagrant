@@ -53,6 +53,20 @@ var _dashed_layer: Control
 var _menu: PopupMenu
 ## Item text -> what it does, for the open menu
 var _menu_actions: Dictionary[String, Callable] = {}
+## Waits for the mouse button to be up ([method call_after_release])
+var _after_release: Callable
+
+## Calls [param action] once the left mouse button is up: switching tabs from a double-click while it is down leaves the node being dragged
+func call_after_release(action: Callable) -> void:
+	_after_release = action
+	set_process(true)
+
+func _process(_delta: float) -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): return
+	set_process(false)
+	var action: Callable = _after_release
+	_after_release = Callable()
+	if action.is_valid(): action.call()
 
 ## Called by [AdventureEditor], not in [method Node._ready], so opening the scene in the editor doesn't run it
 func setup() -> void:
