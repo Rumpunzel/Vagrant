@@ -38,6 +38,8 @@ var _file_dialog: EditorFileDialog
 var _delete_dialog: ConfirmationDialog
 var _profile_dialog: EditorFileDialog
 var _location_view: AdventureLocationView
+var _storyline_view: AdventureStorylineView
+var _storyline_toggle: CheckButton
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
@@ -46,6 +48,7 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_map.setup()
 	_event_view.setup()
 	_make_location_tab()
+	_make_storyline_view()
 	_make_dialogs()
 	_connect_views()
 	_connect_lists()
@@ -78,6 +81,36 @@ func _make_location_tab() -> void:
 	_location_view.setup()
 	_tabs.add_child(_location_view)
 	_tabs.move_child(_location_view, _map_tab.get_index() + 1)
+
+## Next to the event view, shown instead of it for an encounter when toggled; the toggle goes next to the host picker
+func _make_storyline_view() -> void:
+	_storyline_view = AdventureStorylineView.new()
+	_storyline_view.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_storyline_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_storyline_view.visible = false
+	_event_view.add_sibling(_storyline_view)
+	_storyline_view.setup()
+	_storyline_view.event_opened.connect(open_event)
+	_storyline_view.layout_changed.connect(_save_layout)
+	var bar: HBoxContainer = HBoxContainer.new()
+	_host_picker.add_sibling(bar)
+	_host_picker.reparent(bar)
+	_host_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_storyline_toggle = CheckButton.new()
+	_storyline_toggle.text = "Storyline"
+	_storyline_toggle.tooltip_text = "The encounter's stages and which events need and set them"
+	_storyline_toggle.toggled.connect(func(_on: bool) -> void: _show_storyline())
+	bar.add_child(_storyline_toggle)
+
+## The storyline instead of the pages, for an encounter while toggled
+func _show_storyline() -> void:
+	var encounter: AdventureEncounter = _event_view.get_event() as AdventureEncounter
+	_storyline_toggle.visible = encounter != null
+	var showing: bool = encounter != null and _storyline_toggle.button_pressed
+	_storyline_view.visible = showing
+	_event_view.visible = not showing
+	_storyline_view.layout = _layout
+	_storyline_view.show_storyline(encounter if showing else null)
 
 func _show_location(location: AdventureLocation) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_location_view)
@@ -175,6 +208,7 @@ func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent
 
 func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
 	_event_view.show_event(event, host)
+	_show_storyline()
 	_event_list.deselect_all()
 	for index: int in _event_list.item_count:
 		if _event_list.get_item_metadata(index) == event: _event_list.select(index)

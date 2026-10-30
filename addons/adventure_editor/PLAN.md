@@ -208,14 +208,15 @@ Steps:
   (State: Lurking / Beaten / Dead); `generic`, `spawned_by`, monster conditions and the kill consequence are gone
 - [x] 5. `AdventurePlaceCondition` ("encounter is here / at a location or area"); location stages work for a location's own events (subject empty:
   the current location); no content needs them yet
-- [ ] 6. Editor (sketch agreed 2026-10-30; monster stage names to revisit later):
+- [x] 6. Editor (sketch agreed 2026-10-30; monster stage names to revisit later):
   - [x] 6a. Location menu "New encounter here…" (NPC: Storyline Unmet / Met) and "New monster encounter here…" (profile picked or dropped from the
     FileSystem; State Lurking / Beaten / Dead and an ambush whose won fight sets Beaten), files in `encounters/<name>/`, added to the adventure, one
     undo step (`AdventureEventEditing.make_encounter_files`). Dropping an encounter on a location adds it to its places; its faded card: "Not here any more"
   - [x] 6b. A Location tab (double-click a location on the map; built in code, after the Map tab): a section per source in the location's order
     (its own events, encounters that could be there / near it / anywhere / can come here) with their events and conditions, ▲ ▼ write
     `order`; "Can come here" lists move consequences sending encounters there; double-click an event to open it (`AdventureLocationOverview`)
-  - [ ] 6c. Storyline view per encounter (read-only first)
+  - [x] 6c. Storyline view per encounter (read-only): "Storyline" toggle next to the host picker for encounters; a row per track, stages in order,
+    events between the stages they need and the ones their pages set (`AdventureStoryline`); stages not in the track marked; double-click opens the event
   - Originally: "Here" panel per location (everything that can happen there, also "can come here" through move consequences; reordering) and a
   storyline view per encounter (stages as nodes, events between them)
 
@@ -289,3 +290,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-30: step 5 built: place condition; tests: place condition (1), location stages (1)
 - 2026-10-30: step 5 committed; 6a built: making and placing encounters; test: new encounters (1)
 - 2026-10-30: 6a committed; 6b built: location tab; `AdventureLocation.get_slots` (the own events' slot in the order also without own events); tests: location overview (5)
+- 2026-10-30: double-click opening waits for the mouse button (no stuck drag); 6c built: storyline view; tests: storyline (3)
