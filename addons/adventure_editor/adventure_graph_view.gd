@@ -34,11 +34,15 @@ const ARROW_END: int = 1
 const ARROW_START: int = 2
 const ARROW_SIZE: float = 12.0
 const ICON_SIZE: int = AdventureActionMenu.ICON_SIZE
-## [words, editor icon] for menu items, the first that fits
+## How far the mouse wheel scrolls a page holding the graph ([member outer_scroll])
+const WHEEL_STEP: int = 80
 
 var layout: AdventureLayout
 ## Shown on the nodes of their pages
 var problems: Array[AdventureProblems.Problem] = [ ]
+
+## Set when it sits in a scrolling page: the plain mouse wheel scrolls the page; Ctrl + wheel still zooms it, Shift + wheel and middle-drag move it
+var outer_scroll: ScrollContainer
 
 ## By layout key
 var _nodes: Dictionary[String, GraphNode] = {}
@@ -54,6 +58,14 @@ var _after_release: Callable
 func call_after_release(action: Callable) -> void:
 	_after_release = action
 	set_process(true)
+
+func _gui_input(event: InputEvent) -> void:
+	var wheel: InputEventMouseButton = event as InputEventMouseButton
+	if outer_scroll == null or wheel == null or not wheel.pressed or wheel.ctrl_pressed or wheel.shift_pressed: return
+	if wheel.button_index == MOUSE_BUTTON_WHEEL_UP: outer_scroll.scroll_vertical -= WHEEL_STEP
+	elif wheel.button_index == MOUSE_BUTTON_WHEEL_DOWN: outer_scroll.scroll_vertical += WHEEL_STEP
+	else: return
+	accept_event()
 
 func _process(_delta: float) -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): return

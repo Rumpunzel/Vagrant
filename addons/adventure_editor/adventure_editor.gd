@@ -89,6 +89,23 @@ func _make_scenario_view() -> void:
 	_scenario_view.visible = false
 	_event_view.add_sibling(_scenario_view)
 	_scenario_view.setup()
+	_scenario_view.make_graph = _make_event_graph
+
+## A page graph for an option on the scenario screen, wired up like the events tab's own
+func _make_event_graph() -> AdventureEventView:
+	var graph: AdventureEventView = AdventureEventView.new()
+	graph.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	graph.layout = _layout
+	graph.problems = _problems
+	graph.encounters = _get_encounters()
+	graph.changes_requested.connect(_edits.apply)
+	graph.event_opened.connect(open_event)
+	graph.layout_changed.connect(_save_layout)
+	graph.tidied.connect(rebuild)
+	graph.play_requested.connect(_play_from)
+	graph.deletion_requested.connect(_ask_to_delete)
+	graph.exit_opened.connect(_open_location)
+	return graph
 
 ## Events made already (and any other file) as the last option of [param scenario]
 func _offer_options(scenario: AdventureEventScenario, show_actions: Callable) -> void:
@@ -101,12 +118,18 @@ func _add_option(event: AdventureEvent, scenario: AdventureEventScenario) -> voi
 	options.append(event)
 	_edits.apply(AdventureEventEditing.get_changes_listing(scenario, options), "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(scenario)])
 
-## A plain event's pages; a scenario's or encounter's options (an encounter: with its story)
-func _show_event_view() -> void:
+## A plain event's pages; a scenario's or encounter's options (an encounter: with its story), [param focus] unfolded
+func _show_event_view(focus: AdventureEvent = null) -> void:
 	var scenario: AdventureEventScenario = _event_view.get_event() as AdventureEventScenario
 	_scenario_view.visible = scenario != null
 	_event_view.visible = scenario == null
-	_scenario_view.show_scenario(scenario, _event_view.get_host())
+	_scenario_view.show_scenario(scenario, _event_view.get_host(), focus)
+
+## The scenario or encounter (a file of its own, not a location's own events) [param event] is an option of, if any
+func _find_scenario_of(event: AdventureEvent) -> AdventureEventScenario:
+	for host: AdventurePage in _graph.get_hosts(event):
+		if host is AdventureEventScenario and not AdventureEventEditing.is_inside_file(host): return host as AdventureEventScenario
+	return null
 
 func _show_location(location: AdventureLocation) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_location_view)
@@ -145,7 +168,7 @@ func _connect_views() -> void:
 func _connect_lists() -> void:
 	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
 	_event_list.item_selected.connect(func(index: int) -> void: _show_event(_event_list.get_item_metadata(index) as AdventureEvent, null))
-	_host_picker.item_selected.connect(func(index: int) -> void: _event_view.show_event(_event_view.get_event(), _host_picker.get_item_metadata(index) as AdventurePage))
+	_host_picker.item_selected.connect(func(index: int) -> void: _show_event(_event_view.get_event(), _host_picker.get_item_metadata(index) as AdventurePage))
 	_problem_list.item_selected.connect(_show_problem)
 	_find.text_changed.connect(func(_text: String) -> void:
 		_list_events()
@@ -208,9 +231,11 @@ func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent
 	var nested: Array[AdventureEvent] = AdventureGraph.get_listed_on(event)
 	for sub_event: AdventureEvent in nested: _list_event(sub_event, depth + 1, listed)
 
+## An option of a scenario or encounter shows on its screen, unfolded
 func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
-	_event_view.show_event(event, host)
-	_show_event_view()
+	var scenario: AdventureEventScenario = _find_scenario_of(event) if event != null and _graph != null else null
+	_event_view.show_event(scenario if scenario != null else event, host)
+	_show_event_view(event if scenario != null else null)
 	_event_list.deselect_all()
 	for index: int in _event_list.item_count:
 		if _event_list.get_item_metadata(index) == event: _event_list.select(index)

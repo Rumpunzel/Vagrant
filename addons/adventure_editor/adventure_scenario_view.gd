@@ -2,10 +2,10 @@
 class_name AdventureScenarioView
 extends VBoxContainer
 
-## A scenario or encounter on one screen: whether it shows the first option that fits or all of them, when (its own conditions), and its options
-## in order (▲ ▼ reorder, ✕ takes one out, its file stays). An encounter adds its story ([AdventureStoryline]): a bar per stage track with its
-## stages, and per option the stages it can happen in (click the cell to change them) and where its decisions lead. Picking a stage in a bar
-## dims what can't happen then and marks what leads into it. Selecting a row shows it in the Inspector; double-click an option to open it.
+## A scenario or encounter on one screen: whether it shows the first option that fits or all of them, when (its own conditions), and a foldable
+## section per option in order (▲ ▼ reorder, ✕ takes one out, its file stays) with the option's pages as a graph inside. An encounter adds its
+## story ([AdventureStoryline]): a bar per stage track with its stages, and per option the stages it can happen in (click to change them) and
+## where its decisions lead. Picking a stage in a bar dims what can't happen then and marks what leads into it.
 
 signal event_opened(event: AdventureEvent, host: AdventurePage)
 signal changes_requested(changes: Array[Array], action: String, file: Resource)
@@ -16,24 +16,31 @@ signal existing_option_requested(scenario: AdventureEventScenario, show_actions:
 ## Ask for a name, then call [param then] with it
 signal text_requested(title: String, label: String, then: Callable)
 
-enum Act { UP, DOWN, REMOVE }
-enum Column { OPTION, IN, LEADS }
-
 const DIMMED: Color = Color(1, 1, 1, 0.35)
 const LEADS_IN_COLOR: Color = Color(0.6, 1.0, 0.6)
 const UNKNOWN_COLOR: Color = Color(1, 0.55, 0.5)
+const GRAPH_HEIGHT_MIN: float = 220.0
+const GRAPH_HEIGHT_MAX: float = 640.0
+const GRAPH_MARGIN: float = 90.0
+const COLUMN_WIDTH: float = 260.0
+
+## Makes an event graph wired up like the editor's others ([AdventureEventView]); set by [AdventureEditor]
+var make_graph: Callable
 
 var _scenario: AdventureEventScenario
 var _storyline: AdventureStoryline
 var _host: AdventurePage
 ## [track, stage] picked in a bar; empty: none
 var _picked: Array = [ ]
+## Unfolded options, kept while it is shown
+var _open: Array[AdventureEvent] = [ ]
 var _title: Label
 var _pick: OptionButton
 var _add_track: Button
 var _info: Label
 var _tracks: VBoxContainer
-var _tree: Tree
+var _scroll: ScrollContainer
+var _sections: VBoxContainer
 var _menu: AdventureActionMenu
 var _stage_menu: PopupMenu
 var _stage_menu_event: AdventureEvent
@@ -60,14 +67,13 @@ func setup() -> void:
 	add_child(_info)
 	_tracks = VBoxContainer.new()
 	add_child(_tracks)
-	_tree = Tree.new()
-	_tree.hide_root = true
-	_tree.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_tree.item_selected.connect(_on_item_selected)
-	_tree.item_activated.connect(_on_item_activated)
-	_tree.item_mouse_selected.connect(_on_item_clicked)
-	_tree.button_clicked.connect(_on_button_clicked)
-	add_child(_tree)
+	_scroll = ScrollContainer.new()
+	_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	add_child(_scroll)
+	_sections = VBoxContainer.new()
+	_sections.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_scroll.add_child(_sections)
 	_menu = AdventureActionMenu.new()
 	add_child(_menu)
 	_stage_menu = PopupMenu.new()
@@ -75,13 +81,17 @@ func setup() -> void:
 	_stage_menu.index_pressed.connect(_on_stage_toggled)
 	add_child(_stage_menu)
 
-## [param host]: where it is looked at from (the "At:" picker), passed on when an option is opened
-func show_scenario(scenario: AdventureEventScenario, host: AdventurePage) -> void:
-	if scenario != _scenario: _picked = [ ]
+## [param host]: where it is looked at from (the "At:" picker); [param focus]: an option to unfold and scroll to
+func show_scenario(scenario: AdventureEventScenario, host: AdventurePage, focus: AdventureEvent = null) -> void:
+	if scenario != _scenario:
+		_picked = [ ]
+		_open.clear()
+		if scenario != null and not scenario.events.is_empty(): _open.append(scenario.events[0])
+	if focus != null and not _open.has(focus): _open.append(focus)
+	var scrolled: int = _scroll.scroll_vertical
 	_scenario = scenario
 	_host = host
-	_tree.clear()
-	for child: Node in _tracks.get_children(): child.queue_free()
+	for child: Node in _tracks.get_children() + _sections.get_children(): child.queue_free()
 	if scenario == null: return
 	var encounter: AdventureEncounter = scenario as AdventureEncounter
 	_storyline = AdventureStoryline.new(encounter) if encounter != null else null
@@ -91,18 +101,17 @@ func show_scenario(scenario: AdventureEventScenario, host: AdventurePage) -> voi
 	_show_info()
 	if _storyline != null:
 		for track: AdventureStageTrack in encounter.tracks: if track != null: _add_track_bar(track)
-	_tree.columns = 3 if _storyline != null else 2
-	_tree.column_titles_visible = _storyline != null
-	if _storyline != null:
-		_tree.set_column_title(Column.OPTION, "Option")
-		_tree.set_column_title(Column.IN, "Happens in (click to change)")
-		_tree.set_column_title(Column.LEADS, "Leads to")
-	_tree.set_column_expand_ratio(Column.OPTION, 2)
-	_tree.set_column_expand_ratio(Column.IN, 2)
-	if _storyline != null: _tree.set_column_expand_ratio(Column.LEADS, 2)
-	var root: TreeItem = _tree.create_item()
-	for index: int in scenario.events.size(): _add_option(root, index)
-	if scenario.events.is_empty(): _tree.create_item(root).set_text(0, "(no options yet)")
+	var focused: Control = null
+	for index: int in scenario.events.size():
+		var section: Control = _add_section(index)
+		if scenario.events[index] == focus: focused = section
+	if scenario.events.is_empty():
+		var none: Label = Label.new()
+		none.text = "No options yet"
+		none.modulate = DIMMED
+		_sections.add_child(none)
+	if focused != null: _scroll.ensure_control_visible.call_deferred(focused)
+	else: _scroll.set_deferred(&"scroll_vertical", scrolled)
 
 func _show_info() -> void:
 	var lines: Array[String] = [ ]
@@ -121,7 +130,7 @@ func _add_track_bar(track: AdventureStageTrack) -> void:
 	var bar: HBoxContainer = HBoxContainer.new()
 	var label: Label = Label.new()
 	label.text = "%s:" % track.name
-	label.tooltip_text = "One stage at a time; rename or remove stages in the Inspector"
+	label.tooltip_text = "One stage at a time; rename or remove stages in the Inspector (click)"
 	label.mouse_filter = Control.MOUSE_FILTER_PASS
 	label.gui_input.connect(func(input: InputEvent) -> void: _inspect_on_click(input, track))
 	bar.add_child(label)
@@ -147,63 +156,107 @@ func _inspect_on_click(input: InputEvent, resource: Resource) -> void:
 	var click: InputEventMouseButton = input as InputEventMouseButton
 	if click != null and click.pressed and click.button_index == MOUSE_BUTTON_LEFT: EditorInterface.edit_resource(resource)
 
-func _add_option(root: TreeItem, index: int) -> void:
+## A foldable section: its title, where it can happen and leads, ▲ ▼ ✕ in the title bar; unfolded, its pages (a scenario: a way to open it)
+func _add_section(index: int) -> Control:
 	var option: AdventureEvent = _scenario.events[index]
-	var item: TreeItem = _tree.create_item(root)
-	item.set_metadata(0, option)
-	if option == null:
-		item.set_text(Column.OPTION, "%d · (empty)" % (index + 1))
-		return
-	var kind: String = " (scenario)" if option is AdventureEventScenario else " (near)" if option.where == AdventureEvent.Where.NEAR else " (anywhere)" if option.where == AdventureEvent.Where.ANYWHERE else ""
-	item.set_text(Column.OPTION, "%d · %s%s" % [index + 1, AdventureGraph.get_title(option), kind])
-	if _storyline == null:
+	var section: FoldableContainer = FoldableContainer.new()
+	section.title = "%d · %s" % [index + 1, _describe(option)]
+	section.folded = not _open.has(option)
+	_sections.add_child(section)
+	if option == null: return section
+	var dimmed: bool = _storyline != null and not _picked.is_empty() and not _storyline.can_happen_in(option, _picked[0], _picked[1])
+	if dimmed: section.modulate = DIMMED
+	if _storyline != null: _add_story_controls(section, option)
+	else:
 		var needs: String = AdventureEventOverview.get_condition_text(option.conditions)
-		item.set_text(1, "when %s" % needs if not needs.is_empty() else "always fits")
-	else: _fill_story_cells(item, option)
-	var last: int = item.get_tree().columns - 1
-	if index > 0: item.add_button(last, AdventureActionMenu.get_editor_icon("MoveUp"), Act.UP, false, "Earlier: checked first")
-	if index < _scenario.events.size() - 1: item.add_button(last, AdventureActionMenu.get_editor_icon("MoveDown"), Act.DOWN, false, "Later")
-	item.add_button(last, AdventureActionMenu.get_editor_icon("Remove"), Act.REMOVE, AdventureEventEditing.is_inside_file(option), "Not an option any more (its file stays)")
+		section.add_title_bar_control(_make_label("when %s" % needs if not needs.is_empty() else "always fits"))
+	if index > 0: section.add_title_bar_control(_make_icon_button("MoveUp", "Earlier: checked first", _move.bind(index, -1)))
+	if index < _scenario.events.size() - 1: section.add_title_bar_control(_make_icon_button("MoveDown", "Later", _move.bind(index, 1)))
+	var remove: Button = _make_icon_button("Remove", "Not an option any more (its file stays)", _remove.bind(index))
+	remove.disabled = AdventureEventEditing.is_inside_file(option)
+	section.add_title_bar_control(remove)
+	section.add_title_bar_control(_make_icon_button("Object", "Show it in the Inspector", EditorInterface.edit_resource.bind(option)))
+	section.folding_changed.connect(_on_folding_changed.bind(section, option))
+	if not section.folded: _fill_section(section, option)
+	return section
 
-## Where it can happen and where it leads; dimmed if it can't happen in the picked stage, marked if it leads into it
-func _fill_story_cells(item: TreeItem, option: AdventureEvent) -> void:
+func _on_folding_changed(is_folded: bool, section: FoldableContainer, option: AdventureEvent) -> void:
+	if is_folded:
+		_open.erase(option)
+		return
+	if not _open.has(option): _open.append(option)
+	if section.get_child_count() == 0: _fill_section(section, option)
+
+## Its pages as a graph, about as high as they need; a scenario option opens on its own
+func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
+	if option is AdventureEventScenario:
+		section.add_child(_make_button("Open its options", "A scenario inside: its own options", event_opened.emit.bind(option, _host)))
+		return
+	var graph: AdventureEventView = make_graph.call()
+	graph.outer_scroll = _scroll
+	graph.custom_minimum_size.y = GRAPH_HEIGHT_MIN
+	section.add_child(graph)
+	graph.setup()
+	graph.show_event(option, _host)
+	get_tree().process_frame.connect(_fit.bind(graph), CONNECT_ONE_SHOT)
+
+## As high as its nodes reach, within limits
+func _fit(graph: AdventureEventView) -> void:
+	if not is_instance_valid(graph): return
+	var bottom: float = 0.0
+	for child: Node in graph.get_children():
+		var element: GraphElement = child as GraphElement
+		if element != null: bottom = maxf(bottom, element.position_offset.y + element.size.y)
+	graph.custom_minimum_size.y = clampf(bottom * graph.zoom + GRAPH_MARGIN, GRAPH_HEIGHT_MIN, GRAPH_HEIGHT_MAX)
+	graph.scroll_offset = Vector2.ZERO
+
+## Where it can happen (click to change) and where it leads; marked if it leads into the picked stage
+func _add_story_controls(section: FoldableContainer, option: AdventureEvent) -> void:
 	var stages: Array[String] = [ ]
 	for track: AdventureStageTrack in _storyline.encounter.tracks:
 		if track == null: continue
 		var in_track: Array[String] = _storyline.get_stages_in(option, track.name)
 		stages.append("%s: %s" % [track.name, " or ".join(in_track)] if not in_track.is_empty() else "%s: any" % track.name)
 	var others: String = _storyline.describe_other_conditions(option)
-	item.set_text(Column.IN, "  ·  ".join(stages) + ("  ·  when %s" % others if not others.is_empty() else ""))
-	item.set_tooltip_text(Column.IN, "Click to change the stages it can happen in")
+	var happens: Button = Button.new()
+	happens.text = "In " + "  ·  ".join(stages) + ("  ·  when %s" % others if not others.is_empty() else "")
+	happens.tooltip_text = "The stages it can happen in; click to change them"
+	happens.flat = true
+	happens.custom_minimum_size.x = COLUMN_WIDTH
+	happens.pressed.connect(_offer_stages.bind(option))
+	section.add_title_bar_control(happens)
 	var leads: Array[String] = [ ]
 	for lead: AdventureStoryline.Lead in _storyline.get_leads(option):
-		var what: String = lead.decision.description.get_slice("\n", 0) + (" · " + lead.outcome.name if not lead.outcome.name.is_empty() else "")
-		leads.append("%s → %s" % [what, lead.stage])
-	item.set_text(Column.LEADS, "\n".join(leads))
-	item.set_tooltip_text(Column.LEADS, "Change where decisions lead in the event's pages (double-click)")
+		leads.append("%s%s → %s" % [lead.decision.description.get_slice("\n", 0), " · " + lead.outcome.name if not lead.outcome.name.is_empty() else "", lead.stage])
+	var label: Label = _make_label("  ·  ".join(leads) if not leads.is_empty() else "leads to no stage")
+	label.custom_minimum_size.x = COLUMN_WIDTH
+	label.tooltip_text = "Where its decisions lead; change them on its pages"
+	if not _picked.is_empty() and _storyline.leads_into(option, _picked[0], _picked[1]): label.add_theme_color_override(&"font_color", LEADS_IN_COLOR)
+	section.add_title_bar_control(label)
 	var unknown: Array[String] = _storyline.get_unknown_stages(option)
 	if not unknown.is_empty():
-		item.set_custom_color(Column.OPTION, UNKNOWN_COLOR)
-		item.set_tooltip_text(Column.OPTION, "Not a stage of its track: %s" % ", ".join(unknown))
-	if _picked.is_empty(): return
-	if not _storyline.can_happen_in(option, _picked[0], _picked[1]):
-		for column: int in _tree.columns: item.set_custom_color(column, DIMMED)
-	if _storyline.leads_into(option, _picked[0], _picked[1]): item.set_custom_color(Column.LEADS, LEADS_IN_COLOR)
+		var warning: Label = _make_label("⚠ %s" % ", ".join(unknown))
+		warning.add_theme_color_override(&"font_color", UNKNOWN_COLOR)
+		warning.tooltip_text = "Not stages of their tracks"
+		section.add_title_bar_control(warning)
+
+static func _describe(option: AdventureEvent) -> String:
+	if option == null: return "(empty)"
+	var kind: String = " (scenario)" if option is AdventureEventScenario else " (near)" if option.where == AdventureEvent.Where.NEAR else " (anywhere)" if option.where == AdventureEvent.Where.ANYWHERE else ""
+	return AdventureGraph.get_title(option) + kind
 
 func _on_stage_picked(on: bool, track: String, stage: String) -> void:
 	_picked = [track, stage] if on else [ ]
 	show_scenario(_scenario, _host)
 
-## A click in the "Happens in" column: the stages to tick
-func _on_item_clicked(_position: Vector2, mouse_button: int) -> void:
-	if mouse_button != MOUSE_BUTTON_LEFT or _storyline == null or _tree.get_selected_column() != Column.IN: return
-	_stage_menu_event = _tree.get_selected().get_metadata(0) as AdventureEvent
-	if _stage_menu_event == null: return
+## The stages to tick for where [param option] can happen
+func _offer_stages(option: AdventureEvent) -> void:
+	_stage_menu_event = option
 	_stage_menu.clear()
 	for track: AdventureStageTrack in _storyline.encounter.tracks:
 		if track == null: continue
 		_stage_menu.add_separator(track.name)
-		var in_track: Array[String] = _storyline.get_stages_in(_stage_menu_event, track.name)
+		var in_track: Array[String] = _storyline.get_stages_in(option, track.name)
 		for stage: String in track.stages:
 			_stage_menu.add_check_item(stage)
 			_stage_menu.set_item_checked(_stage_menu.item_count - 1, in_track.has(stage))
@@ -237,27 +290,33 @@ func _on_pick_selected(index: int) -> void:
 	if pick == _scenario.pick: return
 	_request([[_scenario, &"pick", pick, AdventureEventEditing.get_file(_scenario)]] as Array[Array], "%s: %s" % [AdventureGraph.get_title(_scenario), _pick.get_item_text(index)])
 
-func _on_item_selected() -> void:
-	var resource: Resource = _tree.get_selected().get_metadata(0) as Resource
-	if resource != null: EditorInterface.edit_resource(resource)
-
-func _on_item_activated() -> void:
-	var option: AdventureEvent = _tree.get_selected().get_metadata(0) as AdventureEvent
-	if option != null: event_opened.emit(option, _host)
-
-func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button: int) -> void:
+func _move(index: int, step: int) -> void:
 	var options: Array[AdventureEvent] = _scenario.events.duplicate()
-	var index: int = item.get_index()
 	var option: AdventureEvent = options.pop_at(index)
-	var title: String = AdventureGraph.get_title(option) if option != null else "empty option"
-	if id == Act.REMOVE:
-		_request(AdventureEventEditing.get_changes_listing(_scenario, options), "Remove %s from %s" % [title, AdventureGraph.get_title(_scenario)])
-		return
-	options.insert(index + (-1 if id == Act.UP else 1), option)
-	_request(AdventureEventEditing.get_changes_listing(_scenario, options), "Move %s" % title)
+	options.insert(index + step, option)
+	_request(AdventureEventEditing.get_changes_listing(_scenario, options), "Move %s" % _describe(option))
+
+func _remove(index: int) -> void:
+	var options: Array[AdventureEvent] = _scenario.events.duplicate()
+	var option: AdventureEvent = options.pop_at(index)
+	_request(AdventureEventEditing.get_changes_listing(_scenario, options), "Remove %s from %s" % [_describe(option), AdventureGraph.get_title(_scenario)])
 
 func _request(changes: Array[Array], action: String) -> void:
 	if not changes.is_empty(): changes_requested.emit(changes, action, null)
+
+static func _make_label(text: String) -> Label:
+	var label: Label = Label.new()
+	label.text = text
+	label.mouse_filter = Control.MOUSE_FILTER_PASS
+	return label
+
+static func _make_icon_button(icon_name: String, tooltip: String, on_pressed: Callable) -> Button:
+	var button: Button = Button.new()
+	button.icon = AdventureActionMenu.get_editor_icon(icon_name)
+	button.tooltip_text = tooltip
+	button.flat = true
+	button.pressed.connect(on_pressed)
+	return button
 
 static func _make_button(text: String, tooltip: String, on_pressed: Callable) -> Button:
 	var button: Button = Button.new()

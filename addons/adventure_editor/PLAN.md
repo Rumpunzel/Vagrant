@@ -236,6 +236,17 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
 - [x] 4. Inspector plugin for UID fields (`AdventureUidInspector`): a resource picker per UID (drop, pick, clear) with the title next to it and
   what empty means ("its own encounter", "here"); lists get a row per entry with ✕ and an empty picker to add; resources inside other files refused
 
+## One screen per encounter (agreed 2026-10-31)
+- [x] 1. A foldable section per option (`FoldableContainer`), its page graph inside; the plain mouse wheel scrolls the page (Ctrl + wheel zooms the
+  graph, Shift + wheel / middle-drag move it); graphs as high as their nodes (220–640 px); the first option (or the one opened) unfolded, the rest
+  remembered while shown; an option picked in the event list opens on its scenario's or encounter's screen
+- [ ] 2. Stage end nodes in the graph ("→ Beaten") for outcomes setting a stage, lines in the stage colour; a picked stage highlights them
+- [ ] 3. A loose event becomes a screen with one section (the separate event graph goes)
+
+## To reconsider
+- Effects on the path: the line from an outcome carries "→ Beaten · Injury" instead of tags on the card (decide after step 2 above)
+- Graph height: fixed by content; a drag handle if it isn't enough
+
 Later: encounter templates (several wolves; a "new monster encounter" with its State track and the fight outcomes' stage consequences ready),
 with the party / carried by, item encounters, roaming by itself (random, routes, time of day), a separate editor tab for editing locations,
 fights against several opponents (needs the fight UI first).
@@ -313,3 +324,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-31: user: storyline table not intuitive (stages look like flags), back to the drawing board later; 3 built: options list for scenarios and encounters, switch code gone; tests: overview reworked
 - 2026-10-31: 4 built: UID fields in the Inspector; test: fields and UIDs (2)
 - 2026-10-31: storyline redesign, first try: one screen (no toggle): an encounter's options list gets a bar per track with stage chips (picking one dims what can't happen then, marks what leads into it), "Happens in" (click: tick stages) and "Leads to" (decision → stage, edited in the pages); table and storyline view gone; tests: storyline (4)
+- 2026-10-31: user: fold the page graphs into the encounter screen, show stage changes in the graph; reconsider critically and often; 1 built: foldable sections with graphs
