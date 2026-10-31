@@ -2,7 +2,7 @@
 class_name AdventureSpecialButton
 extends Button
 
-## A special node in a section's title bar on the event screen; dragged onto the section's graph, places one there ([AdventureEventView])
+## A special node in an event graph's toolbar; dragged into the graph, places one there ([AdventureEventView])
 
 ## Its kind as [AdventureEventView] names it in layout keys: "host", "previous"
 @export var kind: String

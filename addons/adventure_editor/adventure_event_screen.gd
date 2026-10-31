@@ -228,8 +228,7 @@ func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
 	if option is AdventureEventScenario:
 		section.add_child(_make_button("Open its options", "A scenario inside: its own options", event_opened.emit.bind(option, _host)))
 		return
-	section.add_title_bar_control(AdventureSpecialButton.make("host", "Host", "Back to the page the event is on", AdventureCardView.HOST_ICON))
-	section.add_title_bar_control(AdventureSpecialButton.make("previous", "Previous", "Back to where the player was before the host (fleeing)", AdventureEventView.PREVIOUS_ICON))
+
 	var graph: AdventureEventView = make_graph.call()
 	graph.outer_scroll = _scroll
 	graph.picked_stage = _picked

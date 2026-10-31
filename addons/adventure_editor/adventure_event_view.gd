@@ -46,6 +46,9 @@ func setup() -> void:
 	connection_request.connect(_on_connection_request)
 	disconnection_request.connect(func(from: StringName, port: int, _to: StringName, _to_port: int) -> void: _request_reference(from, port, null))
 	connection_to_empty.connect(_on_connection_to_empty)
+	# The special nodes to drag in, with the graph's other tools
+	get_menu_hbox().add_child(AdventureSpecialButton.make("host", "Host", "Back to the page the event is on", HOST_ICON))
+	get_menu_hbox().add_child(AdventureSpecialButton.make("previous", "Previous", "Back to where the player was before the host (fleeing)", PREVIOUS_ICON))
 
 func _get_encounter() -> AdventureEncounter:
 	if _overview == null: return null
