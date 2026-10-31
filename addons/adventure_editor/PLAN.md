@@ -220,6 +220,17 @@ Steps:
   - Originally: "Here" panel per location (everything that can happen there, also "can come here" through move consequences; reordering) and a
   storyline view per encounter (stages as nodes, events between them)
 
+## Editing in lists and tables (agreed 2026-10-31)
+Graphs only where the content is a graph of links (the map, the pages behind an event); lists and tables for collections and orders, the Inspector
+(with a plugin for UID fields) for properties.
+- [x] 1. Location tab editable: + on its own events (new event / scenario, add an existing one), "+ Encounter" (new NPC / monster encounter,
+  place one made already), ✕ on own events and on encounters placed here; selecting a row shows it in the Inspector. Shared change helpers in
+  `AdventureMapEditing` (putting, removing, placing); the menu with icons is `AdventureActionMenu`, used by all views
+- [ ] 2. Storyline as a table instead of a graph: a column per stage (by track), a row per event (checkbox: needs it) and per decision outcome
+  (checkbox: sets it, one per track); "+ stage", "+ track", "+ event needing …"; names in the Inspector. The storyline graph view goes
+- [ ] 3. Events tab: a scenario's or encounter's options as a list; selecting one shows only its pages as a graph (decide after 1 and 2)
+- [ ] 4. Inspector plugin for UID fields: names instead of uid strings, drop from the FileSystem, ✕ per entry
+
 Later: encounter templates (several wolves; a "new monster encounter" with its State track and the fight outcomes' stage consequences ready),
 with the party / carried by, item encounters, roaming by itself (random, routes, time of day), a separate editor tab for editing locations,
 fights against several opponents (needs the fight UI first).
@@ -291,3 +302,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-30: step 5 committed; 6a built: making and placing encounters; test: new encounters (1)
 - 2026-10-30: 6a committed; 6b built: location tab; `AdventureLocation.get_slots` (the own events' slot in the order also without own events); tests: location overview (5)
 - 2026-10-30: double-click opening waits for the mouse button (no stuck drag); 6c built: storyline view; tests: storyline (3)
+- 2026-10-31: graphs reconsidered with the user (lists and tables where content isn't links); 1 built: location tab editable; test: putting / placing (1)

@@ -130,14 +130,15 @@ func _connect_views() -> void:
 		view.play_requested.connect(_play_from)
 		view.deletion_requested.connect(_ask_to_delete)
 	_map.location_requested.connect(_ask_for_location)
-	_map.event_requested.connect(func(location: AdventureLocation, scenario: bool) -> void:
-		_name_dialog.ask("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
-	)
-	_map.existing_event_requested.connect(_offer_events)
+	_map.event_requested.connect(_ask_for_event)
+	_map.existing_event_requested.connect(func(location: AdventureLocation) -> void: _offer_events(location, _map.show_actions))
 	_map.encounter_requested.connect(_ask_for_encounter)
 	_map.location_opened.connect(_show_location)
 	_location_view.event_opened.connect(open_event)
 	_location_view.changes_requested.connect(_edits.apply)
+	_location_view.event_requested.connect(_ask_for_event)
+	_location_view.existing_event_requested.connect(_offer_events)
+	_location_view.encounter_requested.connect(_ask_for_encounter)
 	_event_view.exit_opened.connect(_open_location)
 	_event_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
 
@@ -277,12 +278,16 @@ func _create_location(title: String, area: AdventureArea, new_area_name: String,
 	_save_layout()
 	rebuild()
 
-## The adventure's events (those met and every file in an events folder) not on [param location] yet, and any other file
-func _offer_events(location: AdventureLocation) -> void:
-	_offer(location.get_own_events(), func(event: AdventureEvent) -> void: _map.put_event(location, event), _map)
+func _ask_for_event(location: AdventureLocation, scenario: bool) -> void:
+	_name_dialog.ask("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
+
+## The adventure's events (those met and every file in an events folder) not on [param location] yet, and any other file;
+## [param show_actions] shows the menu
+func _offer_events(location: AdventureLocation, show_actions: Callable) -> void:
+	_offer(location.get_own_events(), func(event: AdventureEvent) -> void: _map.put_event(location, event), show_actions)
 
 ## A menu of the adventure's events (those met and every file in an events folder) but [param taken], and any other file; [param on_pick] gets the event
-func _offer(taken: Array, on_pick: Callable, view: AdventureGraphView) -> void:
+func _offer(taken: Array, on_pick: Callable, show_actions: Callable) -> void:
 	var events: Array[AdventureEvent] = _all_events
 	var actions: Dictionary[String, Callable] = {}
 	for event: AdventureEvent in events:
@@ -295,7 +300,7 @@ func _offer(taken: Array, on_pick: Callable, view: AdventureGraphView) -> void:
 			else: push_warning("%s is no event" % path)
 		)
 		_file_dialog.popup_file_dialog()
-	view.show_actions(actions)
+	show_actions.call(actions)
 
 ## The events met on the map and every event file in an events folder under the adventure; not those stored inside other files
 func _find_all_events() -> Array[AdventureEvent]:

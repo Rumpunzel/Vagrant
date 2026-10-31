@@ -19,6 +19,30 @@ static func without_links(page: AdventurePage, to: AdventurePage) -> Array[Adven
 		if not leads_there or decision is AdventureDiceDecision: kept.append(decision)
 	return kept
 
+## Changes putting [param event] at [param location]: an encounter could be there too, another event is listed there; none if it is already
+static func get_changes_putting(location: AdventureLocation, event: AdventureEvent) -> Array[Array]:
+	if event is AdventureEncounter: return get_changes_placing(event as AdventureEncounter, location, true)
+	var events: Array[AdventureEvent] = location.get_own_events()
+	if events.has(event): return [ ]
+	events.append(event)
+	return AdventureEventEditing.get_changes_listing(location, events)
+
+## Changes taking [param event] off [param location]'s own events
+static func get_changes_removing(location: AdventureLocation, event: AdventureEvent) -> Array[Array]:
+	var events: Array[AdventureEvent] = location.get_own_events()
+	if not events.has(event): return [ ]
+	events.erase(event)
+	return AdventureEventEditing.get_changes_listing(location, events)
+
+## Changes making [param location] one of the places [param encounter] could be ([param here]), or not; none if it is so already
+static func get_changes_placing(encounter: AdventureEncounter, location: AdventureLocation, here: bool) -> Array[Array]:
+	var key: String = AdventureLayout.get_key(location)
+	var places: Array[String] = encounter.places.duplicate()
+	if here == places.has(key): return [ ]
+	if here: places.append(key)
+	else: places.erase(key)
+	return [[encounter, &"places", places, encounter]]
+
 static func make_location(title: String, area: AdventureArea) -> AdventureLocation:
 	var location: AdventureLocation = AdventureLocation.new()
 	location.title = title

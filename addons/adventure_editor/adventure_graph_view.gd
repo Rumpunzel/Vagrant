@@ -33,12 +33,8 @@ const IMAGE_EXTENSIONS: Array[String] = ["png", "jpg", "jpeg", "webp", "svg"]
 const ARROW_END: int = 1
 const ARROW_START: int = 2
 const ARROW_SIZE: float = 12.0
-const ICON_SIZE: int = 16
+const ICON_SIZE: int = AdventureActionMenu.ICON_SIZE
 ## [words, editor icon] for menu items, the first that fits
-const MENU_ICONS: Array[Array] = [
-	[["play"], "Play"], [["unlink"], "Unlinked"], [["remove", "delete", "not nearby", "not here"], "Remove"], [["other file"], "Load"],
-	[["(scenario)"], "GraphEdit"], [["monster"], "Skeleton2D"], [["encounter"], "CharacterBody2D"], [["new ", "add "], "Add"],
-]
 
 var layout: AdventureLayout
 ## Shown on the nodes of their pages
@@ -50,9 +46,7 @@ var _resources: Dictionary[GraphElement, Resource] = {}
 ## [from, to, color, dashed, arrows] lines drawn above everything ([member ARROW_END], [member ARROW_START])
 var _dashed: Array[Array] = [ ]
 var _dashed_layer: Control
-var _menu: PopupMenu
-## Item text -> what it does, for the open menu
-var _menu_actions: Dictionary[String, Callable] = {}
+var _menu: AdventureActionMenu
 ## Waits for the mouse button to be up ([method call_after_release])
 var _after_release: Callable
 
@@ -74,8 +68,7 @@ func setup() -> void:
 	delete_nodes_request.connect(_on_delete_nodes)
 	end_node_move.connect(_on_end_node_move)
 	_add_dashed_layer()
-	_menu = PopupMenu.new()
-	_menu.index_pressed.connect(func(index: int) -> void: _menu_actions[_menu.get_item_text(index)].call())
+	_menu = AdventureActionMenu.new()
 	add_child(_menu, false, Node.INTERNAL_MODE_FRONT)
 	scroll_offset_changed.connect(func(_offset: Vector2) -> void: _dashed_layer.queue_redraw())
 	_add_tidy_button()
@@ -109,24 +102,10 @@ func _get_event_card_actions(_event: AdventureEvent, _page: AdventurePage) -> Di
 func show_actions(actions: Dictionary[String, Callable]) -> void: _show_menu(actions)
 
 ## A context menu at the mouse: item text -> what it does; each item gets an icon by what it does ([method _get_menu_icon])
-func _show_menu(actions: Dictionary[String, Callable]) -> void:
-	_menu_actions = actions
-	_menu.clear()
-	for text: String in actions:
-		var icon: Texture2D = _get_menu_icon(text)
-		if icon != null: _menu.add_icon_item(icon, text)
-		else: _menu.add_item(text)
-		_menu.set_item_icon_max_width(_menu.item_count - 1, ICON_SIZE)
-	_menu.position = DisplayServer.mouse_get_position()
-	_menu.reset_size()
-	_menu.popup()
+func _show_menu(actions: Dictionary[String, Callable]) -> void: _menu.show_actions(actions, _get_menu_icon)
 
-## The icon of a menu item, by the words in it; none where there is no editor (previews)
-func _get_menu_icon(text: String) -> Texture2D:
-	var lower: String = text.to_lower()
-	for words: Array in MENU_ICONS:
-		for word: String in words[0]: if lower.contains(word): return _get_editor_icon(words[1])
-	return _get_editor_icon("Object")
+## The icon of a menu item ([method AdventureActionMenu.get_icon]); views with icons of their own add theirs
+func _get_menu_icon(text: String) -> Texture2D: return AdventureActionMenu.get_icon(text)
 
 ## [param pick] gets the actions when [param node] is right-clicked
 func _on_right_click(node: GraphElement, pick: Callable) -> void:
@@ -328,8 +307,7 @@ func _make_tool_button(icon_name: String, fallback: String, tooltip: String, on_
 	button.pressed.connect(on_pressed)
 	return button
 
-static func _get_editor_icon(icon_name: String) -> Texture2D:
-	return EditorInterface.get_editor_theme().get_icon(icon_name, &"EditorIcons") if Engine.is_editor_hint() else null
+static func _get_editor_icon(icon_name: String) -> Texture2D: return AdventureActionMenu.get_editor_icon(icon_name)
 
 func _on_node_selected(element: Node) -> void:
 	var resource: Resource = _resources.get(element as GraphElement)

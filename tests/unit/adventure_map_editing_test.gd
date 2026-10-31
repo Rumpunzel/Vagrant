@@ -61,6 +61,21 @@ func test_layout_keys() -> void:
 	assert_bool(AdventureLayout.is_placed_special(key)).is_false()
 	assert_str(AdventureLayout.get_switch_key(root, root)).is_equal("res://events/lurker.tres/switch/res://events/lurker.tres")
 
+func test_putting_events_and_encounters_at_a_location() -> void:
+	var ruin: AdventureLocation = AdventureLocation.new()
+	ruin.resource_path = "res://locations/ruin.tres"
+	var wind: AdventureEvent = AdventureEvent.new()
+	var listing: Array[Array] = AdventureMapEditing.get_changes_putting(ruin, wind)
+	assert_str(listing[0][1]).is_equal("scenario")
+	ruin.scenario = listing[0][2]
+	assert_array(AdventureMapEditing.get_changes_putting(ruin, wind)).is_empty()
+	assert_array(AdventureMapEditing.get_changes_removing(ruin, wind)).is_equal([[ruin.scenario, &"events", [ ], ruin]])
+	var eleanor: AdventureEncounter = AdventureEncounter.new()
+	assert_array(AdventureMapEditing.get_changes_putting(ruin, eleanor)).is_equal([[eleanor, &"places", ["res://locations/ruin.tres"], eleanor]])
+	eleanor.places = ["res://locations/ruin.tres"] as Array[String]
+	assert_array(AdventureMapEditing.get_changes_placing(eleanor, ruin, true)).is_empty()
+	assert_array(AdventureMapEditing.get_changes_placing(eleanor, ruin, false)).is_equal([[eleanor, &"places", [ ], eleanor]])
+
 func _page(title: String, path: String) -> AdventurePage:
 	var page: AdventurePage = AdventurePage.new()
 	page.title = title

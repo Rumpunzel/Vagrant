@@ -195,10 +195,10 @@ func _get_add_actions(entry: AdventureEventOverview.Entry, page: AdventurePage) 
 func _get_add_icons() -> Dictionary[String, Texture2D]:
 	return {"Add choice": _get_editor_icon("Add"), "Add fight": FIGHT_ICON, "Add save": SAVE_ICON}
 
-## Fights, saves and monsters get the game's icons
+## Fights and saves get the game's icons
 func _get_menu_icon(text: String) -> Texture2D:
 	var lower: String = text.to_lower()
-	if lower.contains("fight") or lower.contains("is beaten") or lower.contains("is dead"): return FIGHT_ICON
+	if lower.contains("fight"): return FIGHT_ICON
 	if lower.contains("save"): return SAVE_ICON
 	return super(text)
 

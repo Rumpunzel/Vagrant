@@ -101,13 +101,8 @@ func _get_event_card_actions(event: AdventureEvent, page: AdventurePage) -> Dict
 
 ## Whether [param encounter] could be at [param location] (its [member AdventureEncounter.places])
 func set_place(encounter: AdventureEncounter, location: AdventureLocation, here: bool) -> void:
-	var key: String = AdventureLayout.get_key(location)
-	var places: Array[String] = encounter.places.duplicate()
-	if here == places.has(key): return
-	if here: places.append(key)
-	else: places.erase(key)
 	var action: String = ("%s could be at %s" if here else "%s not at %s any more") % [AdventureGraph.get_title(encounter), AdventureGraph.get_title(location)]
-	_request(encounter, &"places", places, action, encounter)
+	changes_requested.emit(AdventureMapEditing.get_changes_placing(encounter, location, here), action, null)
 
 ## Frames grow with their locations; Alt while dragging lets them go, so they can leave
 func _on_move_started() -> void:
@@ -162,28 +157,19 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 		elif dropped is MonsterProfile and location != null: encounter_requested.emit(location, true, dropped as MonsterProfile)
 		else: push_warning("%s is no image, event, encounter or monster" % path)
 
-## Dropped or picked for [param location]: an encounter could be there from now on, another event is listed there
-func put_event(location: AdventureLocation, event: AdventureEvent) -> void:
-	if event is AdventureEncounter: set_place(event as AdventureEncounter, location, true)
-	else: add_event(location, event)
 
-## Lists [param event] on [param location] too
-func add_event(location: AdventureLocation, event: AdventureEvent) -> void:
-	var events: Array[AdventureEvent] = location.get_own_events()
-	if events.has(event):
-		push_warning("%s is on %s already" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])
-		return
-	events.append(event)
-	changes_requested.emit(AdventureEventEditing.get_changes_listing(location, events), "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], null)
+## [param event] at [param location] too: an encounter could be there, another event is listed there
+func put_event(location: AdventureLocation, event: AdventureEvent) -> void:
+	var changes: Array[Array] = AdventureMapEditing.get_changes_putting(location, event)
+	if changes.is_empty(): push_warning("%s is on %s already" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])
+	else: changes_requested.emit(changes, "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], null)
 
 ## Refused for events stored inside the location's file, which would be lost
 func _remove_event(location: AdventureLocation, event: AdventureEvent) -> void:
 	if AdventureEventEditing.is_inside_file(event):
 		push_warning("%s is stored inside %s's file and would be lost" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)])
 		return
-	var events: Array[AdventureEvent] = location.get_own_events()
-	events.erase(event)
-	changes_requested.emit(AdventureEventEditing.get_changes_listing(location, events), "Remove %s from %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], null)
+	changes_requested.emit(AdventureMapEditing.get_changes_removing(location, event), "Remove %s from %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], null)
 
 func _link(from: AdventurePage, to: AdventurePage) -> void:
 	if from == null or to == null or from == to: return
