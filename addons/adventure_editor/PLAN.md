@@ -251,8 +251,10 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
 - [x] Body vs. story (user, 2026-10-31; done): the monster's body (can fight / beaten / dead) is runtime state the fights set, read by
   `AdventureMonsterCondition` (about an encounter, empty: its own) and ended by `AdventureKillConsequence`; stages only for the story. The Lurker
   has no track; the monster template makes none
-- Stage effects show twice in the graph: a tag on the card and a line to the stage node; drop one (or effects on the path, below)
-- Effects on the path: the line from an outcome carries "→ Beaten · Injury" instead of tags on the card (decide after step 2 above)
+- [x] Stage effects showed twice (tag and end node): end nodes gone
+- [x] Frames in a page graph (user): one event per graph, so no frame; specials are dropped anywhere in it
+- [x] Effects (user, 2026-10-31: they belong to the transition): chips where the outcome's line starts (B of: labels on lines / chips at the start /
+  a node in the path); a won fight's "→ beaten" is a read-only chip; the stage end nodes are gone. A node in the path is the next step if it isn't clear enough
 - Graph height: fixed by content; a drag handle if it isn't enough
 
 Later: encounter templates (several wolves; a "new monster encounter" with its State track and the fight outcomes' stage consequences ready),
@@ -338,3 +340,4 @@ loot (user, 2026-10-31): a monster encounter's stage after Dead to search its bo
 - 2026-10-31: user: "beaten" can drift from the monster's real state; proposal noted under To reconsider; 3 built: one event screen for every event, the separate event graph gone
 - 2026-10-31: body vs. story done: monster condition and kill consequence back, about encounters; Lurker and template without State track; tests: body (1), Lurker content reworked
 - 2026-10-31: event list without options (they are on the screen; listed while finding); a monster's body on the screen like a track (Body: can fight / beaten / dead; won fights → beaten, kills → dead) and as end nodes in the graphs; test: body (1)
+- 2026-10-31: no frames in page graphs; effects as chips at the start of their transition, end nodes gone

@@ -2,8 +2,8 @@
 class_name AdventureEventView
 extends AdventureCardView
 
-## One event at a glance ([AdventureEventOverview]): a frame per event (a scenario: per option) and per sub-event, each with the pages behind it,
-## special nodes ("Host", "Previous location": one host per frame always, more dragged in from the sidebar) and the locations it leads to; sub-events hang dashed from the page listing them.
+## One plain event's pages ([AdventureEventOverview]): the event and the pages behind it, the special nodes ("Host", "Previous location": one host
+## always, more dragged in from the sidebar) and the locations it leads to. Effects sit as chips where their outcome's line starts.
 ## Page cards and their decision cards and tags: [AdventureCardView].
 ## Edits are only requested here; [AdventureEditor] makes them (undo, saving). [param file]: the file the change is stored in
 
@@ -12,8 +12,8 @@ signal exit_opened(location: AdventurePage)
 
 enum Target { PAGE, HOST, PREVIOUS }
 
-## Stage nodes and the lines to them
-const STAGE_COLOR: Color = Color(0.6, 1.0, 0.6)
+## Effect chips of the stage picked on the encounter's screen
+const PICKED_COLOR: Color = Color(0.6, 1.0, 0.6)
 const PREVIOUS_COLOR: Color = Color(0.7, 0.55, 0.95)
 const PREVIOUS_ICON: Texture2D = preload("uid://dmkjss474288g")  # exit-door.svg
 ## Special nodes by kind: [name in layout keys and drag data, title, hint, color, icon]
@@ -27,7 +27,7 @@ const NODE_GAP: float = 40.0
 
 ## The adventure's encounters, to find the one of the event shown
 var encounters: Array[AdventureEncounter] = [ ]
-## A stage picked on the encounter's screen ([track, stage]): its stage nodes and lines stay bright, the others fade
+## A stage picked on the encounter's screen ([track, stage]): the effects leading there are marked
 var picked_stage: Array = [ ]
 var _overview: AdventureEventOverview
 ## The host picked to see the event at; none: any host
@@ -37,7 +37,6 @@ var _node_entries: Dictionary[StringName, AdventureEventOverview.Entry] = {}
 var _node_pages: Dictionary[StringName, AdventurePage] = {}
 var _node_ports: Dictionary[StringName, Array] = {}
 var _node_targets: Dictionary[StringName, Array] = {}
-var _frame_entries: Dictionary[GraphFrame, AdventureEventOverview.Entry] = {}
 ## [nodes, top] per column placed by default, stacked once laid out; showing again drops them with the nodes
 var _unstacked: Array[Array] = [ ]
 
@@ -61,8 +60,8 @@ func get_host() -> AdventurePage: return _host
 func show_event(event: AdventureEvent, host: AdventurePage = null) -> void:
 	_clear()
 	_host = host
-	_stage_sources.clear()
-	for nodes: Dictionary in [_node_entries, _node_pages, _node_ports, _node_targets, _card_styles, _frame_entries, _tags, _tag_owners, _fight_cards, _fight_pages]: nodes.clear()
+	_beaten_chips.clear()
+	for nodes: Dictionary in [_node_entries, _node_pages, _node_ports, _node_targets, _card_styles, _tags, _tag_owners, _fight_cards, _fight_pages]: nodes.clear()
 	_unstacked.clear()
 	_overview = AdventureEventOverview.new(event) if event != null else null
 	if _overview == null: return
@@ -70,13 +69,11 @@ func show_event(event: AdventureEvent, host: AdventurePage = null) -> void:
 	for entry: AdventureEventOverview.Entry in _overview.entries:
 		for page: AdventurePage in entry.graph.pages:
 			for decision: AdventureDecision in page.decisions: if decision is AdventureFightDecision: _fight_pages[decision] = page
-	for entry: AdventureEventOverview.Entry in _overview.entries:
-		var frame: GraphFrame = _add_frame(entry.label, entry.event, null)
-		_frame_entries[frame] = entry
-		_add_entry(entry, frame, Vector2.ZERO)
+	for entry: AdventureEventOverview.Entry in _overview.entries: _add_entry(entry, Vector2.ZERO)
+	_highlight_picked()
 
-## Adds the entry's nodes to [param frame] from [param origin] on; returns how many columns they take
-func _add_entry(entry: AdventureEventOverview.Entry, frame: GraphFrame, origin: Vector2) -> int:
+## Adds the entry's nodes from [param origin] on; returns how many columns they take
+func _add_entry(entry: AdventureEventOverview.Entry, origin: Vector2) -> int:
 	var graph: AdventureEventGraph = entry.graph
 	# Default places: a column per step from the event, stacked by height once the nodes are laid out
 	var columns: Dictionary[int, Array] = {}
@@ -86,13 +83,11 @@ func _add_entry(entry: AdventureEventOverview.Entry, frame: GraphFrame, origin: 
 		var placed: bool = layout != null and layout.positions.has(_key(entry, page))
 		var node: GraphNode = _add_exit(entry, page as AdventureLocation, at) if graph.exits.has(page) else _add_page(entry, page, at)
 		if not placed: columns.get_or_add(depth, [ ]).append(node)
-		attach_graph_element_to_frame(node.name, frame.name)
 	for column: Array in columns.values(): _unstacked.append([column, origin.y])
 	if not get_tree().process_frame.is_connected(_stack): get_tree().process_frame.connect(_stack, CONNECT_ONE_SHOT)
 	# Always there, so anything can be linked back to the host
 	var column_count: int = graph.depths.values().max() + 1
-	_add_specials(entry, frame, origin + Vector2(column_count * NODE_SPACING.x, 0))
-	_add_stage_nodes(entry, frame, origin + Vector2(column_count * NODE_SPACING.x, 2 * SPECIAL_SPACING))
+	_add_specials(entry, origin + Vector2(column_count * NODE_SPACING.x, 0))
 	for page: AdventurePage in graph.pages:
 		var ports: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_ports(page)
 		for port: int in ports.size():
@@ -103,23 +98,18 @@ func _add_entry(entry: AdventureEventOverview.Entry, frame: GraphFrame, origin: 
 			if not target_key.is_empty(): connect_node(_nodes[_key(entry, page)].name, port, _nodes[target_key].name, 0)
 	return column_count + 1
 
-## A node per stage the entry's outcomes set ("→ Beaten"), dashed lines to it from those outcomes; with a picked stage the others fade
-func _add_stage_nodes(entry: AdventureEventOverview.Entry, frame: GraphFrame, at: Vector2) -> void:
-	var nodes: Dictionary[String, GraphNode] = {}
-	for source: Array in _stage_sources:
-		var stage_name: String = "%s: %s" % [source[1], source[2]]
-		var picked: bool = picked_stage.is_empty() or picked_stage == [source[1], source[2]]
-		if not nodes.has(stage_name):
-			var key: String = AdventureLayout.get_event_key(_overview.root, entry.event, "stage/" + stage_name)
-			var body: bool = source[1] == AdventureStoryline.BODY
-			var hint: String = "Its body: %s" % source[2] if body else "The story moves on: %s" % stage_name
-			var node: GraphNode = _add_node(key, entry.event, "→ %s" % source[2], _make_label(hint), at + Vector2(0, nodes.size() * SPECIAL_SPACING))
-			node.self_modulate = FIGHT_COLOR if body else STAGE_COLOR
-			if not picked: node.modulate = FADED
-			attach_graph_element_to_frame(node.name, frame.name)
-			nodes[stage_name] = node
-		var color: Color = FIGHT_COLOR if source[1] == AdventureStoryline.BODY else STAGE_COLOR
-		_add_line(source[0], nodes[stage_name], color if picked else Color(color, 0.25), true, ARROW_END)
+## The effect chips (and a won fight's "→ beaten") leading into the picked stage, marked
+func _highlight_picked() -> void:
+	if picked_stage.is_empty(): return
+	var encounter: AdventureEncounter = _get_encounter()
+	for item: Resource in _tags:
+		var stage: AdventureStageConsequence = item as AdventureStageConsequence
+		var kill: AdventureKillConsequence = item as AdventureKillConsequence
+		var leads: bool = stage != null and _is_own(stage.subject, encounter) and picked_stage == [stage.track, stage.stage]
+		leads = leads or kill != null and _is_own(kill.encounter, encounter) and picked_stage == [AdventureStoryline.BODY, AdventureStoryline.BODY_STATES[AdventureMonsterCondition.State.DEAD]]
+		if leads: _tags[item].modulate = PICKED_COLOR
+	if picked_stage == [AdventureStoryline.BODY, AdventureStoryline.BODY_STATES[AdventureMonsterCondition.State.BEATEN]]:
+		for chip: Control in _beaten_chips: chip.modulate = PICKED_COLOR
 
 ## Stacks each column of default-placed nodes below each other, once they are laid out
 func _stack() -> void:
@@ -189,8 +179,8 @@ func _add_exit(entry: AdventureEventOverview.Entry, location: AdventureLocation,
 	_remember(node, entry, null, [ ], [Target.PAGE, location])
 	return node
 
-## The frame's own host (always), the special nodes placed from the sidebar, and a "Previous location" if something leads there but none is placed
-func _add_specials(entry: AdventureEventOverview.Entry, frame: GraphFrame, at: Vector2) -> void:
+## Its own host (always), the special nodes placed from the sidebar, and a "Previous location" if something leads there but none is placed
+func _add_specials(entry: AdventureEventOverview.Entry, at: Vector2) -> void:
 	var nodes: Array[GraphNode] = [_add_special(entry, Target.HOST, _special_key(entry, Target.HOST), at, false)]
 	if layout != null:
 		for key: String in layout.positions:
@@ -202,7 +192,6 @@ func _add_specials(entry: AdventureEventOverview.Entry, frame: GraphFrame, at: V
 		for port: AdventureEventGraph.Outlet in AdventureEventGraph.get_ports(page):
 			if port.to_previous and _get_placed_target(entry, port, Target.PREVIOUS).is_empty(): needs_previous = true
 	if needs_previous: nodes.append(_add_special(entry, Target.PREVIOUS, _special_key(entry, Target.PREVIOUS), at + Vector2(0, SPECIAL_SPACING), false))
-	for node: GraphNode in nodes: attach_graph_element_to_frame(node.name, frame.name)
 
 ## [param removable]: placed from the sidebar
 func _add_special(entry: AdventureEventOverview.Entry, kind: Target, key: String, at: Vector2, removable: bool) -> GraphNode:
@@ -219,7 +208,7 @@ func _add_special(entry: AdventureEventOverview.Entry, kind: Target, key: String
 	_remember(node, entry, null, [ ], [kind, null])
 	return node
 
-## Its links go to the frame's own special node again
+## Its links go to the graph's own special node again
 func _remove_special(key: String) -> void:
 	layout.positions.erase(key)
 	for link: String in layout.special_links.keys(): if layout.special_links[link] == key: layout.special_links.erase(link)
@@ -236,7 +225,7 @@ func _get_placed_target(entry: AdventureEventOverview.Entry, outlet: AdventureEv
 	var key: String = layout.special_links.get(_key(entry, reference), "") if layout != null and reference != null else ""
 	return key if _nodes.has(key) and (_node_targets.get(_nodes[key].name, [ ]) as Array).size() > 0 and _node_targets[_nodes[key].name][0] == kind else ""
 
-## Special nodes dragged in from the sidebar ([AdventureSpecialButton]) land in the frame under the mouse
+## Special nodes dragged in from the sidebar ([AdventureSpecialButton]) land where they are dropped
 ## Images from the FileSystem panel onto a page become its background
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	if data is Dictionary and (data as Dictionary).has("adventure_special"): return true
@@ -252,16 +241,13 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 		var texture: Texture2D = load(files[0]) as Texture2D
 		if texture != null and _node_entries.has(node.name): _request(page, &"background", texture, "Set background", _file_for(null, page, _node_entries[node.name]))
 		return
-	for frame: GraphFrame in _frame_entries:
-		if not Rect2(frame.position_offset, frame.size).has_point(at): continue
-		var prefix: String = "%s%s/" % [_placed_prefix(_frame_entries[frame]), (data as Dictionary)["adventure_special"]]
-		var index: int = 0
-		while layout.positions.has(prefix + str(index)): index += 1
-		layout.positions[prefix + str(index)] = at
-		layout_changed.emit()
-		show_event(get_event(), _host)
-		return
-	push_warning("Drop special nodes into an event's frame")
+	if _overview == null or _overview.entries.is_empty(): return
+	var prefix: String = "%s%s/" % [_placed_prefix(_overview.entries[0]), (data as Dictionary)["adventure_special"]]
+	var index: int = 0
+	while layout.positions.has(prefix + str(index)): index += 1
+	layout.positions[prefix + str(index)] = at
+	layout_changed.emit()
+	show_event(get_event(), _host)
 
 func _open_on_double_click(node: GraphNode, location: AdventurePage) -> void:
 	if location == null: return
@@ -338,7 +324,7 @@ func _on_event_card_pressed(event: AdventureEvent, _page: AdventurePage) -> void
 func _key(entry: AdventureEventOverview.Entry, resource: Resource) -> String:
 	return AdventureLayout.get_event_key(_overview.root, entry.event, AdventureLayout.get_key(resource))
 
-## The frame's own special node of [param kind]
+## The graph's own special node of [param kind]
 func _special_key(entry: AdventureEventOverview.Entry, kind: Target) -> String:
 	return AdventureLayout.get_event_key(_overview.root, entry.event, SPECIALS[kind][0])
 

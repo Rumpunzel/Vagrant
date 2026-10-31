@@ -100,7 +100,7 @@ layout_mode = 2
 
 [node name="Title" type="Label" parent="Tabs/Events/Event/Body/Specials"]
 layout_mode = 2
-text = "Drag into a frame:"
+text = "Drag into the graph:"
 
 [node name="Host" type="Button" parent="Tabs/Events/Event/Body/Specials"]
 layout_mode = 2

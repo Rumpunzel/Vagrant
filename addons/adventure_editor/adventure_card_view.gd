@@ -29,8 +29,8 @@ var _tags: Dictionary[Resource, Control] = {}
 var _tag_owners: Dictionary[Resource, AdventureEvent] = {}
 var _fight_cards: Dictionary[AdventureDecision, Control] = {}
 var _fight_pages: Dictionary[AdventureDecision, AdventurePage] = {}
-## [card or outcome row, track, stage] for each stage an outcome sets on the event's encounter; drawn to stage nodes
-var _stage_sources: Array[Array] = [ ]
+## The read-only "→ beaten" chips of won fights against the encounter's own monster
+var _beaten_chips: Array[Control] = [ ]
 
 func setup() -> void:
 	super()
@@ -43,7 +43,6 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 		var card: PanelContainer = _make_card(entry, page, index, _describe_outlet(outlet), Color.TRANSPARENT, null, outlet.goes_back())
 		card.get_child(0).add_child(_make_tags(decision, &"consequences", _file_for(decision, page, entry), "effect", _get_effect_additions))
 		node.add_child(card)
-		_note_stages(card, decision, &"consequences")
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, Color.WHITE)
 		return
 	var is_fight: bool = decision is AdventureFightDecision
@@ -65,26 +64,18 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 		if outcome.goes_back(): label.modulate = FADED
 		row.add_child(label)
 		node.add_child(row)
-		_note_stages(row, decision, outcome.consequences_property)
-		if is_fight and outcome.label == "Won": _note_beaten(row, decision as AdventureFightDecision)
+		if is_fight and outcome.label == "Won": _add_beaten_chip(row, decision as AdventureFightDecision)
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, OUTCOME_COLORS.get(outcome.label, color))
 
-## The stages [param decision]'s [param property] sets on the event's encounter (and a kill: its body dead), to draw from [param from]
-func _note_stages(from: Control, decision: AdventureDecision, property: StringName) -> void:
-	var encounter: AdventureEncounter = _get_encounter()
-	if encounter == null or property.is_empty(): return
-	for consequence: Variant in decision.get(property) as Array:
-		var stage: AdventureStageConsequence = consequence as AdventureStageConsequence
-		var kill: AdventureKillConsequence = consequence as AdventureKillConsequence
-		if stage != null and _is_own(stage.subject, encounter): _stage_sources.append([from, stage.track, stage.stage])
-		elif kill != null and encounter.profile is MonsterProfile and _is_own(kill.encounter, encounter):
-			_stage_sources.append([from, AdventureStoryline.BODY, AdventureStoryline.BODY_STATES[AdventureMonsterCondition.State.DEAD]])
-
-## Winning a fight against the encounter's own monster beats it
-func _note_beaten(from: Control, fight: AdventureFightDecision) -> void:
+## Winning a fight against the encounter's own monster beats it: no effect does that, the fight does, so the chip can't be removed
+func _add_beaten_chip(row: HBoxContainer, fight: AdventureFightDecision) -> void:
 	var encounter: AdventureEncounter = _get_encounter()
 	if encounter == null or not encounter.profile is MonsterProfile or not fight.enemies.is_empty() or not _is_own(fight.encounter, encounter): return
-	_stage_sources.append([from, AdventureStoryline.BODY, AdventureStoryline.BODY_STATES[AdventureMonsterCondition.State.BEATEN]])
+	var chip: Label = _make_info("→ beaten")
+	chip.tooltip_text = "Winning beats its monster (the fight does it)"
+	row.add_child(chip)
+	row.move_child(chip, 0)
+	_beaten_chips.append(chip)
 
 static func _is_own(subject: String, encounter: AdventureEncounter) -> bool:
 	return subject.is_empty() or Files.load_existing(subject) == encounter
