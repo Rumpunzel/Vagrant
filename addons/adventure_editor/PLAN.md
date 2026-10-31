@@ -231,7 +231,7 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
 - [x] 3. Events tab: a scenario or encounter shows as a list of its options (`AdventureScenarioView`: pick first / all, its conditions, an
   encounter's places, options with what they need, ▲ ▼ ✕, "+ Option", "Add event…"); a plain event shows its pages as a graph, one frame.
   The switch nodes and per-option frames are gone (`AdventureEventOverview` is one entry now)
-- [ ] Storyline UI back to the drawing board (user, 2026-10-31): the table reads stages as independent flags, but a track's stages are one state
+- [ ] (first try built, to be judged by the user) Storyline UI back to the drawing board (user, 2026-10-31): the table reads stages as independent flags, but a track's stages are one state
   at a time ("needs" is a set, "sets" exactly one); a row per outcome of every page won't scale and is hard to read. Rethink after this round
 - [x] 4. Inspector plugin for UID fields (`AdventureUidInspector`): a resource picker per UID (drop, pick, clear) with the title next to it and
   what empty means ("its own encounter", "here"); lists get a row per entry with ✕ and an empty picker to add; resources inside other files refused
@@ -312,3 +312,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-31: banner buttons fixed; 2 built: storyline table (ticks, + Track / Stage / Event, typos marked red), the storyline graph view replaced; tests: storyline table (4)
 - 2026-10-31: user: storyline table not intuitive (stages look like flags), back to the drawing board later; 3 built: options list for scenarios and encounters, switch code gone; tests: overview reworked
 - 2026-10-31: 4 built: UID fields in the Inspector; test: fields and UIDs (2)
+- 2026-10-31: storyline redesign, first try: one screen (no toggle): an encounter's options list gets a bar per track with stage chips (picking one dims what can't happen then, marks what leads into it), "Happens in" (click: tick stages) and "Leads to" (decision → stage, edited in the pages); table and storyline view gone; tests: storyline (4)

@@ -38,8 +38,6 @@ var _file_dialog: EditorFileDialog
 var _delete_dialog: ConfirmationDialog
 var _profile_dialog: EditorFileDialog
 var _location_view: AdventureLocationView
-var _storyline_view: AdventureStorylineView
-var _storyline_toggle: CheckButton
 var _scenario_view: AdventureScenarioView
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
@@ -51,7 +49,6 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_make_dialogs()
 	_make_location_tab()
 	_make_scenario_view()
-	_make_storyline_view()
 	_connect_views()
 	_connect_lists()
 	EditorInterface.get_inspector().property_edited.connect(_on_property_edited)
@@ -104,40 +101,12 @@ func _add_option(event: AdventureEvent, scenario: AdventureEventScenario) -> voi
 	options.append(event)
 	_edits.apply(AdventureEventEditing.get_changes_listing(scenario, options), "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(scenario)])
 
-## Next to the event view, shown instead of it for an encounter when toggled; the toggle goes next to the host picker
-func _make_storyline_view() -> void:
-	_storyline_view = AdventureStorylineView.new()
-	_storyline_view.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_storyline_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_storyline_view.visible = false
-	_event_view.add_sibling(_storyline_view)
-	_storyline_view.setup()
-	_storyline_view.event_opened.connect(open_event)
-	_storyline_view.changes_requested.connect(_edits.apply)
-	_storyline_view.files_requested.connect(func(files: Dictionary[String, Resource], changes: Array[Array], action: String) -> void: _edits.create(files, changes, action))
-	_storyline_view.text_requested.connect(_name_dialog.ask)
-	var bar: HBoxContainer = HBoxContainer.new()
-	_host_picker.add_sibling(bar)
-	_host_picker.reparent(bar)
-	_host_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_storyline_toggle = CheckButton.new()
-	_storyline_toggle.text = "Storyline"
-	_storyline_toggle.tooltip_text = "The encounter's stages: which events need them and which outcomes set them"
-	_storyline_toggle.toggled.connect(func(_on: bool) -> void: _show_storyline())
-	bar.add_child(_storyline_toggle)
-
-## A plain event's pages; a scenario's or encounter's options, or (an encounter, toggled) its storyline
-func _show_storyline() -> void:
-	var event: AdventureEvent = _event_view.get_event()
-	var encounter: AdventureEncounter = event as AdventureEncounter
-	_storyline_toggle.visible = encounter != null
-	var storyline: bool = encounter != null and _storyline_toggle.button_pressed
-	var options: bool = event is AdventureEventScenario and not storyline
-	_storyline_view.visible = storyline
-	_scenario_view.visible = options
-	_event_view.visible = not storyline and not options
-	_storyline_view.show_storyline(encounter if storyline else null)
-	_scenario_view.show_scenario(event as AdventureEventScenario if options else null, _event_view.get_host())
+## A plain event's pages; a scenario's or encounter's options (an encounter: with its story)
+func _show_event_view() -> void:
+	var scenario: AdventureEventScenario = _event_view.get_event() as AdventureEventScenario
+	_scenario_view.visible = scenario != null
+	_event_view.visible = scenario == null
+	_scenario_view.show_scenario(scenario, _event_view.get_host())
 
 func _show_location(location: AdventureLocation) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_location_view)
@@ -171,6 +140,7 @@ func _connect_views() -> void:
 	_scenario_view.existing_option_requested.connect(_offer_options)
 	_scenario_view.event_opened.connect(open_event)
 	_scenario_view.changes_requested.connect(_edits.apply)
+	_scenario_view.text_requested.connect(_name_dialog.ask)
 
 func _connect_lists() -> void:
 	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
@@ -240,7 +210,7 @@ func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent
 
 func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
 	_event_view.show_event(event, host)
-	_show_storyline()
+	_show_event_view()
 	_event_list.deselect_all()
 	for index: int in _event_list.item_count:
 		if _event_list.get_item_metadata(index) == event: _event_list.select(index)
