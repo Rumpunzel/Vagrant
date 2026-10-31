@@ -184,6 +184,12 @@ static func make_stage_condition(track: String, stage: String) -> AdventureStage
 	condition.stages = [stage] as Array[String]
 	return condition
 
+## "It can fight" (is beaten, is dead): about the event's own encounter's monster
+static func make_monster_condition(state: AdventureMonsterCondition.State) -> AdventureMonsterCondition:
+	var condition: AdventureMonsterCondition = _in_file(AdventureMonsterCondition.new()) as AdventureMonsterCondition
+	condition.state = state
+	return condition
+
 ## "[param track] → [param stage]" of the encounter of the event one is in
 static func make_stage_consequence(track: String, stage: String) -> AdventureStageConsequence:
 	var consequence: AdventureStageConsequence = _in_file(AdventureStageConsequence.new()) as AdventureStageConsequence
@@ -203,8 +209,8 @@ static func get_encounter_path(adventure: Adventure, title: String) -> String:
 	return adventure.resource_path.get_base_dir().path_join("encounters").path_join(file_name.get_basename()).path_join(file_name)
 
 ## A new encounter that could be at [param location], with its files (path -> resource, in saving order: what the encounter points at first).
-## An NPC gets a Storyline (Unmet / Met); with [param profile] a monster gets a State track (Lurking / Beaten / Dead) and an ambush while it
-## lurks, whose won fight beats it and goes back to where it happened.
+## An NPC gets a Storyline (Unmet / Met); with [param profile] a monster gets an ambush while it can fight (winning beats it), going back to where
+## it happened; its body is its monster's, so it needs no track.
 static func make_encounter_files(adventure: Adventure, title: String, location: AdventureLocation, profile: MonsterProfile = null) -> Dictionary[String, Resource]:
 	var files: Dictionary[String, Resource] = {}
 	var path: String = get_encounter_path(adventure, title)
@@ -212,18 +218,16 @@ static func make_encounter_files(adventure: Adventure, title: String, location: 
 	encounter.title = title
 	encounter.profile = profile
 	encounter.places = [AdventureLayout.get_key(location)] as Array[String]
-	var track: AdventureStageTrack = make_track("State" if profile != null else "Storyline")
-	var stages: Array[String] = ["Unmet", "Met"]
-	if profile != null: stages = ["Lurking", "Beaten", "Dead"]
-	track.stages = stages
-	encounter.tracks = [track] as Array[AdventureStageTrack]
-	if profile != null:
+	if profile == null:
+		var track: AdventureStageTrack = make_track("Storyline")
+		track.stages = ["Unmet", "Met"] as Array[String]
+		encounter.tracks = [track] as Array[AdventureStageTrack]
+	else:
 		var ambush: AdventureEvent = AdventureEvent.new()
 		ambush.title = "%s Ambush" % title
 		ambush.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BASE | AdventureEvent.Exclusivity.EXCLUDE_BELOW | AdventureEvent.Exclusivity.EXCLUDE_ABOVE
-		ambush.conditions = [make_stage_condition("State", "Lurking")] as Array[AdventureCondition]
+		ambush.conditions = [make_monster_condition(AdventureMonsterCondition.State.CAN_FIGHT)] as Array[AdventureCondition]
 		var fight: AdventureFightDecision = make_fight()
-		fight.consequences = [make_stage_consequence("State", "Beaten")] as Array[AdventureConsequence]
 		fight.transition = make_special_reference(false)
 		ambush.decisions = [fight] as Array[AdventureDecision]
 		files[path.get_base_dir().path_join(path.get_file().get_basename() + "_ambush.tres")] = ambush

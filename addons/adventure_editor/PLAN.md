@@ -246,10 +246,9 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
   option; the editor's own event graph is gone (graphs come from `AdventureEditor._make_event_graph`)
 
 ## To reconsider
-- Body vs. story (user, 2026-10-31): "Beaten" is a stage set by the content, but the monster's being beaten (incapacitated) is runtime state
-  the fight sets, so they can drift apart (a draw where it collapses; a later recovery rule). Proposal: a condition reading the encounter's monster
-  (can fight / is beaten / is dead, no spawned_by) plus a kill consequence for the body; stages only for the story (met, allegiance, looted).
-  The Lurker would need no State track. Decision open
+- [x] Body vs. story (user, 2026-10-31; done): the monster's body (can fight / beaten / dead) is runtime state the fights set, read by
+  `AdventureMonsterCondition` (about an encounter, empty: its own) and ended by `AdventureKillConsequence`; stages only for the story. The Lurker
+  has no track; the monster template makes none
 - Stage effects show twice in the graph: a tag on the card and a line to the stage node; drop one (or effects on the path, below)
 - Effects on the path: the line from an outcome carries "→ Beaten · Injury" instead of tags on the card (decide after step 2 above)
 - Graph height: fixed by content; a drag handle if it isn't enough
@@ -335,3 +334,4 @@ loot (user, 2026-10-31): a monster encounter's stage after Dead to search its bo
 - 2026-10-31: user: fold the page graphs into the encounter screen, show stage changes in the graph; reconsider critically and often; 1 built: foldable sections with graphs
 - 2026-10-31: 2 built: stage end nodes in the graphs; loot idea noted
 - 2026-10-31: user: "beaten" can drift from the monster's real state; proposal noted under To reconsider; 3 built: one event screen for every event, the separate event graph gone
+- 2026-10-31: body vs. story done: monster condition and kill consequence back, about encounters; Lurker and template without State track; tests: body (1), Lurker content reworked

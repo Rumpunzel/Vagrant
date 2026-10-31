@@ -5,18 +5,15 @@
 [ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_r0x4r"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_b35qd"]
 [ext_resource type="Script" uid="uid://by4c6kid8h44s" path="res://adventure/adventure_host_reference.gd" id="9_host"]
-[ext_resource type="Script" uid="uid://bva4sh5387lyd" path="res://adventure/conditions/adventure_stage_condition.gd" id="20_stage_condition"]
-[ext_resource type="Script" uid="uid://dnag2gmshedq4" path="res://adventure/decisions/consequences/adventure_stage_consequence.gd" id="21_stage"]
+[ext_resource type="Script" uid="uid://dvkt7afs014e3" path="res://adventure/conditions/adventure_monster_condition.gd" id="20_monster_condition"]
+[ext_resource type="Script" uid="uid://bibf34snha147" path="res://adventure/decisions/consequences/adventure_kill_consequence.gd" id="21_kill"]
 
 [sub_resource type="Resource" id="Resource_lurker_beaten"]
-script = ExtResource("20_stage_condition")
-track = "State"
-stages = Array[String](["Beaten"])
+script = ExtResource("20_monster_condition")
+state = 1
 
 [sub_resource type="Resource" id="Resource_kill_lurker"]
-script = ExtResource("21_stage")
-track = "State"
-stage = "Dead"
+script = ExtResource("21_kill")
 
 [sub_resource type="Resource" id="Resource_to_host"]
 script = ExtResource("9_host")

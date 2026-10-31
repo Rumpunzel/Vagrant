@@ -162,10 +162,14 @@ func _get_effect_additions() -> Dictionary[String, Resource]:
 	for type_name: String in types: additions[AdventureEventEditing.get_type_name(type_name)] = AdventureEventEditing.make_consequence(types[type_name])
 	return additions
 
-## Every kind of condition, and "is …" for each stage of the event's encounter
+## Every kind of condition, "It can fight / is beaten / is dead" for a monster encounter, and "is …" for each stage of the event's encounter
 func _get_condition_additions(_holder: AdventureEvent) -> Dictionary[String, Resource]:
 	var additions: Dictionary[String, Resource] = {}
 	var encounter: AdventureEncounter = _get_encounter()
+	if encounter != null and encounter.profile is MonsterProfile:
+		for state: AdventureMonsterCondition.State in AdventureMonsterCondition.STATE_TEXTS:
+			var condition: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(state)
+			additions[condition.describe()] = condition
 	if encounter != null:
 		for track: AdventureStageTrack in encounter.tracks:
 			if track == null: continue
@@ -210,7 +214,7 @@ func _get_add_icons() -> Dictionary[String, Texture2D]:
 ## Fights and saves get the game's icons
 func _get_menu_icon(text: String) -> Texture2D:
 	var lower: String = text.to_lower()
-	if lower.contains("fight"): return FIGHT_ICON
+	if lower.contains("fight") or lower.contains("is beaten") or lower.contains("is dead") or lower.begins_with("kill"): return FIGHT_ICON
 	if lower.contains("save"): return SAVE_ICON
 	return super(text)
 

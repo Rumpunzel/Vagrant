@@ -156,11 +156,12 @@ func test_new_encounters() -> void:
 	var encounter: AdventureEncounter = monster.values()[1]
 	var ambush: AdventureEvent = monster.values()[0]
 	assert_object(encounter.profile).is_same(cutthroat)
-	assert_array(encounter.tracks[0].stages).contains_exactly(["Lurking", "Beaten", "Dead"])
+	# Its body is its monster's: no track
+	assert_array(encounter.tracks).is_empty()
 	assert_array(encounter.events).contains_exactly([ambush])
-	assert_array((ambush.conditions[0] as AdventureStageCondition).stages).contains_exactly(["Lurking"])
+	assert_int((ambush.conditions[0] as AdventureMonsterCondition).state).is_equal(AdventureMonsterCondition.State.CAN_FIGHT)
 	var fight: AdventureFightDecision = ambush.decisions[0]
-	assert_str((fight.consequences[0] as AdventureStageConsequence).stage).is_equal("Beaten")
+	assert_array(fight.consequences).is_empty()
 	assert_object(fight.transition).is_instanceof(AdventureHostReference)
 
 func test_forgetting_an_area() -> void:

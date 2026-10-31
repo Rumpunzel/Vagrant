@@ -12,18 +12,10 @@
 [ext_resource type="Resource" uid="uid://dgfjjbm210jot" path="res://adventure/adventures/encounters/lurker/lurker_ambush_lost.tres" id="10_4dq5w"]
 [ext_resource type="Resource" uid="uid://qcl0jfm16ys8" path="res://adventure/adventures/encounters/lurker/lurker_ambush_fled.tres" id="11_ar80c"]
 [ext_resource type="Script" uid="uid://by4c6kid8h44s" path="res://adventure/adventure_host_reference.gd" id="11_host"]
-[ext_resource type="Script" uid="uid://bva4sh5387lyd" path="res://adventure/conditions/adventure_stage_condition.gd" id="20_stage_condition"]
-[ext_resource type="Script" uid="uid://dnag2gmshedq4" path="res://adventure/decisions/consequences/adventure_stage_consequence.gd" id="21_stage"]
+[ext_resource type="Script" uid="uid://dvkt7afs014e3" path="res://adventure/conditions/adventure_monster_condition.gd" id="20_monster_condition"]
 
 [sub_resource type="Resource" id="Resource_lurking"]
-script = ExtResource("20_stage_condition")
-track = "State"
-stages = Array[String](["Lurking"])
-
-[sub_resource type="Resource" id="Resource_beaten"]
-script = ExtResource("21_stage")
-track = "State"
-stage = "Beaten"
+script = ExtResource("20_monster_condition")
 
 [sub_resource type="Resource" id="Resource_to_host"]
 script = ExtResource("11_host")
@@ -37,7 +29,6 @@ draw_transition = ExtResource("8_xnwgx")
 failure_transition = ExtResource("10_4dq5w")
 description = "Fight!"
 transition = SubResource("Resource_to_host")
-consequences = Array[ExtResource("4_70bai")]([SubResource("Resource_beaten")])
 metadata/_custom_type_script = "uid://b8exmtc8feoad"
 
 [resource]

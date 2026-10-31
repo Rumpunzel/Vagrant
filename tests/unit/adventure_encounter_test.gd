@@ -158,6 +158,27 @@ func test_location_stages_gate_its_own_events() -> void:
 	burn.resolve(_story, 0)
 	assert_array(_shore.get_events(_story)).contains([ashes])
 
+func test_the_body_is_its_monsters() -> void:
+	_story._monsters = auto_free(Monsters.new())
+	_eleanor.profile = TestMonsters.cutthroat()
+	var can_fight: AdventureMonsterCondition = AdventureMonsterCondition.new()
+	var beaten: AdventureMonsterCondition = AdventureMonsterCondition.new()
+	beaten.state = AdventureMonsterCondition.State.BEATEN
+	var dead: AdventureMonsterCondition = AdventureMonsterCondition.new()
+	dead.state = AdventureMonsterCondition.State.DEAD
+	var states: Callable = func() -> Array: return [can_fight.is_true(_story, _meeting), beaten.is_true(_story, _meeting), dead.is_true(_story, _meeting)]
+	assert_array(states.call()).is_equal([true, false, false])
+	var monster: Monster = _story.get_monster(_eleanor, _eleanor.profile as MonsterProfile)
+	monster.incapacitated = true
+	assert_array(states.call()).is_equal([false, true, false])
+	_story._encounter = _eleanor
+	AdventureKillConsequence.new().resolve(_story, 0)
+	assert_array(states.call()).is_equal([false, false, true])
+	assert_str(beaten.describe()).is_equal("It is beaten")
+	# Without a monster it is neither
+	_eleanor.profile = null
+	assert_bool(can_fight.is_true(_story, _meeting)).is_false()
+
 func _save(resource: Resource, path: String) -> void:
 	ResourceSaver.save(resource, path)
 	resource.take_over_path(path)

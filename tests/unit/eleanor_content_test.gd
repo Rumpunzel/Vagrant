@@ -13,6 +13,8 @@ var _story: Story
 
 func before_test() -> void:
 	_story = auto_free(Story.new())
+	_story._monsters = auto_free(Monsters.new())
+	add_child(_story._monsters)
 	_story.world = StoryWorld.new((load(ADVENTURE) as Adventure).encounters)
 
 func test_eleanor_is_an_encounter_at_the_castle_ruin() -> void:

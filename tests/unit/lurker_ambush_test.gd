@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 
-## Content check: the Lurker is an encounter at the swamp temple ruin; its ambush is a real fight, its stages tell whether it lurks, is beaten or dead.
+## Content check: the Lurker is an encounter at the swamp temple ruin; its ambush is a real fight, its monster tells whether it can fight, is beaten or dead.
 ## Playing it through the Story scene: integration/lurker_ambush_story_test.gd
 
 const LURKER: String = "uid://d3ytncs0be7oo"  # lurker.tres
@@ -33,7 +33,8 @@ func test_ambush_decision() -> void:
 	assert_str(decision.encounter).is_empty()
 	assert_array(decision.enemies).is_empty()
 	assert_object((load(LURKER_ENCOUNTER) as AdventureEncounter).profile).is_same(load(LURKER))
-	assert_str((decision.consequences[0] as AdventureStageConsequence).stage).is_equal("Beaten")
+	# Winning beats its monster by itself: no consequence needed
+	assert_array(decision.consequences).is_empty()
 	# Winning goes back to wherever the ambush happened, where the scenario then shows the beaten Lurker
 	assert_object(decision.transition).is_instanceof(AdventureHostReference)
 	var references: Dictionary[Fight.Outcome, AdventurePageReference] = {
@@ -54,20 +55,19 @@ func test_ambush_decision() -> void:
 		assert_object(back.transition).is_null()
 		assert_int(back.back_steps).is_equal(1)
 
-func test_ambush_only_while_the_lurker_lurks() -> void:
+func test_ambush_only_while_the_lurker_can_fight() -> void:
 	var ambush: AdventureEvent = load(LURKER_AMBUSH)
-	var condition: AdventureStageCondition = ambush.conditions[0]
-	assert_str(condition.subject).is_empty()
-	assert_str(condition.track).is_equal("State")
-	assert_array(condition.stages).contains_exactly(["Lurking"])
+	var condition: AdventureMonsterCondition = ambush.conditions[0]
+	assert_str(condition.encounter).is_empty()
+	assert_int(condition.state).is_equal(AdventureMonsterCondition.State.CAN_FIGHT)
 
 func test_won_event_offers_to_kill_the_beaten_lurker() -> void:
 	var won: AdventureEvent = load(OUTCOME_PAGES[Fight.Outcome.WON])
 	assert_int(won.exclusivity).is_equal(0)
-	assert_array((won.conditions[0] as AdventureStageCondition).stages).contains_exactly(["Beaten"])
+	assert_int((won.conditions[0] as AdventureMonsterCondition).state).is_equal(AdventureMonsterCondition.State.BEATEN)
 	var kill: AdventureDecision = won.decisions[0]
 	assert_str(kill.description).is_equal("Kill the Lurker.")
-	assert_str((kill.consequences[0] as AdventureStageConsequence).stage).is_equal("Dead")
+	assert_object(kill.consequences[0]).is_instanceof(AdventureKillConsequence)
 	assert_object(kill.transition).is_instanceof(AdventureHostReference)
 
 func test_the_encounter_shows_the_ambush_or_the_beaten_lurker() -> void:
@@ -75,13 +75,17 @@ func test_the_encounter_shows_the_ambush_or_the_beaten_lurker() -> void:
 	assert_array(lurker.events).contains_exactly([load(LURKER_AMBUSH), load(OUTCOME_PAGES[Fight.Outcome.WON])])
 	assert_int(lurker.pick).is_equal(AdventureEventScenario.Pick.FIRST)
 	assert_array(lurker.get_places()).contains_exactly([load(TEMPLE_RUIN)])
-	assert_array(AdventureStageTrack.find(lurker.tracks, "State").stages).contains_exactly(["Lurking", "Beaten", "Dead"])
+	assert_array(lurker.tracks).is_empty()
 	assert_array((load(TEMPLE_RUIN) as AdventureLocation).get_own_events()).is_empty()
 	var story: Story = auto_free(Story.new())
+	story._monsters = auto_free(Monsters.new())
 	story.world = StoryWorld.new([lurker] as Array[AdventureEncounter])
 	var temple: AdventureLocation = load(TEMPLE_RUIN)
 	assert_array(temple.get_events(story)).contains_exactly([load(LURKER_AMBUSH)])
-	story.world.set_stage(lurker, "State", "Beaten")
+	var monster: Monster = story.get_monster(lurker, lurker.profile as MonsterProfile)
+	monster.incapacitated = true
 	assert_array(temple.get_events(story)).contains_exactly([load(OUTCOME_PAGES[Fight.Outcome.WON])])
-	story.world.set_stage(lurker, "State", "Dead")
+	story._encounter = lurker
+	(load(OUTCOME_PAGES[Fight.Outcome.WON]) as AdventureEvent).decisions[0].consequences[0].resolve(story, 0)
+	assert_bool(monster.dead).is_true()
 	assert_array(temple.get_events(story)).is_empty()
