@@ -41,3 +41,8 @@ func test_greeting_her_places_her_and_sets_her_met() -> void:
 	for consequence: AdventureConsequence in greet.consequences: consequence.resolve(_story, 0)
 	assert_array(_story.world.get_places(load(ELEANOR))).contains_exactly([load(CASTLE_RUIN)])
 	assert_str(_story.world.get_stage(load(ELEANOR), "Storyline")).is_equal("Met")
+
+func test_every_event_of_the_adventure_can_show() -> void:
+	var adventure: Adventure = load(ADVENTURE)
+	var texts: Array = AdventureProblems.new(AdventureGraph.new(adventure), [ ] as Array[AdventureEvent]).problems.map(func(problem: AdventureProblems.Problem) -> String: return problem.text)
+	assert_array(texts.filter(func(text: String) -> bool: return text.contains("never shows") or text.contains("no monster"))).is_empty()

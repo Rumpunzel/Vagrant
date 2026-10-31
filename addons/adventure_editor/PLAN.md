@@ -246,8 +246,8 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
   option; the editor's own event graph is gone (graphs come from `AdventureEditor._make_event_graph`)
 
 ## To reconsider
-- A problem check for events that can never show: needs "It is beaten" but nothing anywhere fights it, needs a stage nothing sets (user,
-  2026-10-31: the screen can only show what an event itself changes, not what happens elsewhere, like breath lost in other fights or resting)
+- [x] A problem check for events that can never show (user, 2026-10-31): a stage that is no track's start and nothing sets, a monster nothing
+  fights (beaten) or kills (dead), a body condition on an encounter without monster; only what the content does, not chance or rest
 - [x] Body vs. story (user, 2026-10-31; done): the monster's body (can fight / beaten / dead) is runtime state the fights set, read by
   `AdventureMonsterCondition` (about an encounter, empty: its own) and ended by `AdventureKillConsequence`; stages only for the story. The Lurker
   has no track; the monster template makes none
@@ -341,3 +341,4 @@ loot (user, 2026-10-31): a monster encounter's stage after Dead to search its bo
 - 2026-10-31: body vs. story done: monster condition and kill consequence back, about encounters; Lurker and template without State track; tests: body (1), Lurker content reworked
 - 2026-10-31: event list without options (they are on the screen; listed while finding); a monster's body on the screen like a track (Body: can fight / beaten / dead; won fights → beaten, kills → dead) and as end nodes in the graphs; test: body (1)
 - 2026-10-31: no frames in page graphs; effects as chips at the start of their transition, end nodes gone
+- 2026-11-01: never-shows problem check; tests: stages, monsters (2), content has none (1)

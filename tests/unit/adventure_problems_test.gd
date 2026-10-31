@@ -76,6 +76,57 @@ func test_events_listed_nowhere() -> void:
 	TestAdventures.add(_ruin, source)
 	assert_array(_texts([lost, heard, source])).contains_exactly(["Forgotten is listed on no location"])
 
+func test_stages_nothing_sets() -> void:
+	var storyline: AdventureStageTrack = AdventureStageTrack.new()
+	storyline.name = "Storyline"
+	storyline.stages = ["Unmet", "Met"] as Array[String]
+	var eleanor: AdventureEncounter = AdventureEncounter.new()
+	eleanor.tracks = [storyline] as Array[AdventureStageTrack]
+	var meeting: AdventureEvent = _needing("Meeting", "Unmet")
+	var after: AdventureEvent = _needing("After", "Met")
+	eleanor.events = [meeting, after] as Array[AdventureEvent]
+	_encounters = [eleanor] as Array[AdventureEncounter]
+	assert_array(_texts([ ])).contains_exactly(["After never shows: it needs Storyline Met, which is no track's start and nothing sets"])
+	var greet: AdventureDecision = AdventureDecision.new()
+	var met: AdventureStageConsequence = AdventureStageConsequence.new()
+	met.track = "Storyline"
+	met.stage = "Met"
+	greet.consequences = [met] as Array[AdventureConsequence]
+	meeting.decisions = [greet] as Array[AdventureDecision]
+	assert_array(_texts([ ])).is_empty()
+
+func test_monsters_nothing_fights_or_kills() -> void:
+	var lurker: AdventureEncounter = AdventureEncounter.new()
+	lurker.title = "Lurker"
+	lurker.profile = TestMonsters.cutthroat()
+	var won: AdventureEvent = _event("Won")
+	won.conditions = [_body(AdventureMonsterCondition.State.BEATEN)] as Array[AdventureCondition]
+	var dead: AdventureEvent = _event("Dead")
+	dead.conditions = [_body(AdventureMonsterCondition.State.DEAD)] as Array[AdventureCondition]
+	lurker.events = [won, dead] as Array[AdventureEvent]
+	_encounters = [lurker] as Array[AdventureEncounter]
+	assert_array(_texts([ ])).contains_exactly(["Won never shows: nothing fights Lurker", "Dead never shows: nothing kills Lurker"])
+	var ambush: AdventureEvent = _event("Ambush")
+	ambush.conditions = [_body(AdventureMonsterCondition.State.CAN_FIGHT)] as Array[AdventureCondition]
+	ambush.decisions = [AdventureFightDecision.new()] as Array[AdventureDecision]
+	lurker.events.push_front(ambush)
+	assert_array(_texts([ ])).contains_exactly(["Dead never shows: nothing kills Lurker"])
+	lurker.profile = null
+	assert_array(_texts([ ])).contains(["Won: Lurker has no monster to be beaten"])
+
+func _needing(title: String, stage: String) -> AdventureEvent:
+	var event: AdventureEvent = _event(title)
+	var condition: AdventureStageCondition = AdventureStageCondition.new()
+	condition.track = "Storyline"
+	condition.stages = [stage] as Array[String]
+	event.conditions = [condition] as Array[AdventureCondition]
+	return event
+
+func _body(state: AdventureMonsterCondition.State) -> AdventureMonsterCondition:
+	var condition: AdventureMonsterCondition = AdventureMonsterCondition.new()
+	condition.state = state
+	return condition
+
 func _texts(event_files: Array[AdventureEvent]) -> Array:
 	return AdventureProblems.new(AdventureGraph.new(_adventure()), event_files).problems.map(func(problem: AdventureProblems.Problem) -> String: return problem.text)
 
