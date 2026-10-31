@@ -23,6 +23,8 @@ const GRAPH_HEIGHT_MIN: float = 220.0
 const GRAPH_HEIGHT_MAX: float = 640.0
 const GRAPH_MARGIN: float = 90.0
 const COLUMN_WIDTH: float = 260.0
+## The bar under a graph to drag its height with
+const HANDLE_HEIGHT: float = 8.0
 
 ## Makes an event graph wired up like the editor's others ([AdventureEventView]); set by [AdventureEditor]
 var make_graph: Callable
@@ -226,15 +228,42 @@ func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
 	if option is AdventureEventScenario:
 		section.add_child(_make_button("Open its options", "A scenario inside: its own options", event_opened.emit.bind(option, _host)))
 		return
+	section.add_title_bar_control(AdventureSpecialButton.make("host", "Host", "Back to the page the event is on", AdventureCardView.HOST_ICON))
+	section.add_title_bar_control(AdventureSpecialButton.make("previous", "Previous", "Back to where the player was before the host (fleeing)", AdventureEventView.PREVIOUS_ICON))
 	var graph: AdventureEventView = make_graph.call()
 	graph.outer_scroll = _scroll
 	graph.picked_stage = _picked
 	graph.custom_minimum_size.y = GRAPH_HEIGHT_MIN
-	section.add_child(graph)
+	var column: VBoxContainer = VBoxContainer.new()
+	column.add_theme_constant_override(&"separation", 0)
+	section.add_child(column)
+	column.add_child(graph)
+	column.add_child(_make_handle(graph, AdventureLayout.get_key(option)))
 	graph.setup()
 	graph.show_event(option, _host)
 	_graphs.append(graph)
-	get_tree().process_frame.connect(_fit.bind(graph), CONNECT_ONE_SHOT)
+	var height: float = graph.layout.graph_heights.get(AdventureLayout.get_key(option), 0.0) if graph.layout != null else 0.0
+	if height > 0.0: graph.custom_minimum_size.y = height
+	else: get_tree().process_frame.connect(_fit.bind(graph), CONNECT_ONE_SHOT)
+
+## A bar to drag [param graph]'s height with; let go, the height is kept in the layout under [param key]
+func _make_handle(graph: AdventureEventView, key: String) -> Control:
+	var handle: Panel = Panel.new()
+	handle.custom_minimum_size.y = HANDLE_HEIGHT
+	handle.mouse_default_cursor_shape = Control.CURSOR_VSIZE
+	handle.tooltip_text = "Drag to make the graph higher or lower"
+	handle.gui_input.connect(_on_handle_input.bind(graph, key))
+	return handle
+
+func _on_handle_input(input: InputEvent, graph: AdventureEventView, key: String) -> void:
+	var motion: InputEventMouseMotion = input as InputEventMouseMotion
+	if motion != null and motion.button_mask & MOUSE_BUTTON_MASK_LEFT:
+		graph.custom_minimum_size.y = maxf(GRAPH_HEIGHT_MIN, graph.custom_minimum_size.y + motion.relative.y)
+		return
+	var click: InputEventMouseButton = input as InputEventMouseButton
+	if click == null or click.button_index != MOUSE_BUTTON_LEFT or click.pressed or graph.layout == null: return
+	graph.layout.graph_heights[key] = graph.custom_minimum_size.y
+	graph.layout_changed.emit()
 
 ## As high as its nodes reach, within limits
 func _fit(graph: AdventureEventView) -> void:

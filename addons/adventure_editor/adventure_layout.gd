@@ -10,6 +10,8 @@ const PLACED_SPECIALS: String = "special"
 @export var positions: Dictionary[String, Vector2] = {}
 ## Which special node (host, previous location) a link goes to, by the link's key; event views can show several of each
 @export var special_links: Dictionary[String, String] = {}
+## How high an event's page graph is on the event screen, by the event's key; unset: as high as its nodes need
+@export var graph_heights: Dictionary[String, float] = {}
 
 static func get_path_for(adventure: Adventure) -> String:
 	return adventure.resource_path.get_basename() + ".layout.tres"

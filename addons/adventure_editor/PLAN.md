@@ -255,7 +255,8 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
 - [x] Frames in a page graph (user): one event per graph, so no frame; specials are dropped anywhere in it
 - [x] Effects (user, 2026-10-31: they belong to the transition): chips where the outcome's line starts (B of: labels on lines / chips at the start /
   a node in the path); a won fight's "→ beaten" is a read-only chip; the stage end nodes are gone. A node in the path is the next step if it isn't clear enough
-- Graph height: fixed by content; a drag handle if it isn't enough
+- [x] Graph height: as high as its nodes need, or as dragged with the bar under it (kept in the layout's `graph_heights`)
+- [x] The special nodes' sidebar: Host / Previous are in each graph section's title bar, dragged into its graph
 
 Later: encounter templates (several wolves; a "new monster encounter" with its State track and the fight outcomes' stage consequences ready),
 with the party / carried by, item encounters, roaming by itself (random, routes, time of day), a separate editor tab for editing locations,
@@ -342,3 +343,4 @@ loot (user, 2026-10-31): a monster encounter's stage after Dead to search its bo
 - 2026-10-31: event list without options (they are on the screen; listed while finding); a monster's body on the screen like a track (Body: can fight / beaten / dead; won fights → beaten, kills → dead) and as end nodes in the graphs; test: body (1)
 - 2026-10-31: no frames in page graphs; effects as chips at the start of their transition, end nodes gone
 - 2026-11-01: never-shows problem check; tests: stages, monsters (2), content has none (1)
+- 2026-11-01: Host / Previous in the sections' title bars (sidebar gone); a height handle under each graph
