@@ -226,7 +226,7 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
 - [x] 1. Location tab editable: + on its own events (new event / scenario, add an existing one), "+ Encounter" (new NPC / monster encounter,
   place one made already), ✕ on own events and on encounters placed here; selecting a row shows it in the Inspector. Shared change helpers in
   `AdventureMapEditing` (putting, removing, placing); the menu with icons is `AdventureActionMenu`, used by all views
-- [ ] 2. Storyline as a table instead of a graph: a column per stage (by track), a row per event (checkbox: needs it) and per decision outcome
+- [x] 2. Storyline as a table instead of a graph (built; `AdventureStoryline` builds the rows, columns and the changes ticks make): a column per stage (by track), a row per event (checkbox: needs it) and per decision outcome
   (checkbox: sets it, one per track); "+ stage", "+ track", "+ event needing …"; names in the Inspector. The storyline graph view goes
 - [ ] 3. Events tab: a scenario's or encounter's options as a list; selecting one shows only its pages as a graph (decide after 1 and 2)
 - [ ] 4. Inspector plugin for UID fields: names instead of uid strings, drop from the FileSystem, ✕ per entry
@@ -304,3 +304,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-30: double-click opening waits for the mouse button (no stuck drag); 6c built: storyline view; tests: storyline (3)
 - 2026-10-31: graphs reconsidered with the user (lists and tables where content isn't links); 1 built: location tab editable; test: putting / placing (1)
 - 2026-10-31: location tab: banner with the background (the area's if it has none), title and area over a fade, the image dimmed behind the tab, ▶/■ for the ambience (stops when the tab is hidden), its text (and first-visit text) under the banner
+- 2026-10-31: banner buttons fixed; 2 built: storyline table (ticks, + Track / Stage / Event, typos marked red), the storyline graph view replaced; tests: storyline table (4)

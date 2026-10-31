@@ -91,14 +91,16 @@ func _make_storyline_view() -> void:
 	_event_view.add_sibling(_storyline_view)
 	_storyline_view.setup()
 	_storyline_view.event_opened.connect(open_event)
-	_storyline_view.layout_changed.connect(_save_layout)
+	_storyline_view.changes_requested.connect(_edits.apply)
+	_storyline_view.files_requested.connect(func(files: Dictionary[String, Resource], changes: Array[Array], action: String) -> void: _edits.create(files, changes, action))
+	_storyline_view.text_requested.connect(_name_dialog.ask)
 	var bar: HBoxContainer = HBoxContainer.new()
 	_host_picker.add_sibling(bar)
 	_host_picker.reparent(bar)
 	_host_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_storyline_toggle = CheckButton.new()
 	_storyline_toggle.text = "Storyline"
-	_storyline_toggle.tooltip_text = "The encounter's stages and which events need and set them"
+	_storyline_toggle.tooltip_text = "The encounter's stages: which events need them and which outcomes set them"
 	_storyline_toggle.toggled.connect(func(_on: bool) -> void: _show_storyline())
 	bar.add_child(_storyline_toggle)
 
@@ -109,7 +111,6 @@ func _show_storyline() -> void:
 	var showing: bool = encounter != null and _storyline_toggle.button_pressed
 	_storyline_view.visible = showing
 	_event_view.visible = not showing
-	_storyline_view.layout = _layout
 	_storyline_view.show_storyline(encounter if showing else null)
 
 func _show_location(location: AdventureLocation) -> void:

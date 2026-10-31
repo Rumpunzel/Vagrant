@@ -1,68 +1,133 @@
 @tool
 class_name AdventureStorylineView
-extends AdventureGraphView
+extends VBoxContainer
 
-## An encounter's storyline ([AdventureStoryline]), read-only: a row per stage track with its stages in order, and each event between the stages
-## it needs and the stages it sets. Stages named nowhere in the track are marked as problems. Double-click an event to see its pages.
+## An encounter's storyline as a table ([AdventureStoryline]): a column per stage, a row per event (tick: it needs the stage) with a row per
+## decision outcome below it (tick: it sets the stage). Selecting a row shows it in the Inspector; double-click an event to see its pages.
 
-const STAGE_COLOR: Color = Color(0.55, 0.8, 1.0)
-const SETS_COLOR: Color = Color(0.6, 1.0, 0.6, 0.9)
-const ROW_GAP: float = 120.0
+signal event_opened(event: AdventureEvent, host: AdventurePage)
+signal changes_requested(changes: Array[Array], action: String, file: Resource)
+## New files and changes as one undo step
+signal files_requested(files: Dictionary[String, Resource], changes: Array[Array], action: String)
+## Ask for a name, then call [param then] with it
+signal text_requested(title: String, label: String, then: Callable)
 
-var _key_prefix: String
+const OUTCOME_COLOR: Color = Color(1, 1, 1, 0.75)
+const UNKNOWN_COLOR: Color = Color(1, 0.55, 0.5)
+
+var _storyline: AdventureStoryline
+var _tree: Tree
+var _menu: AdventureActionMenu
+
+func setup() -> void:
+	var bar: HBoxContainer = HBoxContainer.new()
+	add_child(bar)
+	bar.add_child(_make_button("Track", "A new stage track", _ask_for_track))
+	bar.add_child(_make_button("Stage", "A new stage on a track", _offer_tracks))
+	bar.add_child(_make_button("Event", "A new event needing a stage", _offer_stages))
+	_tree = Tree.new()
+	_tree.hide_root = true
+	_tree.column_titles_visible = true
+	_tree.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_tree.item_edited.connect(_on_item_edited)
+	_tree.item_selected.connect(_on_item_selected)
+	_tree.item_activated.connect(_on_item_activated)
+	add_child(_tree)
+	_menu = AdventureActionMenu.new()
+	add_child(_menu)
 
 func show_storyline(encounter: AdventureEncounter) -> void:
-	_clear()
-	if encounter == null: return
-	_key_prefix = "storyline/%s/" % AdventureLayout.get_key(encounter)
-	var storyline: AdventureStoryline = AdventureStoryline.new(encounter)
-	var top: float = 0.0
-	for line: AdventureStoryline.Track in storyline.tracks: top = _add_track(line, top)
-	if storyline.unstaged.is_empty(): return
-	var label: Label = _make_label("Need and set no stage:\n" + "\n".join(storyline.unstaged.map(AdventureGraph.get_title)))
-	_add_node(_key_prefix + "unstaged", encounter, "Other events", label, Vector2(0, top))
+	_tree.clear()
+	_storyline = AdventureStoryline.new(encounter) if encounter != null else null
+	if _storyline == null: return
+	_tree.columns = 1 + _storyline.columns.size()
+	_tree.set_column_title(0, AdventureGraph.get_title(encounter))
+	_tree.set_column_expand_ratio(0, 3)
+	for index: int in _storyline.columns.size():
+		_tree.set_column_title(index + 1, "%s\n%s" % [(_storyline.columns[index][0] as AdventureStageTrack).name, _storyline.columns[index][1]])
+		_tree.set_column_expand_ratio(index + 1, 1)
+	var root: TreeItem = _tree.create_item()
+	var event_item: TreeItem = null
+	for index: int in _storyline.rows.size():
+		var row: AdventureStoryline.Row = _storyline.rows[index]
+		var item: TreeItem = _tree.create_item(root if row.decision == null else event_item)
+		if row.decision == null: event_item = item
+		item.set_metadata(0, index)
+		item.set_text(0, _describe(row))
+		var unknown: Array[String] = _storyline.get_unknown_stages(row)
+		if not unknown.is_empty():
+			item.set_custom_color(0, UNKNOWN_COLOR)
+			item.set_tooltip_text(0, "Not a stage of its track: %s" % ", ".join(unknown))
+		elif row.decision != null: item.set_custom_color(0, OUTCOME_COLOR)
+		for column: int in _storyline.columns.size():
+			item.set_cell_mode(column + 1, TreeItem.CELL_MODE_CHECK)
+			item.set_editable(column + 1, true)
+			item.set_checked(column + 1, _storyline.is_ticked(row, _storyline.columns[column][0], _storyline.columns[column][1]))
+			item.set_tooltip_text(column + 1, "Needs this stage" if row.decision == null else "Sets this stage")
 
-## Its stages in a row, its events below them; returns where the next row starts
-func _add_track(line: AdventureStoryline.Track, top: float) -> float:
-	var stages: Dictionary[String, GraphNode] = {}
-	for index: int in line.track.stages.size():
-		stages[line.track.stages[index]] = _add_stage(line.track, line.track.stages[index], Vector2(index * 2 * NODE_SPACING.x, top), false)
-	var rows: Dictionary[int, int] = {}
-	for step: AdventureStoryline.Step in line.steps:
-		var column: int = 0
-		var first_need: int = line.track.stages.size()
-		for need: String in step.needs: first_need = mini(first_need, line.track.stages.find(need))
-		if not step.needs.is_empty() and first_need >= 0: column = first_need * 2 + 1
-		var row: int = rows.get(column, 0)
-		rows[column] = row + 1
-		var node: GraphNode = _add_event(line.track, step, Vector2(column * NODE_SPACING.x, top + (row + 1) * NODE_SPACING.y * 0.6))
-		for need: String in step.needs: _add_line(_get_stage(stages, line.track, need, top), node, STAGE_COLOR, false, ARROW_END)
-		for stage: String in step.sets: _add_line(node, _get_stage(stages, line.track, stage, top), SETS_COLOR, false, ARROW_END)
-	var deepest: int = 0
-	for column: int in rows: deepest = maxi(deepest, rows[column])
-	return top + (deepest + 1) * NODE_SPACING.y * 0.6 + ROW_GAP
+## The event's title; an outcome: its decision (and outcome) on its page
+static func _describe(row: AdventureStoryline.Row) -> String:
+	if row.decision == null: return AdventureGraph.get_title(row.event) + (" (near)" if row.event.where == AdventureEvent.Where.NEAR else "")
+	var text: String = row.decision.description.get_slice("\n", 0)
+	if not row.outcome.name.is_empty(): text += " · " + row.outcome.name
+	return text if row.page == row.event else "%s: %s" % [AdventureGraph.get_title(row.page), text]
 
-## A stage not in the track (a typo in a condition or consequence) gets a node of its own, marked
-func _get_stage(stages: Dictionary[String, GraphNode], track: AdventureStageTrack, stage: String, top: float) -> GraphNode:
-	if not stages.has(stage): stages[stage] = _add_stage(track, stage, Vector2(stages.size() * 2 * NODE_SPACING.x, top), true)
-	return stages[stage]
+func _on_item_edited() -> void:
+	var item: TreeItem = _tree.get_edited()
+	var column: int = _tree.get_edited_column()
+	if item == null or column < 1: return
+	var row: AdventureStoryline.Row = _storyline.rows[item.get_metadata(0)]
+	var track: AdventureStageTrack = _storyline.columns[column - 1][0]
+	var stage: String = _storyline.columns[column - 1][1]
+	var on: bool = item.is_checked(column)
+	var changes: Array[Array] = _storyline.get_changes_ticking(row, track, stage, on)
+	var what: String = "Needs" if row.decision == null else "Sets"
+	if not changes.is_empty(): changes_requested.emit(changes, "%s %s: %s %s" % [what, track.name, stage, "" if on else "(off)"], null)
 
-func _add_stage(track: AdventureStageTrack, stage: String, at: Vector2, unknown: bool) -> GraphNode:
-	var label: Label = _make_label("Not a stage of %s" % track.name if unknown else "Stage")
-	var node: GraphNode = _add_node(_key_prefix + "%s/%s" % [track.name, stage], track, "%s: %s" % [track.name, stage], label, at)
-	node.self_modulate = PROBLEM_COLOR if unknown else STAGE_COLOR
-	return node
+func _on_item_selected() -> void:
+	var row: AdventureStoryline.Row = _storyline.rows[_tree.get_selected().get_metadata(0)]
+	EditorInterface.edit_resource(row.event if row.decision == null else row.decision)
 
-func _add_event(track: AdventureStageTrack, step: AdventureStoryline.Step, at: Vector2) -> GraphNode:
-	var lines: Array[String] = [ ]
-	lines.append("Needs %s" % " or ".join(step.needs) if not step.needs.is_empty() else "Needs no stage")
-	if not step.sets.is_empty(): lines.append("Sets %s" % ", ".join(step.sets))
-	var title: String = AdventureGraph.get_title(step.event) + (" (near)" if step.event.where == AdventureEvent.Where.NEAR else "")
-	var node: GraphNode = _add_node(_key_prefix + "%s/event/%s" % [track.name, AdventureLayout.get_key(step.event)], step.event, title, _make_label("\n".join(lines)), at)
-	node.gui_input.connect(func(input: InputEvent) -> void:
-		var click: InputEventMouseButton = input as InputEventMouseButton
-		if click != null and click.double_click: call_after_release(event_opened.emit.bind(step.event, null))
-	)
-	return node
+func _on_item_activated() -> void:
+	var row: AdventureStoryline.Row = _storyline.rows[_tree.get_selected().get_metadata(0)]
+	event_opened.emit(row.event, null)
 
-func _on_event_card_pressed(event: AdventureEvent, _page: AdventurePage) -> void: event_opened.emit(event, null)
+func _ask_for_track() -> void:
+	if _storyline == null: return
+	text_requested.emit("New track", "Name", func(track_name: String) -> void: _request(_storyline.get_changes_adding_track(track_name), "New track %s" % track_name))
+
+func _offer_tracks() -> void:
+	if _storyline == null: return
+	var actions: Dictionary[String, Callable] = {}
+	for track: AdventureStageTrack in _storyline.encounter.tracks:
+		if track == null: continue
+		actions["New stage on %s…" % track.name] = text_requested.emit.bind("New stage on %s" % track.name, "Name", _add_stage.bind(track))
+	if actions.is_empty(): push_warning("Make a track first")
+	else: _menu.show_actions(actions)
+
+func _add_stage(stage: String, track: AdventureStageTrack) -> void:
+	_request(_storyline.get_changes_adding_stage(track, stage), "New stage %s: %s" % [track.name, stage])
+
+func _offer_stages() -> void:
+	if _storyline == null: return
+	var actions: Dictionary[String, Callable] = {}
+	for column: Array in _storyline.columns:
+		var label: String = "New event needing %s: %s…" % [(column[0] as AdventureStageTrack).name, column[1]]
+		actions[label] = text_requested.emit.bind("New event", "Title", _add_event.bind(column[0], column[1]))
+	if actions.is_empty(): push_warning("Make a track with stages first")
+	else: _menu.show_actions(actions)
+
+func _add_event(title: String, track: AdventureStageTrack, stage: String) -> void:
+	var files: Dictionary[String, Resource] = _storyline.make_event_files(title, track, stage)
+	files_requested.emit(files, _storyline.get_changes_listing(files.values()[0] as AdventureEvent), "New event %s" % title)
+
+func _request(changes: Array[Array], action: String) -> void:
+	if not changes.is_empty(): changes_requested.emit(changes, action, null)
+
+static func _make_button(text: String, tooltip: String, on_pressed: Callable) -> Button:
+	var button: Button = Button.new()
+	button.text = text
+	button.tooltip_text = tooltip
+	button.icon = AdventureActionMenu.get_editor_icon("Add")
+	button.pressed.connect(on_pressed)
+	return button

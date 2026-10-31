@@ -186,6 +186,12 @@ static func make_stage_consequence(track: String, stage: String) -> AdventureSta
 	consequence.stage = stage
 	return consequence
 
+## A stage track to be stored inside its encounter's or location's file, without stages yet
+static func make_track(track_name: String) -> AdventureStageTrack:
+	var track: AdventureStageTrack = _in_file(AdventureStageTrack.new()) as AdventureStageTrack
+	track.name = track_name
+	return track
+
 ## In its own folder under [code]encounters[/code] next to the adventure
 static func get_encounter_path(adventure: Adventure, title: String) -> String:
 	var file_name: String = AdventureMapEditing.get_file_name(title)
@@ -201,8 +207,7 @@ static func make_encounter_files(adventure: Adventure, title: String, location: 
 	encounter.title = title
 	encounter.profile = profile
 	encounter.places = [AdventureLayout.get_key(location)] as Array[String]
-	var track: AdventureStageTrack = _in_file(AdventureStageTrack.new()) as AdventureStageTrack
-	track.name = "State" if profile != null else "Storyline"
+	var track: AdventureStageTrack = make_track("State" if profile != null else "Storyline")
 	var stages: Array[String] = ["Unmet", "Met"]
 	if profile != null: stages = ["Lurking", "Beaten", "Dead"]
 	track.stages = stages
