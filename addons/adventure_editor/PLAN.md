@@ -240,7 +240,8 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
 - [x] 1. A foldable section per option (`FoldableContainer`), its page graph inside; the plain mouse wheel scrolls the page (Ctrl + wheel zooms the
   graph, Shift + wheel / middle-drag move it); graphs as high as their nodes (220–640 px); the first option (or the one opened) unfolded, the rest
   remembered while shown; an option picked in the event list opens on its scenario's or encounter's screen
-- [ ] 2. Stage end nodes in the graph ("→ Beaten") for outcomes setting a stage, lines in the stage colour; a picked stage highlights them
+- [x] 2. Stage end nodes in the graph ("→ Beaten") for outcomes setting a stage, dashed green lines from the outcome (drawn, not draggable);
+  a picked stage keeps its nodes and lines bright, the others fade
 - [ ] 3. A loose event becomes a screen with one section (the separate event graph goes)
 
 ## To reconsider
@@ -249,7 +250,8 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
 
 Later: encounter templates (several wolves; a "new monster encounter" with its State track and the fight outcomes' stage consequences ready),
 with the party / carried by, item encounters, roaming by itself (random, routes, time of day), a separate editor tab for editing locations,
-fights against several opponents (needs the fight UI first).
+fights against several opponents (needs the fight UI first),
+loot (user, 2026-10-31): a monster encounter's stage after Dead to search its body ("Looted"), with loot tables; needs items first.
 
 ## Later
 - Fight decisions (and other checks) with **input ports** for who takes part: link enemies / participants into the fight node instead of picking them in the Inspector (user idea, 2026-10-29; fits the parked participants / cast idea)
@@ -325,3 +327,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-31: 4 built: UID fields in the Inspector; test: fields and UIDs (2)
 - 2026-10-31: storyline redesign, first try: one screen (no toggle): an encounter's options list gets a bar per track with stage chips (picking one dims what can't happen then, marks what leads into it), "Happens in" (click: tick stages) and "Leads to" (decision → stage, edited in the pages); table and storyline view gone; tests: storyline (4)
 - 2026-10-31: user: fold the page graphs into the encounter screen, show stage changes in the graph; reconsider critically and often; 1 built: foldable sections with graphs
+- 2026-10-31: 2 built: stage end nodes in the graphs; loot idea noted

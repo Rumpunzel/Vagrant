@@ -194,6 +194,7 @@ func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
 		return
 	var graph: AdventureEventView = make_graph.call()
 	graph.outer_scroll = _scroll
+	graph.picked_stage = _picked
 	graph.custom_minimum_size.y = GRAPH_HEIGHT_MIN
 	section.add_child(graph)
 	graph.setup()

@@ -29,6 +29,8 @@ var _tags: Dictionary[Resource, Control] = {}
 var _tag_owners: Dictionary[Resource, AdventureEvent] = {}
 var _fight_cards: Dictionary[AdventureDecision, Control] = {}
 var _fight_pages: Dictionary[AdventureDecision, AdventurePage] = {}
+## [card or outcome row, track, stage] for each stage an outcome sets on the event's encounter; drawn to stage nodes
+var _stage_sources: Array[Array] = [ ]
 
 func setup() -> void:
 	super()
@@ -41,6 +43,7 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 		var card: PanelContainer = _make_card(entry, page, index, _describe_outlet(outlet), Color.TRANSPARENT, null, outlet.goes_back())
 		card.get_child(0).add_child(_make_tags(decision, &"consequences", _file_for(decision, page, entry), "effect", _get_effect_additions))
 		node.add_child(card)
+		_note_stages(card, decision, &"consequences")
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, Color.WHITE)
 		return
 	var is_fight: bool = decision is AdventureFightDecision
@@ -62,7 +65,16 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 		if outcome.goes_back(): label.modulate = FADED
 		row.add_child(label)
 		node.add_child(row)
+		_note_stages(row, decision, outcome.consequences_property)
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, OUTCOME_COLORS.get(outcome.label, color))
+
+## The stages [param decision]'s [param property] sets on the event's encounter, to draw from [param from]
+func _note_stages(from: Control, decision: AdventureDecision, property: StringName) -> void:
+	var encounter: AdventureEncounter = _get_encounter()
+	if encounter == null or property.is_empty(): return
+	for consequence: Variant in decision.get(property) as Array:
+		var stage: AdventureStageConsequence = consequence as AdventureStageConsequence
+		if stage != null and (stage.subject.is_empty() or Files.load_existing(stage.subject) == encounter): _stage_sources.append([from, stage.track, stage.stage])
 
 ## Clicking it edits the decision in the Inspector; ▲ ▼ move it, ✕ removes it
 func _make_card(entry: AdventureEventOverview.Entry, page: AdventurePage, index: int, text: String, color: Color, icon: Texture2D, faded: bool) -> PanelContainer:

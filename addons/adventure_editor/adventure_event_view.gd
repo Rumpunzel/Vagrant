@@ -12,6 +12,8 @@ signal exit_opened(location: AdventurePage)
 
 enum Target { PAGE, HOST, PREVIOUS }
 
+## Stage nodes and the lines to them
+const STAGE_COLOR: Color = Color(0.6, 1.0, 0.6)
 const PREVIOUS_COLOR: Color = Color(0.7, 0.55, 0.95)
 const PREVIOUS_ICON: Texture2D = preload("uid://dmkjss474288g")  # exit-door.svg
 ## Special nodes by kind: [name in layout keys and drag data, title, hint, color, icon]
@@ -25,6 +27,8 @@ const NODE_GAP: float = 40.0
 
 ## The adventure's encounters, to find the one of the event shown
 var encounters: Array[AdventureEncounter] = [ ]
+## A stage picked on the encounter's screen ([track, stage]): its stage nodes and lines stay bright, the others fade
+var picked_stage: Array = [ ]
 var _overview: AdventureEventOverview
 ## The host picked to see the event at; none: any host
 var _host: AdventurePage
@@ -57,6 +61,7 @@ func get_host() -> AdventurePage: return _host
 func show_event(event: AdventureEvent, host: AdventurePage = null) -> void:
 	_clear()
 	_host = host
+	_stage_sources.clear()
 	for nodes: Dictionary in [_node_entries, _node_pages, _node_ports, _node_targets, _card_styles, _frame_entries, _tags, _tag_owners, _fight_cards, _fight_pages]: nodes.clear()
 	_unstacked.clear()
 	_overview = AdventureEventOverview.new(event) if event != null else null
@@ -87,6 +92,7 @@ func _add_entry(entry: AdventureEventOverview.Entry, frame: GraphFrame, origin: 
 	# Always there, so anything can be linked back to the host
 	var column_count: int = graph.depths.values().max() + 1
 	_add_specials(entry, frame, origin + Vector2(column_count * NODE_SPACING.x, 0))
+	_add_stage_nodes(entry, frame, origin + Vector2(column_count * NODE_SPACING.x, 2 * SPECIAL_SPACING))
 	for page: AdventurePage in graph.pages:
 		var ports: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_ports(page)
 		for port: int in ports.size():
@@ -96,6 +102,21 @@ func _add_entry(entry: AdventureEventOverview.Entry, frame: GraphFrame, origin: 
 			elif ports[port].target != null: target_key = _key(entry, ports[port].target)
 			if not target_key.is_empty(): connect_node(_nodes[_key(entry, page)].name, port, _nodes[target_key].name, 0)
 	return column_count + 1
+
+## A node per stage the entry's outcomes set ("→ Beaten"), dashed lines to it from those outcomes; with a picked stage the others fade
+func _add_stage_nodes(entry: AdventureEventOverview.Entry, frame: GraphFrame, at: Vector2) -> void:
+	var nodes: Dictionary[String, GraphNode] = {}
+	for source: Array in _stage_sources:
+		var stage_name: String = "%s: %s" % [source[1], source[2]]
+		var picked: bool = picked_stage.is_empty() or picked_stage == [source[1], source[2]]
+		if not nodes.has(stage_name):
+			var key: String = AdventureLayout.get_event_key(_overview.root, entry.event, "stage/" + stage_name)
+			var node: GraphNode = _add_node(key, entry.event, "→ %s" % source[2], _make_label("The story moves on: %s" % stage_name), at + Vector2(0, nodes.size() * SPECIAL_SPACING))
+			node.self_modulate = STAGE_COLOR
+			if not picked: node.modulate = FADED
+			attach_graph_element_to_frame(node.name, frame.name)
+			nodes[stage_name] = node
+		_add_line(source[0], nodes[stage_name], STAGE_COLOR if picked else Color(STAGE_COLOR, 0.25), true, ARROW_END)
 
 ## Stacks each column of default-placed nodes below each other, once they are laid out
 func _stack() -> void:
