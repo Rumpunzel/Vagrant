@@ -67,6 +67,26 @@ func test_tracks_stages_and_other_conditions() -> void:
 	_meeting.conditions.append(AdventurePlaceCondition.new())
 	assert_str(story.describe_other_conditions(_meeting)).is_equal("It is here")
 
+func test_a_monster_s_body_shows_like_a_track() -> void:
+	_eleanor.profile = TestMonsters.cutthroat()
+	var story: AdventureStoryline = AdventureStoryline.new(_eleanor)
+	assert_array(story.get_track_names()).contains_exactly(["Body", "Storyline"])
+	assert_array(story.get_stages_of("Body")).contains_exactly(["can fight", "beaten", "dead"])
+	var ambush: AdventureEvent = _event("Ambush", [ ])
+	ambush.conditions = [AdventureMonsterCondition.new()] as Array[AdventureCondition]
+	var fight: AdventureFightDecision = AdventureFightDecision.new()
+	fight.description = "Fight!"
+	var kill: AdventureDecision = AdventureDecision.new()
+	kill.consequences = [AdventureKillConsequence.new()] as Array[AdventureConsequence]
+	ambush.decisions = [fight, kill] as Array[AdventureDecision]
+	assert_array(story.get_stages_in(ambush, "Body")).contains_exactly(["can fight"])
+	var leads: Array = story.get_leads(ambush).map(func(lead: AdventureStoryline.Lead) -> String: return "%s %s" % [lead.outcome.name, lead.stage])
+	assert_array(leads).contains_exactly(["Won beaten", " dead"])
+	# One state at a time: another replaces it, the same one again drops the condition
+	var condition: AdventureMonsterCondition = ambush.conditions[0]
+	assert_array(story.get_changes_toggling(ambush, "Body", "beaten")).is_equal([[condition, &"state", AdventureMonsterCondition.State.BEATEN, _eleanor]])
+	assert_array(story.get_changes_toggling(ambush, "Body", "can fight")).is_equal([[ambush, &"conditions", [ ], _eleanor]])
+
 func _event(title: String, needs: Array[String]) -> AdventureEvent:
 	var event: AdventureEvent = AdventureEvent.new()
 	event.title = title

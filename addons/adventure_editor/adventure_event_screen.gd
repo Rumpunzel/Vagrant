@@ -126,7 +126,7 @@ func show_event(event: AdventureEvent, host: AdventurePage, focus: AdventureEven
 	_pick.select(_pick.get_item_index(scenario.pick))
 	_show_info()
 	if _storyline != null:
-		for track: AdventureStageTrack in encounter.tracks: if track != null: _add_track_bar(track)
+		for track_name: String in _storyline.get_track_names(): _add_track_bar(track_name)
 	var focused: Control = null
 	for index: int in scenario.events.size():
 		var section: Control = _add_section(scenario.events[index], index)
@@ -151,27 +151,34 @@ func _show_info() -> void:
 	_info.text = "\n".join(lines)
 	_info.visible = not lines.is_empty()
 
-## "Storyline:" and a toggle per stage (picking one dims what can't happen then), and + for a new stage
-func _add_track_bar(track: AdventureStageTrack) -> void:
+## "Storyline:" and a toggle per stage (picking one dims what can't happen then), and + for a new stage; the body's states can't be added to
+func _add_track_bar(track_name: String) -> void:
+	var track: AdventureStageTrack = AdventureStageTrack.find(_storyline.encounter.tracks, track_name)
+	var stages: Array[String] = _storyline.get_stages_of(track_name)
 	var bar: HBoxContainer = HBoxContainer.new()
 	var label: Label = Label.new()
-	label.text = "%s:" % track.name
-	label.tooltip_text = "One stage at a time; rename or remove stages in the Inspector (click)"
+	label.text = "%s:" % track_name
 	label.mouse_filter = Control.MOUSE_FILTER_PASS
-	label.gui_input.connect(func(input: InputEvent) -> void: _inspect_on_click(input, track))
+	if track != null:
+		label.tooltip_text = "One stage at a time; rename or remove stages in the Inspector (click)"
+		label.gui_input.connect(func(input: InputEvent) -> void: _inspect_on_click(input, track))
+	else: label.tooltip_text = "Its monster's body, as the fights leave it (won: beaten) and kills end it"
 	bar.add_child(label)
-	for stage: String in track.stages:
+	for stage: String in stages:
 		var chip: Button = Button.new()
 		chip.text = stage
 		chip.toggle_mode = true
-		chip.button_pressed = _picked == [track.name, stage]
+		chip.button_pressed = _picked == [track_name, stage]
 		chip.tooltip_text = "What can happen while it is %s, and what leads here" % stage
-		chip.toggled.connect(_on_stage_picked.bind(track.name, stage))
+		chip.toggled.connect(_on_stage_picked.bind(track_name, stage))
 		bar.add_child(chip)
-	var add: Button = _make_button("", "A new stage on %s" % track.name, _ask_for_stage.bind(track))
+	if track == null:
+		_tracks.add_child(bar)
+		return
+	var add: Button = _make_button("", "A new stage on %s" % track_name, _ask_for_stage.bind(track))
 	add.flat = true
 	bar.add_child(add)
-	if track.stages.is_empty():
+	if stages.is_empty():
 		var hint: Label = Label.new()
 		hint.text = "No stages yet"
 		hint.modulate = DIMMED
@@ -242,10 +249,9 @@ func _fit(graph: AdventureEventView) -> void:
 ## Where it can happen (click to change) and where it leads; marked if it leads into the picked stage
 func _add_story_controls(section: FoldableContainer, option: AdventureEvent) -> void:
 	var stages: Array[String] = [ ]
-	for track: AdventureStageTrack in _storyline.encounter.tracks:
-		if track == null: continue
-		var in_track: Array[String] = _storyline.get_stages_in(option, track.name)
-		stages.append("%s: %s" % [track.name, " or ".join(in_track)] if not in_track.is_empty() else "%s: any" % track.name)
+	for track_name: String in _storyline.get_track_names():
+		var in_track: Array[String] = _storyline.get_stages_in(option, track_name)
+		stages.append("%s: %s" % [track_name, " or ".join(in_track)] if not in_track.is_empty() else "%s: any" % track_name)
 	var others: String = _storyline.describe_other_conditions(option)
 	var happens: Button = Button.new()
 	happens.text = "In " + "  ·  ".join(stages) + ("  ·  when %s" % others if not others.is_empty() else "")
@@ -286,15 +292,16 @@ func focus_resource(resource: Resource) -> void:
 func _offer_stages(option: AdventureEvent) -> void:
 	_stage_menu_event = option
 	_stage_menu.clear()
-	for track: AdventureStageTrack in _storyline.encounter.tracks:
-		if track == null: continue
-		_stage_menu.add_separator(track.name)
-		var in_track: Array[String] = _storyline.get_stages_in(option, track.name)
-		for stage: String in track.stages:
-			_stage_menu.add_check_item(stage)
+	for track_name: String in _storyline.get_track_names():
+		_stage_menu.add_separator(track_name)
+		var in_track: Array[String] = _storyline.get_stages_in(option, track_name)
+		var body: bool = track_name == AdventureStoryline.BODY
+		for stage: String in _storyline.get_stages_of(track_name):
+			if body: _stage_menu.add_radio_check_item(stage)
+			else: _stage_menu.add_check_item(stage)
 			_stage_menu.set_item_checked(_stage_menu.item_count - 1, in_track.has(stage))
-			_stage_menu.set_item_metadata(_stage_menu.item_count - 1, [track.name, stage])
-			_stage_menu.set_item_tooltip(_stage_menu.item_count - 1, "None ticked on a track: any of its stages")
+			_stage_menu.set_item_metadata(_stage_menu.item_count - 1, [track_name, stage])
+			_stage_menu.set_item_tooltip(_stage_menu.item_count - 1, "One state at a time; picked again: any" if body else "None ticked on a track: any of its stages")
 	_stage_menu.position = DisplayServer.mouse_get_position()
 	_stage_menu.reset_size()
 	_stage_menu.popup()

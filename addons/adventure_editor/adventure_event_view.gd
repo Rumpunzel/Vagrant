@@ -111,12 +111,15 @@ func _add_stage_nodes(entry: AdventureEventOverview.Entry, frame: GraphFrame, at
 		var picked: bool = picked_stage.is_empty() or picked_stage == [source[1], source[2]]
 		if not nodes.has(stage_name):
 			var key: String = AdventureLayout.get_event_key(_overview.root, entry.event, "stage/" + stage_name)
-			var node: GraphNode = _add_node(key, entry.event, "→ %s" % source[2], _make_label("The story moves on: %s" % stage_name), at + Vector2(0, nodes.size() * SPECIAL_SPACING))
-			node.self_modulate = STAGE_COLOR
+			var body: bool = source[1] == AdventureStoryline.BODY
+			var hint: String = "Its body: %s" % source[2] if body else "The story moves on: %s" % stage_name
+			var node: GraphNode = _add_node(key, entry.event, "→ %s" % source[2], _make_label(hint), at + Vector2(0, nodes.size() * SPECIAL_SPACING))
+			node.self_modulate = FIGHT_COLOR if body else STAGE_COLOR
 			if not picked: node.modulate = FADED
 			attach_graph_element_to_frame(node.name, frame.name)
 			nodes[stage_name] = node
-		_add_line(source[0], nodes[stage_name], STAGE_COLOR if picked else Color(STAGE_COLOR, 0.25), true, ARROW_END)
+		var color: Color = FIGHT_COLOR if source[1] == AdventureStoryline.BODY else STAGE_COLOR
+		_add_line(source[0], nodes[stage_name], color if picked else Color(color, 0.25), true, ARROW_END)
 
 ## Stacks each column of default-placed nodes below each other, once they are laid out
 func _stack() -> void:

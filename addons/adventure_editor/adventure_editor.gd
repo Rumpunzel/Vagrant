@@ -208,7 +208,8 @@ func _list_events() -> Array[AdventureEvent]:
 	if _graph != null: for event: AdventureEvent in _graph.get_top_events(): _list_event(event, 0, listed)
 	return listed
 
-## Those not fitting the find field are left out, their sub-events are still looked at
+## Those not fitting the find field are left out; options show on their scenario's or encounter's screen, so they are listed (below it) only
+## while finding
 func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent]) -> void:
 	if listed.has(event): return
 	listed.append(event)
@@ -216,8 +217,8 @@ func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent
 		var index: int = _event_list.add_item(INDENT.repeat(depth) + _describe_event(event))
 		_event_list.set_item_metadata(index, event)
 		_event_list.set_item_tooltip(index, event.resource_path)
-	var nested: Array[AdventureEvent] = AdventureGraph.get_listed_on(event)
-	for sub_event: AdventureEvent in nested: _list_event(sub_event, depth + 1, listed)
+	if _find.text.strip_edges().is_empty(): return
+	for sub_event: AdventureEvent in AdventureGraph.get_listed_on(event): _list_event(sub_event, depth + 1, listed)
 
 ## An option of a scenario or encounter shows on its screen, unfolded
 func _show_event(event: AdventureEvent, host: AdventurePage) -> void:

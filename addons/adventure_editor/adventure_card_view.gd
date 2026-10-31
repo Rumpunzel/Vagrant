@@ -66,15 +66,28 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 		row.add_child(label)
 		node.add_child(row)
 		_note_stages(row, decision, outcome.consequences_property)
+		if is_fight and outcome.label == "Won": _note_beaten(row, decision as AdventureFightDecision)
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, OUTCOME_COLORS.get(outcome.label, color))
 
-## The stages [param decision]'s [param property] sets on the event's encounter, to draw from [param from]
+## The stages [param decision]'s [param property] sets on the event's encounter (and a kill: its body dead), to draw from [param from]
 func _note_stages(from: Control, decision: AdventureDecision, property: StringName) -> void:
 	var encounter: AdventureEncounter = _get_encounter()
 	if encounter == null or property.is_empty(): return
 	for consequence: Variant in decision.get(property) as Array:
 		var stage: AdventureStageConsequence = consequence as AdventureStageConsequence
-		if stage != null and (stage.subject.is_empty() or Files.load_existing(stage.subject) == encounter): _stage_sources.append([from, stage.track, stage.stage])
+		var kill: AdventureKillConsequence = consequence as AdventureKillConsequence
+		if stage != null and _is_own(stage.subject, encounter): _stage_sources.append([from, stage.track, stage.stage])
+		elif kill != null and encounter.profile is MonsterProfile and _is_own(kill.encounter, encounter):
+			_stage_sources.append([from, AdventureStoryline.BODY, AdventureStoryline.BODY_STATES[AdventureMonsterCondition.State.DEAD]])
+
+## Winning a fight against the encounter's own monster beats it
+func _note_beaten(from: Control, fight: AdventureFightDecision) -> void:
+	var encounter: AdventureEncounter = _get_encounter()
+	if encounter == null or not encounter.profile is MonsterProfile or not fight.enemies.is_empty() or not _is_own(fight.encounter, encounter): return
+	_stage_sources.append([from, AdventureStoryline.BODY, AdventureStoryline.BODY_STATES[AdventureMonsterCondition.State.BEATEN]])
+
+static func _is_own(subject: String, encounter: AdventureEncounter) -> bool:
+	return subject.is_empty() or Files.load_existing(subject) == encounter
 
 ## Clicking it edits the decision in the Inspector; ▲ ▼ move it, ✕ removes it
 func _make_card(entry: AdventureEventOverview.Entry, page: AdventurePage, index: int, text: String, color: Color, icon: Texture2D, faded: bool) -> PanelContainer:
