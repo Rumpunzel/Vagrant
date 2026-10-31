@@ -303,3 +303,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-30: 6a committed; 6b built: location tab; `AdventureLocation.get_slots` (the own events' slot in the order also without own events); tests: location overview (5)
 - 2026-10-30: double-click opening waits for the mouse button (no stuck drag); 6c built: storyline view; tests: storyline (3)
 - 2026-10-31: graphs reconsidered with the user (lists and tables where content isn't links); 1 built: location tab editable; test: putting / placing (1)
+- 2026-10-31: location tab: banner with the background (the area's if it has none), title and area over a fade, the image dimmed behind the tab, ▶/■ for the ambience (stops when the tab is hidden), its text (and first-visit text) under the banner

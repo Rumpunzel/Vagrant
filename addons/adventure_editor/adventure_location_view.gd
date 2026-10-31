@@ -1,8 +1,9 @@
 @tool
 class_name AdventureLocationView
-extends VBoxContainer
+extends Control
 
-## One location at a glance ([AdventureLocationOverview]): a section per source of events in its order (its own events, then the encounters
+## One location at a glance: a banner with its background (or its area's) and a player for its ambience, its text, and ([AdventureLocationOverview])
+## a section per source of events in its order (its own events, then the encounters
 ## that can show there), each with the events that could show and what they need; what can come here below. ▲ ▼ change the order, + adds
 ## events or encounters, ✕ takes them off here. Selecting a row shows it in the Inspector; double-click an event to open it.
 
@@ -16,26 +17,44 @@ signal encounter_requested(location: AdventureLocation, monster: bool, profile: 
 
 enum Act { UP, DOWN, ADD, REMOVE }
 
+const BANNER_HEIGHT: float = 220.0
+const BACKDROP: Color = Color(1, 1, 1, 0.12)
+const TEXT_LINES: int = 4
+
 var _overview: AdventureLocationOverview
 var _encounters: Array[AdventureEncounter] = [ ]
 var _title: Label
+var _subtitle: Label
+var _text: Label
+var _banner: TextureRect
+var _backdrop: TextureRect
+var _ambience: AudioStreamPlayer
+var _ambience_button: Button
 var _tree: Tree
 var _menu: AdventureActionMenu
 
 func setup() -> void:
-	var bar: HBoxContainer = HBoxContainer.new()
-	add_child(bar)
-	_title = Label.new()
-	_title.theme_type_variation = &"HeaderMedium"
-	_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bar.add_child(_title)
-	var add: Button = Button.new()
-	add.text = "Encounter"
-	add.icon = AdventureActionMenu.get_editor_icon("Add")
-	add.tooltip_text = "A new encounter here, or one made already"
-	add.pressed.connect(_on_add_encounter)
-	bar.add_child(add)
+	_backdrop = _make_cover()
+	_backdrop.modulate = BACKDROP
+	add_child(_backdrop)
+	_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var column: VBoxContainer = VBoxContainer.new()
+	add_child(column)
+	column.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	column.add_child(_make_banner())
+	_text = Label.new()
+	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_text.max_lines_visible = TEXT_LINES
+	_text.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	_text.modulate = Color(1, 1, 1, 0.8)
+	_text.mouse_filter = Control.MOUSE_FILTER_PASS
+	column.add_child(_text)
+	_ambience = AudioStreamPlayer.new()
+	add_child(_ambience)
+	_ambience.finished.connect(_update_ambience_button)
+	visibility_changed.connect(_on_visibility_changed)
 	_tree = Tree.new()
+	_tree.add_theme_stylebox_override(&"panel", StyleBoxEmpty.new())
 	_tree.columns = 2
 	_tree.hide_root = true
 	_tree.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -44,9 +63,113 @@ func setup() -> void:
 	_tree.item_activated.connect(_on_item_activated)
 	_tree.item_selected.connect(_on_item_selected)
 	_tree.button_clicked.connect(_on_button_clicked)
-	add_child(_tree)
+	column.add_child(_tree)
 	_menu = AdventureActionMenu.new()
 	add_child(_menu)
+
+## The background over the whole width, faded at the bottom under its title; the ambience and encounter buttons at the top
+func _make_banner() -> Control:
+	var banner: Control = Control.new()
+	banner.custom_minimum_size.y = BANNER_HEIGHT
+	banner.clip_contents = true
+	_banner = _make_cover()
+	banner.add_child(_banner)
+	_banner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var fade: TextureRect = TextureRect.new()
+	var gradient: GradientTexture2D = GradientTexture2D.new()
+	gradient.gradient = Gradient.new()
+	gradient.gradient.set_color(0, Color(0, 0, 0, 0))
+	gradient.gradient.set_color(1, Color(0, 0, 0, 0.85))
+	gradient.gradient.set_offset(0, 0.35)
+	gradient.fill_from = Vector2(0, 0)
+	gradient.fill_to = Vector2(0, 1)
+	fade.texture = gradient
+	fade.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	fade.stretch_mode = TextureRect.STRETCH_SCALE
+	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	banner.add_child(fade)
+	fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var margin: MarginContainer = MarginContainer.new()
+	for side: String in ["left", "top", "right", "bottom"]: margin.add_theme_constant_override("margin_" + side, 12)
+	banner.add_child(margin)
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var stack: VBoxContainer = VBoxContainer.new()
+	margin.add_child(stack)
+	var buttons: HBoxContainer = HBoxContainer.new()
+	buttons.alignment = BoxContainer.ALIGNMENT_END
+	buttons.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	stack.add_child(buttons)
+	_ambience_button = Button.new()
+	_ambience_button.text = "Ambience"
+	_ambience_button.pressed.connect(_toggle_ambience)
+	buttons.add_child(_ambience_button)
+	var add: Button = Button.new()
+	add.text = "Encounter"
+	add.icon = AdventureActionMenu.get_editor_icon("Add")
+	add.tooltip_text = "A new encounter here, or one made already"
+	add.pressed.connect(_on_add_encounter)
+	buttons.add_child(add)
+	_title = _make_banner_label(&"HeaderLarge")
+	stack.add_child(_title)
+	_subtitle = _make_banner_label(&"")
+	stack.add_child(_subtitle)
+	return banner
+
+static func _make_cover() -> TextureRect:
+	var cover: TextureRect = TextureRect.new()
+	cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	cover.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return cover
+
+## Outlined, so it reads on any background
+static func _make_banner_label(variation: StringName) -> Label:
+	var label: Label = Label.new()
+	label.theme_type_variation = variation
+	label.add_theme_constant_override(&"outline_size", 6)
+	label.add_theme_color_override(&"font_outline_color", Color(0, 0, 0, 0.8))
+	return label
+
+## Its own background, else its area's; the same for the ambience
+func _show_header(location: AdventureLocation) -> void:
+	var background: Texture2D = null
+	var ambience: AudioStream = null
+	var notes: Array[String] = [ ]
+	if location != null:
+		background = location.background if location.background != null else location.get_area_background()
+		ambience = location.ambience if location.ambience != null else location.area.ambience if location.area != null else null
+		if location.area != null: notes.append(location.area.name)
+		if location.background == null: notes.append("the area's background" if background != null else "no background")
+		if location.ambience == null and ambience != null: notes.append("the area's ambience")
+	_banner.texture = background
+	_backdrop.texture = background
+	_subtitle.text = " · ".join(notes)
+	var parts: Array[String] = [ ]
+	if location != null and not location.first_description.is_empty(): parts.append("First visit: " + location.first_description)
+	if location != null: parts.append(location.description)
+	_text.text = "\n".join(parts)
+	_text.tooltip_text = _text.text
+	_text.visible = not _text.text.is_empty()
+	if _ambience.stream != ambience:
+		_ambience.stop()
+		_ambience.stream = ambience
+	_ambience_button.disabled = ambience == null
+	_ambience_button.tooltip_text = "No ambience" if ambience == null else ambience.resource_path.get_file()
+	_update_ambience_button()
+
+func _toggle_ambience() -> void:
+	if _ambience.playing: _ambience.stop()
+	else: _ambience.play()
+	_update_ambience_button()
+
+func _update_ambience_button() -> void:
+	_ambience_button.icon = AdventureActionMenu.get_editor_icon("Stop" if _ambience.playing else "Play")
+
+## Silent while another tab is shown
+func _on_visibility_changed() -> void:
+	if is_visible_in_tree(): return
+	_ambience.stop()
+	_update_ambience_button()
 
 func _on_add_encounter() -> void:
 	if get_location() != null: _menu.show_actions(_get_encounter_actions())
@@ -59,6 +182,7 @@ func show_location(location: AdventureLocation, encounters: Array[AdventureEncou
 	_encounters = encounters
 	_overview = AdventureLocationOverview.new(location, encounters, pages) if location != null else null
 	_title.text = "Double-click a location on the map" if location == null else AdventureGraph.get_title(location)
+	_show_header(location)
 	if _overview == null: return
 	var root: TreeItem = _tree.create_item()
 	for index: int in _overview.sections.size(): _add_section(root, index)
