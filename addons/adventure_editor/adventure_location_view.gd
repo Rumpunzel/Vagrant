@@ -102,12 +102,14 @@ func _make_banner() -> Control:
 	_ambience_button = Button.new()
 	_ambience_button.text = "Ambience"
 	_ambience_button.pressed.connect(_toggle_ambience)
+	_ambience_button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	buttons.add_child(_ambience_button)
 	var add: Button = Button.new()
 	add.text = "Encounter"
 	add.icon = AdventureActionMenu.get_editor_icon("Add")
 	add.tooltip_text = "A new encounter here, or one made already"
 	add.pressed.connect(_on_add_encounter)
+	add.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	buttons.add_child(add)
 	_title = _make_banner_label(&"HeaderLarge")
 	stack.add_child(_title)
