@@ -22,7 +22,8 @@ const INDENT: String = "    "
 @export var _events_tab: Control
 @export var _event_list: ItemList
 @export var _host_picker: OptionButton
-@export var _event_view: AdventureEventView
+## Where the event screen goes, next to the special nodes' sidebar
+@export var _event_body: HBoxContainer
 
 var adventure: Adventure : set = set_adventure
 
@@ -38,17 +39,16 @@ var _file_dialog: EditorFileDialog
 var _delete_dialog: ConfirmationDialog
 var _profile_dialog: EditorFileDialog
 var _location_view: AdventureLocationView
-var _scenario_view: AdventureScenarioView
+var _event_screen: AdventureEventScreen
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_edits = AdventureEdits.new(undo_redo)
 	_edits.changed.connect(rebuild)
 	_map.setup()
-	_event_view.setup()
 	_make_dialogs()
 	_make_location_tab()
-	_make_scenario_view()
+	_make_event_screen()
 	_connect_views()
 	_connect_lists()
 	EditorInterface.get_inspector().property_edited.connect(_on_property_edited)
@@ -81,17 +81,17 @@ func _make_location_tab() -> void:
 	_tabs.add_child(_location_view)
 	_tabs.move_child(_location_view, _map_tab.get_index() + 1)
 
-## Next to the event view: scenarios and encounters are lists of their options, not page graphs
-func _make_scenario_view() -> void:
-	_scenario_view = AdventureScenarioView.new()
-	_scenario_view.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_scenario_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_scenario_view.visible = false
-	_event_view.add_sibling(_scenario_view)
-	_scenario_view.setup()
-	_scenario_view.make_graph = _make_event_graph
+## Built here: the screen of the event shown, before the special nodes' sidebar
+func _make_event_screen() -> void:
+	_event_screen = AdventureEventScreen.new()
+	_event_screen.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_event_screen.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_event_body.add_child(_event_screen)
+	_event_body.move_child(_event_screen, 0)
+	_event_screen.setup()
+	_event_screen.make_graph = _make_event_graph
 
-## A page graph for an option on the scenario screen, wired up like the events tab's own
+## A page graph for a section of the event screen, wired up like the map
 func _make_event_graph() -> AdventureEventView:
 	var graph: AdventureEventView = AdventureEventView.new()
 	graph.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -118,13 +118,6 @@ func _add_option(event: AdventureEvent, scenario: AdventureEventScenario) -> voi
 	options.append(event)
 	_edits.apply(AdventureEventEditing.get_changes_listing(scenario, options), "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(scenario)])
 
-## A plain event's pages; a scenario's or encounter's options (an encounter: with its story), [param focus] unfolded
-func _show_event_view(focus: AdventureEvent = null) -> void:
-	var scenario: AdventureEventScenario = _event_view.get_event() as AdventureEventScenario
-	_scenario_view.visible = scenario != null
-	_event_view.visible = scenario == null
-	_scenario_view.show_scenario(scenario, _event_view.get_host(), focus)
-
 ## The scenario or encounter (a file of its own, not a location's own events) [param event] is an option of, if any
 func _find_scenario_of(event: AdventureEvent) -> AdventureEventScenario:
 	for host: AdventurePage in _graph.get_hosts(event):
@@ -141,7 +134,7 @@ func _get_encounters() -> Array[AdventureEncounter]:
 	return encounters
 
 func _connect_views() -> void:
-	for view: AdventureGraphView in [_map, _event_view]:
+	for view: AdventureGraphView in [_map]:
 		view.changes_requested.connect(_edits.apply)
 		view.event_opened.connect(open_event)
 		view.layout_changed.connect(_save_layout)
@@ -158,17 +151,16 @@ func _connect_views() -> void:
 	_location_view.event_requested.connect(_ask_for_event)
 	_location_view.existing_event_requested.connect(_offer_events)
 	_location_view.encounter_requested.connect(_ask_for_encounter)
-	_event_view.exit_opened.connect(_open_location)
-	_scenario_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
-	_scenario_view.existing_option_requested.connect(_offer_options)
-	_scenario_view.event_opened.connect(open_event)
-	_scenario_view.changes_requested.connect(_edits.apply)
-	_scenario_view.text_requested.connect(_name_dialog.ask)
+	_event_screen.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
+	_event_screen.existing_option_requested.connect(_offer_options)
+	_event_screen.event_opened.connect(open_event)
+	_event_screen.changes_requested.connect(_edits.apply)
+	_event_screen.text_requested.connect(_name_dialog.ask)
 
 func _connect_lists() -> void:
 	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
 	_event_list.item_selected.connect(func(index: int) -> void: _show_event(_event_list.get_item_metadata(index) as AdventureEvent, null))
-	_host_picker.item_selected.connect(func(index: int) -> void: _show_event(_event_view.get_event(), _host_picker.get_item_metadata(index) as AdventurePage))
+	_host_picker.item_selected.connect(func(index: int) -> void: _show_event(_event_screen.get_event(), _host_picker.get_item_metadata(index) as AdventurePage))
 	_problem_list.item_selected.connect(_show_problem)
 	_find.text_changed.connect(func(_text: String) -> void:
 		_list_events()
@@ -181,8 +173,7 @@ func set_adventure(value: Adventure) -> void:
 	_picker.edited_resource = value
 	_layout = AdventureLayout.load_for(value) if value != null else null
 	_map.layout = _layout
-	_event_view.layout = _layout
-	_event_view.show_event(null)
+	_event_screen.show_event(null, null)
 	rebuild()
 	_map.scroll_to_nodes()
 
@@ -194,23 +185,20 @@ func rebuild() -> void:
 	_problems = [ ]
 	if adventure != null: _problems = AdventureProblems.new(_graph, _all_events).problems
 	_map.problems = _problems
-	_event_view.problems = _problems
-	_event_view.encounters = _get_encounters()
 	_map.show_graph(_graph)
 	var listed: Array[AdventureEvent] = _list_events()
 	_fill_event_shelf()
 	_list_problems()
 	var shown: AdventureLocation = _location_view.get_location()
 	_location_view.show_location(shown if _graph.pages.has(shown) else null, _get_encounters(), _graph.pages)
-	var current: AdventureEvent = _event_view.get_event()
-	if listed.has(current): _show_event(current, _event_view.get_host())
+	var current: AdventureEvent = _event_screen.get_event()
+	if listed.has(current): _show_event(current, _event_screen.get_host())
 	else: _show_event(null, null)
 
 ## Shows [param event] in the events tab, at [param host] if given
 func open_event(event: AdventureEvent, host: AdventurePage) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_events_tab)
 	_show_event(event, host)
-	_event_view.scroll_to_nodes()
 
 ## Scenarios list their options below them, events the sub-events of their pages
 ## Every event met, as a tree; returns them all, shown or filtered out
@@ -234,8 +222,7 @@ func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent
 ## An option of a scenario or encounter shows on its screen, unfolded
 func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
 	var scenario: AdventureEventScenario = _find_scenario_of(event) if event != null and _graph != null else null
-	_event_view.show_event(scenario if scenario != null else event, host)
-	_show_event_view(event if scenario != null else null)
+	_event_screen.show_event(scenario if scenario != null else event, host, event if scenario != null else null)
 	_event_list.deselect_all()
 	for index: int in _event_list.item_count:
 		if _event_list.get_item_metadata(index) == event: _event_list.select(index)
@@ -361,7 +348,7 @@ func _fill_event_shelf() -> void:
 func _play_from(page: AdventurePage, event: AdventureEvent) -> void:
 	var host: AdventurePage = null
 	if event != null:
-		host = _event_view.get_host()
+		host = _event_screen.get_host()
 		var hosts: Array[AdventureLocation] = _graph.get_location_hosts(event)
 		if host == null and not hosts.is_empty(): host = hosts[0]
 		if host == null:
@@ -387,7 +374,7 @@ func _show_problem(index: int) -> void:
 		_open_location(problem.page)
 		return
 	open_event(problem.event, null)
-	_event_view.focus_resource.call_deferred(problem.page)
+	_event_screen.focus_resource.call_deferred(problem.page)
 
 ## Creates the event's file and lists it on [param host] (a location, or a scenario as its last option), as one undo step
 func _create_event(title: String, host: AdventurePage, scenario: bool) -> void:

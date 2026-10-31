@@ -242,9 +242,15 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
   remembered while shown; an option picked in the event list opens on its scenario's or encounter's screen
 - [x] 2. Stage end nodes in the graph ("→ Beaten") for outcomes setting a stage, dashed green lines from the outcome (drawn, not draggable);
   a picked stage keeps its nodes and lines bright, the others fade
-- [ ] 3. A loose event becomes a screen with one section (the separate event graph goes)
+- [x] 3. One event screen (`AdventureEventScreen`) for every event: a plain event as one unfolded section, a scenario or encounter as a section per
+  option; the editor's own event graph is gone (graphs come from `AdventureEditor._make_event_graph`)
 
 ## To reconsider
+- Body vs. story (user, 2026-10-31): "Beaten" is a stage set by the content, but the monster's being beaten (incapacitated) is runtime state
+  the fight sets, so they can drift apart (a draw where it collapses; a later recovery rule). Proposal: a condition reading the encounter's monster
+  (can fight / is beaten / is dead, no spawned_by) plus a kill consequence for the body; stages only for the story (met, allegiance, looted).
+  The Lurker would need no State track. Decision open
+- Stage effects show twice in the graph: a tag on the card and a line to the stage node; drop one (or effects on the path, below)
 - Effects on the path: the line from an outcome carries "→ Beaten · Injury" instead of tags on the card (decide after step 2 above)
 - Graph height: fixed by content; a drag handle if it isn't enough
 
@@ -328,3 +334,4 @@ loot (user, 2026-10-31): a monster encounter's stage after Dead to search its bo
 - 2026-10-31: storyline redesign, first try: one screen (no toggle): an encounter's options list gets a bar per track with stage chips (picking one dims what can't happen then, marks what leads into it), "Happens in" (click: tick stages) and "Leads to" (decision → stage, edited in the pages); table and storyline view gone; tests: storyline (4)
 - 2026-10-31: user: fold the page graphs into the encounter screen, show stage changes in the graph; reconsider critically and often; 1 built: foldable sections with graphs
 - 2026-10-31: 2 built: stage end nodes in the graphs; loot idea noted
+- 2026-10-31: user: "beaten" can drift from the monster's real state; proposal noted under To reconsider; 3 built: one event screen for every event, the separate event graph gone

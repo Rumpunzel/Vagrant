@@ -1,9 +1,9 @@
 @tool
-class_name AdventureScenarioView
+class_name AdventureEventScreen
 extends VBoxContainer
 
-## A scenario or encounter on one screen: whether it shows the first option that fits or all of them, when (its own conditions), and a foldable
-## section per option in order (▲ ▼ reorder, ✕ takes one out, its file stays) with the option's pages as a graph inside. An encounter adds its
+## An event on one screen. A plain event: its section with its pages as a graph. A scenario or encounter: whether it shows the first option that
+## fits or all of them, when (its own conditions), and a foldable section per option in order (▲ ▼ reorder, ✕ takes one out, its file stays) with the option's pages as a graph inside. An encounter adds its
 ## story ([AdventureStoryline]): a bar per stage track with its stages, and per option the stages it can happen in (click to change them) and
 ## where its decisions lead. Picking a stage in a bar dims what can't happen then and marks what leads into it.
 
@@ -27,6 +27,8 @@ const COLUMN_WIDTH: float = 260.0
 ## Makes an event graph wired up like the editor's others ([AdventureEventView]); set by [AdventureEditor]
 var make_graph: Callable
 
+var _event: AdventureEvent
+## The event shown, if it is a scenario or encounter
 var _scenario: AdventureEventScenario
 var _storyline: AdventureStoryline
 var _host: AdventurePage
@@ -37,6 +39,10 @@ var _open: Array[AdventureEvent] = [ ]
 var _title: Label
 var _pick: OptionButton
 var _add_track: Button
+var _add_option: Button
+var _add_existing: Button
+## The graphs of the unfolded sections
+var _graphs: Array[AdventureEventView] = [ ]
 var _info: Label
 var _tracks: VBoxContainer
 var _scroll: ScrollContainer
@@ -57,8 +63,10 @@ func setup() -> void:
 	_pick.add_item("Shows every option that fits", AdventureEventScenario.Pick.ALL)
 	_pick.item_selected.connect(_on_pick_selected)
 	bar.add_child(_pick)
-	bar.add_child(_make_button("Option", "A new event as the last option", func() -> void: option_requested.emit(_scenario)))
-	bar.add_child(_make_button("Add event…", "An event made already as the last option", func() -> void: existing_option_requested.emit(_scenario, _menu.show_actions)))
+	_add_option = _make_button("Option", "A new event as the last option", func() -> void: option_requested.emit(_scenario))
+	bar.add_child(_add_option)
+	_add_existing = _make_button("Add event…", "An event made already as the last option", func() -> void: existing_option_requested.emit(_scenario, _menu.show_actions))
+	bar.add_child(_add_existing)
 	_add_track = _make_button("Track", "A new stage track: a line of the story, one stage at a time", _ask_for_track)
 	bar.add_child(_add_track)
 	_info = Label.new()
@@ -81,29 +89,47 @@ func setup() -> void:
 	_stage_menu.index_pressed.connect(_on_stage_toggled)
 	add_child(_stage_menu)
 
+func get_event() -> AdventureEvent: return _event
+
+func get_host() -> AdventurePage: return _host
+
 ## [param host]: where it is looked at from (the "At:" picker); [param focus]: an option to unfold and scroll to
-func show_scenario(scenario: AdventureEventScenario, host: AdventurePage, focus: AdventureEvent = null) -> void:
-	if scenario != _scenario:
+func show_event(event: AdventureEvent, host: AdventurePage, focus: AdventureEvent = null) -> void:
+	var scenario: AdventureEventScenario = event as AdventureEventScenario
+	if event != _event:
 		_picked = [ ]
 		_open.clear()
 		if scenario != null and not scenario.events.is_empty(): _open.append(scenario.events[0])
+		if scenario == null and event != null: _open.append(event)
 	if focus != null and not _open.has(focus): _open.append(focus)
 	var scrolled: int = _scroll.scroll_vertical
+	_event = event
 	_scenario = scenario
 	_host = host
+	_graphs.clear()
 	for child: Node in _tracks.get_children() + _sections.get_children(): child.queue_free()
-	if scenario == null: return
+	for control: Control in [_pick, _add_option, _add_existing]: control.visible = scenario != null
+	_add_track.visible = event is AdventureEncounter
+	_storyline = null
+	if event == null:
+		_title.text = "Pick an event"
+		_info.visible = false
+		return
+	if scenario == null:
+		_title.text = AdventureGraph.get_title(event)
+		_show_info()
+		_add_section(event, -1)
+		return
 	var encounter: AdventureEncounter = scenario as AdventureEncounter
 	_storyline = AdventureStoryline.new(encounter) if encounter != null else null
 	_title.text = AdventureGraph.get_title(scenario) + (" (encounter)" if encounter != null else " (scenario)")
 	_pick.select(_pick.get_item_index(scenario.pick))
-	_add_track.visible = encounter != null
 	_show_info()
 	if _storyline != null:
 		for track: AdventureStageTrack in encounter.tracks: if track != null: _add_track_bar(track)
 	var focused: Control = null
 	for index: int in scenario.events.size():
-		var section: Control = _add_section(index)
+		var section: Control = _add_section(scenario.events[index], index)
 		if scenario.events[index] == focus: focused = section
 	if scenario.events.is_empty():
 		var none: Label = Label.new()
@@ -115,9 +141,9 @@ func show_scenario(scenario: AdventureEventScenario, host: AdventurePage, focus:
 
 func _show_info() -> void:
 	var lines: Array[String] = [ ]
-	var conditions: String = AdventureEventOverview.get_condition_text(_scenario.conditions)
+	var conditions: String = AdventureEventOverview.get_condition_text(_event.conditions)
 	if not conditions.is_empty(): lines.append("When %s" % conditions)
-	var encounter: AdventureEncounter = _scenario as AdventureEncounter
+	var encounter: AdventureEncounter = _event as AdventureEncounter
 	if encounter != null:
 		var places: Array[String] = [ ]
 		for location: AdventureLocation in encounter.get_places(): places.append(AdventureGraph.get_title(location))
@@ -156,28 +182,29 @@ func _inspect_on_click(input: InputEvent, resource: Resource) -> void:
 	var click: InputEventMouseButton = input as InputEventMouseButton
 	if click != null and click.pressed and click.button_index == MOUSE_BUTTON_LEFT: EditorInterface.edit_resource(resource)
 
-## A foldable section: its title, where it can happen and leads, ▲ ▼ ✕ in the title bar; unfolded, its pages (a scenario: a way to open it)
-func _add_section(index: int) -> Control:
-	var option: AdventureEvent = _scenario.events[index]
+## A foldable section: its title, where it can happen and leads, ▲ ▼ ✕ in the title bar; unfolded, its pages (a scenario: a way to open it).
+## [param index]: its place among the options; -1: the event shown on its own
+func _add_section(option: AdventureEvent, index: int) -> Control:
 	var section: FoldableContainer = FoldableContainer.new()
-	section.title = "%d · %s" % [index + 1, _describe(option)]
+	section.title = "%d · %s" % [index + 1, _describe(option)] if index >= 0 else _describe(option)
 	section.folded = not _open.has(option)
 	_sections.add_child(section)
 	if option == null: return section
 	var dimmed: bool = _storyline != null and not _picked.is_empty() and not _storyline.can_happen_in(option, _picked[0], _picked[1])
 	if dimmed: section.modulate = DIMMED
 	if _storyline != null: _add_story_controls(section, option)
-	else:
+	elif index >= 0:
 		var needs: String = AdventureEventOverview.get_condition_text(option.conditions)
 		section.add_title_bar_control(_make_label("when %s" % needs if not needs.is_empty() else "always fits"))
+	section.folding_changed.connect(_on_folding_changed.bind(section, option))
+	if not section.folded: _fill_section(section, option)
+	if index < 0: return section
 	if index > 0: section.add_title_bar_control(_make_icon_button("MoveUp", "Earlier: checked first", _move.bind(index, -1)))
 	if index < _scenario.events.size() - 1: section.add_title_bar_control(_make_icon_button("MoveDown", "Later", _move.bind(index, 1)))
 	var remove: Button = _make_icon_button("Remove", "Not an option any more (its file stays)", _remove.bind(index))
 	remove.disabled = AdventureEventEditing.is_inside_file(option)
 	section.add_title_bar_control(remove)
 	section.add_title_bar_control(_make_icon_button("Object", "Show it in the Inspector", EditorInterface.edit_resource.bind(option)))
-	section.folding_changed.connect(_on_folding_changed.bind(section, option))
-	if not section.folded: _fill_section(section, option)
 	return section
 
 func _on_folding_changed(is_folded: bool, section: FoldableContainer, option: AdventureEvent) -> void:
@@ -199,6 +226,7 @@ func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
 	section.add_child(graph)
 	graph.setup()
 	graph.show_event(option, _host)
+	_graphs.append(graph)
 	get_tree().process_frame.connect(_fit.bind(graph), CONNECT_ONE_SHOT)
 
 ## As high as its nodes reach, within limits
@@ -248,7 +276,11 @@ static func _describe(option: AdventureEvent) -> String:
 
 func _on_stage_picked(on: bool, track: String, stage: String) -> void:
 	_picked = [track, stage] if on else [ ]
-	show_scenario(_scenario, _host)
+	show_event(_event, _host)
+
+## The node of [param resource] in the open graphs, in the middle
+func focus_resource(resource: Resource) -> void:
+	for graph: AdventureEventView in _graphs: graph.focus_resource(resource)
 
 ## The stages to tick for where [param option] can happen
 func _offer_stages(option: AdventureEvent) -> void:

@@ -3,7 +3,7 @@ class_name AdventureEventOverview
 extends RefCounted
 
 ## One plain event at a glance: an entry (shown as a frame) with the pages behind it. Scenarios and encounters are lists of their options
-## ([AdventureScenarioView]), not overviews.
+## ([AdventureEventScreen]), not overviews.
 
 class Entry:
 	var event: AdventureEvent
