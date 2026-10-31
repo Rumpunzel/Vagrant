@@ -15,6 +15,11 @@ static func make_reference(target: AdventurePage, file_path: String) -> Adventur
 	if target_path.is_empty() or target_path == file_path: return target
 	return AdventureTransition.leading_to(target)
 
+## The file [param resource] is stored in: itself, or the file holding it; [param fallback] (else itself) while it is stored nowhere yet
+static func get_file(resource: Resource, fallback: Resource = null) -> Resource:
+	if resource.resource_path.is_empty(): return fallback if fallback != null else resource
+	return load(get_file_path(resource)) if resource.resource_path.contains("::") else resource
+
 ## Whether [param page] is stored inside another file (or not stored yet), so it is lost once nothing in that file points at it
 static func is_inside_file(page: AdventurePage) -> bool:
 	return page.resource_path.is_empty() or page.resource_path.contains("::")
@@ -76,7 +81,7 @@ static func get_changes_forgetting(target: AdventurePage, roots: Array[Adventure
 ## Changes listing [param events] on [param host], each [resource, property, value, file]: a scenario's options, or a location's own events
 ## (in its own scenario, made here if it has none, picking all that fit)
 static func get_changes_listing(host: AdventurePage, events: Array[AdventureEvent]) -> Array[Array]:
-	var file: Resource = load(get_file_path(host)) if host.resource_path.contains("::") else host
+	var file: Resource = get_file(host)
 	var scenario: AdventureEventScenario = host as AdventureEventScenario
 	var location: AdventureLocation = host as AdventureLocation
 	if location != null: scenario = location.scenario

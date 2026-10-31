@@ -59,7 +59,6 @@ func test_layout_keys() -> void:
 	var placed: String = AdventureLayout.get_placed_special_prefix(root, root) + "host/0"
 	assert_bool(AdventureLayout.is_placed_special(placed)).is_true()
 	assert_bool(AdventureLayout.is_placed_special(key)).is_false()
-	assert_str(AdventureLayout.get_switch_key(root, root)).is_equal("res://events/lurker.tres/switch/res://events/lurker.tres")
 
 func test_putting_events_and_encounters_at_a_location() -> void:
 	var ruin: AdventureLocation = AdventureLocation.new()

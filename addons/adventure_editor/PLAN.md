@@ -228,7 +228,11 @@ Graphs only where the content is a graph of links (the map, the pages behind an 
   `AdventureMapEditing` (putting, removing, placing); the menu with icons is `AdventureActionMenu`, used by all views
 - [x] 2. Storyline as a table instead of a graph (built; `AdventureStoryline` builds the rows, columns and the changes ticks make): a column per stage (by track), a row per event (checkbox: needs it) and per decision outcome
   (checkbox: sets it, one per track); "+ stage", "+ track", "+ event needing …"; names in the Inspector. The storyline graph view goes
-- [ ] 3. Events tab: a scenario's or encounter's options as a list; selecting one shows only its pages as a graph (decide after 1 and 2)
+- [x] 3. Events tab: a scenario or encounter shows as a list of its options (`AdventureScenarioView`: pick first / all, its conditions, an
+  encounter's places, options with what they need, ▲ ▼ ✕, "+ Option", "Add event…"); a plain event shows its pages as a graph, one frame.
+  The switch nodes and per-option frames are gone (`AdventureEventOverview` is one entry now)
+- [ ] Storyline UI back to the drawing board (user, 2026-10-31): the table reads stages as independent flags, but a track's stages are one state
+  at a time ("needs" is a set, "sets" exactly one); a row per outcome of every page won't scale and is hard to read. Rethink after this round
 - [ ] 4. Inspector plugin for UID fields: names instead of uid strings, drop from the FileSystem, ✕ per entry
 
 Later: encounter templates (several wolves; a "new monster encounter" with its State track and the fight outcomes' stage consequences ready),
@@ -305,3 +309,4 @@ fights against several opponents (needs the fight UI first).
 - 2026-10-31: graphs reconsidered with the user (lists and tables where content isn't links); 1 built: location tab editable; test: putting / placing (1)
 - 2026-10-31: location tab: banner with the background (the area's if it has none), title and area over a fade, the image dimmed behind the tab, ▶/■ for the ambience (stops when the tab is hidden), its text (and first-visit text) under the banner
 - 2026-10-31: banner buttons fixed; 2 built: storyline table (ticks, + Track / Stage / Event, typos marked red), the storyline graph view replaced; tests: storyline table (4)
+- 2026-10-31: user: storyline table not intuitive (stages look like flags), back to the drawing board later; 3 built: options list for scenarios and encounters, switch code gone; tests: overview reworked

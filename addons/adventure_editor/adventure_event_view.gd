@@ -9,8 +9,6 @@ extends AdventureCardView
 
 ## An exit or the picked host was double-clicked
 signal exit_opened(location: AdventurePage)
-## A new event as an option of [param scenario]
-signal option_requested(scenario: AdventureEventScenario)
 
 enum Target { PAGE, HOST, PREVIOUS }
 
@@ -25,6 +23,8 @@ const SPECIALS: Dictionary[Target, Array] = {
 const SPECIAL_SPACING: float = 140.0
 const NODE_GAP: float = 40.0
 
+## The adventure's encounters, to find the one of the event shown
+var encounters: Array[AdventureEncounter] = [ ]
 var _overview: AdventureEventOverview
 ## The host picked to see the event at; none: any host
 var _host: AdventurePage
@@ -44,7 +44,10 @@ func setup() -> void:
 	disconnection_request.connect(func(from: StringName, port: int, _to: StringName, _to_port: int) -> void: _request_reference(from, port, null))
 	connection_to_empty.connect(_on_connection_to_empty)
 
-func _get_encounter() -> AdventureEncounter: return _overview.root as AdventureEncounter if _overview != null else null
+func _get_encounter() -> AdventureEncounter:
+	if _overview == null: return null
+	for encounter: AdventureEncounter in encounters: if encounter.get_listed_events().has(_overview.root): return encounter
+	return null
 
 func get_event() -> AdventureEvent: return _overview.root if _overview != null else null
 
@@ -62,26 +65,10 @@ func show_event(event: AdventureEvent, host: AdventurePage = null) -> void:
 	for entry: AdventureEventOverview.Entry in _overview.entries:
 		for page: AdventurePage in entry.graph.pages:
 			for decision: AdventureDecision in page.decisions: if decision is AdventureFightDecision: _fight_pages[decision] = page
-	var origin: Vector2 = Vector2.ZERO
 	for entry: AdventureEventOverview.Entry in _overview.entries:
-		# A scenario's switch (and the scenarios around it) before its first option
-		var chain: Array[AdventureEventOverview.Switch] = [ ]
-		var switch: AdventureEventOverview.Switch = entry.switch
-		while switch != null:
-			chain.push_front(switch)
-			switch = switch.outer
-		for outer: AdventureEventOverview.Switch in chain:
-			if _nodes.has(_switch_key(outer.scenario)): continue
-			_add_switch(outer, origin)
-			origin.x += NODE_SPACING.x * 1.25
 		var frame: GraphFrame = _add_frame(entry.label, entry.event, null)
 		_frame_entries[frame] = entry
-		origin.x += (_add_entry(entry, frame, origin) + 1) * NODE_SPACING.x
-	for switch: AdventureEventOverview.Switch in _overview.switches: _connect_switch(switch)
-	for entry: AdventureEventOverview.Entry in _overview.entries:
-		if entry.parent != null and entry.switch == null: _add_dashed(_nodes[_key(entry.parent, entry.parent_page)], _nodes[_key(entry, entry.event)])
-	for switch: AdventureEventOverview.Switch in _overview.switches:
-		if switch.parent != null and switch.outer == null: _add_dashed(_nodes[_key(switch.parent, switch.parent_page)], _nodes[_switch_key(switch.scenario)])
+		_add_entry(entry, frame, Vector2.ZERO)
 
 ## Adds the entry's nodes to [param frame] from [param origin] on; returns how many columns they take
 func _add_entry(entry: AdventureEventOverview.Entry, frame: GraphFrame, origin: Vector2) -> int:
@@ -129,8 +116,7 @@ func _add_page(entry: AdventureEventOverview.Entry, page: AdventurePage, at: Vec
 		for text: String in [AdventureEventOverview.get_hiding_text(entry, _host)]:
 			if not text.is_empty(): content.add_child(_make_info(text))
 	var node: GraphNode = _add_node(_key(entry, page), page, AdventureGraph.get_title(page), content, at)
-	# An option's event is linked from its scenario's switch
-	node.set_slot(0, page != entry.event or entry.switch != null, 0, Color.WHITE, false, 0, Color.WHITE)
+	node.set_slot(0, page != entry.event, 0, Color.WHITE, false, 0, Color.WHITE)
 	var outlets: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outlets(page)
 	for index: int in outlets.size(): _add_decision_cards(node, entry, page, index, outlets[index])
 	# What the game offers on a page without decisions
@@ -323,68 +309,7 @@ func _on_delete_key(element: GraphElement) -> void:
 	elif AdventureLayout.is_placed_special(_key_of_node(element.name)): _remove_special(_key_of_node(element.name))
 	else: super(element)
 
-## A sub-event's card shows its frame (a scenario: its switch); others open the event
-func _on_event_card_pressed(event: AdventureEvent, _page: AdventurePage) -> void:
-	if _nodes.has(_switch_key(event)):
-		focus_node(_nodes[_switch_key(event)])
-		return
-	var entry: AdventureEventOverview.Entry = _overview.get_listed_entry(event)
-	if entry != null: focus_node(_nodes[_key(entry, entry.event)])
-	else: event_opened.emit(event, null)
-
-## A scenario picking the first of its options that fits: a row per option in priority order (▲ ▼ ✕), linked to the option, and "+ option"
-func _add_switch(switch: AdventureEventOverview.Switch, at: Vector2) -> void:
-	var scenario: AdventureEventScenario = switch.scenario
-	var file: Resource = load(AdventureEventEditing.get_file_path(scenario))
-	var content: VBoxContainer = VBoxContainer.new()
-	content.custom_minimum_size.x = THUMBNAIL_SIZE.x
-	content.add_child(_make_info("Shows %s. When:" % ("the first option that fits" if scenario.pick == AdventureEventScenario.Pick.FIRST else "every option that fits")))
-	content.add_child(_make_condition_tags(scenario, file))
-	var node: GraphNode = _add_node(_switch_key(scenario), scenario, "%s (scenario)" % AdventureGraph.get_title(scenario), content, at)
-	node.set_slot(0, switch.outer != null, 0, Color.WHITE, false, 0, Color.WHITE)
-	var options: Array[AdventureEvent] = scenario.events
-	for index: int in options.size():
-		var row: HBoxContainer = HBoxContainer.new()
-		var conditions: String = AdventureEventOverview.get_condition_text(options[index].conditions)
-		var label: Label = _make_label("%d · %s%s" % [index + 1, AdventureGraph.get_title(options[index]), "\nwhen %s" % conditions if not conditions.is_empty() else ""])
-		label.custom_minimum_size.x = THUMBNAIL_SIZE.x - 3 * ICON_SIZE - 24
-		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		row.add_child(label)
-		if index > 0: row.add_child(_make_tool_button("MoveUp", "▲", "Earlier: checked first", _move_option.bind(scenario, file, index, -1)))
-		if index < options.size() - 1: row.add_child(_make_tool_button("MoveDown", "▼", "Later", _move_option.bind(scenario, file, index, 1)))
-		row.add_child(_make_tool_button("Remove", "✕", "Not an option any more (its file stays)", _remove_option.bind(scenario, file, index)))
-		node.add_child(row)
-		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, Color.WHITE)
-	node.add_child(_make_info("Otherwise: nothing"))
-	var add: Button = _make_tool_button("Add", "+", "A new event as the last option", option_requested.emit.bind(scenario))
-	add.text = "option"
-	node.add_child(add)
-
-## Each option's row to its event (a scenario option: to its switch)
-func _connect_switch(switch: AdventureEventOverview.Switch) -> void:
-	var options: Array[AdventureEvent] = switch.scenario.events
-	for index: int in options.size():
-		var target: String = _switch_key(options[index]) if options[index] is AdventureEventScenario else ""
-		var entry: AdventureEventOverview.Entry = _overview.get_entry(options[index])
-		if target.is_empty() and entry != null: target = _key(entry, entry.event)
-		if _nodes.has(target): connect_node(_nodes[_switch_key(switch.scenario)].name, index, _nodes[target].name, 0)
-
-func _move_option(scenario: AdventureEventScenario, file: Resource, index: int, step: int) -> void:
-	var options: Array[AdventureEvent] = scenario.events.duplicate()
-	var option: AdventureEvent = options.pop_at(index)
-	options.insert(index + step, option)
-	_request(scenario, &"events", options, "Move %s" % AdventureGraph.get_title(option), file)
-
-func _remove_option(scenario: AdventureEventScenario, file: Resource, index: int) -> void:
-	var options: Array[AdventureEvent] = scenario.events.duplicate()
-	var option: AdventureEvent = options.pop_at(index)
-	if AdventureEventEditing.is_inside_file(option):
-		push_warning("%s is stored inside the scenario's file and would be lost" % AdventureGraph.get_title(option))
-		return
-	_request(scenario, &"events", options, "Remove %s" % AdventureGraph.get_title(option), file)
-
-func _switch_key(scenario: AdventurePage) -> String:
-	return AdventureLayout.get_switch_key(_overview.root, scenario)
+func _on_event_card_pressed(event: AdventureEvent, _page: AdventurePage) -> void: event_opened.emit(event, null)
 
 func _key(entry: AdventureEventOverview.Entry, resource: Resource) -> String:
 	return AdventureLayout.get_event_key(_overview.root, entry.event, AdventureLayout.get_key(resource))

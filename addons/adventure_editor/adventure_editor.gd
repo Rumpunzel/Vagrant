@@ -40,6 +40,7 @@ var _profile_dialog: EditorFileDialog
 var _location_view: AdventureLocationView
 var _storyline_view: AdventureStorylineView
 var _storyline_toggle: CheckButton
+var _scenario_view: AdventureScenarioView
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
@@ -49,6 +50,7 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_event_view.setup()
 	_make_dialogs()
 	_make_location_tab()
+	_make_scenario_view()
 	_make_storyline_view()
 	_connect_views()
 	_connect_lists()
@@ -82,6 +84,26 @@ func _make_location_tab() -> void:
 	_tabs.add_child(_location_view)
 	_tabs.move_child(_location_view, _map_tab.get_index() + 1)
 
+## Next to the event view: scenarios and encounters are lists of their options, not page graphs
+func _make_scenario_view() -> void:
+	_scenario_view = AdventureScenarioView.new()
+	_scenario_view.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_scenario_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_scenario_view.visible = false
+	_event_view.add_sibling(_scenario_view)
+	_scenario_view.setup()
+
+## Events made already (and any other file) as the last option of [param scenario]
+func _offer_options(scenario: AdventureEventScenario, show_actions: Callable) -> void:
+	var taken: Array = scenario.events.duplicate()
+	taken.append(scenario)
+	_offer(taken, _add_option.bind(scenario), show_actions)
+
+func _add_option(event: AdventureEvent, scenario: AdventureEventScenario) -> void:
+	var options: Array[AdventureEvent] = scenario.events.duplicate()
+	options.append(event)
+	_edits.apply(AdventureEventEditing.get_changes_listing(scenario, options), "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(scenario)])
+
 ## Next to the event view, shown instead of it for an encounter when toggled; the toggle goes next to the host picker
 func _make_storyline_view() -> void:
 	_storyline_view = AdventureStorylineView.new()
@@ -104,14 +126,18 @@ func _make_storyline_view() -> void:
 	_storyline_toggle.toggled.connect(func(_on: bool) -> void: _show_storyline())
 	bar.add_child(_storyline_toggle)
 
-## The storyline instead of the pages, for an encounter while toggled
+## A plain event's pages; a scenario's or encounter's options, or (an encounter, toggled) its storyline
 func _show_storyline() -> void:
-	var encounter: AdventureEncounter = _event_view.get_event() as AdventureEncounter
+	var event: AdventureEvent = _event_view.get_event()
+	var encounter: AdventureEncounter = event as AdventureEncounter
 	_storyline_toggle.visible = encounter != null
-	var showing: bool = encounter != null and _storyline_toggle.button_pressed
-	_storyline_view.visible = showing
-	_event_view.visible = not showing
-	_storyline_view.show_storyline(encounter if showing else null)
+	var storyline: bool = encounter != null and _storyline_toggle.button_pressed
+	var options: bool = event is AdventureEventScenario and not storyline
+	_storyline_view.visible = storyline
+	_scenario_view.visible = options
+	_event_view.visible = not storyline and not options
+	_storyline_view.show_storyline(encounter if storyline else null)
+	_scenario_view.show_scenario(event as AdventureEventScenario if options else null, _event_view.get_host())
 
 func _show_location(location: AdventureLocation) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_location_view)
@@ -141,7 +167,10 @@ func _connect_views() -> void:
 	_location_view.existing_event_requested.connect(_offer_events)
 	_location_view.encounter_requested.connect(_ask_for_encounter)
 	_event_view.exit_opened.connect(_open_location)
-	_event_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
+	_scenario_view.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
+	_scenario_view.existing_option_requested.connect(_offer_options)
+	_scenario_view.event_opened.connect(open_event)
+	_scenario_view.changes_requested.connect(_edits.apply)
 
 func _connect_lists() -> void:
 	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
@@ -173,6 +202,7 @@ func rebuild() -> void:
 	if adventure != null: _problems = AdventureProblems.new(_graph, _all_events).problems
 	_map.problems = _problems
 	_event_view.problems = _problems
+	_event_view.encounters = _get_encounters()
 	_map.show_graph(_graph)
 	var listed: Array[AdventureEvent] = _list_events()
 	_fill_event_shelf()

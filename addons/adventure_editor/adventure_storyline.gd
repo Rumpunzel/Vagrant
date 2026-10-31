@@ -57,7 +57,7 @@ func get_unknown_stages(row: Row) -> Array[String]:
 ## at most one stage per track, so ticking another moves it
 func get_changes_ticking(row: Row, track: AdventureStageTrack, stage: String, on: bool) -> Array[Array]:
 	if row.decision == null: return _get_changes_needing(row.event, track.name, stage, on)
-	var file: Resource = _get_file(row.decision, _get_file(row.event, encounter))
+	var file: Resource = AdventureEventEditing.get_file(row.decision, AdventureEventEditing.get_file(row.event, encounter))
 	var consequence: AdventureStageConsequence = _find_consequence(row, track.name)
 	var none: Array[Array] = [ ]
 	if on and consequence != null:
@@ -110,7 +110,7 @@ func _add_outcome_rows(event: AdventureEvent, page: AdventurePage) -> void:
 			rows.append(row)
 
 func _get_changes_needing(event: AdventureEvent, track_name: String, stage: String, on: bool) -> Array[Array]:
-	var file: Resource = _get_file(event, encounter)
+	var file: Resource = AdventureEventEditing.get_file(event, encounter)
 	var condition: AdventureStageCondition = _find_condition(event, track_name)
 	var conditions: Array[AdventureCondition] = event.conditions.duplicate()
 	if condition == null:
@@ -140,8 +140,3 @@ func _find_consequence(row: Row, track_name: String) -> AdventureStageConsequenc
 ## An empty subject is the encounter of the event
 func _is_about_it(subject: String) -> bool:
 	return subject.is_empty() or Files.load_existing(subject) == encounter
-
-## The file [param resource] is stored in; [param fallback] while it is stored nowhere yet
-static func _get_file(resource: Resource, fallback: Resource) -> Resource:
-	if resource.resource_path.is_empty(): return fallback
-	return resource if not resource.resource_path.contains("::") else load(AdventureEventEditing.get_file_path(resource))

@@ -51,8 +51,5 @@ static func get_placed_special_prefix(root: Resource, entry: Resource) -> String
 ## Placed special nodes exist only through their position, so tidying keeps it
 static func is_placed_special(key: String) -> bool: return key.contains("/%s/" % PLACED_SPECIALS)
 
-static func get_switch_key(root: Resource, scenario: Resource) -> String:
-	return "%s/switch/%s" % [get_key(root), get_key(scenario)]
-
 func save_for(adventure: Adventure) -> void:
 	ResourceSaver.save(self, get_path_for(adventure))
