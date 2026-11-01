@@ -38,16 +38,16 @@ positions = Dictionary[String, Vector2]({
 "uid://c16ehct0w6n48/uid://m4wl5ad8o0i7/uid://m4wl5ad8o0i7": Vector2(420, 380),
 "uid://ca3sv437yiklg": Vector2(480, -180),
 "uid://cs40ge42lw0ry": Vector2(-360, 140),
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_0x8r7": Vector2(440, 520),
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_b3ed1": Vector2(700, 320),
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_j24m5": Vector2(420, 0),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_0x8r7": Vector2(920, 720),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_b3ed1": Vector2(600, 520),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_j24m5": Vector2(1320, -40),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/::Resource_yrhxu": Vector2(280, 240),
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/host": Vector2(760, 60),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/host": Vector2(1340, 500),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/encounters/eleanor/meeting_eleanor.tres::Resource_0x8r7": Vector2(560, 400),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/encounters/eleanor/meeting_eleanor.tres::Resource_b3ed1": Vector2(560, 260),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/encounters/eleanor/meeting_eleanor.tres::Resource_j24m5": Vector2(280, 0),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/res://adventure/adventures/encounters/eleanor/meeting_eleanor.tres::Resource_yrhxu": Vector2(260, 260),
-"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/special/previous/0": Vector2(1080, 300),
+"uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/special/previous/0": Vector2(920, 280),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/stage/Storyline: Met": Vector2(380, 340),
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh": Vector2(0, 0),
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/host": Vector2(-520, 260),
@@ -76,6 +76,6 @@ graph_heights = Dictionary[String, float]({
 })
 graph_views = Dictionary[String, Vector3]({
 "uid://bxwqtk0p80o4g": Vector3(-492, -159, 1),
-"uid://d3cv8d5e65vwh": Vector3(0, 0, 1),
+"uid://d3cv8d5e65vwh": Vector3(-119, -14, 1),
 "uid://m4wl5ad8o0i7": Vector3(-100, -59, 1)
 })

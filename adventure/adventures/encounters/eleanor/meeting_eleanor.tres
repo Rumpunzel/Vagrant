@@ -37,10 +37,16 @@ description = "Approach and greet her."
 transition = SubResource("Resource_j24m5")
 consequences = Array[ExtResource("3_0imj5")]([SubResource("Resource_here"), SubResource("Resource_met")])
 
+[sub_resource type="Resource" id="b0ump"]
+script = ExtResource("1_npy2t")
+description = "Continue."
+transition = SubResource("Resource_j24m5")
+
 [sub_resource type="Resource" id="Resource_0x8r7"]
 script = ExtResource("3_t43k6")
 description = "Oops, you accidentaly the claps of your ass cheeks.
 Dummy thicc."
+decisions = Array[ExtResource("1_npy2t")]([SubResource("b0ump")])
 
 [sub_resource type="Resource" id="piem0"]
 script = ExtResource("8_cdjox")
@@ -67,7 +73,6 @@ transition = SubResource("Resource_b3ed1")
 [resource]
 script = ExtResource("3_t43k6_event")
 conditions = Array[ExtResource("1_k8kem")]([SubResource("Resource_unmet")])
-text_layering = 2
 decisions_layering = 2
 title = "The Mysterious Woman"
 description = "A young woman knocks her mace against the heavy gate of the ruined keep."
