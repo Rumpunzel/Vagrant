@@ -14,7 +14,7 @@ enum Pick {
 	ALL,
 }
 
-const UNUSED: Array[StringName] = [&"description", &"background", &"ambience", &"decisions", &"text_layering", &"decisions_layering"]
+const UNUSED: Array[StringName] = [&"description", &"background", &"ambience", &"decisions", &"text_layering", &"decisions_layering", &"no_rest"]
 
 @export var pick: Pick = Pick.FIRST
 @export var events: Array[AdventureEvent]

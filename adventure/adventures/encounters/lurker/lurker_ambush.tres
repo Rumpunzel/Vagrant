@@ -54,4 +54,5 @@ conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurking"), Sub
 decisions_layering = 2
 description = "The water beside the path stirs. Rings spread across the black surface, though nothing broke it, and the reeds go quiet."
 decisions = Array[ExtResource("2_74683")]([SubResource("Resource_continue")])
+no_rest = true
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

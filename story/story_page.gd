@@ -14,6 +14,8 @@ var events: Array[AdventureEvent]
 var fight: Fight
 ## Taken right away instead of showing the page, e.g. a fight lost on arrival
 var forced_choice: StoryChoice
+## The party can neither catch its breath nor make camp here ([method AdventurePage.forbids_rest])
+var forbids_rest: bool = false
 
 func _init(
 	from_adventure_page: AdventurePage,

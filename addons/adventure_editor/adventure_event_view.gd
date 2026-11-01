@@ -123,6 +123,18 @@ static func _toggled_only(layering: AdventureEvent.Layering) -> AdventureEvent.L
 static func _toggled_location(layering: AdventureEvent.Layering) -> AdventureEvent.Layering:
 	return AdventureEvent.Layering.REPLACES_LOCATION if layering == AdventureEvent.Layering.ADDS else AdventureEvent.Layering.ADDS
 
+## Whether the party may catch its breath and make camp while [param page] shows; clicking toggles it (one undo step)
+func _make_rest_row(page: AdventurePage) -> Button:
+	var row: Button = Button.new()
+	row.flat = true
+	row.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	row.text = ("✕ " if page.no_rest else "✓ ") + "Resting (catch breath, make camp)"
+	row.modulate = FADED if page.no_rest else Color.WHITE
+	row.tooltip_text = "No rest here; click to allow it" if page.no_rest else "Resting is allowed; click to forbid it"
+	var action: String = "%s: %s" % [AdventureGraph.get_title(page), "rest allowed" if page.no_rest else "no rest here"]
+	row.pressed.connect(_request.bind(page, &"no_rest", not page.no_rest, action, _file_for(null, page)))
+	return row
+
 ## [param property] empty: its own part, always there
 func _make_preview_row(text: String, hidden: bool, property: StringName, toggled: AdventureEvent.Layering) -> Button:
 	var row: Button = Button.new()
@@ -177,6 +189,7 @@ func _add_page(page: AdventurePage, at: Vector2) -> GraphNode:
 		content.add_child(_make_condition_tags(_event, _file_for(null, page)))
 		content.add_child(_make_info("On the page:"))
 		content.add_child(_make_page_preview())
+	if page == _event or page.no_rest: content.add_child(_make_rest_row(page))
 	var node: GraphNode = _add_node(_key(page), page, AdventureGraph.get_title(page), content, at)
 	node.set_slot(0, page != _event, 0, Color.WHITE, false, 0, Color.WHITE)
 	var outlets: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outlets(page)

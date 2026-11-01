@@ -10,6 +10,8 @@ extends AdventurePageReference
 @export var background: Texture2D
 @export var ambience: AudioStream
 @export var decisions: Array[AdventureDecision]
+## While it shows, the party can neither catch its breath nor make camp: someone or something is right there
+@export var no_rest: bool = false
 
 func prepare() -> void: pass
 
@@ -24,6 +26,9 @@ func get_area_background() -> Texture2D: return null
 func get_ambience(_story: Story) -> AudioStream: return ambience
 
 func get_decisions(_story: Story) -> Array[AdventureDecision]: return decisions.duplicate()
+
+## Itself or an event shown on it forbids resting ([member no_rest])
+func forbids_rest(story: Story) -> bool: return no_rest or get_events(story).any(func(event: AdventureEvent) -> bool: return event.no_rest)
 
 ## The events shown on it; a plain page shows none
 func get_events(_story: Story) -> Array[AdventureEvent]:

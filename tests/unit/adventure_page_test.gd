@@ -161,6 +161,17 @@ func test_transition_loads_its_page() -> void:
 	var page: AdventureLocation = _location("", "")
 	assert_object(page.get_adventure_page()).is_same(page)
 
+func test_no_rest_on_the_page_or_from_an_event_on_it() -> void:
+	var page: AdventureLocation = _location("Ruin", "Damp.")
+	assert_bool(page.forbids_rest(_story)).is_false()
+	var eleanor: AdventureEvent = _event("", "A woman knocks at the gate.")
+	eleanor.no_rest = true
+	TestAdventures.list(page, [eleanor] as Array[AdventureEvent])
+	assert_bool(page.forbids_rest(_story)).is_true()
+	var burning: AdventurePage = AdventurePage.new()
+	burning.no_rest = true
+	assert_bool(burning.forbids_rest(_story)).is_true()
+
 func _location(title: String, description: String) -> AdventureLocation:
 	var location: AdventureLocation = AdventureLocation.new()
 	location.title = title

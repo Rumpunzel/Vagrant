@@ -173,31 +173,30 @@ func get_how_often_page_has_been_entered(adventure_page: AdventurePage) -> int:
 func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	assert(_protagonist)
 	assert(adventure_page)
-	var forced_choices: Array[StoryChoice] = []
+	var choices: Array[StoryChoice] = _create_story_choices(adventure_page, adventure_page.get_decisions(self))
+	# Nothing to choose (only dice decisions, no breath dice left): the first one fails right away
+	var failed: StoryChoice = null
+	if not choices.any(func(choice: StoryChoice) -> bool: return choice.is_available()):
+		failed = StoryChoice.from_adventure_decision(_create_failed_decision(choices.front().get_adventure_decision() as AdventureDiceDecision), _protagonist)
+		choices = [failed]
 	var story_page: StoryPage = StoryPage.new(
 		adventure_page,
 		adventure_page.get_page_title(self),
 		adventure_page.get_description(self),
 		adventure_page.get_background(self),
 		adventure_page.get_ambience(self),
-		_create_story_choices(adventure_page, adventure_page.get_decisions(self), forced_choices),
+		choices,
 		adventure_page.get_events(self),
 	)
-	if not forced_choices.is_empty(): story_page.forced_choice = forced_choices.front()
+	story_page.forced_choice = failed
+	story_page.forbids_rest = adventure_page.forbids_rest(self)
 	return story_page
 
-## Choices that must be taken right away (fights lost on arrival) are also added to [param forced_choices]
-func _create_story_choices(adventure_page: AdventurePage, decisions: Array[AdventureDecision], forced_choices: Array[StoryChoice]) -> Array[StoryChoice]:
+func _create_story_choices(adventure_page: AdventurePage, decisions: Array[AdventureDecision]) -> Array[StoryChoice]:
 	if decisions.is_empty(): decisions.append(AdventureDecision.get_turn_back())
 	var story_choices: Array[StoryChoice] = []
 	for decision: AdventureDecision in decisions:
-		if decision is AdventureFightDecision:
-			var fight: Fight = _create_fight(adventure_page, decision as AdventureFightDecision)
-			if fight.is_ongoing(): story_choices.append_array(_create_fight_choices(fight))
-			else:
-				var lost_choice: StoryChoice = StoryChoice.from_adventure_decision(_create_lost_fight_decision(fight), _protagonist)
-				story_choices.append(lost_choice)
-				forced_choices.append(lost_choice)
+		if decision is AdventureFightDecision: story_choices.append_array(_create_fight_choices(_create_fight(adventure_page, decision as AdventureFightDecision)))
 		else: story_choices.append(StoryChoice.from_adventure_decision(decision, _protagonist))
 	return story_choices
 
@@ -219,14 +218,13 @@ func _find_decision_owner(page: AdventurePage, decision: AdventureDecision) -> A
 		if holder != null: return holder
 	return null
 
-## A fight already lost on arrival (no breath dice to resist with) only offers its failure path
-func _create_lost_fight_decision(fight: Fight) -> AdventureDecision:
-	assert(fight.outcome == Fight.Outcome.LOST)
-	var lost_decision: AdventureDecision = AdventureDecision.new()
-	lost_decision.description = "You can no longer resist."
-	lost_decision.transition = fight.decision.failure_transition
-	lost_decision.consequences = fight.decision.failure_consequences
-	return lost_decision
+## A save or fight failed without rolling (no breath dice to roll): its failure path
+func _create_failed_decision(decision: AdventureDiceDecision) -> AdventureDecision:
+	var failed_decision: AdventureDecision = AdventureDecision.new()
+	failed_decision.description = "You can no longer resist." if decision is AdventureFightDecision else "You are out of breath."
+	failed_decision.transition = decision.failure_transition
+	failed_decision.consequences = decision.failure_consequences
+	return failed_decision
 
 func _create_fight_choices(fight: Fight) -> Array[StoryChoice]:
 	return [StoryFightDecision.new(fight, false), StoryFightDecision.new(fight, true)]

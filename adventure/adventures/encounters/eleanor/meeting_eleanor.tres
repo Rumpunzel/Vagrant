@@ -72,3 +72,4 @@ decisions_layering = 2
 title = "The Mysterious Woman"
 description = "A young woman knocks her mace against the heavy gate of the ruined keep."
 decisions = Array[ExtResource("1_npy2t")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])
+no_rest = true

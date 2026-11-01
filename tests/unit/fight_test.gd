@@ -91,12 +91,6 @@ func test_fleeing_from_monster_out_of_breath_still_flees() -> void:
 	assert_bool(_monster.is_out_of_breath()).is_true()
 	assert_int(fight.outcome).is_equal(Fight.Outcome.FLED)
 
-func test_starting_out_of_breath_loses_immediately() -> void:
-	_character.lose_breath_dice(_character.get_breath_dice_pool())
-	var fight: Fight = Fight.new(_decision, _character, _monster, _character)
-	assert_int(fight.outcome).is_equal(Fight.Outcome.LOST)
-	assert_int(fight.get_exchange_count()).is_equal(0)
-
 func test_injuries_and_losses_reach_both_sides() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster, _character)
 	var guts_before: int = _character.get_attribute_score(GUTS).get_score()

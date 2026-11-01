@@ -11,6 +11,8 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 - Start: d4, d6, d8, d10, d12.
 - Rolled for saves and fights. A die above the rolled attribute is **lost** (still counts for the result).
 - Catching breath: exhaust one die type, recover all others. The last die type can't be exhausted.
+- **No rest:** some places and events forbid catching breath and making camp (someone or something is right there, e.g. meeting Eleanor, the water stirring before the Lurker strikes). Fights always do.
+- **None left:** saves and fights can't be chosen (catch your breath first). If nothing else can be done, the first of them fails at once: a save takes its failure, a fight is lost.
 
 ## Saves
 - Roll chosen breath dice; highest ≥ difficulty = success. Margin = difference.
@@ -30,7 +32,7 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 - **Damage** = highest usable weapon die → stance → armour reduction, at least 0.
 - Injuries and losses apply after the exchange.
 - **Afterwards:** a monster that lost (or failed its save) stays incapacitated; the story decides what happens to it.
-- **End:** player incapacitated while fleeing → lost; player flees → fled; otherwise 0 breath dice or incapacitated → that side is out (both = draw). Entering a fight with 0 breath = lost.
+- **End:** player incapacitated while fleeing → lost; player flees → fled; otherwise 0 breath dice or incapacitated → that side is out (both = draw). Entering a fight with 0 breath = lost (see Breath dice: None left).
 
 ## Weapons
 - A weapon die within the wield attribute (default Guts) on an unmarked face is **free**: it strikes and threatens, no mark.
