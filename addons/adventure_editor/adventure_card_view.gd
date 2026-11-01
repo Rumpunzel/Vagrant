@@ -165,8 +165,8 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 
 func _get_effect_additions() -> Dictionary[String, Resource]:
 	var additions: Dictionary[String, Resource] = {}
-	var types: Dictionary[String, Script] = AdventureEventEditing.get_consequence_types()
-	for type_name: String in types: additions[AdventureEventEditing.get_type_name(type_name)] = AdventureEventEditing.make_consequence(types[type_name])
+	var types: Dictionary[String, Script] = AdventureMakers.get_consequence_types()
+	for type_name: String in types: additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_consequence(types[type_name])
 	return additions
 
 ## Every kind of condition, "It can fight / is beaten / is dead" for a monster encounter, and "is …" for each stage of the event's encounter
@@ -175,14 +175,14 @@ func _get_condition_additions(_holder: AdventureEvent) -> Dictionary[String, Res
 	var encounter: AdventureEncounter = _get_encounter()
 	if encounter != null and encounter.profile is MonsterProfile:
 		for state: AdventureMonsterCondition.State in AdventureMonsterCondition.STATE_TEXTS:
-			var condition: AdventureMonsterCondition = AdventureEventEditing.make_monster_condition(state)
+			var condition: AdventureMonsterCondition = AdventureMakers.make_monster_condition(state)
 			additions[condition.describe()] = condition
 	if encounter != null:
 		for track: AdventureStageTrack in encounter.tracks:
 			if track == null: continue
-			for stage: String in track.stages: additions["%s is %s" % [track.name, stage]] = AdventureEventEditing.make_stage_condition(track.name, stage)
-	var types: Dictionary[String, Script] = AdventureEventEditing.get_condition_types()
-	for type_name: String in types: additions[AdventureEventEditing.get_type_name(type_name)] = AdventureEventEditing.make_condition(types[type_name])
+			for stage: String in track.stages: additions["%s is %s" % [track.name, stage]] = AdventureMakers.make_stage_condition(track.name, stage)
+	var types: Dictionary[String, Script] = AdventureMakers.get_condition_types()
+	for type_name: String in types: additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_condition(types[type_name])
 	return additions
 
 ## The encounter whose events are shown, if any
@@ -191,7 +191,7 @@ func _get_encounter() -> AdventureEncounter: return null
 ## Its own text, or its kind's name when it has none to show
 static func _describe(item: Resource) -> String:
 	var text: String = item.call(&"describe")
-	return text if not text.is_empty() else AdventureEventEditing.get_type_name(item.get_script().get_global_name())
+	return text if not text.is_empty() else AdventureMakers.get_type_name(item.get_script().get_global_name())
 
 ## Buttons for new choices, fights and saves
 func _make_add_bar(page: AdventurePage) -> HBoxContainer:
@@ -210,9 +210,9 @@ func _make_add_bar(page: AdventurePage) -> HBoxContainer:
 
 func _get_add_actions(page: AdventurePage) -> Dictionary[String, Callable]:
 	return {
-		"Add choice": _add_decision.bind(page, AdventureEventEditing.make_choice),
-		"Add fight": _add_decision.bind(page, AdventureEventEditing.make_fight),
-		"Add save": _add_decision.bind(page, AdventureEventEditing.make_save),
+		"Add choice": _add_decision.bind(page, AdventureMakers.make_choice),
+		"Add fight": _add_decision.bind(page, AdventureMakers.make_fight),
+		"Add save": _add_decision.bind(page, AdventureMakers.make_save),
 	}
 
 func _get_add_icons() -> Dictionary[String, Texture2D]:

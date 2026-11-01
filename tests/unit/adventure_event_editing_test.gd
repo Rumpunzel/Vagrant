@@ -59,36 +59,36 @@ func test_pages_inside_the_file_are_not_lost_by_relinking() -> void:
 	assert_bool(AdventureEventEditing.would_lose_page(ambush, both_ways)).is_true()
 
 func test_new_pages_and_decisions_have_an_id_in_their_file() -> void:
-	var page: AdventurePage = AdventureEventEditing.make_page()
+	var page: AdventurePage = AdventureMakers.make_page()
 	assert_str(page.resource_scene_unique_id).is_not_empty()
 	assert_str(AdventureLayout.get_key(page)).is_equal("::" + page.resource_scene_unique_id)
-	assert_str(AdventureEventEditing.make_choice().description).is_equal("New choice.")
-	var fight: AdventureFightDecision = AdventureEventEditing.make_fight()
+	assert_str(AdventureMakers.make_choice().description).is_equal("New choice.")
+	var fight: AdventureFightDecision = AdventureMakers.make_fight()
 	assert_array(fight.enemies).is_empty()
 	assert_str(fight.resource_scene_unique_id).is_not_empty()
-	assert_object(AdventureEventEditing.make_save().attribute).is_null()
+	assert_object(AdventureMakers.make_save().attribute).is_null()
 
 func test_new_events() -> void:
-	var event: AdventurePage = AdventureEventEditing.make_event("Wolves", false)
+	var event: AdventurePage = AdventureMakers.make_event("Wolves", false)
 	assert_str(event.title).is_equal("Wolves")
 	assert_bool(event is AdventureEventScenario).is_false()
-	assert_object(AdventureEventEditing.make_event("Wolves", true)).is_instanceof(AdventureEventScenario)
+	assert_object(AdventureMakers.make_event("Wolves", true)).is_instanceof(AdventureEventScenario)
 	var location: AdventureEventScenario = _page("res://locations/swamp/temple_ruin.tres")
-	assert_str(AdventureEventEditing.get_event_path(location, "Wolf Pack")).is_equal("res://locations/swamp/events/wolf_pack.tres")
+	assert_str(AdventureMakers.get_event_path(location, "Wolf Pack")).is_equal("res://locations/swamp/events/wolf_pack.tres")
 	# A scenario in the events folder already: its options next to it
 	var scenario: AdventureEventScenario = _page("res://locations/swamp/events/lurker.tres")
-	assert_str(AdventureEventEditing.get_event_path(scenario, "Wolf Pack")).is_equal("res://locations/swamp/events/wolf_pack.tres")
+	assert_str(AdventureMakers.get_event_path(scenario, "Wolf Pack")).is_equal("res://locations/swamp/events/wolf_pack.tres")
 
 func test_stage_conditions_are_about_the_own_encounter() -> void:
-	var condition: AdventureStageCondition = AdventureEventEditing.make_stage_condition("State", "Beaten")
+	var condition: AdventureStageCondition = AdventureMakers.make_stage_condition("State", "Beaten")
 	assert_str(condition.subject).is_empty()
 	assert_str(condition.track).is_equal("State")
 	assert_array(condition.stages).contains_exactly(["Beaten"])
 	assert_str(condition.resource_scene_unique_id).is_not_empty()
 
 func test_special_references() -> void:
-	var host: AdventurePageReference = AdventureEventEditing.make_special_reference(false)
-	var previous: AdventurePageReference = AdventureEventEditing.make_special_reference(true)
+	var host: AdventurePageReference = AdventureMakers.make_special_reference(false)
+	var previous: AdventurePageReference = AdventureMakers.make_special_reference(true)
 	assert_object(host).is_instanceof(AdventureHostReference)
 	assert_object(previous).is_instanceof(AdventurePreviousLocationReference)
 	assert_str(previous.resource_scene_unique_id).is_not_empty()
@@ -143,14 +143,14 @@ func test_new_encounters() -> void:
 	adventure.resource_path = "res://adventures/test.tres"
 	var ruin: AdventureLocation = AdventureLocation.new()
 	ruin.resource_path = "res://adventures/locations/ruin.tres"
-	var npc: Dictionary[String, Resource] = AdventureEventEditing.make_encounter_files(adventure, "Old Man", ruin)
+	var npc: Dictionary[String, Resource] = AdventureMakers.make_encounter_files(adventure, "Old Man", ruin)
 	assert_array(npc.keys()).contains_exactly(["res://adventures/encounters/old_man/old_man.tres"])
 	var old_man: AdventureEncounter = npc.values()[0]
 	assert_array(old_man.places).contains_exactly(["res://adventures/locations/ruin.tres"])
 	assert_array(old_man.tracks[0].stages).contains_exactly(["Unmet", "Met"])
 	assert_array(old_man.events).is_empty()
 	var cutthroat: MonsterProfile = TestMonsters.cutthroat()
-	var monster: Dictionary[String, Resource] = AdventureEventEditing.make_encounter_files(adventure, "Cutthroat", ruin, cutthroat)
+	var monster: Dictionary[String, Resource] = AdventureMakers.make_encounter_files(adventure, "Cutthroat", ruin, cutthroat)
 	# The ambush first, so the encounter points at its file once both are saved
 	assert_array(monster.keys()).contains_exactly(["res://adventures/encounters/cutthroat/cutthroat_ambush.tres", "res://adventures/encounters/cutthroat/cutthroat.tres"])
 	var encounter: AdventureEncounter = monster.values()[1]
@@ -173,14 +173,14 @@ func test_forgetting_an_area() -> void:
 	assert_array(AdventureEventEditing.get_changes_forgetting_area(swamp, pages)).contains_exactly([[ruin, &"area", null, ruin]])
 
 func test_consequence_types() -> void:
-	var types: Dictionary[String, Script] = AdventureEventEditing.get_consequence_types()
+	var types: Dictionary[String, Script] = AdventureMakers.get_consequence_types()
 	assert_array(types.keys()).contains(["AdventureInjuryConsequence", "AdventureStageConsequence", "AdventureMoveConsequence"])
 	assert_array(types.keys()).not_contains(["AdventureConsequence"])
-	assert_str(AdventureEventEditing.get_type_name("AdventureMoveConsequence")).is_equal("Move")
-	assert_str(AdventureEventEditing.get_type_name("AdventureStageCondition")).is_equal("Stage")
-	assert_array(AdventureEventEditing.get_condition_types().keys()).contains(["AdventureStageCondition", "AdventureIsAlwaysTrueCondition"])
-	assert_array(AdventureEventEditing.get_condition_types().keys()).not_contains(["AdventureCondition"])
-	var injury: AdventureConsequence = AdventureEventEditing.make_consequence(types["AdventureInjuryConsequence"])
+	assert_str(AdventureMakers.get_type_name("AdventureMoveConsequence")).is_equal("Move")
+	assert_str(AdventureMakers.get_type_name("AdventureStageCondition")).is_equal("Stage")
+	assert_array(AdventureMakers.get_condition_types().keys()).contains(["AdventureStageCondition", "AdventureIsAlwaysTrueCondition"])
+	assert_array(AdventureMakers.get_condition_types().keys()).not_contains(["AdventureCondition"])
+	var injury: AdventureConsequence = AdventureMakers.make_consequence(types["AdventureInjuryConsequence"])
 	assert_object(injury).is_instanceof(AdventureInjuryConsequence)
 	assert_str(injury.resource_scene_unique_id).is_not_empty()
 

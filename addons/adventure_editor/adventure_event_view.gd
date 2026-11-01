@@ -273,7 +273,7 @@ func _on_connection_request(from: StringName, port: int, to: StringName, _to_por
 	var outlet: AdventureEventGraph.Outlet = _get_port(from, port)
 	if target.is_empty() or outlet == null: return
 	if target[0] != Target.PAGE:
-		var reference: AdventurePageReference = AdventureEventEditing.make_special_reference(target[0] == Target.PREVIOUS)
+		var reference: AdventurePageReference = AdventureMakers.make_special_reference(target[0] == Target.PREVIOUS)
 		# Before the request: applying it redraws the graph, which then draws the link to this node
 		layout.special_links[_key(reference)] = _key_of_node(to)
 		_request_reference(from, port, reference)
@@ -288,7 +288,7 @@ func _on_connection_request(from: StringName, port: int, to: StringName, _to_por
 ## A new page inside the file, where the link was let go
 func _on_connection_to_empty(from: StringName, port: int, release_position: Vector2) -> void:
 	if _get_port(from, port) == null: return
-	var page: AdventurePage = AdventureEventEditing.make_page()
+	var page: AdventurePage = AdventureMakers.make_page()
 	layout.positions[_key(page)] = _to_graph(release_position)
 	_request_reference(from, port, page)
 
@@ -301,7 +301,7 @@ func _request_reference(from: StringName, port: int, reference: AdventurePageRef
 	# The automatic "Turn back.": a choice leading there takes its place
 	if outlet.decision == null:
 		if reference == null: return
-		var choice: AdventureDecision = AdventureEventEditing.make_choice()
+		var choice: AdventureDecision = AdventureMakers.make_choice()
 		choice.description = "Continue."
 		choice.transition = reference
 		var decisions: Array[AdventureDecision] = [choice]

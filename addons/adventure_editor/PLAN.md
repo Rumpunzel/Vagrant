@@ -1,287 +1,67 @@
 # Adventure Editor — Plan
 
-Status: **v1 + events tab built** (2026-10-25). Waiting on: manual check in the editor by user (see Open).
-Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2D / 3D / Script), starting as a map of areas and locations.
+Status (2026-11-01): built through encounters, one event screen and the cleanups on branch `refactor/encounters`; see "Built" for what exists,
+"Open" and "Later" for what doesn't. The log at the end has the history.
+Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2D / 3D / Script).
 
 ## Decisions
 - **Main-screen plugin.** Opens by double-clicking an `Adventure` `.tres` (`_handles` / `_edit`), plus a picker in the tab.
-- **One adventure per graph.** Pages are found by walking links from `starting_page`; areas don't list their pages, so the walk is the only source.
-- **Links stay `AdventureTransition`s.** Godot can't load `.tres` files that reference each other in a loop and there is no real way around that; the editor hides the indirection (reads it now, creates it later).
-- **No data changes without a good reason.** A *location* is a page with `area` set; no new class for now.
-- **Graph:** area = `GraphFrame` (area background dimmed behind it), location = `GraphNode` (its background as a thumbnail), link = connection from a location's decision to the location it leads to. Decisions without a transition (turn back) draw nothing.
-- **Events are attachments:** shown as cards on their host location, not as graph nodes. One event can have several hosts (generic encounters; an event that may happen in one of several places, but only once). Later they get their own tab in the editor window, so they stay lightweight on the map.
-- **Layout side file** per adventure, next to it: `<adventure>.layout.tres`, node positions keyed by page UID (path for pages without one); frames shrink to fit their locations, so they need no rects. Written on the first move. Game `.tres` stay untouched by moving nodes.
-- **Saving edits (v2+)** goes through `EditorUndoRedoManager` and the editor's own saving, so UIDs survive (scripted `ResourceSaver.save()` outside the editor drops them).
-- **Links through events** (a location reached only via an event or its inner pages, e.g. Lurker won → Temple Ruin) are drawn as a dashed line from the host location.
-- **Pages without an area** stay in the graph, outside all area frames.
-- Untitled pages / events show their file name, capitalized (`hearing_eleanor` → "Hearing Eleanor"). Area frames keep an 80 px margin around their locations (Godot's default is 40).
-- `AdventurePage`'s exports are public (`title`, `description`, `area`, `background`, `ambience`, `conditions`, `decisions`, `exclusivity`, `events`); the editor reads them directly, the `get_*(story)` methods stay for the resolved, event-dependent values. Today only events set one (Meeting Eleanor, Lurker ambush), locations use their area's, so a location node shows its own background if set, else none (the area's is already behind the frame).
-- UI is kept plain; the user styles it by hand later.
-- **Icons wherever possible** (user, 2026-10-29): every context menu item gets one by what it does (`AdventureGraphView.MENU_ICONS`; fights, saves and monsters the game's icons).
+- **One adventure per editor.** Map pages are found by walking links from `starting_page`, plus the encounters listed on the adventure.
+- **Graphs only where the content is a graph of links** (the map; the pages behind an event). Collections and orders are lists, properties the
+  Inspector (with a plugin for UID fields). Text is edited in the Inspector, not in cards.
+- **Links stay `AdventureTransition`s**, and back-pointers (to encounters and locations) go by UID: Godot can't load files that reference each
+  other in a loop, and nothing can point inside another file.
+- **The world is locations and encounters.** A location shows its own events and those of the encounters that can be there, in its order;
+  an encounter's story is in its stage tracks, its monster's body in runtime state (can fight / beaten / dead).
+- **Layout side file** per adventure (`<adventure>.layout.tres`): node positions, links to placed special nodes, page graphs' heights and views.
+  Game `.tres` stay untouched by moving nodes.
+- **Edits** go through `EditorUndoRedoManager` and the editor's own saving, so UIDs survive (scripted `ResourceSaver.save()` outside the editor
+  drops them); new files and deleting are part of their undo step (deleted files go to the system trash).
+- **Icons wherever possible** (user): menu items get one by the words in them (`AdventureActionMenu`), buttons by what they do.
+- **Reconsider critically** (user): after each step an honest check whether it is still the right way; doubts go to "Open".
 
 ## Design
 | File | Owns |
 |---|---|
-| `adventure_editor_plugin.gd` | Main screen tab "Adventure": handles `Adventure`, remembers the open one in the editor layout, rebuilds on resource saves; passes its undo manager, reports unsaved changes (`_get_unsaved_status`) and saves them (`_save_external_data`) |
-| `adventure_editor.gd` / `.tscn` (`AdventureEditor`, root) | Adventure picker and Find…, tabs "Map" (graph + event sidebar) / "Events" / "Problems", the event list as a tree, "At:" host picker; wiring (`_make_dialogs`, `_connect_views`, `_connect_lists`): every view's `changes_requested` goes to `AdventureEdits`; dialogs for new locations, events, options; offering events; "Play from here"; rebuild on edits and Inspector changes, every event file found once per rebuild (`_all_events`). `setup()` instead of `_ready`, so opening the scene doesn't run it |
-| `adventure_edits.gd` (`AdventureEdits`) | **Edits** (unit tested with a plain `UndoRedo`): `apply(changes, action, file)` — [resource, property, value] changes as one undo step, marking the file they are stored in unsaved; `save()`, `has_unsaved_changes()`, `create_file()` (not undone). Works with the editor's `EditorUndoRedoManager` (the plugin's) or an `UndoRedo` |
-| `adventure_graph.gd` (`AdventureGraph`) | **Map model** (unit tested): `get_title` (title; untitled: file name, or for a page stored inside another file the start of its text); walks from `starting_page`; `pages` (nodes), `areas`, `links` (`Link.through_event`), `event_hosts` (every event met, with the pages listing it), `get_location_hosts(event)` (map pages it happens on, also through scenarios), `get_top_events()`. `get_references(decision)`: every `AdventurePageReference` property, `transition` first (property list, since decision scripts aren't `@tool` and are placeholders in the editor); host references lead to no page on the map |
-| `adventure_event_graph.gd` (`AdventureEventGraph`) | **Event model** (unit tested): `pages` (event + pages behind it, not through nested events), `exits` (locations), `depths`, `leads_to_host`. `get_outlets(page)`: a row per decision (plain: its target / host / back and consequences; fight or save: `to_check`); `get_ports(page)`: what the page's output ports lead to, outcomes inlined. `get_outcomes(check)`: fixed per kind (fight: Won / Lost / Fled / Draw, other dice checks: Success / Failure) with their consequences, other page references after. `describe_check` ("Fight: Lurker", "Save: Nerves 5"), `describe_consequences` (`AdventureConsequence.describe()`, consequences are `@tool` now) |
-| `adventure_event_overview.gd` (`AdventureEventOverview`) | **Overview model** (unit tested): `entries` (one per event and per sub-event of the pages inside, recursively, each with its `AdventureEventGraph`, `listed_as`, parent entry and page, the `switch` it is an option of) and `switches` (one per scenario, `outer` for nested ones); texts: conditions (`AdventureCondition.describe()`), what Hide flags hide at a host, monsters shared / per host |
-| `adventure_graph_view.gd` (`AdventureGraphView`, abstract) | Shared view: nodes by layout key, frames, dashed links (internal layer above the frames), page content (thumbnail, event cards → `_on_event_card_pressed`), wrapping labels, selection → Inspector, positions → `layout` (`layout_changed`), `scroll_to_nodes`, `focus_node` |
-| `adventure_map_view.gd` (`AdventureMapView`) | Frames per area, one port per node, dashed links through events, unreachable pages faded; requests edits (`link_requested`, `unlink_requested` via `right_disconnects`, `location_requested` from the right-click menu, `areas_requested` after a move: Alt+drag lets locations go of their frame, the frame under the center decides) |
-| `adventure_event_view.gd` (`AdventureEventView`) | The overview: a frame per entry side by side; page cards with their whole text, decision cards (choice: one port; fight / save: colored, icon, a port per outcome; ▲ ▼ ✕; click → Inspector) and an add bar; a host node per frame; faded exits; info lines on the event node; sub-events dashed from their page. Default places: a column per step, stacked by real height a frame after building. Requests: `reference_requested`, `decisions_requested`, `references_cleared` (delete page); refuses losing pages stored inside the file. Layout keys `<root>/<entry event>/<page or host>`; a switch node per scenario before its options' frames (rows linked to the options, ▲ ▼ ✕, + option); condition and effect tags (`_make_tags`); dotted lines from monster conditions to the fight card spawning the monster |
-| `adventure_layout.gd` (`AdventureLayout`) | Side file: positions, links to placed special nodes; builds and recognizes every key: `get_key` (a file's UID, an inside resource's `::id`), `is_location_key`, `get_event_key`, `get_placed_special_prefix` / `is_placed_special`, `get_switch_key`; `get_placed_pages()` |
-| `adventure_map_editing.gd` (`AdventureMapEditing`) | **Map edits as data** (unit tested): `make_link` (plain decision + `AdventureTransition.leading_to`), `without_links`, `make_location`, `make_area`, file paths and names |
-| `adventure_event_editing.gd` (`AdventureEventEditing`) | **Event edits as data** (unit tested): `get_file_path`, `make_reference` (same file: the page, else `AdventureTransition`), `would_loop` (through pages and events held directly), `is_inside_file`, `find_references_to`, `would_lose_page`, `make_page` / `make_choice` / `make_fight` / `make_save` (with an in-file ID), `make_event`, `get_event_path`; `get_condition_types` / `get_consequence_types` (classes in the project that can be made), `get_type_name`, `make_condition`, `make_monster_condition` (quick picks, `spawned_by` by file, none if it would loop) |
-| `adventure_new_location_dialog.gd` (`AdventureNewLocationDialog`) | Title + area (existing or "New area…" by name) |
-| `adventure_name_dialog.gd` (`AdventureNameDialog`) | Asks for a name (new events, scenarios) |
-| `adventure/adventure_transition.gd` | In the editor loads its page with plain `load()` (`Files.load_async` isn't `@tool` and is for the game's threaded loading) |
+| `adventure_editor_plugin.gd` | The main-screen tab "Adventure": handles `Adventure`, remembers the open one, passes its undo manager, reports and saves unsaved changes, adds the UID inspector |
+| `adventure_editor.gd` / `.tscn` (`AdventureEditor`) | State (adventure, map model, problems, layout, edits, every event) and the tabs: Map (graph + event sidebar), Location, Events (event list, "At:" picker, the event screen), Problems; Find…; rebuild on edits and Inspector changes; "Play from here" |
+| `adventure_editor_actions.gd` (`AdventureEditorActions`) | Everything made or deleted through a dialog: new locations, events, options, encounters (monster template), offering events made already, deleting; owns the dialogs |
+| `adventure_edits.gd` (`AdventureEdits`) | Changes ([resource, property, value(, file)]) as undo steps, new files and deleting in the same step, unsaved files, saving |
+| `adventure_makers.gd` (`AdventureMakers`) | New things: pages, decisions, events, scenarios, encounters (with an NPC's Storyline or a monster's ambush), tracks, conditions, effects, locations, areas, links, and where their files go |
+| `adventure_event_editing.gd`, `adventure_map_editing.gd` | Changes as data: listing events, forgetting what is deleted (also UID back-pointers), putting / removing / placing at locations, unlinking; file and reference helpers |
+| `adventure_graph.gd` (`AdventureGraph`) | Map model: pages, areas, links (also through events), event hosts, encounters and the locations they could show on, titles |
+| `adventure_event_graph.gd` (`AdventureEventGraph`) | One event's pages: outlets and ports, outcomes, exits, depths; texts for checks, effects, conditions and what Hide flags hide |
+| `adventure_location_overview.gd`, `adventure_location_view.gd` | The Location tab: what can happen at a location in its order (own events, encounters there / near / anywhere / that can come), banner with background and ambience, editing |
+| `adventure_storyline.gd` (`AdventureStoryline`) | An encounter's story: where its events can happen (stages, body), where their decisions lead, toggling, adding tracks and stages |
+| `adventure_event_screen.gd` (`AdventureEventScreen`) | The event screen: a plain event as one section, a scenario or encounter as a foldable section per option with its story columns and track bars; each section's page graph, its height handle |
+| `adventure_graph_view.gd` / `adventure_card_view.gd` / `adventure_event_view.gd` / `adventure_map_view.gd` | Graph views: shared nodes, lines, menus, problems, tidy; page and decision cards with condition and effect chips; an event's page graph (Host / Previous in its toolbar); the map (area frames, links) |
+| `adventure_problems.gd` (`AdventureProblems`) | The problem list, also events that can never show |
+| `adventure_uid_inspector.gd` (`AdventureUidInspector`) | UID fields in the Inspector as resource pickers with titles |
+| `adventure_layout.gd` (`AdventureLayout`) | The side file and its keys (event graph keys still name the event twice, from when a view showed several events, so saved positions stay valid) |
 
-## v1 — view only
-Shows the map; nothing in the adventure data changes. Moving nodes / frames only writes the layout file. `[~]` = built, only checkable by hand in the editor.
-- [x] Rename `AdventurePage._background` → `background` (script + `meeting_eleanor.tres`, `lurker_ambush.tres`)
-- [x] `plugin.cfg` + `adventure_editor_plugin.gd` (main screen, handles `Adventure`), enabled in `project.godot`
-- [x] Graph model (pure, no UI, unit tested with pages built in code): walk pages from `starting_page` through decisions, events and transitions; collect areas, locations, links, event hosts
-- [x] `adventure_editor.tscn` (reuse the stub: `GraphEdit`, frames, nodes) builds the view from the model
-- [x] Location node: title, background thumbnail, event cards; pages without an area as the same node outside frames
-- [x] Dashed lines for links that run through an event
-- [x] Area frame: name, dimmed background, contains its locations
-- [~] Click a location / event / area: open it in the Inspector (`EditorInterface.edit_resource`)
-- [~] Layout file: load, place new nodes automatically, save on move
-- [~] Reload when the adventure or one of its pages changes on disk / in the Inspector
-- [x] Update `CLAUDE.md` (addons section still calls `adventure_editor` "just a scene")
-
-## v1.1 — events tab (agreed 2026-10-25, view only)
-- Tabs "Map" and "Events" under the adventure picker. Events: list of all events of the adventure (left), graph of the picked one (right). An event card (on the map or inside an event) opens that event there.
-- Event graph: the event as first node (listing its hosts), the pages behind it as nodes, the locations it leads to as grey exit nodes (double-click: back to the map, centred and selected). Nested events stay cards.
-- One output port per decision outcome, labelled: the decision's text for its transition ("(back)" without one), then "↳ Failure" / "↳ Flee" / "↳ Draw" ... for the other page references.
-- Positions in the same layout file, keyed per event (`<event uid>/<page uid>`), so a page shared by two events can sit apart in each.
-- [x] Event model `AdventureEventGraph` (pages, exits, depths, outlets) + unit tests; `AdventureGraph` collects events and their hosts
-- [x] Views split: `AdventureGraphView` (shared nodes, cards, selection, layout), `AdventureMapView`, `AdventureEventView`; `AdventureEditor` becomes the root (picker, tabs, list, wiring)
-
-## v1.2 — reusable events (done 2026-10-26)
-Events should work on any page and name a page or location only when they mean to. Today the Lurker is bound to Temple Ruin three times: Fight won → `temple_ruin`, "Kill the Lurker" → `temple_ruin`, and the Lurker belongs to the page that spawned it (the ambush event), so the ambush on two pages would share one Lurker.
-
-**Engine (game code, tests, Rules Reference where it changes play):**
-- **`AdventureEventScenario`**: groups events and shows at most one, the first whose conditions pass (list order = priority); its own conditions gate the whole group. Extends `AdventurePage` so it fits a host's `events`; its options are its `events`, the page fields it doesn't use are hidden in the Inspector. Pages resolve it through one hook (`AdventurePage.resolve_event(story)`: a page returns itself, a scenario its active option or none), so the Hide flags of the chosen option act on the host as if it were there directly. Lurker: scenario "Lurker" = [Ambush (Hide All, Lurker can fight), Won (adds "Kill the Lurker", Lurker beaten)].
-- **`AdventureHostReference`** ("↺ Host"): a page reference meaning the page the event was shown on. `Story._host` = the page on which an event's decision (owner ≠ the page) was last chosen; pages behind the event keep it. References resolve through `AdventurePageReference.resolve(story)`; choices hand Story `get_transition_reference()` (the old `get_transition()` is gone). Fight won and "Kill the Lurker" point to it.
-- **Monsters shared or per host**: shared by default (keyed by the spawning event, as before); `AdventurePage.generic` on the spawning event gives each host its own (`Monsters` keyed by [event, host]). On the event, not the fight, so non-combat encounters can use it for what they spawn later.
-- Later: a condition "this event hasn't happened yet" for events that may happen in one of several places, but only once.
-
-**Editor:**
-- Events tab shows an event on its own: "↺ Host" is a node of its own, no location.
-- "At:" picker above the event graph (none or one of its hosts). With a host: "↺ Host" becomes that page, a line says what the event hides there (text, decisions, other events), and whether its monster is per host or shared. A card on the map opens the event with that host picked.
-- Clicking a scenario shows all of it: a frame per option (priority order) and per sub-event of the pages inside (Godot frames can't nest, so sub-event frames sit beside, dashed from the page listing them). Everything is editable through the Inspector by selecting it; editing in the graph is v2.
-
-**Order:** [x] scenario → [x] host reference → [x] generic events → [x] Lurker content (`events/lurker.tres` = [Ambush, Won] on Temple Ruin) → [x] editor.
-
-## v2 — editing, slice 1: the map (done 2026-10-27)
-The graph edits structure (links, new things, order), the Inspector edits content (text, fields). Tabs stay "Map" and "Events"; no extra panel until one is clearly missing.
-- **Link:** drag from a location to another: a plain decision "Go to <title>" with an `AdventureTransition`. **Unlink:** drag a link's end away from its target (`right_disconnects`): removes the page's plain decisions leading there (links made only by fights / saves stay; edited in the events tab later).
-- **New location:** right-click on empty space → name + area (an existing one or a new one by name). Locations get their own file, `locations/<area folder>/<name>.tres`; a new area gets `locations/<name>/<name>.tres`. Pages behind events will live inside the event's file (slice 2).
-- **Moving a location sets its area:** frames grow with their locations, so a plain drag keeps the area. **Alt+drag** lets a location go of its frame: dropped on empty space it has no area, in another frame that frame's area, back on its own frame it is attached again. A location without an area dropped into a frame joins it. Moving a frame takes its locations along.
-- **Placed but unreachable** locations (in the layout, not reached from the start) still show, faded, so new locations don't vanish before they are linked.
-- **Undo** through the plugin's `EditorUndoRedoManager`. **Saving:** changes stay unsaved until saved, like editor edits: the plugin reports them (`_get_unsaved_status`) and saves them on Save All, before running and on quit (`_save_external_data`); Ctrl+S in the tab saves too. Creating files (new location / area) is not undone; delete them in the FileSystem.
-- [x] Editing helpers (pure, unit tested): link / unlink decisions, new location / area, file paths
-- [x] Map view: link, unlink, right-click menu, frame drop
-- [x] Root + plugin: undo, unsaved tracking, saving, new-location dialog
-- [x] `AdventureGraph` takes placed pages from the layout (unreachable, faded)
-
-## v2 — editing, slice 2: events (built 2026-10-27, manual check open)
-- **Links:** drag a decision's or outcome's port onto a page, the host or an exit; dragging a link's end off makes it "(back)". Same file: the page itself; another file: `AdventureTransition`; host: `AdventureHostReference`.
-- **New page:** drag a port onto empty space: a page inside the event's file, linked at once.
-- **Pages behind an event live inside its file.** A link back to the event or an earlier page of the same file would be a cycle, which one file can't store: refused with a warning (use "(back)", "↺ Host" or a separate file).
-- **New decisions:** buttons at the bottom of each page card (and right-click, with icons) → choice / fight / save; fights and saves start empty (enemy, attribute, difficulty in the Inspector).
-- **Decisions are cards inside the page card** (2026-10-28, replacing the separate check nodes): a choice with its port; a fight (red, sword) or save (its attribute's color and icon, else blue dice) with a row and port per outcome. Click a card: the decision in the Inspector; ▲ ▼ reorder, ✕ removes.
-- **"Host" node in every frame**, linked or not, in its own color with a return icon.
-- **No accidental loss:** unlinking, relinking or removing a decision is refused while it is the only way to a page stored in the file; such pages go only by right-click → "Delete page" (everything in the file pointing at it goes back instead).
-- **New event / scenario:** right-click a location on the map → a file in the area's `events/` folder, listed on the location.
-- Scenario option order: in the Inspector (it reorders arrays already). Putting an existing event on more locations: later, its own step.
-- Undo and saving as on the map; edits inside a file mark that file unsaved.
-- Inline pages and decisions get their in-file ID (`resource_scene_unique_id`) when created, and the layout keys inline resources by it, so positions survive saving (positions of inline pages placed before reset once).
-- [x] Editing helpers (pure, unit tested): references by file, cycle check, new pages / decisions / events, event paths
-- [x] Event view: link, unlink, drop on empty, page menu; map: location menu
-- [x] Root: undo with the owning file, name dialog, creating event files
-
-- **2026-10-28 additions:** clicking a decision card highlights it; outcome ports and links colored (Won / Success green, Lost / Failure red, Fled yellow, Draw grey); a page without decisions shows the game's automatic "Turn back. (automatic, back 1)"; going back shows its steps ("(back 2)"); effects (consequences) as tags on choices and outcomes (click: Inspector, ✕: remove) with "+ effect" listing every consequence type (`AdventureEventEditing.get_consequence_types`).
-
-## v2 — "Previous location" and special nodes (built 2026-10-28)
-"Back" and "↺ Host" are nearly always the same; fleeing should go to the location before the host instead. Leaving is where a decision leads, so a link target rather than an effect:
-- New page reference **"↶ Previous location"** (`AdventurePreviousLocationReference`): Story goes back past the host, however deep the event goes (today's `back_steps = 2` only works one page deep). Fled would use it.
-- A **sidebar** next to the event graph with special nodes to drag onto a frame: "Host" and "Previous location" (more later, e.g. "End adventure"). Each frame always has its own host; more copies of either can be placed to avoid long links (right-click a placed copy → Remove; its links go to the frame's own again). A frame's own "Previous location" shows when something leads there but no copy is placed. Plain "(back N)" stays.
-- Which copy a link goes to: `AdventureLayout.special_links` (link key → node key); placed copies are layout keys `<root>/<entry>/special/<kind>/<n>`.
-- Story: `_go(reference, back_steps)` is the one way choices, saves and fights are followed (fights and saves without a transition now also go back their decision's `back_steps`, before always 1). Previous location goes back to the page before the host; nothing before it (the adventure started there): to the host.
-- Content: Lurker Ambush Fled's "Continue." leads to "Previous location" instead of `back_steps = 2`.
-
-## v2 — conditions and scenarios (built 2026-10-29, manual check open)
-- **Scenario as a switch node** left of its options' frames: its title and own conditions, a row per option in priority order ("1 · Lurker Ambush", its conditions) linked to the option's frame, "otherwise: nothing". ▲ ▼ reorder, ✕ takes an option out (its file stays), "+ option" makes a new event file in the `events/` folder. Frame titles lose the numbers; an option's "When" shows only its own conditions.
-- **Conditions as tags** (like effects) on event nodes and the switch node: click → Inspector, ✕ removes, "+ condition" lists every condition type, plus **quick picks** for the monsters of the fights in the overview ("Lurker can fight / is beaten / is dead", `spawned_by` set: none on the fight's own page, a transition to another file, the page in the same file unless that loops).
-- **Dotted lines** from a monster condition's tag to the fight card that spawns the monster, in the condition's color.
-- A page without decisions: its automatic "Turn back." row has a port; linking it (or dropping it on empty space) adds a real "Continue." choice leading there.
-- Idea (user, 2026-10-29), not designed yet: a scenario declares its participants / objects (monsters, characters, items, flags), and conditions are built from them.
-- Scaling (user, 2026-10-28): fine for now; more kinds of conditions (characters present, flags set in the game) may need another way to show the choice later.
-- [x] Model: switches in the overview, condition types, monster condition quick picks, event paths inside `events/`
-- [x] View: condition tags, switch node, dotted lines
-- [x] Root: options (add, move, remove)
-
-
-## v2 — map lines, existing events, nearby events (built 2026-10-29, manual check open)
-1. **Map lines:** straight lines between the nearest edges of two locations, one per pair, arrowheads for direction (both for both ways), dashed through events; no GraphEdit curves on the map. Ports stay for dragging new links; unlinking by right-click a location → "Unlink from X".
-2. **Existing events:** a sidebar on the map ("Drag onto a location:") lists the adventure's events (known ones and every event file in an `events/` folder under the adventure; `AdventureEventButton`); drag one onto a location to list it there, press one to open it. Also right-click a location → "Add event…" (same list and "Other file…"); right-click an event card on the map → "Remove from here" (the file stays).
-3. **Nearby events** (side effects, e.g. Hearing Eleanor belongs to the Eleanor scenario): an event lists `nearby_events`; each shows on the locations around wherever its source is placed, within its `nearby_reach` (1: the locations linked from it; more: further; 0: the whole area, up to `MAX_NEARBY_REACH` links), when its own conditions are met (the source needn't be active). One lookup for game and editor: `AdventurePage.find_nearby_events()` (from the page's own links, `get_linked_locations`, `get_listed_events` incl. scenario options); Story filters and caches per page entered (`Story.get_nearby_events`); they join the page's events after its own, Hide flags as usual. Editor: faded cards on the map ("· from Castle Ruin"), frames "(nearby)" dashed from the source in the event view, right-click an event node → "Add nearby event…" / "Not nearby … any more"; the events list shows them under their source. Content: Hearing Eleanor moves from Rocky Shore into The Mysterious Woman.
-- [x] Map lines
-- [x] Existing events (add, remove)
-- [x] Nearby events: engine + tests, editor, content
-
-## v2 — housekeeping, problems, play from here (built 2026-10-29)
-- Cleanup: test content (glhf, asdf, dfgh) removed; the event view split: `AdventureCardView` (decision cards, tags, add bar, selection) between `AdventureGraphView` and `AdventureEventView`.
-- **Problems tab** (`AdventureProblems`, unit tested): fights without enemies, saves without attribute, links to missing files (`AdventureTransition.leads_nowhere`), locations not reached from the start, events listed nowhere (pages reached behind events don't count), scenario options after one without conditions, "Host" / "Previous location" outside events. The tab title counts them; clicking one opens the map or the event with its page in the middle (`focus_resource`).
-- **Play from here** (right-click a location on the map or a page / event node): saves, writes `AdventurePlayFrom` (adventure, page, host; pages stored inside a file by their file and in-file ID), starts the main scene; a debug run of `Game` takes it once. A location starts as it is; an event's own page starts at its host (the picked one, else the first location it is on); a page behind an event starts on it with the host entered first (`Story.start_adventure(…, page, host)`). Character creation still runs first if the protagonist isn't set up.
-- `AdventurePage.get_held_pages()` (game code) is the one walk over what a file holds; the editor's loop and reference checks use it.
-
-## v2 — problems on nodes, drag from FileSystem, search, tidy (built 2026-10-29)
-- **Problems on nodes:** a node whose page has a problem gets a warning icon in its title bar, a red title and the problems as tooltip (map and event view).
-- **Drag from the FileSystem panel:** an event file onto a location lists it there; an image onto a location, page or area frame makes it the background.
-- **Search:** a "Find…" field next to the adventure picker (Ctrl+F in the tab): typing filters the map's event sidebar and the Events list, Enter jumps to the first page or event whose title fits.
-- **Tidy:** a button in each graph's toolbar forgets where that graph's nodes were moved (after asking), so they go back to their default places.
-- Not wanted (user): a stand-in character for "Play from here"; own text editing in cards (it would want spell checking, rich text, tooltips … — the Inspector stays). Participants stay parked until a second kind exists.
-- [x] Problems on nodes
-- [x] Drag from FileSystem
-- [x] Search
-- [x] Tidy
-
-## Cleanup (agreed 2026-10-29, branch `refactor/adventure-editor-cleanup`)
-- [x] **A. Decisions know their outcomes:** decision scripts `@tool`; `AdventureDecision.get_outcomes()` ([reference property, name, effects property]) and `get_page_references()`; `Fight`, `StorySaveDecision` and the editor read the same list; no more reading fields by name or walking property lists
-- [x] **B + C. Editing in one place:** `AdventureEdits` (undo, unsaved, new files; testable with a plain `UndoRedo`); the views request changes with one signal (`changes_requested`: [resource, property, value] … in a file, as an undo step); `AdventureLayout` builds and recognizes every layout key
-- [x] **E. Small things:** event files scanned once per rebuild (also not per Find keystroke); `AdventureTransition` uses `load_page()` in the editor; nearby events follow plain links only (documented)
-
-## Deleting, undoable adding, nearby in the area (2026-10-30)
-- **Delete** a location, event or area: right-click → "Delete …", or the Delete key on selected nodes (event view: pages inside a file go as by "Delete page", placed special nodes are removed). After asking, one undo step removes everything pointing at it (`AdventureEventEditing.get_changes_forgetting`: plain decisions leading only there go, fight / save outcomes leading there go back, it is no event, option or nearby event any more; an area is taken off its locations), then its file goes to the system trash. Ctrl+Z restores the links, not the file. The starting page can't be deleted.
-- **Adding is undoable:** new locations, areas, events and options are saved as part of their undo step (`AdventureEdits.create`); undo moves the file to the trash, redo saves it again. Moving nodes stays without undo (user: not needed).
-- Changes may name the file they are stored in ([resource, property, value, file]).
-- **Nearby events can stay in their source's area** (`AdventurePage.nearby_stays_in_area`).
-
-## Encounters (agreed 2026-10-30, branch `refactor/encounters`)
-The adventure model gets rebuilt around **locations and encounters** (NPCs, monsters, items) instead of pages that host events.
-- **Page:** title, text, background, ambience, decisions. Pages behind events have no events of their own.
-- **Event:** page + conditions + the stages it needs + **where** + the Hide flags (kept as they are).
-  - Where = base (where its encounter is / near it, with reach and "stays in area" / anywhere) + optional filter (only at these locations or areas).
-    In a location's own scenario: here.
-  - An event can **put its encounter here** (Eleanor has no place until her first meeting).
-- **Scenario:** events (or nested scenarios) and how it picks: **first** that fits or **all** that fit. Replaces both `events` lists and `AdventureEventScenario`.
-- **Encounter** = scenario + identity: name, profile (monster, NPC, later item), **stage tracks**, an optional place.
-  - Stages are free (they branch: Unmet, Met at the beach, Met at the castle, …); an encounter or location can have several independent **tracks**
-    (the temple: intact / burned; door closed / open), each with its current stage.
-  - Place: none / a location (later: with the party, carried by another encounter, e.g. loot on a dead monster).
-- **Location:** page + area + its own scenario + stage tracks + an **ordered list** of what can happen there (its own events and the encounters);
-  Hide Below / Above go by that order; encounters not listed come after. A burned temple stays the same location: a Hide Base event on its own scenario
-  needing "burned" changes its text, background and decisions.
-- **Adventure:** its locations (through links) and its encounters.
-- **Stages replace** the monster conditions (alive / dead) and the kill-monster consequence: one stage condition, one stage consequence.
-- **Fights only through encounters** (texts per monster later); a **generic monster encounter** takes monster profiles on the spot and has no lasting stage.
-- **Runtime:** one world-state object in Story with all stages and places (later what a save game stores).
-
-Steps:
-- [x] 1. Split the types: `AdventurePage` (plain), `AdventureEventHost` (abstract, `events`) → `AdventureLocation` / `AdventureEvent` → `AdventureEventScenario`;
-  content moved (text edits, UIDs kept); first / all comes with step 2
-- [x] 2. Locations' events into their own scenario (`AdventureLocation.scenario`, picking all); scenarios pick first / all; plain events hold no events
-  any more (`AdventureEventHost` gone, nesting only through scenarios). The location's ordered list comes with step 3, when there are encounters to order
-- [x] 3. Encounters (design agreed 2026-10-30, built):
-  - Back-pointers (to encounters and locations from conditions, consequences, filters, the order list) go by **file UID**, loaded when needed
-    (like `AdventureTransition`); files can't load each other in a circle, and nothing can point inside another file.
-  - `AdventureEncounter` (an `AdventureEventScenario`: its events, pick first): title, optional profile, `tracks` (`AdventureStageTrack`: name +
-    stages, the first is the start), `places`: where it **could be** (UIDs); first contact (a move consequence) narrows them to one.
-  - `AdventureEvent`: `where` (where its encounter is / near it, with reach and "stays in area" / anywhere), `only_at` (locations or areas by UID);
-    `nearby_events` goes (Hearing Eleanor is Eleanor's "near" event).
-  - `AdventureLocation`: `tracks`, `order` (encounters by UID; the location itself = its own events; unlisted: own events first, other encounters
-    after, in the adventure's order), `first_description` (shown instead on the first visit).
-  - `Adventure.encounters`.
-  - Stage condition (subject by UID, empty: own encounter or the current location; track; one of a set of stages), stage consequence (sets one),
-    move consequence (encounter, empty: own; to a location, empty: here).
-  - `StoryWorld` in Story: stages per subject and track, places per encounter; Story knows the encounter of the event one is in (also on the
-    pages behind it). A "first visit" condition only if something needs it.
-  - Eleanor moved to `encounters/eleanor/` (track Unmet / Met; Meeting needs Unmet and places her; Hearing near her, needs Unmet).
-- [x] 4. Monsters as encounters: a fight names an encounter (empty: its event's) and fights its monster, one per encounter for the whole story;
-  fight outcomes set stages through their consequences (agreed: explicit, no automatic track). Without a monster encounter, `enemies` make a one-off
-  fight (a fresh monster per page and location) instead of a separate generic monster encounter file. The Lurker moved to `encounters/lurker/`
-  (State: Lurking / Beaten / Dead); `generic`, `spawned_by`, monster conditions and the kill consequence are gone
-- [x] 5. `AdventurePlaceCondition` ("encounter is here / at a location or area"); location stages work for a location's own events (subject empty:
-  the current location); no content needs them yet
-- [x] 6. Editor (sketch agreed 2026-10-30; monster stage names to revisit later):
-  - [x] 6a. Location menu "New encounter here…" (NPC: Storyline Unmet / Met) and "New monster encounter here…" (profile picked or dropped from the
-    FileSystem; State Lurking / Beaten / Dead and an ambush whose won fight sets Beaten), files in `encounters/<name>/`, added to the adventure, one
-    undo step (`AdventureEventEditing.make_encounter_files`). Dropping an encounter on a location adds it to its places; its faded card: "Not here any more"
-  - [x] 6b. A Location tab (double-click a location on the map; built in code, after the Map tab): a section per source in the location's order
-    (its own events, encounters that could be there / near it / anywhere / can come here) with their events and conditions, ▲ ▼ write
-    `order`; "Can come here" lists move consequences sending encounters there; double-click an event to open it (`AdventureLocationOverview`)
-  - [x] 6c. Storyline view per encounter (read-only): "Storyline" toggle next to the host picker for encounters; a row per track, stages in order,
-    events between the stages they need and the ones their pages set (`AdventureStoryline`); stages not in the track marked; double-click opens the event
-  - Originally: "Here" panel per location (everything that can happen there, also "can come here" through move consequences; reordering) and a
-  storyline view per encounter (stages as nodes, events between them)
-
-## Editing in lists and tables (agreed 2026-10-31)
-Graphs only where the content is a graph of links (the map, the pages behind an event); lists and tables for collections and orders, the Inspector
-(with a plugin for UID fields) for properties.
-- [x] 1. Location tab editable: + on its own events (new event / scenario, add an existing one), "+ Encounter" (new NPC / monster encounter,
-  place one made already), ✕ on own events and on encounters placed here; selecting a row shows it in the Inspector. Shared change helpers in
-  `AdventureMapEditing` (putting, removing, placing); the menu with icons is `AdventureActionMenu`, used by all views
-- [x] 2. Storyline as a table instead of a graph (built; `AdventureStoryline` builds the rows, columns and the changes ticks make): a column per stage (by track), a row per event (checkbox: needs it) and per decision outcome
-  (checkbox: sets it, one per track); "+ stage", "+ track", "+ event needing …"; names in the Inspector. The storyline graph view goes
-- [x] 3. Events tab: a scenario or encounter shows as a list of its options (`AdventureScenarioView`: pick first / all, its conditions, an
-  encounter's places, options with what they need, ▲ ▼ ✕, "+ Option", "Add event…"); a plain event shows its pages as a graph, one frame.
-  The switch nodes and per-option frames are gone (`AdventureEventOverview` is one entry now)
-- [ ] (first try built, to be judged by the user) Storyline UI back to the drawing board (user, 2026-10-31): the table reads stages as independent flags, but a track's stages are one state
-  at a time ("needs" is a set, "sets" exactly one); a row per outcome of every page won't scale and is hard to read. Rethink after this round
-- [x] 4. Inspector plugin for UID fields (`AdventureUidInspector`): a resource picker per UID (drop, pick, clear) with the title next to it and
-  what empty means ("its own encounter", "here"); lists get a row per entry with ✕ and an empty picker to add; resources inside other files refused
-
-## One screen per encounter (agreed 2026-10-31)
-- [x] 1. A foldable section per option (`FoldableContainer`), its page graph inside; the plain mouse wheel scrolls the page (Ctrl + wheel zooms the
-  graph, Shift + wheel / middle-drag move it); graphs as high as their nodes (220–640 px); the first option (or the one opened) unfolded, the rest
-  remembered while shown; an option picked in the event list opens on its scenario's or encounter's screen
-- [x] 2. Stage end nodes in the graph ("→ Beaten") for outcomes setting a stage, dashed green lines from the outcome (drawn, not draggable);
-  a picked stage keeps its nodes and lines bright, the others fade
-- [x] 3. One event screen (`AdventureEventScreen`) for every event: a plain event as one unfolded section, a scenario or encounter as a section per
-  option; the editor's own event graph is gone (graphs come from `AdventureEditor._make_event_graph`)
-
-## To reconsider
-- [x] A problem check for events that can never show (user, 2026-10-31): a stage that is no track's start and nothing sets, a monster nothing
-  fights (beaten) or kills (dead), a body condition on an encounter without monster; only what the content does, not chance or rest
-- [x] Body vs. story (user, 2026-10-31; done): the monster's body (can fight / beaten / dead) is runtime state the fights set, read by
-  `AdventureMonsterCondition` (about an encounter, empty: its own) and ended by `AdventureKillConsequence`; stages only for the story. The Lurker
-  has no track; the monster template makes none
-- [x] Stage effects showed twice (tag and end node): end nodes gone
-- [x] Frames in a page graph (user): one event per graph, so no frame; specials are dropped anywhere in it
-- [x] Effects (user, 2026-10-31: they belong to the transition): chips where the outcome's line starts (B of: labels on lines / chips at the start /
-  a node in the path); a won fight's "→ beaten" is a read-only chip; the stage end nodes are gone. A node in the path is the next step if it isn't clear enough
-- [x] Graph height: as high as its nodes need, or as dragged with the bar under it (kept in the layout's `graph_heights`)
-- [x] The special nodes' sidebar: Host / Previous are in each event graph's toolbar (user's pick), dragged into the graph
-
-Later: encounter templates (several wolves; a "new monster encounter" with its State track and the fight outcomes' stage consequences ready),
-with the party / carried by, item encounters, roaming by itself (random, routes, time of day), a separate editor tab for editing locations,
-fights against several opponents (needs the fight UI first),
-loot (user, 2026-10-31): a monster encounter's stage after Dead to search its body ("Looted"), with loot tables; needs items first.
-
-## Later
-- Fight decisions (and other checks) with **input ports** for who takes part: link enemies / participants into the fight node instead of picking them in the Inspector (user idea, 2026-10-29; fits the parked participants / cast idea)
-- **v2 map editing:** create areas and locations, connect two locations (plain decision "Go to X" + `AdventureTransition`), delete links, move events between hosts by dragging cards, **moving a location into an area frame sets its `area`** (`GraphEdit.graph_elements_linked_to_frame_request`)
-- Events tab: edit events (and their inner pages) inside the editor window
-- Non-location pages (dialogue, fight outcomes such as the Lurker's won / lost pages)
-- Portals: a link into another area ends in a small portal node inside the source frame instead of a long line across the map
+## Built
+- **Map:** areas as frames, locations, links (dashed through events), unreachable pages faded; link / unlink, new location and area, Alt+drag out
+  of a frame, drop events, encounters, monster profiles and images; delete; Tidy; play from here; Find.
+- **Location tab:** banner (background, ambience), text, sections in the location's order with ▲ ▼, + event, + encounter, ✕, can come here.
+- **Event screen:** one per event; scenarios and encounters as foldable sections with their page graphs (height handle, scroll and zoom kept),
+  pick first / every, + Option, Add event…; encounters with track bars (+ stage, + track), the Body bar, "In" (click to change) and "Leads to";
+  picking a stage dims what can't happen then and marks what leads into it.
+- **Page graphs:** pages, decision cards (choices, fights, saves with their outcomes), condition and effect chips at the start of their
+  transition, Host / Previous location, exits; links by dragging ports, new pages on empty space.
+- **Data:** locations, events, scenarios (first / all), encounters (places, stage tracks, where, only at), stage / move / kill effects,
+  stage / place / monster conditions, one-off fights, the problem check.
 
 ## Open
-- [x] Manual check (**user**): problem nodes (icon, tooltip), dragging event files and images from the FileSystem panel (location, page, area frame), Find… (typing filters, Enter jumps, Ctrl+F), Tidy in both graphs
-- [x] Manual check of map lines (right-click → Unlink from …), "Add event…" / "Other file…" / "Remove from here", "Add nearby event…" (**user**)
-- [x] Manual check of conditions and scenarios (**user**): the Lurker's switch node (reorder, + option, ✕), condition tags and "+ condition" with its quick picks, the dotted lines to the fight
-- [x] Manual check of event editing (**user**): drag outcome ports onto pages / "↺ Host" / exits, drag a link's end off, drop a port on empty space (new page), right-click a page → Add choice / fight / save, right-click a location on the map → New event / scenario, a loop warning, undo, saving the event file. Only data helpers are unit tested
-- [ ] Later (with editable conditions): show how a scenario picks its option better than numbers in the frame titles (user)
-- [ ] Map placement still uses a fixed grid (event view stacks by real height now)
-- [x] Manual check of checks and page text (**user**): Lurker scenario and The Mysterious Woman, selecting a check node edits the decision
-- [x] Manual check of the scenario overview (**user**): click the Lurker scenario, the "At:" picker, frames / nodes → Inspector, "↺ Temple Ruin" double-click, positions per scenario
-- [x] Manual check of the events tab (**user**): event list, cards opening events (map and inside events), exit double-click back to the map, positions per event
-- [x] Manual check in the editor (**user**): open `test_adventure.tres`, click nodes / cards / frames, move nodes (layout file appears, positions survive a restart), edit a page in the Inspector (graph updates). Only the rendering was checked (screenshots from a game run) and the editor run (3 pages, 2 areas, 4 links), not the clicks
-- [ ] Auto placement is a plain grid per area (one row per area), so lines cross until nodes are moved once; judge once there are more locations (user)
+- [ ] Effects: if chips at the start of a transition aren't clear enough, try a node in the path for an outcome with effects (user to judge)
+- [ ] Monster template stage names and the template idea in general (user, later)
+- [ ] Map placement is a plain grid per area until nodes are moved; judge once there are more locations (user)
+
+## Later
+- Encounter templates (several wolves), with the party / carried by, item encounters, loot ("Looted" after Dead, loot tables; needs items),
+  roaming by itself (random, routes, time of day)
+- Fight decisions with input ports for who takes part; fights against several opponents (needs the fight UI first)
+- Portals: a link into another area ends in a small portal node inside the source frame
+- The location tab growing into a full location editor
 
 ## Log
 - 2026-10-25: plan agreed (main-screen tab, one adventure, `AdventureTransition` kept, location = page with area, events as shared attachments, side layout file, v1 view only, portals later)
@@ -346,3 +126,4 @@ loot (user, 2026-10-31): a monster encounter's stage after Dead to search its bo
 - 2026-11-01: Host / Previous in the sections' title bars (sidebar gone); a height handle under each graph
 - 2026-11-01: Host / Previous moved into the event graphs' toolbars
 - 2026-11-01: icons on the specials, event cards, the map's event buttons, "In …" and "Open its options"; each graph's scroll and zoom kept in the layout (`graph_views`) with its height; tidying a graph forgets both
+- 2026-11-01: cleanups: docs, hiding text by order, overview folded into the event view, frames to the map, AdventureEditorActions and AdventureMakers split out, this plan condensed (history stays in the log)

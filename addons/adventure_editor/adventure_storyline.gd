@@ -116,7 +116,7 @@ func get_changes_toggling(event: AdventureEvent, track: String, stage: String) -
 	var condition: AdventureStageCondition = _find_condition(event, track)
 	var conditions: Array[AdventureCondition] = event.conditions.duplicate()
 	if condition == null:
-		conditions.append(AdventureEventEditing.make_stage_condition(track, stage))
+		conditions.append(AdventureMakers.make_stage_condition(track, stage))
 		return [[event, &"conditions", conditions, file]]
 	var stages: Array[String] = condition.stages.duplicate()
 	if stages.has(stage): stages.erase(stage)
@@ -134,7 +134,7 @@ func get_changes_adding_stage(track: AdventureStageTrack, stage: String) -> Arra
 ## A track without stages yet
 func get_changes_adding_track(track_name: String) -> Array[Array]:
 	var tracks: Array[AdventureStageTrack] = encounter.tracks.duplicate()
-	tracks.append(AdventureEventEditing.make_track(track_name))
+	tracks.append(AdventureMakers.make_track(track_name))
 	return [[encounter, &"tracks", tracks, encounter]]
 
 ## Its other conditions (not about the encounter's stages or body), described
@@ -154,7 +154,7 @@ func _get_changes_toggling_body(event: AdventureEvent, stage: String) -> Array[A
 	var body: AdventureMonsterCondition = _find_body_condition(event)
 	var conditions: Array[AdventureCondition] = event.conditions.duplicate()
 	if body == null:
-		conditions.append(AdventureEventEditing.make_monster_condition(state))
+		conditions.append(AdventureMakers.make_monster_condition(state))
 		return [[event, &"conditions", conditions, file]]
 	if body.state != state: return [[body, &"state", state, file]]
 	conditions.erase(body)

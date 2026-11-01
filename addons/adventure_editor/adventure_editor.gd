@@ -33,45 +33,23 @@ var _layout: AdventureLayout
 var _edits: AdventureEdits
 ## Every event of the adventure, found once per rebuild ([method _find_all_events])
 var _all_events: Array[AdventureEvent] = [ ]
-var _new_location_dialog: AdventureNewLocationDialog
-var _name_dialog: AdventureNameDialog
-var _file_dialog: EditorFileDialog
-var _delete_dialog: ConfirmationDialog
-var _profile_dialog: EditorFileDialog
 var _location_view: AdventureLocationView
 var _event_screen: AdventureEventScreen
+var _actions: AdventureEditorActions
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_edits = AdventureEdits.new(undo_redo)
 	_edits.changed.connect(rebuild)
 	_map.setup()
-	_make_dialogs()
+	_actions = AdventureEditorActions.new()
+	add_child(_actions)
+	_actions.setup(self)
 	_make_location_tab()
 	_make_event_screen()
 	_connect_views()
 	_connect_lists()
 	EditorInterface.get_inspector().property_edited.connect(_on_property_edited)
-
-func _make_dialogs() -> void:
-	_new_location_dialog = AdventureNewLocationDialog.new()
-	_new_location_dialog.location_confirmed.connect(_create_location)
-	add_child(_new_location_dialog)
-	_name_dialog = AdventureNameDialog.new()
-	add_child(_name_dialog)
-	_file_dialog = EditorFileDialog.new()
-	_file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
-	_file_dialog.add_filter("*.tres", "Events")
-	add_child(_file_dialog)
-	_profile_dialog = EditorFileDialog.new()
-	_profile_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
-	_profile_dialog.title = "Monster profile"
-	_profile_dialog.add_filter("*.tres", "Monster profiles")
-	_profile_dialog.current_dir = "res://characters/monsters"
-	add_child(_profile_dialog)
-	_delete_dialog = ConfirmationDialog.new()
-	_delete_dialog.ok_button_text = "Delete"
-	add_child(_delete_dialog)
 
 ## Built here rather than in the scene: a tab after the map
 func _make_location_tab() -> void:
@@ -100,23 +78,12 @@ func _make_event_graph() -> AdventureEventView:
 	graph.encounters = _get_encounters()
 	graph.changes_requested.connect(_edits.apply)
 	graph.event_opened.connect(open_event)
-	graph.layout_changed.connect(_save_layout)
+	graph.layout_changed.connect(save_layout)
 	graph.tidied.connect(rebuild)
 	graph.play_requested.connect(_play_from)
-	graph.deletion_requested.connect(_ask_to_delete)
+	graph.deletion_requested.connect(_actions.ask_to_delete)
 	graph.exit_opened.connect(_open_location)
 	return graph
-
-## Events made already (and any other file) as the last option of [param scenario]
-func _offer_options(scenario: AdventureEventScenario, show_actions: Callable) -> void:
-	var taken: Array = scenario.events.duplicate()
-	taken.append(scenario)
-	_offer(taken, _add_option.bind(scenario), show_actions)
-
-func _add_option(event: AdventureEvent, scenario: AdventureEventScenario) -> void:
-	var options: Array[AdventureEvent] = scenario.events.duplicate()
-	options.append(event)
-	_edits.apply(AdventureEventEditing.get_changes_listing(scenario, options), "Add %s to %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(scenario)])
 
 ## The scenario or encounter (a file of its own, not a location's own events) [param event] is an option of, if any
 func _find_scenario_of(event: AdventureEvent) -> AdventureEventScenario:
@@ -137,25 +104,25 @@ func _connect_views() -> void:
 	for view: AdventureGraphView in [_map]:
 		view.changes_requested.connect(_edits.apply)
 		view.event_opened.connect(open_event)
-		view.layout_changed.connect(_save_layout)
+		view.layout_changed.connect(save_layout)
 		view.tidied.connect(rebuild)
 		view.play_requested.connect(_play_from)
-		view.deletion_requested.connect(_ask_to_delete)
-	_map.location_requested.connect(_ask_for_location)
-	_map.event_requested.connect(_ask_for_event)
-	_map.existing_event_requested.connect(func(location: AdventureLocation) -> void: _offer_events(location, _map.show_actions))
-	_map.encounter_requested.connect(_ask_for_encounter)
+		view.deletion_requested.connect(_actions.ask_to_delete)
+	_map.location_requested.connect(_actions.ask_for_location)
+	_map.event_requested.connect(_actions.ask_for_event)
+	_map.existing_event_requested.connect(func(location: AdventureLocation) -> void: _actions.offer_events(location, _map.show_actions))
+	_map.encounter_requested.connect(_actions.ask_for_encounter)
 	_map.location_opened.connect(_show_location)
 	_location_view.event_opened.connect(open_event)
 	_location_view.changes_requested.connect(_edits.apply)
-	_location_view.event_requested.connect(_ask_for_event)
-	_location_view.existing_event_requested.connect(_offer_events)
-	_location_view.encounter_requested.connect(_ask_for_encounter)
-	_event_screen.option_requested.connect(func(scenario: AdventureEventScenario) -> void: _name_dialog.ask("New option", "Title", _create_event.bind(scenario, false)))
-	_event_screen.existing_option_requested.connect(_offer_options)
+	_location_view.event_requested.connect(_actions.ask_for_event)
+	_location_view.existing_event_requested.connect(_actions.offer_events)
+	_location_view.encounter_requested.connect(_actions.ask_for_encounter)
+	_event_screen.option_requested.connect(_actions.ask_for_option)
+	_event_screen.existing_option_requested.connect(_actions.offer_options)
 	_event_screen.event_opened.connect(open_event)
 	_event_screen.changes_requested.connect(_edits.apply)
-	_event_screen.text_requested.connect(_name_dialog.ask)
+	_event_screen.text_requested.connect(_actions.ask_name)
 
 func _connect_lists() -> void:
 	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
@@ -214,7 +181,7 @@ func _list_event(event: AdventureEvent, depth: int, listed: Array[AdventureEvent
 	if listed.has(event): return
 	listed.append(event)
 	if _fits(event):
-		var index: int = _event_list.add_item(INDENT.repeat(depth) + _describe_event(event))
+		var index: int = _event_list.add_item(INDENT.repeat(depth) + describe_event(event))
 		_event_list.set_item_metadata(index, event)
 		_event_list.set_item_tooltip(index, event.resource_path)
 	if _find.text.strip_edges().is_empty(): return
@@ -239,6 +206,17 @@ func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
 func _open_location(location: AdventurePage) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_map_tab)
 	_map.focus_page(location)
+
+func get_edits() -> AdventureEdits: return _edits
+
+func get_graph() -> AdventureGraph: return _graph
+
+## Every event of the adventure ([method _find_all_events])
+func get_all_events() -> Array[AdventureEvent]: return _all_events
+
+func get_layout() -> AdventureLayout: return _layout
+
+func get_map() -> AdventureMapView: return _map
 
 func has_unsaved_changes() -> bool: return _edits.has_unsaved_changes()
 
@@ -272,50 +250,6 @@ func _jump_to(_text: String) -> void:
 			return
 	push_warning("Nothing called \"%s\"" % _find.text)
 
-func _ask_for_location(at: Vector2) -> void:
-	if adventure != null: _new_location_dialog.open(_graph.areas, at)
-
-## Creates the location's file (and a new area's) right away; Ctrl+Z doesn't delete files
-## Its file (and a new area's) is part of the undo step
-func _create_location(title: String, area: AdventureArea, new_area_name: String, at: Vector2) -> void:
-	var files: Dictionary[String, Resource] = {}
-	if area == null:
-		area = AdventureMapEditing.make_area(new_area_name)
-		area.resource_path = AdventureMapEditing.get_area_path(adventure, new_area_name)
-		files[area.resource_path] = area
-	var page: AdventurePage = AdventureMapEditing.make_location(title, area)
-	var path: String = AdventureMapEditing.get_location_path(area, title)
-	files[path] = page
-	var changes: Array[Array] = [ ]
-	if not _edits.create(files, changes, "New location %s" % title): return
-	_layout.positions[AdventureLayout.get_key(page)] = at
-	_save_layout()
-	rebuild()
-
-func _ask_for_event(location: AdventureLocation, scenario: bool) -> void:
-	_name_dialog.ask("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
-
-## The adventure's events (those met and every file in an events folder) not on [param location] yet, and any other file;
-## [param show_actions] shows the menu
-func _offer_events(location: AdventureLocation, show_actions: Callable) -> void:
-	_offer(location.get_own_events(), func(event: AdventureEvent) -> void: _map.put_event(location, event), show_actions)
-
-## A menu of the adventure's events (those met and every file in an events folder) but [param taken], and any other file; [param on_pick] gets the event
-func _offer(taken: Array, on_pick: Callable, show_actions: Callable) -> void:
-	var events: Array[AdventureEvent] = _all_events
-	var actions: Dictionary[String, Callable] = {}
-	for event: AdventureEvent in events:
-		if not taken.has(event): actions[_describe_event(event)] = on_pick.bind(event)
-	actions["Other file…"] = func() -> void:
-		for connection: Dictionary in _file_dialog.file_selected.get_connections(): _file_dialog.file_selected.disconnect(connection["callable"])
-		_file_dialog.file_selected.connect(func(path: String) -> void:
-			var event: AdventureEvent = load(path) as AdventureEvent
-			if event != null: on_pick.call(event)
-			else: push_warning("%s is no event" % path)
-		)
-		_file_dialog.popup_file_dialog()
-	show_actions.call(actions)
-
 ## The events met on the map and every event file in an events folder under the adventure; not those stored inside other files
 func _find_all_events() -> Array[AdventureEvent]:
 	var events: Array[AdventureEvent] = [ ]
@@ -326,7 +260,7 @@ func _find_all_events() -> Array[AdventureEvent]:
 			if event != null and not events.has(event): events.append(event)
 	return events.filter(func(event: AdventureEvent) -> bool: return not AdventureEventEditing.is_inside_file(event))
 
-static func _describe_event(event: AdventureEvent) -> String:
+static func describe_event(event: AdventureEvent) -> String:
 	var kind: String = " (encounter)" if event is AdventureEncounter else " (scenario)" if event is AdventureEventScenario else ""
 	return AdventureGraph.get_title(event) + kind
 
@@ -339,7 +273,7 @@ func _fill_event_shelf() -> void:
 		button.event = event
 		button.icon = AdventureActionMenu.get_event_icon(event)
 		button.add_theme_constant_override(&"icon_max_width", AdventureActionMenu.ICON_SIZE)
-		button.text = _describe_event(event)
+		button.text = describe_event(event)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		button.tooltip_text = "%s\nDrag onto a location to list it there; press to open it" % event.resource_path
@@ -379,65 +313,7 @@ func _show_problem(index: int) -> void:
 	open_event(problem.event, null)
 	_event_screen.focus_resource.call_deferred(problem.page)
 
-## Creates the event's file and lists it on [param host] (a location, or a scenario as its last option), as one undo step
-func _create_event(title: String, host: AdventurePage, scenario: bool) -> void:
-	var event: AdventureEvent = AdventureEventEditing.make_event(title, scenario)
-	var files: Dictionary[String, Resource] = {AdventureEventEditing.get_event_path(host, title): event}
-	var events: Array[AdventureEvent] = AdventureGraph.get_listed_on(host)
-	events.append(event)
-	_edits.create(files, AdventureEventEditing.get_changes_listing(host, events), "New %s on %s" % [title, AdventureGraph.get_title(host)])
-
-## An NPC is named in a dialog; a monster is named after its profile (asked for if not given)
-func _ask_for_encounter(location: AdventureLocation, monster: bool, profile: MonsterProfile) -> void:
-	if not monster:
-		_name_dialog.ask("New encounter", "Name", func(title: String) -> void: _create_encounter(title, location, null))
-		return
-	if profile != null:
-		_create_encounter(profile.name, location, profile)
-		return
-	for connection: Dictionary in _profile_dialog.file_selected.get_connections(): _profile_dialog.file_selected.disconnect(connection["callable"])
-	_profile_dialog.file_selected.connect(func(path: String) -> void:
-		var picked: MonsterProfile = load(path) as MonsterProfile
-		if picked != null: _create_encounter(picked.name, location, picked)
-		else: push_warning("%s is no monster profile" % path)
-	)
-	_profile_dialog.popup_file_dialog()
-
-## Its files and its place in the adventure's encounters, as one undo step
-func _create_encounter(title: String, location: AdventureLocation, profile: MonsterProfile) -> void:
-	var files: Dictionary[String, Resource] = AdventureEventEditing.make_encounter_files(adventure, title, location, profile)
-	var encounters: Array[AdventureEncounter] = adventure.encounters.duplicate()
-	encounters.append(files.values().back() as AdventureEncounter)
-	_edits.create(files, [[adventure, &"encounters", encounters, adventure]] as Array[Array], "New encounter %s" % title)
-
-## Asks first; the starting page can't go
-func _ask_to_delete(resource: Resource) -> void:
-	if resource == adventure.starting_page:
-		push_warning("The starting page can't be deleted; set another one on the adventure first")
-		return
-	var title: String = AdventureGraph.get_title(resource as AdventurePage) if resource is AdventurePage else (resource as AdventureArea).name
-	_delete_dialog.dialog_text = "Delete %s?\nWhat points to it is removed (Ctrl+Z brings that back); its file goes to the system trash." % title
-	for connection: Dictionary in _delete_dialog.confirmed.get_connections(): _delete_dialog.confirmed.disconnect(connection["callable"])
-	_delete_dialog.confirmed.connect(_delete.bind(resource, title))
-	_delete_dialog.popup_centered()
-
-func _delete(resource: Resource, title: String) -> void:
-	var changes: Array[Array] = [ ]
-	if resource is AdventureArea: changes = AdventureEventEditing.get_changes_forgetting_area(resource as AdventureArea, _graph.pages)
-	else:
-		var roots: Array[AdventurePage] = _graph.pages.duplicate()
-		for event: AdventureEvent in _all_events: if not roots.has(event): roots.append(event)
-		changes = AdventureEventEditing.get_changes_forgetting(resource as AdventurePage, roots)
-	var key: String = AdventureLayout.get_key(resource)
-	if adventure.encounters.has(resource):
-		var encounters: Array[AdventureEncounter] = adventure.encounters.duplicate()
-		encounters.erase(resource)
-		changes.append([adventure, &"encounters", encounters, adventure])
-	_edits.delete(resource, changes, "Delete %s" % title)
-	_layout.positions.erase(key)
-	_save_layout()
-
 func _on_property_edited(_property: String) -> void: rebuild()
 
-func _save_layout() -> void:
+func save_layout() -> void:
 	if adventure != null: _layout.save_for(adventure)
