@@ -146,7 +146,7 @@ func describe_other_conditions(event: AdventureEvent) -> String:
 		if stage_condition != null and _is_about_it(stage_condition.subject): continue
 		if body != null and has_body() and _is_about_it(body.encounter): continue
 		others.append(condition)
-	return AdventureEventOverview.get_condition_text(others)
+	return AdventureEventGraph.describe_conditions(others)
 
 func _get_changes_toggling_body(event: AdventureEvent, stage: String) -> Array[Array]:
 	var file: Resource = AdventureEventEditing.get_file(event, encounter)

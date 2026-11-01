@@ -30,6 +30,19 @@ func setup() -> void:
 		_show_menu({"New location here": location_requested.emit.bind(at)})
 	)
 
+func _add_frame(title: String, resource: Resource, background_texture: Texture2D) -> GraphFrame:
+	var frame: GraphFrame = GraphFrame.new()
+	frame.name = "Frame%d" % _resources.size()
+	frame.title = title
+	frame.autoshrink_margin = FRAME_MARGIN
+	if background_texture != null:
+		var background: TextureRect = _make_texture_rect(background_texture)
+		background.modulate.a = FRAME_BACKGROUND_ALPHA
+		frame.add_child(background)
+	add_child(frame)
+	_resources[frame] = resource
+	return frame
+
 func show_graph(graph: AdventureGraph) -> void:
 	_clear()
 	var frames: Dictionary[AdventureArea, GraphFrame] = {}

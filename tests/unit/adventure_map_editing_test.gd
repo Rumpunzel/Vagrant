@@ -52,11 +52,11 @@ func test_layout_keys() -> void:
 	var inside: AdventurePage = _page("Inside", "res://events/lurker.tres::Resource_a1")
 	inside.resource_scene_unique_id = "Resource_a1"
 	assert_str(AdventureLayout.get_key(inside)).is_equal("::Resource_a1")
-	var key: String = AdventureLayout.get_event_key(root, root, AdventureLayout.get_key(inside))
+	var key: String = AdventureLayout.get_event_key(root, AdventureLayout.get_key(inside))
 	assert_str(key).is_equal("res://events/lurker.tres/res://events/lurker.tres/::Resource_a1")
 	assert_bool(AdventureLayout.is_location_key(AdventureLayout.get_key(root))).is_true()
 	assert_bool(AdventureLayout.is_location_key(key)).is_false()
-	var placed: String = AdventureLayout.get_placed_special_prefix(root, root) + "host/0"
+	var placed: String = AdventureLayout.get_placed_special_prefix(root) + "host/0"
 	assert_bool(AdventureLayout.is_placed_special(placed)).is_true()
 	assert_bool(AdventureLayout.is_placed_special(key)).is_false()
 

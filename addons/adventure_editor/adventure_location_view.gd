@@ -215,7 +215,7 @@ func _add_section(root: TreeItem, index: int) -> void:
 	for event: AdventureEvent in section.events:
 		var row: TreeItem = _tree.create_item(item)
 		row.set_text(0, AdventureGraph.get_title(event) + (" (near)" if event.where == AdventureEvent.Where.NEAR and section.encounter != null else ""))
-		var needs: String = AdventureEventOverview.get_condition_text(event.conditions)
+		var needs: String = AdventureEventGraph.describe_conditions(event.conditions)
 		row.set_text(1, "when %s" % needs if not needs.is_empty() else "")
 		row.set_metadata(0, event)
 		if section.encounter == null and not AdventureEventEditing.is_inside_file(event):

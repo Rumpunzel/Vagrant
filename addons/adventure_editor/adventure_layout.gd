@@ -45,12 +45,13 @@ static func _exists(key: String) -> bool:
 ## A map node's key is one resource's; event view keys join several
 static func is_location_key(key: String) -> bool: return key.count("://") == 1
 
-## A node in an event view: [param part] (a resource's key, or a special node's name) in the frame of [param entry] in the view of [param root]
-static func get_event_key(root: Resource, entry: Resource, part: String) -> String:
-	return "%s/%s/%s" % [get_key(root), get_key(entry), part]
+## A node in [param event]'s page graph: [param part] (a resource's key, or a special node's name). The event's key comes twice: these keys
+## are from when a view showed several events, and saved positions go by them
+static func get_event_key(event: Resource, part: String) -> String:
+	return "%s/%s/%s" % [get_key(event), get_key(event), part]
 
 ## Special nodes placed from the sidebar: this, then "<kind>/<number>"
-static func get_placed_special_prefix(root: Resource, entry: Resource) -> String: return get_event_key(root, entry, "%s/" % PLACED_SPECIALS)
+static func get_placed_special_prefix(event: Resource) -> String: return get_event_key(event, "%s/" % PLACED_SPECIALS)
 
 ## Placed special nodes exist only through their position, so tidying keeps it
 static func is_placed_special(key: String) -> bool: return key.contains("/%s/" % PLACED_SPECIALS)

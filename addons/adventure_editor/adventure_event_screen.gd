@@ -143,7 +143,7 @@ func show_event(event: AdventureEvent, host: AdventurePage, focus: AdventureEven
 
 func _show_info() -> void:
 	var lines: Array[String] = [ ]
-	var conditions: String = AdventureEventOverview.get_condition_text(_event.conditions)
+	var conditions: String = AdventureEventGraph.describe_conditions(_event.conditions)
 	if not conditions.is_empty(): lines.append("When %s" % conditions)
 	var encounter: AdventureEncounter = _event as AdventureEncounter
 	if encounter != null:
@@ -203,7 +203,7 @@ func _add_section(option: AdventureEvent, index: int) -> Control:
 	if dimmed: section.modulate = DIMMED
 	if _storyline != null: _add_story_controls(section, option)
 	elif index >= 0:
-		var needs: String = AdventureEventOverview.get_condition_text(option.conditions)
+		var needs: String = AdventureEventGraph.describe_conditions(option.conditions)
 		section.add_title_bar_control(_make_label("when %s" % needs if not needs.is_empty() else "always fits"))
 	section.folding_changed.connect(_on_folding_changed.bind(section, option))
 	if not section.folded: _fill_section(section, option)

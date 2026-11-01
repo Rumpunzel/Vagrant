@@ -220,19 +220,6 @@ func _mark_problems(node: GraphNode, resource: Resource) -> void:
 	node.get_titlebar_hbox().add_child(icon)
 	node.get_titlebar_hbox().move_child(icon, 0)
 
-func _add_frame(title: String, resource: Resource, background_texture: Texture2D) -> GraphFrame:
-	var frame: GraphFrame = GraphFrame.new()
-	frame.name = "Frame%d" % _resources.size()
-	frame.title = title
-	frame.autoshrink_margin = FRAME_MARGIN
-	if background_texture != null:
-		var background: TextureRect = _make_texture_rect(background_texture)
-		background.modulate.a = FRAME_BACKGROUND_ALPHA
-		frame.add_child(background)
-	add_child(frame)
-	_resources[frame] = resource
-	return frame
-
 func _add_dashed(from: Control, to: Control, color: Color = DASHED_COLOR) -> void: _add_line(from, to, color, true, 0)
 
 ## Between two nodes: straight from edge to edge, toward each other's center; otherwise from the sides facing each other

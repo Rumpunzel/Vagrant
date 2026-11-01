@@ -86,6 +86,34 @@ static func get_outcomes(check: AdventureDecision) -> Array[Outlet]:
 		outcomes.append(outlet)
 	return outcomes
 
+static func describe_conditions(conditions: Array[AdventureCondition]) -> String:
+	var texts: Array[String] = [ ]
+	for condition: AdventureCondition in conditions:
+		if condition != null and not condition.describe().is_empty(): texts.append(condition.describe())
+	return ", ".join(texts)
+
+## What [param event]'s Hide flags hide at [param host] (none: any host): before and after it go by the location's order of its own events and
+## [param encounters]' ([method AdventureLocation.get_slots])
+static func describe_hiding(event: AdventureEvent, host: AdventurePage, encounters: Array[AdventureEncounter]) -> String:
+	if event.exclusivity == 0: return ""
+	var where_name: String = AdventureGraph.get_title(host) if host != null else "the host"
+	var siblings: Array[AdventureEvent] = [ ]
+	var location: AdventureLocation = host as AdventureLocation
+	if location != null:
+		for slot: AdventureEncounter in location.get_slots(encounters):
+			var listed: Array[AdventureEvent] = slot.get_listed_events() if slot != null else location.get_listed_events()
+			for listed_event: AdventureEvent in listed: if not listed_event is AdventureEventScenario: siblings.append(listed_event)
+	var index: int = siblings.find(event)
+	var parts: Array[String] = [ ]
+	if event.exclude_base(): parts.append("%s's text and decisions" % where_name)
+	if event.exclude_above(): parts.append(_name_events("events before it", siblings.slice(0, index), index >= 0))
+	if event.exclude_below(): parts.append(_name_events("events after it", siblings.slice(index + 1), index >= 0))
+	return "Hides %s" % ", ".join(parts)
+
+static func _name_events(text: String, events: Array[AdventureEvent], known: bool) -> String:
+	if not known: return text
+	return "%s (%s)" % [text, ", ".join(events.map(AdventureGraph.get_title)) if not events.is_empty() else "none"]
+
 ## What a check is about: "Fight: Lurker", "Save: Blood 7"
 static func describe_check(check: AdventureDecision) -> String:
 	if check is AdventureFightDecision:

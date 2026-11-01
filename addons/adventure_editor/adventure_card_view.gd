@@ -22,6 +22,9 @@ const OUTCOME_COLORS: Dictionary[String, Color] = {
 const SELECTED_COLOR: Color = Color(1, 1, 1, 0.9)
 
 ## The decision whose card was clicked; each card's style, to show it
+## The event shown and its pages
+var _event: AdventureEvent
+var _pages: AdventureEventGraph
 var _selected: AdventureDecision
 var _card_styles: Dictionary[AdventureDecision, StyleBoxFlat] = {}
 ## Tags of conditions and effects, the page or event a condition is on, and the fight cards with their pages, for the dotted lines
@@ -37,11 +40,11 @@ func setup() -> void:
 	node_selected.connect(func(_node: Node) -> void: _select_card(null))
 
 ## A choice: one card with its port. A fight or save: a card with its kind and text, then a row with a port per outcome.
-func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, page: AdventurePage, index: int, outlet: AdventureEventGraph.Outlet) -> void:
+func _add_decision_cards(node: GraphNode, page: AdventurePage, index: int, outlet: AdventureEventGraph.Outlet) -> void:
 	var decision: AdventureDecision = outlet.decision
 	if not outlet.to_check:
-		var card: PanelContainer = _make_card(entry, page, index, _describe_outlet(outlet), Color.TRANSPARENT, null, outlet.goes_back())
-		card.get_child(0).add_child(_make_tags(decision, &"consequences", _file_for(decision, page, entry), "effect", _get_effect_additions))
+		var card: PanelContainer = _make_card(page, index, _describe_outlet(outlet), Color.TRANSPARENT, null, outlet.goes_back())
+		card.get_child(0).add_child(_make_tags(decision, &"consequences", _file_for(decision, page), "effect", _get_effect_additions))
 		node.add_child(card)
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, Color.WHITE)
 		return
@@ -52,13 +55,13 @@ func _add_decision_cards(node: GraphNode, entry: AdventureEventOverview.Entry, p
 	if attribute != null:
 		color = attribute.color
 		if attribute.icon != null: icon = attribute.icon
-	var check_card: PanelContainer = _make_card(entry, page, index, "%s\n%s" % [AdventureEventGraph.describe_check(decision), decision.description.get_slice("\n", 0)], color, icon, false)
+	var check_card: PanelContainer = _make_card(page, index, "%s\n%s" % [AdventureEventGraph.describe_check(decision), decision.description.get_slice("\n", 0)], color, icon, false)
 	if is_fight: _fight_cards[decision] = check_card
 	node.add_child(check_card)
 	for outcome: AdventureEventGraph.Outlet in AdventureEventGraph.get_outcomes(decision):
 		var row: HBoxContainer = HBoxContainer.new()
 		row.alignment = BoxContainer.ALIGNMENT_END
-		if not outcome.consequences_property.is_empty(): row.add_child(_make_tags(decision, outcome.consequences_property, _file_for(decision, page, entry), "effect", _get_effect_additions))
+		if not outcome.consequences_property.is_empty(): row.add_child(_make_tags(decision, outcome.consequences_property, _file_for(decision, page), "effect", _get_effect_additions))
 		var label: Label = Label.new()
 		label.text = _describe_outlet(outcome)
 		if outcome.goes_back(): label.modulate = FADED
@@ -81,7 +84,7 @@ static func _is_own(subject: String, encounter: AdventureEncounter) -> bool:
 	return subject.is_empty() or Files.load_existing(subject) == encounter
 
 ## Clicking it edits the decision in the Inspector; ▲ ▼ move it, ✕ removes it
-func _make_card(entry: AdventureEventOverview.Entry, page: AdventurePage, index: int, text: String, color: Color, icon: Texture2D, faded: bool) -> PanelContainer:
+func _make_card(page: AdventurePage, index: int, text: String, color: Color, icon: Texture2D, faded: bool) -> PanelContainer:
 	var decision: AdventureDecision = page.decisions[index]
 	var card: PanelContainer = PanelContainer.new()
 	var style: StyleBoxFlat = StyleBoxFlat.new()
@@ -112,9 +115,9 @@ func _make_card(entry: AdventureEventOverview.Entry, page: AdventurePage, index:
 	if faded: label.modulate = FADED
 	row.add_child(label)
 	var count: int = page.decisions.size()
-	if index > 0: row.add_child(_make_tool_button("MoveUp", "▲", "Move up", _move_decision.bind(entry, page, index, -1)))
-	if index < count - 1: row.add_child(_make_tool_button("MoveDown", "▼", "Move down", _move_decision.bind(entry, page, index, 1)))
-	row.add_child(_make_tool_button("Remove", "✕", "Remove", _remove_decision.bind(entry, page, index)))
+	if index > 0: row.add_child(_make_tool_button("MoveUp", "▲", "Move up", _move_decision.bind(page, index, -1)))
+	if index < count - 1: row.add_child(_make_tool_button("MoveDown", "▼", "Move down", _move_decision.bind(page, index, 1)))
+	row.add_child(_make_tool_button("Remove", "✕", "Remove", _remove_decision.bind(page, index)))
 	lines.add_child(row)
 	card.add_child(lines)
 	return card
@@ -191,9 +194,9 @@ static func _describe(item: Resource) -> String:
 	return text if not text.is_empty() else AdventureEventEditing.get_type_name(item.get_script().get_global_name())
 
 ## Buttons for new choices, fights and saves
-func _make_add_bar(entry: AdventureEventOverview.Entry, page: AdventurePage) -> HBoxContainer:
+func _make_add_bar(page: AdventurePage) -> HBoxContainer:
 	var bar: HBoxContainer = HBoxContainer.new()
-	var actions: Dictionary[String, Callable] = _get_add_actions(entry, page)
+	var actions: Dictionary[String, Callable] = _get_add_actions(page)
 	var icons: Dictionary[String, Texture2D] = _get_add_icons()
 	for text: String in actions:
 		var button: Button = Button.new()
@@ -205,11 +208,11 @@ func _make_add_bar(entry: AdventureEventOverview.Entry, page: AdventurePage) -> 
 		bar.add_child(button)
 	return bar
 
-func _get_add_actions(entry: AdventureEventOverview.Entry, page: AdventurePage) -> Dictionary[String, Callable]:
+func _get_add_actions(page: AdventurePage) -> Dictionary[String, Callable]:
 	return {
-		"Add choice": _add_decision.bind(entry, page, AdventureEventEditing.make_choice),
-		"Add fight": _add_decision.bind(entry, page, AdventureEventEditing.make_fight),
-		"Add save": _add_decision.bind(entry, page, AdventureEventEditing.make_save),
+		"Add choice": _add_decision.bind(page, AdventureEventEditing.make_choice),
+		"Add fight": _add_decision.bind(page, AdventureEventEditing.make_fight),
+		"Add save": _add_decision.bind(page, AdventureEventEditing.make_save),
 	}
 
 func _get_add_icons() -> Dictionary[String, Texture2D]:
@@ -222,22 +225,22 @@ func _get_menu_icon(text: String) -> Texture2D:
 	if lower.contains("save"): return SAVE_ICON
 	return super(text)
 
-func _add_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, make: Callable) -> void:
+func _add_decision(page: AdventurePage, make: Callable) -> void:
 	var decisions: Array[AdventureDecision] = page.decisions.duplicate()
 	var decision: AdventureDecision = make.call()
 	decisions.append(decision)
-	_request(page, &"decisions", decisions, "Add %s" % decision.description, _file_for(null, page, entry))
+	_request(page, &"decisions", decisions, "Add %s" % decision.description, _file_for(null, page))
 
-func _move_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, index: int, step: int) -> void:
+func _move_decision(page: AdventurePage, index: int, step: int) -> void:
 	var decisions: Array[AdventureDecision] = page.decisions.duplicate()
 	var decision: AdventureDecision = decisions.pop_at(index)
 	decisions.insert(index + step, decision)
-	_request(page, &"decisions", decisions, "Move %s" % decision.description, _file_for(decision, page, entry))
+	_request(page, &"decisions", decisions, "Move %s" % decision.description, _file_for(decision, page))
 
 ## Refused if a page stored inside the file would be lost with it
-func _remove_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, index: int) -> void:
+func _remove_decision(page: AdventurePage, index: int) -> void:
 	var decision: AdventureDecision = page.decisions[index]
-	var file: Resource = _file_for(decision, page, entry)
+	var file: Resource = _file_for(decision, page)
 	var references: Array[AdventurePageReference] = [ ]
 	references.assign(decision.get_page_references())
 	if file is AdventurePage and AdventureEventEditing.would_lose_page(file as AdventurePage, references):
@@ -248,8 +251,8 @@ func _remove_decision(entry: AdventureEventOverview.Entry, page: AdventurePage, 
 	_request(page, &"decisions", decisions, "Remove %s" % decision.description, file)
 
 ## The file a change of [param decision] (or of [param page]) is stored in: the first of them stored somewhere already, else the event's
-func _file_for(decision: AdventureDecision, page: AdventurePage, entry: AdventureEventOverview.Entry) -> Resource:
-	for resource: Resource in [decision, page, entry.event]:
+func _file_for(decision: AdventureDecision, page: AdventurePage) -> Resource:
+	for resource: Resource in [decision, page, _event]:
 		if resource != null and not resource.resource_path.is_empty(): return load(AdventureEventEditing.get_file_path(resource))
 	return null
 
