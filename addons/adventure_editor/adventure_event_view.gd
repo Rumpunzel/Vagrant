@@ -98,6 +98,47 @@ func _add_pages(origin: Vector2) -> int:
 			if not target_key.is_empty(): connect_node(_nodes[_key(page)].name, port, _nodes[target_key].name, 0)
 	return column_count + 1
 
+## How the page reads with this event, top to bottom: the area's text, the location's, other events', its own; then the decisions. What its
+## text and decisions layering hides is crossed out; clicking a row shows or hides it (one undo step)
+func _make_page_preview() -> VBoxContainer:
+	var rows: VBoxContainer = VBoxContainer.new()
+	rows.add_theme_constant_override(&"separation", 0)
+	var place: String = AdventureGraph.get_title(_host) if _host is AdventureLocation else "The location"
+	var text: AdventureEvent.Layering = _event.text_layering
+	var choices: AdventureEvent.Layering = _event.decisions_layering
+	rows.add_child(_make_preview_row("The area's text", text == AdventureEvent.Layering.ONLY_THIS, &"text_layering", _toggled_only(text)))
+	rows.add_child(_make_preview_row("%s's text" % place, text != AdventureEvent.Layering.ADDS, &"text_layering", _toggled_location(text)))
+	rows.add_child(_make_preview_row("Other events' text", text == AdventureEvent.Layering.ONLY_THIS, &"text_layering", _toggled_only(text)))
+	rows.add_child(_make_preview_row("▶ Its text", false, &"", 0))
+	rows.add_child(_make_preview_row("%s's decisions" % place, choices != AdventureEvent.Layering.ADDS, &"decisions_layering", _toggled_location(choices)))
+	rows.add_child(_make_preview_row("Other events' decisions", choices == AdventureEvent.Layering.ONLY_THIS, &"decisions_layering", _toggled_only(choices)))
+	rows.add_child(_make_preview_row("▶ Its decisions", false, &"", 0))
+	return rows
+
+## Another event's or the area's part: shown with this one, or only this one
+static func _toggled_only(layering: AdventureEvent.Layering) -> AdventureEvent.Layering:
+	return AdventureEvent.Layering.ADDS if layering == AdventureEvent.Layering.ONLY_THIS else AdventureEvent.Layering.ONLY_THIS
+
+## The location's part: shown, or replaced by this one
+static func _toggled_location(layering: AdventureEvent.Layering) -> AdventureEvent.Layering:
+	return AdventureEvent.Layering.REPLACES_LOCATION if layering == AdventureEvent.Layering.ADDS else AdventureEvent.Layering.ADDS
+
+## [param property] empty: its own part, always there
+func _make_preview_row(text: String, hidden: bool, property: StringName, toggled: AdventureEvent.Layering) -> Button:
+	var row: Button = Button.new()
+	row.flat = true
+	row.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	row.text = ("✕ " if hidden else "✓ ") + text
+	row.modulate = FADED if hidden else (PICKED_COLOR if property.is_empty() else Color.WHITE)
+	if property.is_empty():
+		row.disabled = true
+		return row
+	row.tooltip_text = "Hidden by this event; click to show it" if hidden else "Shown with this event; click to hide it"
+	var names: Array[String] = ["adds", "replaces the location's", "only this"]
+	var what: String = "text" if property == &"text_layering" else "decisions"
+	row.pressed.connect(_request.bind(_event, property, toggled, "%s: %s %s" % [AdventureGraph.get_title(_event), what, names[toggled]], _file_for(null, _event)))
+	return row
+
 ## Its height and view on the event screen go too, so it fits its nodes again
 func _tidy() -> void:
 	if layout != null and get_event() != null:
@@ -127,15 +168,15 @@ func _stack() -> void:
 			y += node.size.y + NODE_GAP
 	_unstacked.clear()
 
-## The page with its whole text and its decisions as cards; the event's node also says when it shows, what it hides and whose its monsters are
+## The page with its whole text and its decisions as cards; the event's node also says when it shows and how its page reads
 func _add_page(page: AdventurePage, at: Vector2) -> GraphNode:
 	var content: VBoxContainer = _make_page_content(page)
 	if not page.description.is_empty(): content.add_child(_make_text(page.description))
 	if page == _event:
 		content.add_child(_make_info("When:"))
 		content.add_child(_make_condition_tags(_event, _file_for(null, page)))
-		for text: String in [AdventureEventGraph.describe_hiding(_event, _host, encounters)]:
-			if not text.is_empty(): content.add_child(_make_info(text))
+		content.add_child(_make_info("On the page:"))
+		content.add_child(_make_page_preview())
 	var node: GraphNode = _add_node(_key(page), page, AdventureGraph.get_title(page), content, at)
 	node.set_slot(0, page != _event, 0, Color.WHITE, false, 0, Color.WHITE)
 	var outlets: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outlets(page)

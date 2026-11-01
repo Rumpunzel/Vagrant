@@ -87,19 +87,28 @@ var _location: AdventureLocation
 var _encounter: AdventureEncounter
 ## Chance conditions' rolls for the current arrival at a location ([AdventureChanceCondition])
 var _chance_rolls: Dictionary[AdventureChanceCondition, bool] = {}
+## The area just entered on arriving at the current location (from another area, or at the start), else none; the first time there or not
+var _entered_area: AdventureArea
+var _first_time_in_area: bool = false
+var _areas_been_in: Array[AdventureArea] = [ ]
+## Played from in the adventure editor ([AdventurePlayFrom]): on the first arrival its conditions count as met ([method is_forced])
+var _forced: AdventureEvent
+var _arrivals_while_forced: int = 0
 # StoryPage -> Array[StoryPage]
 var _page_log: Dictionary[AdventurePage, Array] = {}
 # AdventureDecision -> StoryChoice (individual times the decision has been made)
 var _decision_log: Dictionary[AdventureDecision, Array] = {}
 
 ## [param page]: start there instead of the starting page; [param host]: the page its event is on, entered first so going back and host links work
-func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterProfile, page: AdventurePage = null, host: AdventurePage = null) -> void:
+## [param forced]: an event played from in the adventure editor, shown on the first arrival whatever its conditions
+func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterProfile, page: AdventurePage = null, host: AdventurePage = null, forced: AdventureEvent = null) -> void:
 	assert(new_adventure)
 	assert(protagonist_profile)
 	assert(protagonist_profile.is_valid())
 	_adventure = new_adventure
 	world = StoryWorld.new(new_adventure.encounters)
 	_protagonist = _party.create_character(protagonist_profile)
+	_forced = forced
 	if host != null and host != page:
 		enter_page(host)
 		_host = host
@@ -107,11 +116,30 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 
 func enter_page(adventure_page: AdventurePage) -> void:
 	if adventure_page is AdventureLocation:
+		var area: AdventureArea = (adventure_page as AdventureLocation).area
+		_entered_area = area if area != null and (_location == null or _location.area != area) else null
+		_first_time_in_area = _entered_area != null and not _areas_been_in.has(area)
+		if _first_time_in_area: _areas_been_in.append(area)
 		_location = adventure_page as AdventureLocation
 		_chance_rolls.clear()
+		_arrivals_while_forced += 1
+		if _arrivals_while_forced > 1: _forced = null
 	_current_story_page = _create_story_page(adventure_page) if adventure_page else null
 
 func get_location() -> AdventureLocation: return _location
+
+## The text of the area just entered on arriving at [param location] ([member AdventureArea.description], its first-time text the first time),
+## as a paragraph; empty if no area was entered
+func get_area_text(location: AdventureLocation) -> String:
+	if _entered_area == null or location.area != _entered_area: return ""
+	var first: bool = _first_time_in_area and not _entered_area.first_description.is_empty()
+	var text: String = _entered_area.first_description if first else _entered_area.description
+	return "[p]%s[/p]" % text if not text.is_empty() else ""
+
+## The event played from in the adventure editor, or a scenario holding it, until the player arrives at a location the second time
+func is_forced(event: AdventureEvent) -> bool:
+	if _forced == null or event == null: return false
+	return event == _forced or event is AdventureEventScenario and (event as AdventureEventScenario).get_listed_events().has(_forced)
 
 ## Whether [param condition]'s chance came up on this arrival at the location: rolled the first time it is asked, then kept until the next arrival
 func roll_chance(condition: AdventureChanceCondition) -> bool:

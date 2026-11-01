@@ -30,6 +30,9 @@ func test_ambush_decision() -> void:
 	assert_int(ambush.decisions.size()).is_equal(1)
 	assert_str(ambush.decisions[0].description).is_equal("Continue.")
 	assert_str(ambush.title).is_empty()
+	# You read the swamp and the ruin, but can only go on
+	assert_int(ambush.text_layering).is_equal(AdventureEvent.Layering.ADDS)
+	assert_int(ambush.decisions_layering).is_equal(AdventureEvent.Layering.ONLY_THIS)
 	var strikes: AdventurePage = ambush.decisions[0].transition as AdventurePage
 	assert_str(strikes.title).is_equal("Lurker Ambush")
 	var decision: AdventureFightDecision = strikes.decisions[0]
@@ -71,7 +74,7 @@ func test_ambush_only_while_the_lurker_can_fight() -> void:
 
 func test_won_event_offers_to_kill_the_beaten_lurker() -> void:
 	var won: AdventureEvent = load(OUTCOME_PAGES[Fight.Outcome.WON])
-	assert_int(won.exclusivity).is_equal(0)
+	assert_int(won.decisions_layering).is_equal(AdventureEvent.Layering.ADDS)
 	assert_int((won.conditions[0] as AdventureMonsterCondition).state).is_equal(AdventureMonsterCondition.State.BEATEN)
 	var kill: AdventureDecision = won.decisions[0]
 	assert_str(kill.description).is_equal("Kill the Lurker.")

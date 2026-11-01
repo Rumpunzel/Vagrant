@@ -14,6 +14,8 @@ signal event_requested(location: AdventureLocation, scenario: bool)
 ## Pick an event made already for [param location]'s own events; [param show_actions] shows the choices
 signal existing_event_requested(location: AdventureLocation, show_actions: Callable)
 signal encounter_requested(location: AdventureLocation, monster: bool, profile: MonsterProfile)
+## Play from [param page] ([param event]: none)
+signal play_requested(page: AdventurePage, event: AdventureEvent)
 
 enum Act { UP, DOWN, ADD, REMOVE }
 
@@ -104,6 +106,13 @@ func _make_banner() -> Control:
 	_ambience_button.pressed.connect(_toggle_ambience)
 	_ambience_button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	buttons.add_child(_ambience_button)
+	var play: Button = Button.new()
+	play.text = "Play"
+	play.icon = AdventureActionMenu.get_editor_icon("PlayScene")
+	play.tooltip_text = "Play from here (chance decides what happens, as in the game)"
+	play.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	play.pressed.connect(_on_play)
+	buttons.add_child(play)
 	var add: Button = Button.new()
 	add.text = "Encounter"
 	add.icon = AdventureActionMenu.get_editor_icon("Add")
@@ -172,6 +181,9 @@ func _on_visibility_changed() -> void:
 	if is_visible_in_tree(): return
 	_ambience.stop()
 	_update_ambience_button()
+
+func _on_play() -> void:
+	if get_location() != null: play_requested.emit(get_location(), null)
 
 func _on_add_encounter() -> void:
 	if get_location() != null: _menu.show_actions(_get_encounter_actions())

@@ -2,8 +2,9 @@
 class_name AdventureLocation
 extends AdventurePage
 
-## A place on the map, in an area: what one walks between, where events happen. Events whose prerequisites are met add their text and decisions,
-## and the first of them with a title, background or ambience overrides the location's.
+## A place on the map, in an area: what one walks between, where events happen. Its page reads: the area's text (entering it), its own text,
+## then the events whose prerequisites are met in its order (its own, the encounters'), each adding to, replacing the location's or being the only
+## text and decisions ([enum AdventureEvent.Layering]); the first with a title, background or ambience overrides the location's.
 
 @export var area: AdventureArea
 ## Its own events (usually picking all that fit); stored inside its file
@@ -16,20 +17,23 @@ extends AdventurePage
 @export_file("*.tres") var order: Array[String]
 
 func get_page_title(story: Story) -> String:
-	for event: AdventureEvent in _get_candidate_events(story):
+	for event: AdventureEvent in get_events(story):
 		var event_title: String = event.get_page_title(story)
 		if not event_title.is_empty(): return event_title
 	return "%s — %s" % [area.name, title] if area != null else title
 
 func get_description(story: Story) -> String:
 	var active_events: Array[AdventureEvent] = get_events(story)
+	var only: AdventureEvent = _find_layering(active_events, &"text_layering", AdventureEvent.Layering.ONLY_THIS)
+	if only != null: return only.get_description(story)
 	var own: String = first_description if not first_description.is_empty() and story.get_how_often_page_has_been_entered(self) == 0 else description
-	var text: String = "" if _is_base_hidden(active_events) else "[p]%s[/p]" % own
+	var text: String = story.get_area_text(self)
+	if _find_layering(active_events, &"text_layering", AdventureEvent.Layering.REPLACES_LOCATION) == null: text += "[p]%s[/p]" % own
 	for event: AdventureEvent in active_events: text += event.get_description(story)
 	return text
 
 func get_background(story: Story) -> Texture2D:
-	for event: AdventureEvent in _get_candidate_events(story):
+	for event: AdventureEvent in get_events(story):
 		var event_background: Texture2D = event.get_background(story)
 		if event_background: return event_background
 	return background
@@ -38,7 +42,7 @@ func get_area_background() -> Texture2D:
 	return area.background if area else null
 
 func get_ambience(story: Story) -> AudioStream:
-	for event: AdventureEvent in _get_candidate_events(story):
+	for event: AdventureEvent in get_events(story):
 		var event_ambience: AudioStream = event.get_ambience(story)
 		if event_ambience != null: return event_ambience
 	if ambience != null: return ambience
@@ -46,18 +50,22 @@ func get_ambience(story: Story) -> AudioStream:
 
 func get_decisions(story: Story) -> Array[AdventureDecision]:
 	var active_events: Array[AdventureEvent] = get_events(story)
+	var only: AdventureEvent = _find_layering(active_events, &"decisions_layering", AdventureEvent.Layering.ONLY_THIS)
+	if only != null: return only.get_decisions(story)
 	var active_decisions: Array[AdventureDecision] = [ ]
 	for event: AdventureEvent in active_events: active_decisions.append_array(event.get_decisions(story))
-	if not _is_base_hidden(active_events): active_decisions.append_array(decisions)
+	if _find_layering(active_events, &"decisions_layering", AdventureEvent.Layering.REPLACES_LOCATION) == null: active_decisions.append_array(decisions)
 	return active_decisions
 
-## Events whose prerequisites are met, in order. Hide Above drops the ones before an event, Hide Below the ones after it.
+## Events whose prerequisites are met, in order; of two wanting to be the only text (or the only decisions), the later isn't shown
 func get_events(story: Story) -> Array[AdventureEvent]:
 	var active_events: Array[AdventureEvent] = [ ]
 	for event: AdventureEvent in _get_candidate_events(story):
-		if event.exclude_above(): active_events = [ ]
+		var only_text: bool = event.text_layering == AdventureEvent.Layering.ONLY_THIS
+		var only_decisions: bool = event.decisions_layering == AdventureEvent.Layering.ONLY_THIS
+		if only_text and _find_layering(active_events, &"text_layering", AdventureEvent.Layering.ONLY_THIS) != null: continue
+		if only_decisions and _find_layering(active_events, &"decisions_layering", AdventureEvent.Layering.ONLY_THIS) != null: continue
 		active_events.append(event)
-		if event.exclude_below(): break
 	return active_events
 
 ## The events of its own scenario
@@ -132,7 +140,7 @@ func _get_candidate_events(story: Story) -> Array[AdventureEvent]:
 		if source.are_all_prerequisites_fullfilled(story): candidates.append_array(source.resolve_events(story, self, null))
 	return candidates
 
-## Hide Base on any active event drops this page's own description and decisions
-static func _is_base_hidden(active_events: Array[AdventureEvent]) -> bool:
-	for event: AdventureEvent in active_events: if event.exclude_base(): return true
-	return false
+## The first of [param active_events] whose [param property] (text or decisions layering) is [param layering]
+static func _find_layering(active_events: Array[AdventureEvent], property: StringName, layering: AdventureEvent.Layering) -> AdventureEvent:
+	for event: AdventureEvent in active_events: if event.get(property) == layering: return event
+	return null

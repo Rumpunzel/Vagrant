@@ -199,6 +199,20 @@ func test_chance_is_rolled_once_per_arrival() -> void:
 	assert_array(_castle.get_events(_story)).contains_exactly([_meeting])
 	assert_str(chance.describe()).is_equal("1 in 3 chance")
 
+func test_the_event_played_from_shows_whatever_its_conditions() -> void:
+	var met: AdventureStageCondition = AdventureStageCondition.new()
+	met.track = "Storyline"
+	met.stages = ["Met"] as Array[String]
+	var later: AdventureEvent = _event("Later", "She waves.")
+	later.conditions = [met] as Array[AdventureCondition]
+	_eleanor.events = [_meeting, later] as Array[AdventureEvent]
+	assert_array(_castle.get_events(_story)).contains_exactly([_meeting])
+	# Played from: met on that arrival, and her encounter picks it first
+	_story._forced = later
+	assert_array(_castle.get_events(_story)).contains_exactly([later])
+	# Even where it couldn't happen
+	assert_bool(_shore.get_events(_story).has(later)).is_true()
+
 func _save(resource: Resource, path: String) -> void:
 	ResourceSaver.save(resource, path)
 	resource.take_over_path(path)

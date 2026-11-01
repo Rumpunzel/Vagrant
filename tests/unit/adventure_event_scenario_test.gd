@@ -50,7 +50,8 @@ func test_own_conditions_gate_the_whole_scenario() -> void:
 	assert_array(_host.get_events(_story)).is_empty()
 
 func test_hide_flags_of_the_shown_event_act_on_the_host() -> void:
-	_first.exclusivity = 7
+	_first.text_layering = AdventureEvent.Layering.ONLY_THIS
+	_first.decisions_layering = AdventureEvent.Layering.ONLY_THIS
 	var later: AdventureEvent = _event("", "Birds sing.")
 	TestAdventures.add(_host, later)
 	assert_str(_host.get_description(_story)).is_equal("[p]A hiss![/p]")

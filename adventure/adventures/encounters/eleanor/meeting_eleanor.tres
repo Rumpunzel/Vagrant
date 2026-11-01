@@ -67,7 +67,8 @@ transition = SubResource("Resource_b3ed1")
 [resource]
 script = ExtResource("3_t43k6_event")
 conditions = Array[ExtResource("1_k8kem")]([SubResource("Resource_unmet")])
-exclusivity = 7
+text_layering = 2
+decisions_layering = 2
 title = "The Mysterious Woman"
 description = "A young woman knocks her mace against the heavy gate of the ruined keep."
 decisions = Array[ExtResource("1_npy2t")]([SubResource("Resource_fqbk4"), SubResource("Resource_yrhxu")])

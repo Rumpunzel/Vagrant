@@ -14,13 +14,16 @@ enum Pick {
 	ALL,
 }
 
-const UNUSED: Array[StringName] = [&"description", &"background", &"ambience", &"decisions", &"exclusivity"]
+const UNUSED: Array[StringName] = [&"description", &"background", &"ambience", &"decisions", &"text_layering", &"decisions_layering"]
 
 @export var pick: Pick = Pick.FIRST
 @export var events: Array[AdventureEvent]
 
+## Picking the first, the one played from the adventure editor comes first ([method Story.is_forced])
 func resolve_events(story: Story, location: AdventureLocation, encounter: AdventureEncounter) -> Array[AdventureEvent]:
 	var shown: Array[AdventureEvent] = [ ]
+	if pick == Pick.FIRST:
+		for event: AdventureEvent in events: if event != null and story.is_forced(event): return event.resolve_events(story, location, encounter)
 	for event: AdventureEvent in events:
 		if event == null or not event.are_all_prerequisites_fullfilled(story): continue
 		shown.append_array(event.resolve_events(story, location, encounter))

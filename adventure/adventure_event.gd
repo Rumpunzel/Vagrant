@@ -3,13 +3,16 @@ class_name AdventureEvent
 extends AdventurePage
 
 ## Shown on a location while its conditions are met: as one of the location's own events, or an encounter's, by [member where];
-## [member exclusivity] decides what else stays visible
+## [member text_layering] and [member decisions_layering] decide what else of the page stays
 
-enum Exclusivity {
-	NONE = 0,
-	EXCLUDE_BASE = 1,
-	EXCLUDE_BELOW = 2,
-	EXCLUDE_ABOVE = 4,
+## What an event does to the rest of the page, for its text and for its decisions
+enum Layering {
+	## It joins the rest
+	ADDS,
+	## The location's own goes
+	REPLACES_LOCATION,
+	## Everything else's goes; of two events wanting this, the earlier in the location's order wins and the later one isn't shown
+	ONLY_THIS,
 }
 
 enum Where {
@@ -24,8 +27,10 @@ enum Where {
 const MAX_NEARBY_REACH: int = 8
 
 @export var conditions: Array[AdventureCondition]
-@export_flags("Hide Base:1", "Hide Below:2", "Hide Above:4", "Hide All:7")
-var exclusivity: int = 0
+## What its text does to the area's, the location's and other events' text
+@export var text_layering: Layering = Layering.ADDS
+## What its decisions do to the location's and other events' decisions
+@export var decisions_layering: Layering = Layering.ADDS
 ## For an encounter's events; a location's own events show there
 @export var where: Where = Where.ENCOUNTER
 ## Only on these locations, or locations in these areas (UIDs); none: no such limit
@@ -35,7 +40,9 @@ var exclusivity: int = 0
 ## Near: only on locations in the same area as where its encounter is
 @export var nearby_stays_in_area: bool = false
 
+## Played from the adventure editor ([method Story.is_forced]): met on that first arrival
 func are_all_prerequisites_fullfilled(story: Story) -> bool:
+	if story.is_forced(self): return true
 	for condition: AdventureCondition in conditions:
 		if not condition.is_true(story, self): return false
 	return true
@@ -44,7 +51,7 @@ func are_all_prerequisites_fullfilled(story: Story) -> bool:
 ## it picks); [param encounter]: the encounter it belongs to, none for a location's own events
 func resolve_events(story: Story, location: AdventureLocation, encounter: AdventureEncounter) -> Array[AdventureEvent]:
 	var shown: Array[AdventureEvent] = [ ]
-	if encounter == null or can_show_at(story, location, encounter): shown.append(self)
+	if encounter == null or story.is_forced(self) or can_show_at(story, location, encounter): shown.append(self)
 	return shown
 
 func can_show_at(story: Story, location: AdventureLocation, encounter: AdventureEncounter) -> bool:
@@ -60,12 +67,3 @@ func is_allowed_at(location: AdventureLocation) -> bool:
 		var allowed: Resource = Files.load_existing(path)
 		if allowed != null and (allowed == location or allowed == location.area): return true
 	return false
-
-func exclude_base() -> bool:
-	return exclusivity & Exclusivity.EXCLUDE_BASE
-
-func exclude_below() -> bool:
-	return exclusivity & Exclusivity.EXCLUDE_BELOW
-
-func exclude_above() -> bool:
-	return exclusivity & Exclusivity.EXCLUDE_ABOVE

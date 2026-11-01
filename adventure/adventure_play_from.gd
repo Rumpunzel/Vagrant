@@ -9,13 +9,16 @@ var adventure: Adventure
 var page: AdventurePage
 ## The page [member page]'s event is on, or none
 var host: AdventurePage
+## The event played from: shown on the first arrival whatever its conditions, or none
+var forced: AdventureEvent
 
 ## [param start]: where to start; [param start_host]: the page its event is on (for pages behind an event), or none
-static func write(to_play: Adventure, start: AdventurePage, start_host: AdventurePage) -> void:
+static func write(to_play: Adventure, start: AdventurePage, start_host: AdventurePage, start_forced: AdventureEvent = null) -> void:
 	var file: ConfigFile = ConfigFile.new()
 	file.set_value("start", "adventure", to_play.resource_path)
 	file.set_value("start", "page", _locate(start))
 	file.set_value("start", "host", _locate(start_host) if start_host != null else [ ])
+	file.set_value("start", "forced", _locate(start_forced) if start_forced != null else [ ])
 	file.save(PATH)
 
 ## Where to start, and the file is gone; none if there was none
@@ -30,6 +33,8 @@ static func take() -> AdventurePlayFrom:
 	if start.adventure == null or start.page == null: return null
 	var host_location: Array = file.get_value("start", "host") as Array
 	start.host = _find(host_location) if not host_location.is_empty() else null
+	var forced_location: Array = file.get_value("start", "forced", [ ]) as Array
+	start.forced = _find(forced_location) as AdventureEvent if not forced_location.is_empty() else null
 	return start
 
 ## [its file, its ID in there (empty: the file itself)]: pages stored inside a file have no path of their own to load

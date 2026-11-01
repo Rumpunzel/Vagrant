@@ -101,23 +101,6 @@ func test_condition_text() -> void:
 	var conditions: Array[AdventureCondition] = [_stage_condition("Dead"), AdventureIsAlwaysTrueCondition.new(), _stage_condition("Lurking")]
 	assert_str(AdventureEventGraph.describe_conditions(conditions)).is_equal("its own: State is Dead, its own: State is Lurking")
 
-func test_hiding_text_goes_by_the_location_s_order() -> void:
-	var ambush: AdventureEvent = _page("Ambush")
-	ambush.exclusivity = 7
-	var host: AdventureLocation = AdventureLocation.new()
-	host.title = "Ruin"
-	TestAdventures.list(host, [_page("Birds"), ambush] as Array[AdventureEvent])
-	var none: Array[AdventureEncounter] = [ ]
-	assert_str(AdventureEventGraph.describe_hiding(ambush, host, none)).is_equal("Hides Ruin's text and decisions, events before it (Birds), events after it (none)")
-	assert_str(AdventureEventGraph.describe_hiding(ambush, null, none)).is_equal("Hides the host's text and decisions, events before it, events after it")
-	# An encounter's events count where the location's order puts them: after its own events unless listed first
-	var eleanor: AdventureEncounter = AdventureEncounter.new()
-	eleanor.events = [_page("Knocking")] as Array[AdventureEvent]
-	var encounters: Array[AdventureEncounter] = [eleanor]
-	assert_str(AdventureEventGraph.describe_hiding(ambush, host, encounters)).is_equal("Hides Ruin's text and decisions, events before it (Birds), events after it (Knocking)")
-	ambush.exclusivity = 0
-	assert_str(AdventureEventGraph.describe_hiding(ambush, host, none)).is_empty()
-
 func _stage_condition(stage: String) -> AdventureStageCondition:
 	var condition: AdventureStageCondition = AdventureStageCondition.new()
 	condition.track = "State"

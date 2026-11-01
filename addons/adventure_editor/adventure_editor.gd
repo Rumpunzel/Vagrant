@@ -123,6 +123,8 @@ func _connect_views() -> void:
 	_event_screen.event_opened.connect(open_event)
 	_event_screen.changes_requested.connect(_edits.apply)
 	_event_screen.text_requested.connect(_actions.ask_name)
+	_event_screen.play_requested.connect(_play_from)
+	_location_view.play_requested.connect(_play_from)
 
 func _connect_lists() -> void:
 	_picker.resource_changed.connect(func(resource: Resource) -> void: set_adventure(resource as Adventure))
@@ -293,7 +295,7 @@ func _play_from(page: AdventurePage, event: AdventureEvent) -> void:
 			return
 		if page == event: page = host
 	save()
-	AdventurePlayFrom.write(adventure, page, host)
+	AdventurePlayFrom.write(adventure, page, host, event)
 	EditorInterface.play_main_scene()
 
 func _list_problems() -> void:

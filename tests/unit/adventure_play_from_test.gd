@@ -31,8 +31,9 @@ func after_test() -> void:
 	for path: String in [EVENT_PATH, ADVENTURE_PATH, AdventurePlayFrom.PATH]: if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
 
 func test_takes_what_was_written_once() -> void:
-	AdventurePlayFrom.write(_adventure, _inside, _host)
+	AdventurePlayFrom.write(_adventure, _inside, _host, _event)
 	var start: AdventurePlayFrom = AdventurePlayFrom.take()
+	assert_str(start.forced.title).is_equal("Ambush")
 	assert_str(start.adventure.resource_path).is_equal(ADVENTURE_PATH)
 	assert_str(start.page.title).is_equal("Inside")
 	assert_str(start.host.title).is_equal("Ambush")

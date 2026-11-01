@@ -49,7 +49,8 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
 - **Page graphs:** pages, decision cards (choices, fights, saves with their outcomes), condition and effect chips at the start of their
   transition, Host / Previous location, exits; links by dragging ports, new pages on empty space.
 - **Data:** locations, events, scenarios (first / all), encounters (places, stage tracks, where, only at), stage / move / kill effects,
-  stage / place / monster / chance conditions (chance: rolled once per arrival at a location), one-off fights, the problem check.
+  stage / place / monster / chance conditions (chance: rolled once per arrival at a location), one-off fights, the problem check;
+  area texts on entering an area; events' text and decisions layering (adds / replaces the location's / only this).
 
 ## Open
 - [ ] Effects: if chips at the start of a transition aren't clear enough, try a node in the path for an outcome with effects (user to judge)
@@ -128,3 +129,4 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
 - 2026-11-01: icons on the specials, event cards, the map's event buttons, "In …" and "Open its options"; each graph's scroll and zoom kept in the layout (`graph_views`) with its height; tidying a graph forgets both
 - 2026-11-01: cleanups: docs, hiding text by order, overview folded into the event view, frames to the map, AdventureEditorActions and AdventureMakers split out, this plan condensed (history stays in the log)
 - 2026-11-01: chance condition (1 in N, rolled once per arrival, hidden); the Lurker's ambush starts with the water stirring (1 in 2), "Continue." leads into the fight; tests: chance (1), Lurker content and story reworked
+- 2026-11-01: Hide flags replaced by text and decisions layering (adds / replaces the location's / only this; of two "only", the earlier wins); area texts on entering an area (first-time text); the event node previews the page (click a row to show or hide it); "Play from here" forces its event (all conditions met on the first arrival, its scenario picks it) and has ▶ buttons on the event screen's sections and the location banner; tests: layering (4), area text (1), forced (1)

@@ -64,65 +64,72 @@ func test_event_needs_all_conditions() -> void:
 	event.conditions = [AdventureIsAlwaysTrueCondition.new(), AdventureIsAlwaysTrueCondition.new()] as Array[AdventureCondition]
 	assert_bool(event.are_all_prerequisites_fullfilled(_story)).is_true()
 
-func test_exclude_above_drops_earlier_events() -> void:
+func test_an_event_replacing_the_location_s_text() -> void:
 	var page: AdventureLocation = _location("Ruin", "Damp.")
-	var first: AdventureEvent = _event("", "First.")
-	var second: AdventureEvent = _event("", "Second.")
-	second.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_ABOVE
-	TestAdventures.list(page, [first, second] as Array[AdventureEvent])
-	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p][p]Second.[/p]")
-	assert_array(page.get_events(_story)).is_equal([second])
+	page.decisions = [_decision("Leave")] as Array[AdventureDecision]
+	var burning: AdventureEvent = _event("", "The temple burns.")
+	burning.text_layering = AdventureEvent.Layering.REPLACES_LOCATION
+	TestAdventures.list(page, [burning, _event("", "Birds sing.")] as Array[AdventureEvent])
+	assert_str(page.get_description(_story)).is_equal("[p]The temple burns.[/p][p]Birds sing.[/p]")
+	assert_int(page.get_decisions(_story).size()).is_equal(1)
 
-func test_exclude_below_stops_later_events() -> void:
+func test_only_its_decisions_keeps_all_text() -> void:
 	var page: AdventureLocation = _location("Ruin", "Damp.")
-	var first: AdventureEvent = _event("", "First.")
-	first.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BELOW
-	TestAdventures.list(page, [first, _event("", "Second.")] as Array[AdventureEvent])
-	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p][p]First.[/p]")
-	assert_array(page.get_events(_story)).is_equal([first])
+	page.decisions = [_decision("Leave")] as Array[AdventureDecision]
+	var ripples: AdventureEvent = _event("", "The water stirs.")
+	var go_on: AdventureDecision = _decision("Continue")
+	ripples.decisions = [go_on] as Array[AdventureDecision]
+	ripples.decisions_layering = AdventureEvent.Layering.ONLY_THIS
+	var birds: AdventureEvent = _event("", "Birds sing.")
+	birds.decisions = [_decision("Listen")] as Array[AdventureDecision]
+	TestAdventures.list(page, [birds, ripples] as Array[AdventureEvent])
+	# You see everything, but can only react
+	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p][p]Birds sing.[/p][p]The water stirs.[/p]")
+	assert_array(page.get_decisions(_story)).is_equal([go_on])
 
-func test_exclude_base_and_below_hides_the_page_itself() -> void:
+func test_only_its_text_and_decisions() -> void:
 	var page: AdventureLocation = _location("Ruin", "Damp.")
 	page.decisions = [_decision("Leave")] as Array[AdventureDecision]
 	var event: AdventureEvent = _event("", "A hiss!")
 	var event_decision: AdventureDecision = _decision("Fight")
 	event.decisions = [event_decision] as Array[AdventureDecision]
-	event.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BASE | AdventureEvent.Exclusivity.EXCLUDE_BELOW
-	TestAdventures.list(page, [event, _event("", "Second.")] as Array[AdventureEvent])
-	assert_str(page.get_description(_story)).is_equal("[p]A hiss![/p]")
-	assert_array(page.get_decisions(_story)).is_equal([event_decision])
-
-func test_exclude_base_alone_hides_the_page_itself() -> void:
-	var page: AdventureLocation = _location("Ruin", "Damp.")
-	page.decisions = [_decision("Leave")] as Array[AdventureDecision]
-	var event: AdventureEvent = _event("", "A hiss!")
-	event.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BASE
-	var second: AdventureEvent = _event("", "Second.")
-	TestAdventures.list(page, [event, second] as Array[AdventureEvent])
-	# Later events still show, only the page's own part is gone
-	assert_str(page.get_description(_story)).is_equal("[p]A hiss![/p][p]Second.[/p]")
-	assert_array(page.get_decisions(_story)).is_empty()
-
-func test_dropped_event_does_not_hide_base() -> void:
-	var page: AdventureLocation = _location("Ruin", "Damp.")
-	var hiding: AdventureEvent = _event("", "First.")
-	hiding.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BASE
-	var dropping: AdventureEvent = _event("", "Second.")
-	dropping.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_ABOVE
-	TestAdventures.list(page, [hiding, dropping] as Array[AdventureEvent])
-	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p][p]Second.[/p]")
-
-func test_hide_all_shows_only_the_event() -> void:
-	var page: AdventureLocation = _location("Ruin", "Damp.")
-	page.decisions = [_decision("Leave")] as Array[AdventureDecision]
-	var event: AdventureEvent = _event("", "A hiss!")
-	var event_decision: AdventureDecision = _decision("Fight")
-	event.decisions = [event_decision] as Array[AdventureDecision]
-	event.exclusivity = 7
+	event.text_layering = AdventureEvent.Layering.ONLY_THIS
+	event.decisions_layering = AdventureEvent.Layering.ONLY_THIS
 	TestAdventures.list(page, [_event("", "Before."), event, _event("", "After.")] as Array[AdventureEvent])
 	assert_str(page.get_description(_story)).is_equal("[p]A hiss![/p]")
 	assert_array(page.get_decisions(_story)).is_equal([event_decision])
-	assert_array(page.get_events(_story)).is_equal([event])
+
+func test_of_two_wanting_to_be_the_only_one_the_earlier_wins() -> void:
+	var page: AdventureLocation = _location("Ruin", "Damp.")
+	var first: AdventureEvent = _event("", "First.")
+	first.decisions_layering = AdventureEvent.Layering.ONLY_THIS
+	var second: AdventureEvent = _event("", "Second.")
+	second.decisions_layering = AdventureEvent.Layering.ONLY_THIS
+	var third: AdventureEvent = _event("", "Third.")
+	TestAdventures.list(page, [first, second, third] as Array[AdventureEvent])
+	assert_array(page.get_events(_story)).is_equal([first, third])
+	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p][p]First.[/p][p]Third.[/p]")
+
+func test_the_area_s_text_on_entering_it() -> void:
+	var swamp: AdventureArea = AdventureArea.new()
+	swamp.description = "Mist hangs over the reeds."
+	swamp.first_description = "You have never smelled rot like this."
+	var page: AdventureLocation = _location("Ruin", "Damp.")
+	page.area = swamp
+	_story._entered_area = swamp
+	_story._first_time_in_area = true
+	assert_str(page.get_description(_story)).is_equal("[p]You have never smelled rot like this.[/p][p]Damp.[/p]")
+	_story._first_time_in_area = false
+	assert_str(page.get_description(_story)).is_equal("[p]Mist hangs over the reeds.[/p][p]Damp.[/p]")
+	# Arriving from within the area: no area text
+	_story._entered_area = null
+	assert_str(page.get_description(_story)).is_equal("[p]Damp.[/p]")
+	# Only this event's text: not even the area's
+	var hiss: AdventureEvent = _event("", "A hiss!")
+	hiss.text_layering = AdventureEvent.Layering.ONLY_THIS
+	TestAdventures.list(page, [hiss] as Array[AdventureEvent])
+	_story._entered_area = swamp
+	assert_str(page.get_description(_story)).is_equal("[p]A hiss![/p]")
 
 func test_background_and_ambience_fallbacks() -> void:
 	var page: AdventureLocation = _location("Ruin", "")

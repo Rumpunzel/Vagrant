@@ -15,6 +15,8 @@ signal option_requested(scenario: AdventureEventScenario)
 signal existing_option_requested(scenario: AdventureEventScenario, show_actions: Callable)
 ## Ask for a name, then call [param then] with it
 signal text_requested(title: String, label: String, then: Callable)
+## Play from [param page], [param event] shown whatever its conditions
+signal play_requested(page: AdventurePage, event: AdventureEvent)
 
 const DIMMED: Color = Color(1, 1, 1, 0.35)
 const LEADS_IN_COLOR: Color = Color(0.6, 1.0, 0.6)
@@ -207,6 +209,8 @@ func _add_section(option: AdventureEvent, index: int) -> Control:
 		section.add_title_bar_control(_make_label("when %s" % needs if not needs.is_empty() else "always fits"))
 	section.folding_changed.connect(_on_folding_changed.bind(section, option))
 	if not section.folded: _fill_section(section, option)
+	if not option is AdventureEventScenario:
+		section.add_title_bar_control(_make_icon_button("Play", "Play from here: the game starts at its location with it shown, whatever its conditions", play_requested.emit.bind(option, option)))
 	if index < 0: return section
 	if index > 0: section.add_title_bar_control(_make_icon_button("MoveUp", "Earlier: checked first", _move.bind(index, -1)))
 	if index < _scenario.events.size() - 1: section.add_title_bar_control(_make_icon_button("MoveDown", "Later", _move.bind(index, 1)))

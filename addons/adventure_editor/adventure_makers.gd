@@ -125,7 +125,8 @@ static func make_encounter_files(adventure: Adventure, title: String, location: 
 	else:
 		var ambush: AdventureEvent = AdventureEvent.new()
 		ambush.title = "%s Ambush" % title
-		ambush.exclusivity = AdventureEvent.Exclusivity.EXCLUDE_BASE | AdventureEvent.Exclusivity.EXCLUDE_BELOW | AdventureEvent.Exclusivity.EXCLUDE_ABOVE
+		# You see everything, but can only react
+		ambush.decisions_layering = AdventureEvent.Layering.ONLY_THIS
 		ambush.conditions = [make_monster_condition(AdventureMonsterCondition.State.CAN_FIGHT)] as Array[AdventureCondition]
 		var fight: AdventureFightDecision = make_fight()
 		fight.transition = make_special_reference(false)
