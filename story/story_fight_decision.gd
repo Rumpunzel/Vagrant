@@ -38,5 +38,5 @@ func get_icon_color() -> Color:
 	if custom_color != Color.WHITE and not fleeing: return custom_color
 	return get_dice_request().attribute.color
 
-func _setup(_protagonist: Character) -> void:
+func _setup(_character: Character) -> void:
 	dice_request = fight.create_request(fleeing)

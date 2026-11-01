@@ -71,7 +71,8 @@ func get_link(from: AdventurePage, to: AdventurePage) -> Link:
 
 func get_encounter_locations(encounter: AdventureEncounter) -> Array[AdventureLocation]:
 	var locations: Array[AdventureLocation] = [ ]
-	locations.assign(encounter_locations.get(encounter, [ ]) as Array)
+	var stored: Array = encounter_locations.get(encounter, [ ])
+	locations.assign(stored)
 	return locations
 
 ## The encounter [param event] is (one of the events of), if any
@@ -88,7 +89,8 @@ func get_encounters_at(location: AdventureLocation) -> Array[AdventureEncounter]
 
 func get_hosts(event: AdventureEvent) -> Array[AdventurePage]:
 	var hosts: Array[AdventurePage] = [ ]
-	hosts.assign(event_hosts.get(event, [ ]) as Array)
+	var stored: Array = event_hosts.get(event, [ ])
+	hosts.assign(stored)
 	return hosts
 
 ## The map locations [param event] happens on, also through the scenarios and encounters it is part of

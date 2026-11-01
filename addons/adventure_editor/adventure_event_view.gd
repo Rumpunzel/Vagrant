@@ -284,7 +284,9 @@ func _get_special_target(outlet: AdventureEventGraph.Outlet, kind: Target) -> St
 func _get_placed_target(outlet: AdventureEventGraph.Outlet, kind: Target) -> String:
 	var reference: Resource = outlet.decision.get(outlet.property) as Resource
 	var key: String = layout.special_links.get(_key(reference), "") if layout != null and reference != null else ""
-	return key if _nodes.has(key) and (_node_targets.get(_nodes[key].name, [ ]) as Array).size() > 0 and _node_targets[_nodes[key].name][0] == kind else ""
+	if not _nodes.has(key): return ""
+	var targets: Array = _node_targets.get(_nodes[key].name, [ ])
+	return key if not targets.is_empty() and targets[0] == kind else ""
 
 ## Special nodes dragged in from the sidebar ([AdventureSpecialButton]) land where they are dropped
 ## Images from the FileSystem panel onto a page become its background

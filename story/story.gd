@@ -151,7 +151,8 @@ func roll_chance(condition: AdventureChanceCondition) -> bool:
 func get_subject(path: String, event: AdventurePage = null) -> Resource:
 	if not path.is_empty(): return Files.load_existing(path)
 	var encounter: AdventureEncounter = world.get_encounter_of(event as AdventureEvent) if event is AdventureEvent else _encounter
-	return encounter if encounter != null else _location
+	if encounter != null: return encounter
+	return _location
 
 func get_protagonist() -> Character: return _protagonist
 
@@ -177,7 +178,8 @@ func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	# Nothing to choose (only dice decisions, no breath dice left): the first one fails right away
 	var failed: StoryChoice = null
 	if not choices.any(func(choice: StoryChoice) -> bool: return choice.is_available()):
-		failed = StoryChoice.from_adventure_decision(_create_failed_decision(choices.front().get_adventure_decision() as AdventureDiceDecision), _protagonist)
+		var first: StoryChoice = choices.front()
+		failed = StoryChoice.from_adventure_decision(_create_failed_decision(first.get_adventure_decision() as AdventureDiceDecision), _protagonist)
 		choices = [failed]
 	var story_page: StoryPage = StoryPage.new(
 		adventure_page,

@@ -139,7 +139,8 @@ class UidList:
 
 	func _get_paths() -> Array[String]:
 		var paths: Array[String] = [ ]
-		paths.assign(get_edited_object().get(get_edited_property()) as Array)
+		var stored: Array = get_edited_object().get(get_edited_property())
+		paths.assign(stored)
 		return paths
 
 	func _on_added(resource: Resource) -> void:

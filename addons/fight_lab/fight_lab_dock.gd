@@ -140,7 +140,7 @@ func _load_result(status: String) -> void:
 		return
 	_results.show_result(result)
 	var cells: Array = result["cells"]
-	_status.text = "%s: %d cells × %d fights." % [status, cells.size(), int(cells[0]["stats"]["runs"]) if not cells.is_empty() else 0]
+	_status.text = "%s: %d cells × %d fights." % [status, cells.size(), cells[0]["stats"]["runs"] if not cells.is_empty() else 0]
 	var skipped: Array = result.get("skipped", [])
 	if not skipped.is_empty(): _status.text += " Skipped (attributes not rolled): %s." % ", ".join(skipped)
 

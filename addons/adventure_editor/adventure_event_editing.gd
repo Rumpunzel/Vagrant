@@ -72,7 +72,8 @@ static func get_changes_forgetting(target: AdventurePage, roots: Array[Adventure
 			for list: StringName in [&"places", &"only_at", &"order"]:
 				if not list in page or target_uid.is_empty(): continue
 				var paths: Array[String] = [ ]
-				paths.assign(page.get(list) as Array)
+				var stored: Array = page.get(list)
+				paths.assign(stored)
 				if not paths.has(target_uid): continue
 				paths.erase(target_uid)
 				changes.append([page, list, paths, file])

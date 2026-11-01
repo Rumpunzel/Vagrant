@@ -28,12 +28,14 @@ static func take() -> AdventurePlayFrom:
 	file.load(PATH)
 	DirAccess.remove_absolute(PATH)
 	var start: AdventurePlayFrom = AdventurePlayFrom.new()
-	start.adventure = load(file.get_value("start", "adventure") as String) as Adventure
-	start.page = _find(file.get_value("start", "page") as Array)
+	var adventure_path: String = file.get_value("start", "adventure")
+	var page_location: Array = file.get_value("start", "page")
+	start.adventure = load(adventure_path) as Adventure
+	start.page = _find(page_location)
 	if start.adventure == null or start.page == null: return null
-	var host_location: Array = file.get_value("start", "host") as Array
+	var host_location: Array = file.get_value("start", "host")
 	start.host = _find(host_location) if not host_location.is_empty() else null
-	var forced_location: Array = file.get_value("start", "forced", [ ]) as Array
+	var forced_location: Array = file.get_value("start", "forced", [ ])
 	start.forced = _find(forced_location) as AdventureEvent if not forced_location.is_empty() else null
 	return start
 
@@ -43,7 +45,8 @@ static func _locate(located: AdventurePage) -> Array:
 	return [file, located.resource_scene_unique_id if located.resource_path.contains("::") else ""]
 
 static func _find(location: Array) -> AdventurePage:
-	var root: AdventurePage = load(location[0] as String) as AdventurePage
+	var file: String = location[0]
+	var root: AdventurePage = load(file) as AdventurePage
 	var id: String = location[1]
 	if root == null or id.is_empty(): return root
 	for held: AdventurePage in root.get_held_pages(): if held.resource_scene_unique_id == id: return held
