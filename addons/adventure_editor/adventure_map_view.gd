@@ -15,14 +15,27 @@ signal location_opened(location: AdventureLocation)
 ## A new encounter that could be at [param location]: an NPC, or (with [param profile], none: ask for one) a monster
 signal encounter_requested(location: AdventureLocation, monster: bool, profile: MonsterProfile)
 
+## The texts the map asks for: a decision's or an area's, and their first-time texts
+const TEXT_PROPERTIES: Array[StringName] = [&"description", &"first_description"]
+
 ## Locations let go of their frame during the current drag, with that frame
 var _detached: Dictionary[GraphElement, GraphFrame] = {}
+var _texts_dialog: AdventureTextsDialog
+var _ambience: AudioStreamPlayer
+## The ▶ buttons, with what each plays
+var _ambience_buttons: Dictionary[Button, AudioStream] = {}
 
 func setup() -> void:
 	super()
 	right_disconnects = true
-	connection_request.connect(func(from: StringName, _from_port: int, to: StringName, _to_port: int) -> void: _link(_page_of(from), _page_of(to)))
+	connection_request.connect(func(from: StringName, _from_port: int, to: StringName, _to_port: int) -> void: _ask_link(_page_of(from), _page_of(to)))
 	disconnection_request.connect(func(from: StringName, _from_port: int, to: StringName, _to_port: int) -> void: _unlink(_page_of(from), _page_of(to)))
+	_texts_dialog = AdventureTextsDialog.new()
+	add_child(_texts_dialog)
+	_ambience = AudioStreamPlayer.new()
+	add_child(_ambience)
+	_ambience.finished.connect(_show_ambience_playing)
+	visibility_changed.connect(_on_visibility_changed)
 	begin_node_move.connect(_on_move_started)
 	end_node_move.connect(_on_moved)
 	popup_request.connect(func(at_position: Vector2) -> void:
@@ -45,10 +58,12 @@ func _add_frame(title: String, resource: Resource, background_texture: Texture2D
 
 func show_graph(graph: AdventureGraph) -> void:
 	_clear()
+	_ambience_buttons.clear()
 	var frames: Dictionary[AdventureArea, GraphFrame] = {}
 	for area: AdventureArea in graph.areas:
 		frames[area] = _add_frame(area.name, area, area.background)
-		_on_right_click(frames[area], func() -> Dictionary[String, Callable]: return {"Delete area…": deletion_requested.emit.bind(area)})
+		_add_ambience_button(frames[area].get_titlebar_hbox(), area.ambience, "Play the area's ambience")
+		_on_right_click(frames[area], func() -> Dictionary[String, Callable]: return {"Edit area texts…": _ask_area_texts.bind(area), "Delete area…": deletion_requested.emit.bind(area)})
 	var row_sizes: Dictionary[int, int] = {}
 	for page: AdventurePage in graph.pages:
 		var location: AdventureLocation = page as AdventureLocation
@@ -64,8 +79,12 @@ func show_graph(graph: AdventureGraph) -> void:
 				card.text = "%s (could be here)" % AdventureGraph.get_title(encounter)
 				card.modulate = FADED
 				content.add_child(card)
-		var node: GraphNode = _add_node(_key(page), page, AdventureGraph.get_title(page), content, Vector2(column, row) * NODE_SPACING)
+		content.add_child(_make_exits(graph, page))
+		var starts: bool = page == graph.adventure.starting_page
+		var node: GraphNode = _add_node(_key(page), page, ("★ " if starts else "") + AdventureGraph.get_title(page), content, Vector2(column, row) * NODE_SPACING)
 		node.set_slot(0, true, 0, Color.WHITE, true, 0, Color.WHITE)
+		if page.ambience != null: _add_ambience_button(node.get_titlebar_hbox(), page.ambience, "Play its ambience")
+		elif area != null: _add_ambience_button(node.get_titlebar_hbox(), area.ambience, "Play its area's ambience")
 		_on_right_click(node, func() -> Dictionary[String, Callable]: return _get_location_actions(graph, page))
 		if location != null:
 			node.gui_input.connect(func(input: InputEvent) -> void:
@@ -96,6 +115,8 @@ func _get_location_actions(graph: AdventureGraph, page: AdventurePage) -> Dictio
 		actions["New encounter here…"] = encounter_requested.emit.bind(page, false, null)
 		actions["New monster encounter here…"] = encounter_requested.emit.bind(page, true, null)
 	actions["Play from here"] = play_requested.emit.bind(page, null)
+	if page != graph.adventure.starting_page:
+		actions["Set as starting page"] = _request.bind(graph.adventure, &"starting_page", page, "Start at %s" % AdventureGraph.get_title(page), graph.adventure)
 	actions["Delete location…" if page is AdventureLocation else "Delete page…"] = deletion_requested.emit.bind(page)
 	for link: AdventureGraph.Link in graph.links:
 		if link.from == page and not link.through_event: actions["Unlink from %s" % AdventureGraph.get_title(link.to)] = _unlink.bind(page, link.to)
@@ -184,13 +205,107 @@ func _remove_event(location: AdventureLocation, event: AdventureEvent) -> void:
 		return
 	changes_requested.emit(AdventureMapEditing.get_changes_removing(location, event), "Remove %s from %s" % [AdventureGraph.get_title(event), AdventureGraph.get_title(location)], null)
 
-func _link(from: AdventurePage, to: AdventurePage) -> void:
+## Asks for the new decision's texts first
+func _ask_link(from: AdventurePage, to: AdventurePage) -> void:
 	if from == null or to == null or from == to: return
 	# Already linked: dragging the same link again would offer it twice
 	if AdventureMapEditing.without_links(from, to).size() != from.decisions.size(): return
+	var title: String = "Link %s to %s" % [AdventureGraph.get_title(from), AdventureGraph.get_title(to)]
+	_texts_dialog.ask(title, _get_exit_fields(AdventureMakers.make_link(to), to), _link.bind(from, to, title))
+
+func _link(texts: Array[String], from: AdventurePage, to: AdventurePage, title: String) -> void:
+	var link: AdventureDecision = AdventureMakers.make_link(to)
+	if not texts[0].is_empty(): link.description = texts[0]
+	link.first_description = texts[1]
 	var decisions: Array[AdventureDecision] = from.decisions.duplicate()
-	decisions.append(AdventureMakers.make_link(to))
-	_request(from, &"decisions", decisions, "Link %s to %s" % [AdventureGraph.get_title(from), AdventureGraph.get_title(to)], from)
+	decisions.append(link)
+	_request(from, &"decisions", decisions, title, from)
+
+## [param page]'s own plain decisions leading to pages on the map, a row each: click to change its texts; the way back is offered where there is none
+func _make_exits(graph: AdventureGraph, page: AdventurePage) -> VBoxContainer:
+	var exits: VBoxContainer = VBoxContainer.new()
+	exits.add_theme_constant_override(&"separation", 0)
+	for decision: AdventureDecision in page.decisions:
+		if decision == null or decision is AdventureDiceDecision or decision.transition == null: continue
+		var to: AdventurePage = decision.transition.get_adventure_page()
+		if to == null or not graph.pages.has(to): continue
+		var row: HBoxContainer = HBoxContainer.new()
+		var exit: Button = Button.new()
+		exit.flat = true
+		exit.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		exit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		exit.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		exit.text = "→ %s: %s" % [AdventureGraph.get_title(to), decision.description.get_slice("\n", 0)]
+		exit.tooltip_text = decision.description
+		if not decision.first_description.is_empty(): exit.tooltip_text += "\nThe first time: %s" % decision.first_description
+		exit.tooltip_text += "\nClick to change"
+		exit.pressed.connect(_ask_exit_texts.bind(page, decision, to))
+		row.add_child(exit)
+		if graph.get_link(to, page) == null:
+			row.add_child(_make_tool_button("Back", "+ back", "No way back from %s; click to add one" % AdventureGraph.get_title(to), _ask_link.bind(to, page)))
+		exits.add_child(row)
+		if not decision.first_description.is_empty():
+			var first: Label = _make_info("   the first time: %s" % decision.first_description.get_slice("\n", 0))
+			first.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			exits.add_child(first)
+	return exits
+
+func _get_exit_fields(decision: AdventureDecision, to: AdventurePage) -> Array[AdventureTextsDialog.Field]:
+	return [
+		AdventureTextsDialog.Field.new("Text", decision.description),
+		AdventureTextsDialog.Field.new("The first time (until %s was visited)" % AdventureGraph.get_title(to), decision.first_description, "None: always the text above"),
+	]
+
+func _ask_exit_texts(page: AdventurePage, decision: AdventureDecision, to: AdventurePage) -> void:
+	var title: String = "%s → %s" % [AdventureGraph.get_title(page), AdventureGraph.get_title(to)]
+	_texts_dialog.ask(title, _get_exit_fields(decision, to), _set_texts.bind(decision, TEXT_PROPERTIES, title, page))
+
+func _ask_area_texts(area: AdventureArea) -> void:
+	var fields: Array[AdventureTextsDialog.Field] = [
+		AdventureTextsDialog.Field.new("On entering it from another area", area.description, "None", true),
+		AdventureTextsDialog.Field.new("The first time", area.first_description, "None: the text above", true),
+	]
+	var title: String = "%s's texts" % area.name
+	_texts_dialog.ask(title, fields, _set_texts.bind(area, TEXT_PROPERTIES, title, area))
+
+## A decision's text can't be emptied; the others can
+func _set_texts(texts: Array[String], resource: Resource, properties: Array[StringName], action: String, file: Resource) -> void:
+	var changes: Array[Array] = [ ]
+	for index: int in properties.size():
+		var text: String = texts[index]
+		var now: String = resource.get(properties[index])
+		if text == now or (text.is_empty() and resource is AdventureDecision and properties[index] == &"description"): continue
+		changes.append([resource, properties[index], text])
+	if not changes.is_empty(): changes_requested.emit(changes, action, file)
+
+## A ▶ in [param bar] (none without [param stream]); one ambience plays at a time
+func _add_ambience_button(bar: HBoxContainer, stream: AudioStream, tooltip: String) -> void:
+	if stream == null: return
+	var button: Button = Button.new()
+	button.flat = true
+	button.toggle_mode = true
+	button.icon = _get_editor_icon("AudioStreamPlayer")
+	if button.icon == null: button.text = "▶"
+	button.tooltip_text = tooltip
+	button.set_pressed_no_signal(_ambience.playing and _ambience.stream == stream)
+	button.toggled.connect(_toggle_ambience.bind(stream))
+	bar.add_child(button)
+	_ambience_buttons[button] = stream
+
+func _toggle_ambience(on: bool, stream: AudioStream) -> void:
+	if on:
+		_ambience.stream = stream
+		_ambience.play()
+	elif _ambience.stream == stream: _ambience.stop()
+	_show_ambience_playing()
+
+func _show_ambience_playing() -> void:
+	for button: Button in _ambience_buttons: button.set_pressed_no_signal(_ambience.playing and _ambience.stream == _ambience_buttons[button])
+
+func _on_visibility_changed() -> void:
+	if is_visible_in_tree(): return
+	_ambience.stop()
+	_show_ambience_playing()
 
 ## Removes the plain decisions leading there; fights and saves stay
 func _unlink(from: AdventurePage, to: AdventurePage) -> void:

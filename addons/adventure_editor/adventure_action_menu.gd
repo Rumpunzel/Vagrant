@@ -7,7 +7,7 @@ extends PopupMenu
 const ICON_SIZE: int = 16
 ## [words, icon name]: the first entry with a word in an item's text gives its icon
 const ICONS: Array[Array] = [
-	[["play"], "Play"], [["unlink"], "Unlinked"], [["remove", "delete", "not nearby", "not here"], "Remove"], [["other file"], "Load"],
+	[["starting page"], "Favorites"], [["texts"], "Edit"], [["play"], "Play"], [["unlink"], "Unlinked"], [["remove", "delete", "not nearby", "not here"], "Remove"], [["other file"], "Load"],
 	[["(scenario)"], "GraphEdit"], [["monster"], "Skeleton2D"], [["encounter", "place "], "CharacterBody2D"], [["new ", "add "], "Add"],
 ]
 

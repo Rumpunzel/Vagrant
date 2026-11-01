@@ -18,6 +18,7 @@ class Link:
 
 const TITLE_FROM_TEXT_LENGTH: int = 32
 
+var adventure: Adventure
 var pages: Array[AdventurePage] = [ ]
 var areas: Array[AdventureArea] = [ ]
 var links: Array[Link] = [ ]
@@ -29,7 +30,8 @@ var unreachable: Array[AdventurePage] = [ ]
 var encounter_locations: Dictionary[AdventureEncounter, Array] = {}
 
 ## [param placed]: pages placed by hand ([method AdventureLayout.get_placed_pages]); those not reached from the start, and what they lead to, are [member unreachable]
-func _init(adventure: Adventure, placed: Array[AdventurePage] = [ ]) -> void:
+func _init(of: Adventure, placed: Array[AdventurePage] = [ ]) -> void:
+	adventure = of
 	if adventure == null or adventure.starting_page == null: return
 	_walk([adventure.starting_page])
 	var reached: int = pages.size()
@@ -171,3 +173,9 @@ static func _get_targets(decisions: Array[AdventureDecision]) -> Array[Adventure
 			var target: AdventurePage = link.get_adventure_page()
 			if target != null: targets.append(target)
 	return targets
+
+## Whether [param event] (or an option or event of it) only happens by chance ([AdventureChanceCondition])
+static func happens_by_chance(event: AdventureEvent) -> bool:
+	if event.conditions.any(func(condition: AdventureCondition) -> bool: return condition is AdventureChanceCondition): return true
+	var scenario: AdventureEventScenario = event as AdventureEventScenario
+	return scenario != null and scenario.events.any(func(option: AdventureEvent) -> bool: return option != null and happens_by_chance(option))

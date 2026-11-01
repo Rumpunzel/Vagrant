@@ -40,3 +40,23 @@ func test_fight_outcomes_follow_how_the_fight_ended() -> void:
 	# Fleeing and a draw do nothing but lead on
 	assert_str(fight.get_fight_outcome(Fight.Outcome.FLED).consequences_property).is_empty()
 	assert_array(fight.get_page_references()).contains_exactly(pages)
+
+func test_first_time_text_until_its_page_was_visited() -> void:
+	var story: Story = auto_free(Story.new())
+	var castle: AdventurePage = AdventurePage.new()
+	var decision: AdventureDecision = AdventureDecision.new()
+	decision.description = "Go to the castle."
+	decision.transition = castle
+	assert_str(decision.get_description(story)).is_equal("Go to the castle.")
+	decision.first_description = "Climb the narrow path."
+	assert_str(decision.get_description(story)).is_equal("Climb the narrow path.")
+	story._page_log[castle] = [StoryPage.new(castle, "", "", null, null, [StoryChoice.from_adventure_decision(AdventureDecision.new(), null)] as Array[StoryChoice], [] as Array[AdventureEvent])] as Array[StoryPage]
+	assert_str(decision.get_description(story)).is_equal("Go to the castle.")
+	# A file not loaded yet wasn't visited, and isn't loaded to find out
+	var transition: AdventureTransition = AdventureTransition.new()
+	transition._leads_to = "res://nowhere/castle.tres"
+	decision.transition = transition
+	assert_str(decision.get_description(story)).is_equal("Climb the narrow path.")
+	# Going back: no first time
+	decision.transition = AdventureHostReference.new()
+	assert_str(decision.get_description(story)).is_equal("Go to the castle.")

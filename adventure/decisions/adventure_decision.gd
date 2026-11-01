@@ -16,6 +16,8 @@ class Outcome:
 		consequences_property = effects
 
 @export_multiline var description: String
+## Shown instead while the page it leads to hasn't been visited yet ("Climb the narrow path." before "Go to the castle."); empty: none
+@export_multiline var first_description: String
 ## None: goes back [member back_steps] pages
 @export var transition: AdventurePageReference
 @export_range(1, 5) var back_steps: int = 1
@@ -48,6 +50,11 @@ func get_page_references() -> Array[AdventurePageReference]:
 		var link: AdventurePageReference = get_reference(outcome)
 		if link != null: references.append(link)
 	return references
+
+## Its text in [param story]: the first-time text until the page it leads to was visited
+func get_description(story: Story) -> String:
+	if first_description.is_empty() or transition == null or transition.was_visited(story): return description
+	return first_description
 
 func get_icon() -> Texture2D: return _icon
 func get_color() -> Color: return _color

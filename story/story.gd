@@ -199,7 +199,10 @@ func _create_story_choices(adventure_page: AdventurePage, decisions: Array[Adven
 	var story_choices: Array[StoryChoice] = []
 	for decision: AdventureDecision in decisions:
 		if decision is AdventureFightDecision: story_choices.append_array(_create_fight_choices(_create_fight(adventure_page, decision as AdventureFightDecision)))
-		else: story_choices.append(StoryChoice.from_adventure_decision(decision, _protagonist))
+		else:
+			var choice: StoryChoice = StoryChoice.from_adventure_decision(decision, _protagonist)
+			choice.description = decision.get_description(self)
+			story_choices.append(choice)
 	return story_choices
 
 ## Against the monster of its encounter (named, or the one of the event it is in), else a one-off fight against its first enemy

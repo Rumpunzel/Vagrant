@@ -19,6 +19,12 @@ func leads_nowhere() -> bool: return not ResourceLoader.exists(_leads_to)
 
 func load_page() -> AdventurePage: return load(_leads_to)
 
+## Without loading it: a visited page stays loaded (the story's page log holds it), one not loaded yet wasn't visited
+func was_visited(story: Story) -> bool:
+	var path: String = ResourceUID.uid_to_path(_leads_to) if _leads_to.begins_with("uid://") else _leads_to
+	var page: AdventurePage = ResourceLoader.get_cached_ref(path) as AdventurePage
+	return page != null and story.get_how_often_page_has_been_entered(page) > 0
+
 func get_adventure_page() -> AdventurePage:
 	# The adventure editor reads links too; Files isn't @tool
 	if Engine.is_editor_hint(): return load_page()

@@ -248,6 +248,9 @@ func _make_event_card(event: AdventureEvent, page: AdventurePage) -> Button:
 	card.icon = AdventureActionMenu.get_event_icon(event)
 	card.add_theme_constant_override(&"icon_max_width", ICON_SIZE)
 	card.tooltip_text = "%s: %s" % ["Scenario" if event is AdventureEventScenario else "Event", event.resource_path]
+	if AdventureGraph.happens_by_chance(event):
+		card.text += " 🎲"
+		card.tooltip_text += "\nHappens only by chance"
 	card.pressed.connect(_on_event_card_pressed.bind(event, page))
 	card.gui_input.connect(func(input: InputEvent) -> void:
 		var click: InputEventMouseButton = input as InputEventMouseButton

@@ -41,7 +41,9 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
 
 ## Built
 - **Map:** areas as frames, locations, links (dashed through events), unreachable pages faded; link / unlink, new location and area, Alt+drag out
-  of a frame, drop events, encounters, monster profiles and images; delete; Tidy; play from here; Find.
+  of a frame, drop events, encounters, monster profiles and images; delete; Tidy; play from here; Find; ★ starting page (set from the menu);
+  exits on each node (click: text and first-time text; new links ask for them; + way back where there is none); ▶ ambience on locations and
+  areas (one at a time); area texts from the frame's menu; 🎲 on events that happen by chance.
 - **Location tab:** banner (background, ambience), text, sections in the location's order with ▲ ▼, + event, + encounter, ✕, can come here.
 - **Event screen:** one per event; scenarios and encounters as foldable sections with their page graphs (height handle, scroll and zoom kept),
   pick first / every, + Option, Add event…; encounters with track bars (+ stage, + track), the Body bar, "In" (click to change) and "Leads to";
@@ -132,3 +134,4 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
 - 2026-11-01: chance condition (1 in N, rolled once per arrival, hidden); the Lurker's ambush starts with the water stirring (1 in 2), "Continue." leads into the fight; tests: chance (1), Lurker content and story reworked
 - 2026-11-01: Hide flags replaced by text and decisions layering (adds / replaces the location's / only this; of two "only", the earlier wins); area texts on entering an area (first-time text); the event node previews the page (click a row to show or hide it); "Play from here" forces its event (all conditions met on the first arrival, its scenario picks it) and has ▶ buttons on the event screen's sections and the location banner; tests: layering (4), area text (1), forced (1)
 - 2026-11-01: no breath dice left: saves and fights are greyed out (tooltip) and come back after catching breath; with nothing else to do, the first fails at once (generalizes the fight lost on arrival, which moved from `Fight` to `Story`); "no rest here" (`AdventurePage.no_rest`, a page or any event on it) disables catching breath and making camp, set on meeting Eleanor and the Lurker's stirring water; tests: availability (1), no rest (1), greyed out and failing on arrival (2)
+- 2026-11-01: a choice's first-time text (`AdventureDecision.first_description`, until the page it leads to was visited, read from the load cache so nothing loads early); map: exits with their texts, linking asks for them, + way back, ▶ ambience, ★ starting page, area texts dialog (`AdventureTextsDialog`), 🎲 on chance events; duplicate decisions are a problem, linking twice adds none; tests: first-time text (1), offered twice (1)

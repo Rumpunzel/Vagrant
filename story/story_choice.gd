@@ -14,6 +14,9 @@ signal dice_requested(dice_request: DiceRequest)
 @warning_ignore("unused_signal")
 signal roll_requested(dice_request: DiceRequest)
 
+## As the story words it now, e.g. a first-time text ([method AdventureDecision.get_description]); empty: its decision's text
+var description: String
+
 var _adventure_decision: AdventureDecision :
 	set(new_adventure_decision):
 		_adventure_decision = new_adventure_decision
@@ -43,7 +46,7 @@ func discard() -> void: assert(not is_chosen()); discarded.emit()
 @abstract func get_transition_reference() -> AdventurePageReference
 @abstract func get_consequences() -> Array[StoryConsequence]
 
-func get_description() -> String: return get_adventure_decision().description
+func get_description() -> String: return description if not description.is_empty() else get_adventure_decision().description
 func get_icon() -> Texture2D: return get_adventure_decision().get_icon()
 func get_icon_color() -> Color: return get_adventure_decision().get_color()
 ## Why it can't be chosen right now; empty: it can
