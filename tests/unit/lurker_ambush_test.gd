@@ -1,11 +1,11 @@
 extends GdUnitTestSuite
 
-## Content check: the Lurker ambush in the swamp temple ruin is a real fight, in a scenario that works on any page.
+## Content check: the Lurker is an encounter at the swamp temple ruin; its ambush is a real fight, its monster tells whether it can fight, is beaten or dead.
 ## Playing it through the Story scene: integration/lurker_ambush_story_test.gd
 
 const LURKER: String = "uid://d3ytncs0be7oo"  # lurker.tres
 const LURKER_AMBUSH: String = "uid://bxwqtk0p80o4g"  # lurker_ambush.tres
-const LURKER_SCENARIO: String = "uid://c16ehct0w6n48"  # events/lurker.tres
+const LURKER_ENCOUNTER: String = "uid://c16ehct0w6n48"  # encounters/lurker/lurker.tres
 const TEMPLE_RUIN: String = "uid://cs40ge42lw0ry"  # temple_ruin.tres
 const OUTCOME_PAGES: Dictionary[Fight.Outcome, String] = {
 	Fight.Outcome.WON: "uid://m4wl5ad8o0i7",  # lurker_ambush_won.tres
@@ -25,11 +25,24 @@ func test_lurker_profile() -> void:
 	assert_object((lurker.attack as NervesAttack).target).is_same(Rules.AGILITY)
 
 func test_ambush_decision() -> void:
-	var ambush: AdventurePage = load(LURKER_AMBUSH)
+	var ambush: AdventureEvent = load(LURKER_AMBUSH)
+	# First the water stirs: only "Continue." leads on, into the fight
 	assert_int(ambush.decisions.size()).is_equal(1)
-	var decision: AdventureFightDecision = ambush.decisions[0]
+	assert_str(ambush.decisions[0].description).is_equal("Continue.")
+	assert_str(ambush.title).is_empty()
+	# You read the swamp and the ruin, but can only go on
+	assert_int(ambush.text_layering).is_equal(AdventureEvent.Layering.ADDS)
+	assert_int(ambush.decisions_layering).is_equal(AdventureEvent.Layering.ONLY_THIS)
+	var strikes: AdventurePage = ambush.decisions[0].transition as AdventurePage
+	assert_str(strikes.title).is_equal("Lurker Ambush")
+	var decision: AdventureFightDecision = strikes.decisions[0]
 	assert_str(decision.flee_description).is_equal("Wun away!")
-	assert_object(decision.enemies[0]).is_same(load(LURKER))
+	# Its own encounter's monster fights
+	assert_str(decision.encounter).is_empty()
+	assert_array(decision.enemies).is_empty()
+	assert_object((load(LURKER_ENCOUNTER) as AdventureEncounter).profile).is_same(load(LURKER))
+	# Winning beats its monster by itself: no consequence needed
+	assert_array(decision.consequences).is_empty()
 	# Winning goes back to wherever the ambush happened, where the scenario then shows the beaten Lurker
 	assert_object(decision.transition).is_instanceof(AdventureHostReference)
 	var references: Dictionary[Fight.Outcome, AdventurePageReference] = {
@@ -51,30 +64,40 @@ func test_ambush_decision() -> void:
 		assert_int(back.back_steps).is_equal(1)
 
 func test_ambush_only_while_the_lurker_can_fight() -> void:
-	var ambush: AdventurePage = load(LURKER_AMBUSH)
+	var ambush: AdventureEvent = load(LURKER_AMBUSH)
 	var condition: AdventureMonsterCondition = ambush.conditions[0]
+	assert_str(condition.encounter).is_empty()
 	assert_int(condition.state).is_equal(AdventureMonsterCondition.State.CAN_FIGHT)
-	assert_object(condition.monster.monster).is_same(load(LURKER))
-	# Its own Lurker: the ambush is the page that spawns it
-	assert_object(condition.monster.spawned_by).is_null()
+	# And only by chance
+	var chance: AdventureChanceCondition = ambush.conditions[1]
+	assert_str(chance.describe()).is_equal("1 in 2 chance")
 
 func test_won_event_offers_to_kill_the_beaten_lurker() -> void:
-	var won: AdventurePage = load(OUTCOME_PAGES[Fight.Outcome.WON])
-	assert_int(won.exclusivity).is_equal(0)
-	var condition: AdventureMonsterCondition = won.conditions[0]
-	assert_int(condition.state).is_equal(AdventureMonsterCondition.State.INCAPACITATED)
-	assert_object(condition.monster.spawned_by.get_adventure_page()).is_same(load(LURKER_AMBUSH))
+	var won: AdventureEvent = load(OUTCOME_PAGES[Fight.Outcome.WON])
+	assert_int(won.decisions_layering).is_equal(AdventureEvent.Layering.ADDS)
+	assert_int((won.conditions[0] as AdventureMonsterCondition).state).is_equal(AdventureMonsterCondition.State.BEATEN)
 	var kill: AdventureDecision = won.decisions[0]
 	assert_str(kill.description).is_equal("Kill the Lurker.")
-	var consequence: AdventureKillMonsterConsequence = kill.consequences[0]
-	assert_object(consequence.monster.spawned_by.get_adventure_page()).is_same(load(LURKER_AMBUSH))
+	assert_object(kill.consequences[0]).is_instanceof(AdventureKillConsequence)
 	assert_object(kill.transition).is_instanceof(AdventureHostReference)
 
-func test_scenario_shows_the_ambush_or_the_beaten_lurker() -> void:
-	var scenario: AdventureEventScenario = load(LURKER_SCENARIO)
-	assert_array((load(TEMPLE_RUIN) as AdventurePage).events).contains_exactly([scenario])
-	# The ambush first: while the Lurker can fight, the beaten one isn't there
-	assert_array(scenario.events).contains_exactly([load(LURKER_AMBUSH), load(OUTCOME_PAGES[Fight.Outcome.WON])])
-	assert_array(scenario.conditions).is_empty()
-	# One Lurker, wherever the scenario is placed
-	assert_bool((load(LURKER_AMBUSH) as AdventurePage).generic).is_false()
+func test_the_encounter_shows_the_ambush_or_the_beaten_lurker() -> void:
+	var lurker: AdventureEncounter = load(LURKER_ENCOUNTER)
+	assert_array(lurker.events).contains_exactly([load(LURKER_AMBUSH), load(OUTCOME_PAGES[Fight.Outcome.WON])])
+	assert_int(lurker.pick).is_equal(AdventureEventScenario.Pick.FIRST)
+	assert_array(lurker.get_places()).contains_exactly([load(TEMPLE_RUIN)])
+	assert_array(lurker.tracks).is_empty()
+	assert_array((load(TEMPLE_RUIN) as AdventureLocation).get_own_events()).is_empty()
+	var story: Story = auto_free(Story.new())
+	story._monsters = auto_free(Monsters.new())
+	story.chance_roller = func(_condition: AdventureChanceCondition) -> bool: return true
+	story.world = StoryWorld.new([lurker] as Array[AdventureEncounter])
+	var temple: AdventureLocation = load(TEMPLE_RUIN)
+	assert_array(temple.get_events(story)).contains_exactly([load(LURKER_AMBUSH)])
+	var monster: Monster = story.get_monster(lurker, lurker.profile as MonsterProfile)
+	monster.incapacitated = true
+	assert_array(temple.get_events(story)).contains_exactly([load(OUTCOME_PAGES[Fight.Outcome.WON])])
+	story._encounter = lurker
+	(load(OUTCOME_PAGES[Fight.Outcome.WON]) as AdventureEvent).decisions[0].consequences[0].resolve(story, 0)
+	assert_bool(monster.dead).is_true()
+	assert_array(temple.get_events(story)).is_empty()

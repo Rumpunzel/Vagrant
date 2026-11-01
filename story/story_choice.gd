@@ -4,6 +4,9 @@ extends RefCounted
 
 signal chosen
 signal discarded
+## It became possible or impossible to choose it ([method get_unavailable_reason])
+@warning_ignore("unused_signal")
+signal availability_changed
 @warning_ignore("unused_signal")
 signal icon_changed
 @warning_ignore("unused_signal")
@@ -43,6 +46,9 @@ func discard() -> void: assert(not is_chosen()); discarded.emit()
 func get_description() -> String: return get_adventure_decision().description
 func get_icon() -> Texture2D: return get_adventure_decision().get_icon()
 func get_icon_color() -> Color: return get_adventure_decision().get_color()
+## Why it can't be chosen right now; empty: it can
+func get_unavailable_reason() -> String: return ""
+func is_available() -> bool: return get_unavailable_reason().is_empty()
 
 @abstract func _setup(protagonist: Character) -> void
 func _chose() -> void: chosen.emit()

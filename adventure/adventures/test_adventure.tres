@@ -1,7 +1,10 @@
 [gd_resource type="Resource" script_class="Adventure" format=3 uid="uid://dw1vkutmmhnao"]
 
 [ext_resource type="Script" uid="uid://b70286dnr6ftj" path="res://adventure/adventure.gd" id="1_5cnpf"]
+[ext_resource type="Script" uid="uid://jag8exqamilc" path="res://adventure/adventure_encounter.gd" id="4_encounter"]
 [ext_resource type="Resource" uid="uid://3lhxtoqoq8kx" path="res://characters/the_vagrant.tres" id="1_buje7"]
+[ext_resource type="Resource" uid="uid://c16ehct0w6n48" path="res://adventure/adventures/encounters/lurker/lurker.tres" id="5_lurker"]
+[ext_resource type="Resource" uid="uid://dkfro0d37xt6n" path="res://adventure/adventures/encounters/eleanor/eleanor.tres" id="3_eleanor"]
 [ext_resource type="Resource" uid="uid://ycd6xhx346l6" path="res://adventure/adventures/locations/beach/rocky_shore.tres" id="2_74d10"]
 
 [resource]
@@ -9,3 +12,4 @@ script = ExtResource("1_5cnpf")
 title = "Test Adventure"
 starting_page = ExtResource("2_74d10")
 protagonist = ExtResource("1_buje7")
+encounters = Array[ExtResource("4_encounter")]([ExtResource("3_eleanor"), ExtResource("5_lurker")])

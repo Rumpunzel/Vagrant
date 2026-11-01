@@ -9,6 +9,8 @@
 [ext_resource type="Script" uid="uid://btlh4wrv04rc3" path="res://addons/collapsible_container/collapsible_elements/collapsible_container.gd" id="6_ywxnt"]
 [ext_resource type="PackedScene" uid="uid://bpqkh512g0nmb" path="res://game/breath_dice/breath_dice_selection.tscn" id="7_sl3wq"]
 [ext_resource type="PackedScene" uid="uid://eusoh8easays" path="res://game/story_book/injury_display.tscn" id="9_injury"]
+[ext_resource type="Texture2D" uid="uid://cyxyw6jc62i5h" path="res://assets/game_icons/willdabeast/round-shield.svg" id="10_c5alc"]
+[ext_resource type="Texture2D" uid="uid://dlih5kmubqfvf" path="res://assets/game_icons/lorc/knife-thrust.svg" id="10_mxtv7"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ywxnt"]
 
@@ -85,6 +87,7 @@ metadata/_custom_type_script = "uid://rbc1te7wgcy0"
 [node name="Description" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=633031264]
 layout_mode = 2
 focus_mode = 2
+theme_override_constants/paragraph_separation = 8
 bbcode_enabled = true
 text = "First line.
 Second line."
@@ -125,14 +128,26 @@ offset_right = 0.0
 offset_bottom = 47.0
 grow_horizontal = 2
 
-[node name="Injuries" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=585672939]
+[node name="WeaponToggle" type="Button" parent="MarginContainer/VBoxContainer" unique_id=834980876]
 visible = false
+layout_mode = 2
+text = "Raise your Weapon!"
+icon = ExtResource("10_mxtv7")
+expand_icon = true
+
+[node name="ShieldToggle" type="Button" parent="MarginContainer/VBoxContainer" unique_id=2124873220]
+visible = false
+layout_mode = 2
+text = "Raise your Shield!"
+icon = ExtResource("10_c5alc")
+expand_icon = true
+
+[node name="Injuries" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=585672939]
 layout_mode = 2
 theme_override_constants/separation = 24
 alignment = 1
 
 [node name="Outcome" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1895481572]
-visible = false
 layout_mode = 2
 focus_mode = 2
 bbcode_enabled = true

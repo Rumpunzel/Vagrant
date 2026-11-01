@@ -4,6 +4,7 @@ extends EditorPlugin
 const AdventureEditorScene: PackedScene = preload("uid://btrr51xe6kwox")  # adventure_editor.tscn
 
 var _editor: AdventureEditor
+var _uid_inspector: AdventureUidInspector
 
 func _enter_tree() -> void:
 	_editor = AdventureEditorScene.instantiate()
@@ -11,8 +12,11 @@ func _enter_tree() -> void:
 	_editor.setup(get_undo_redo())
 	_make_visible(false)
 	resource_saved.connect(_on_resource_saved)
+	_uid_inspector = AdventureUidInspector.new()
+	add_inspector_plugin(_uid_inspector)
 
 func _exit_tree() -> void:
+	remove_inspector_plugin(_uid_inspector)
 	_editor.queue_free()
 
 func _has_main_screen() -> bool: return true

@@ -1,5 +1,10 @@
 class_name Files
 
+## The resource at [param path] (a path or a UID); none if it is empty or gone, without the errors [method ResourceLoader.exists] reports for unknown UIDs
+static func load_existing(path: String) -> Resource:
+	if path.is_empty() or path.begins_with("uid://") and not ResourceUID.has_id(ResourceUID.text_to_id(path)): return null
+	return load(path) if ResourceLoader.exists(path) else null
+
 static func load_async(resource_path: String) -> Variant:
 	match ResourceLoader.load_threaded_get_status(resource_path):
 		ResourceLoader.ThreadLoadStatus.THREAD_LOAD_IN_PROGRESS, ResourceLoader.ThreadLoadStatus.THREAD_LOAD_LOADED:

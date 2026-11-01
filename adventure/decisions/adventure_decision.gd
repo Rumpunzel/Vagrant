@@ -36,7 +36,9 @@ func get_reference(outcome: Outcome) -> AdventurePageReference: return get(outco
 
 func get_consequences_of(outcome: Outcome) -> Array[AdventureConsequence]:
 	var effects: Array[AdventureConsequence] = [ ]
-	if not outcome.consequences_property.is_empty(): effects.assign(get(outcome.consequences_property) as Array)
+	if outcome.consequences_property.is_empty(): return effects
+	var stored: Array = get(outcome.consequences_property)
+	effects.assign(stored)
 	return effects
 
 ## Where its outcomes lead, those that lead somewhere

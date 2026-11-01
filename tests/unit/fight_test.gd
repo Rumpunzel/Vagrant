@@ -91,12 +91,6 @@ func test_fleeing_from_monster_out_of_breath_still_flees() -> void:
 	assert_bool(_monster.is_out_of_breath()).is_true()
 	assert_int(fight.outcome).is_equal(Fight.Outcome.FLED)
 
-func test_starting_out_of_breath_loses_immediately() -> void:
-	_character.lose_breath_dice(_character.get_breath_dice_pool())
-	var fight: Fight = Fight.new(_decision, _character, _monster, _character)
-	assert_int(fight.outcome).is_equal(Fight.Outcome.LOST)
-	assert_int(fight.get_exchange_count()).is_equal(0)
-
 func test_injuries_and_losses_reach_both_sides() -> void:
 	var fight: Fight = Fight.new(_decision, _character, _monster, _character)
 	var guts_before: int = _character.get_attribute_score(GUTS).get_score()
@@ -154,9 +148,13 @@ func test_summary_tells_who_was_unnerved() -> void:
 func test_find_decision_owner_in_events() -> void:
 	var base: AdventurePage = load("uid://cs40ge42lw0ry")  # temple_ruin.tres
 	var ambush: AdventurePage = load("uid://bxwqtk0p80o4g")  # lurker_ambush.tres
+	var story: Story = auto_free(Story.new())
+	story._monsters = auto_free(Monsters.new())
+	story.chance_roller = func(_condition: AdventureChanceCondition) -> bool: return true
+	story.world = StoryWorld.new([load("uid://c16ehct0w6n48")] as Array[AdventureEncounter])  # encounters/lurker/lurker.tres
 	for ambush_decision: AdventureDecision in ambush.decisions:
-		assert_object(base.find_decision_owner(ambush_decision)).is_same(ambush)
-	assert_object(base.find_decision_owner(AdventureDecision.new())).is_null()
+		assert_object(story._find_decision_owner(base, ambush_decision)).is_same(ambush)
+	assert_object(story._find_decision_owner(base, AdventureDecision.new())).is_null()
 
 func _apply(
 	fight: Fight,

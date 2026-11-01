@@ -3,37 +3,38 @@ extends GdUnitTestSuite
 ## The adventure editor's problem list: what it finds, and where it points.
 
 var _beach: AdventureArea
-var _shore: AdventurePage
-var _ruin: AdventurePage
+var _shore: AdventureLocation
+var _ruin: AdventureLocation
+var _encounters: Array[AdventureEncounter] = [ ]
 
 func before_test() -> void:
 	_beach = AdventureArea.new()
-	_shore = _page("Shore", _beach)
-	_ruin = _page("Ruin", _beach)
+	_shore = _location("Shore", _beach)
+	_ruin = _location("Ruin", _beach)
 	_link(_shore, _ruin)
 
 func test_a_clean_adventure_has_none() -> void:
 	assert_array(_texts([ ])).is_empty()
 
 func test_unreachable_locations() -> void:
-	var cave: AdventurePage = _page("Cave", _beach)
+	var cave: AdventureLocation = _location("Cave", _beach)
 	var placed: Array[AdventurePage] = [cave]
-	var problems: AdventureProblems = AdventureProblems.new(AdventureGraph.new(_adventure(), placed), [ ])
+	var problems: AdventureProblems = AdventureProblems.new(AdventureGraph.new(_adventure(), placed), [ ] as Array[AdventureEvent])
 	assert_array(problems.problems.map(func(problem: AdventureProblems.Problem) -> String: return problem.text)).contains_exactly(["Cave can't be reached from the starting page"])
 	assert_object(problems.problems[0].page).is_same(cave)
 	assert_object(problems.problems[0].event).is_null()
 
 func test_empty_fights_and_saves_inside_events() -> void:
-	var ambush: AdventurePage = _page("Ambush", null)
+	var ambush: AdventureEvent = _event("Ambush")
 	var fight: AdventureFightDecision = AdventureFightDecision.new()
 	fight.description = "Fight!"
 	var save: AdventureSaveDecision = AdventureSaveDecision.new()
 	save.description = "Hide"
 	ambush.decisions = [fight, save] as Array[AdventureDecision]
-	_ruin.events.append(ambush)
-	var problems: Array[AdventureProblems.Problem] = AdventureProblems.new(AdventureGraph.new(_adventure()), [ ]).problems
+	TestAdventures.add(_ruin, ambush)
+	var problems: Array[AdventureProblems.Problem] = AdventureProblems.new(AdventureGraph.new(_adventure()), [ ] as Array[AdventureEvent]).problems
 	assert_array(problems.map(func(problem: AdventureProblems.Problem) -> String: return problem.text)).contains_exactly([
-		"Ambush, \"Fight!\": the fight has no enemies",
+		"Ambush, \"Fight!\": the fight has no monster encounter and no enemies",
 		"Ambush, \"Hide\": the save has no attribute",
 	])
 	assert_object(problems[0].event).is_same(ambush)
@@ -54,37 +55,97 @@ func test_missing_files_and_host_links_outside_events() -> void:
 	])
 
 func test_options_after_one_without_conditions() -> void:
-	var always: AdventurePage = _page("Always", null)
-	var never: AdventurePage = _page("Never", null)
+	var always: AdventureEvent = _event("Always")
+	var never: AdventureEvent = _event("Never")
 	never.conditions = [AdventureIsAlwaysTrueCondition.new()] as Array[AdventureCondition]
 	var scenario: AdventureEventScenario = AdventureEventScenario.new()
-	scenario.events = [always, never] as Array[AdventurePage]
-	_ruin.events.append(scenario)
+	scenario.events = [always, never] as Array[AdventureEvent]
+	TestAdventures.add(_ruin, scenario)
 	assert_array(_texts([ ])).contains_exactly(["Never never shows: Always comes first and has no conditions"])
 
 func test_events_listed_nowhere() -> void:
-	var lost: AdventurePage = _page("Forgotten", null)
-	var heard: AdventurePage = _page("Heard", null)
-	var source: AdventurePage = _page("Source", null)
-	source.nearby_events = [heard] as Array[AdventurePage]
-	var behind: AdventurePage = _page("Behind", null)
+	var lost: AdventureEvent = _event("Forgotten")
+	var heard: AdventureEvent = _event("Heard")
+	var source: AdventureEvent = _event("Source")
+	var eleanor: AdventureEncounter = AdventureEncounter.new()
+	eleanor.events = [heard] as Array[AdventureEvent]
+	_encounters = [eleanor] as Array[AdventureEncounter]
+	var behind: AdventurePage = AdventurePage.new()
+	behind.title = "Behind"
 	_link(source, behind)
-	_ruin.events.append(source)
-	assert_array(_texts([lost, heard, source, behind])).contains_exactly(["Forgotten is listed on no location"])
+	TestAdventures.add(_ruin, source)
+	assert_array(_texts([lost, heard, source])).contains_exactly(["Forgotten is listed on no location"])
 
-func _texts(event_files: Array[AdventurePage]) -> Array:
+func test_stages_nothing_sets() -> void:
+	var storyline: AdventureStageTrack = AdventureStageTrack.new()
+	storyline.name = "Storyline"
+	storyline.stages = ["Unmet", "Met"] as Array[String]
+	var eleanor: AdventureEncounter = AdventureEncounter.new()
+	eleanor.tracks = [storyline] as Array[AdventureStageTrack]
+	var meeting: AdventureEvent = _needing("Meeting", "Unmet")
+	var after: AdventureEvent = _needing("After", "Met")
+	eleanor.events = [meeting, after] as Array[AdventureEvent]
+	_encounters = [eleanor] as Array[AdventureEncounter]
+	assert_array(_texts([ ])).contains_exactly(["After never shows: it needs Storyline Met, which is no track's start and nothing sets"])
+	var greet: AdventureDecision = AdventureDecision.new()
+	var met: AdventureStageConsequence = AdventureStageConsequence.new()
+	met.track = "Storyline"
+	met.stage = "Met"
+	greet.consequences = [met] as Array[AdventureConsequence]
+	meeting.decisions = [greet] as Array[AdventureDecision]
+	assert_array(_texts([ ])).is_empty()
+
+func test_monsters_nothing_fights_or_kills() -> void:
+	var lurker: AdventureEncounter = AdventureEncounter.new()
+	lurker.title = "Lurker"
+	lurker.profile = TestMonsters.cutthroat()
+	var won: AdventureEvent = _event("Won")
+	won.conditions = [_body(AdventureMonsterCondition.State.BEATEN)] as Array[AdventureCondition]
+	var dead: AdventureEvent = _event("Dead")
+	dead.conditions = [_body(AdventureMonsterCondition.State.DEAD)] as Array[AdventureCondition]
+	lurker.events = [won, dead] as Array[AdventureEvent]
+	_encounters = [lurker] as Array[AdventureEncounter]
+	assert_array(_texts([ ])).contains_exactly(["Won never shows: nothing fights Lurker", "Dead never shows: nothing kills Lurker"])
+	var ambush: AdventureEvent = _event("Ambush")
+	ambush.conditions = [_body(AdventureMonsterCondition.State.CAN_FIGHT)] as Array[AdventureCondition]
+	ambush.decisions = [AdventureFightDecision.new()] as Array[AdventureDecision]
+	lurker.events.push_front(ambush)
+	assert_array(_texts([ ])).contains_exactly(["Dead never shows: nothing kills Lurker"])
+	lurker.profile = null
+	assert_array(_texts([ ])).contains(["Won: Lurker has no monster to be beaten"])
+
+func _needing(title: String, stage: String) -> AdventureEvent:
+	var event: AdventureEvent = _event(title)
+	var condition: AdventureStageCondition = AdventureStageCondition.new()
+	condition.track = "Storyline"
+	condition.stages = [stage] as Array[String]
+	event.conditions = [condition] as Array[AdventureCondition]
+	return event
+
+func _body(state: AdventureMonsterCondition.State) -> AdventureMonsterCondition:
+	var condition: AdventureMonsterCondition = AdventureMonsterCondition.new()
+	condition.state = state
+	return condition
+
+func _texts(event_files: Array[AdventureEvent]) -> Array:
 	return AdventureProblems.new(AdventureGraph.new(_adventure()), event_files).problems.map(func(problem: AdventureProblems.Problem) -> String: return problem.text)
 
 func _adventure() -> Adventure:
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = _shore
+	adventure.encounters = _encounters
 	return adventure
 
-func _page(title: String, area: AdventureArea) -> AdventurePage:
-	var page: AdventurePage = AdventurePage.new()
-	page.title = title
-	page.area = area
-	return page
+func _location(title: String, area: AdventureArea) -> AdventureLocation:
+	var location: AdventureLocation = AdventureLocation.new()
+	location.title = title
+	location.area = area
+	return location
+
+func _event(title: String) -> AdventureEvent:
+	var event: AdventureEvent = AdventureEvent.new()
+	event.title = title
+	return event
 
 func _link(from: AdventurePage, to: AdventurePage) -> void:
 	var decision: AdventureDecision = AdventureDecision.new()

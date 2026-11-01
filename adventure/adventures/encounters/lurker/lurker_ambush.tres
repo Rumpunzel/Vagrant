@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="AdventureEvent" format=3 uid="uid://bxwqtk0p80o4g"]
+
+[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="1_6v84y"]
+[ext_resource type="Texture2D" uid="uid://bc6smekfx7nam" path="res://assets/monster_portraits/lurker.jpg" id="1_74683"]
+[ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_74683"]
+[ext_resource type="Script" uid="uid://elib8bc2fnvu" path="res://adventure/adventure_event.gd" id="3_1x56p_event"]
+[ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_70bai"]
+[ext_resource type="Script" uid="uid://b8exmtc8feoad" path="res://adventure/decisions/adventure_fight_decision.gd" id="5_hg3kg"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="8_2rcic"]
+[ext_resource type="Script" uid="uid://1342yb3eb2bh" path="res://characters/monsters/monster_profile.gd" id="8_c1g4w"]
+[ext_resource type="Resource" uid="uid://dsfrbfoig3deo" path="res://adventure/adventures/encounters/lurker/lurker_ambush_draw.tres" id="8_xnwgx"]
+[ext_resource type="Resource" uid="uid://dgfjjbm210jot" path="res://adventure/adventures/encounters/lurker/lurker_ambush_lost.tres" id="10_4dq5w"]
+[ext_resource type="Resource" uid="uid://qcl0jfm16ys8" path="res://adventure/adventures/encounters/lurker/lurker_ambush_fled.tres" id="11_ar80c"]
+[ext_resource type="Script" uid="uid://by4c6kid8h44s" path="res://adventure/adventure_host_reference.gd" id="11_host"]
+[ext_resource type="Script" uid="uid://dvkt7afs014e3" path="res://adventure/conditions/adventure_monster_condition.gd" id="20_monster_condition"]
+[ext_resource type="Script" uid="uid://cxveirqh4qic4" path="res://adventure/conditions/adventure_chance_condition.gd" id="21_chance"]
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="22_page"]
+
+[sub_resource type="Resource" id="Resource_lurking"]
+script = ExtResource("20_monster_condition")
+
+[sub_resource type="Resource" id="Resource_chance"]
+script = ExtResource("21_chance")
+
+[sub_resource type="Resource" id="Resource_to_host"]
+script = ExtResource("11_host")
+metadata/_custom_type_script = "uid://by4c6kid8h44s"
+
+[sub_resource type="Resource" id="Resource_2rcic"]
+script = ExtResource("5_hg3kg")
+flee_description = "Wun away!"
+flee_transition = ExtResource("11_ar80c")
+draw_transition = ExtResource("8_xnwgx")
+failure_transition = ExtResource("10_4dq5w")
+description = "Fight!"
+transition = SubResource("Resource_to_host")
+metadata/_custom_type_script = "uid://b8exmtc8feoad"
+
+[sub_resource type="Resource" id="Resource_strikes"]
+script = ExtResource("22_page")
+title = "Lurker Ambush"
+description = "Something foul and wicked your way comes!"
+background = ExtResource("1_74683")
+decisions = Array[ExtResource("2_74683")]([SubResource("Resource_2rcic")])
+
+[sub_resource type="Resource" id="Resource_continue"]
+script = ExtResource("2_74683")
+description = "Continue."
+transition = SubResource("Resource_strikes")
+
+[resource]
+script = ExtResource("3_1x56p_event")
+conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurking"), SubResource("Resource_chance")])
+decisions_layering = 2
+description = "The water beside the path stirs. Rings spread across the black surface, though nothing broke it, and the reeds go quiet."
+decisions = Array[ExtResource("2_74683")]([SubResource("Resource_continue")])
+no_rest = true
+metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

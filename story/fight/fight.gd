@@ -44,7 +44,6 @@ func _init(for_decision: AdventureFightDecision, first_actor: Actor, second_acto
 	second = second_actor
 	player = with_player
 	for actor: Actor in [first, second]: actor.prepare_for_fight()
-	if first.is_out_of_breath(): outcome = Outcome.LOST
 
 ## The player's request for the next exchange; only in the story, where the player's character fights a monster
 func create_request(fleeing: bool = false) -> FightRequest:

@@ -15,6 +15,11 @@ static func make_reference(target: AdventurePage, file_path: String) -> Adventur
 	if target_path.is_empty() or target_path == file_path: return target
 	return AdventureTransition.leading_to(target)
 
+## The file [param resource] is stored in: itself, or the file holding it; [param fallback] (else itself) while it is stored nowhere yet
+static func get_file(resource: Resource, fallback: Resource = null) -> Resource:
+	if resource.resource_path.is_empty(): return fallback if fallback != null else resource
+	return load(get_file_path(resource)) if resource.resource_path.contains("::") else resource
+
 ## Whether [param page] is stored inside another file (or not stored yet), so it is lost once nothing in that file points at it
 static func is_inside_file(page: AdventurePage) -> bool:
 	return page.resource_path.is_empty() or page.resource_path.contains("::")
@@ -41,10 +46,11 @@ static func would_loop(from: AdventurePage, target: AdventurePage) -> bool:
 	return target.get_held_pages().has(from)
 
 ## Changes forgetting [param target] everywhere in [param roots] (files) and what they hold, each [resource, property, value, file]:
-## plain decisions leading only there go, fight and save outcomes leading there go back, and it is no event, option or nearby event any more
+## plain decisions leading only there go, fight and save outcomes leading there go back, it is no event or option any more, and UID lists forget it
 static func get_changes_forgetting(target: AdventurePage, roots: Array[AdventurePage]) -> Array[Array]:
 	var changes: Array[Array] = [ ]
 	var seen: Array[AdventurePage] = [ ]
+	var target_uid: String = AdventureLayout.get_key(target) if not is_inside_file(target) else ""
 	for root: AdventurePage in roots:
 		for page: AdventurePage in root.get_held_pages():
 			if seen.has(page) or page == target: continue
@@ -58,18 +64,38 @@ static func get_changes_forgetting(target: AdventurePage, roots: Array[Adventure
 				for outcome: AdventureDecision.Outcome in decision.get_outcomes():
 					if _leads_to(decision.get_reference(outcome), target): changes.append([decision, outcome.reference_property, null, file])
 			if kept.size() != page.decisions.size(): changes.append([page, &"decisions", kept, file])
-			for list: StringName in [&"events", &"nearby_events"]:
-				var listed: Array[AdventurePage] = page.get(list)
-				if not listed.has(target): continue
-				var without: Array[AdventurePage] = listed.duplicate()
+			if page is AdventureEventScenario and (page as AdventureEventScenario).events.has(target):
+				var without: Array[AdventureEvent] = (page as AdventureEventScenario).events.duplicate()
 				without.erase(target)
-				changes.append([page, list, without, file])
+				changes.append([page, &"events", without, file])
+			# Back-pointers by UID: where encounters could be, where events may show, a location's order
+			for list: StringName in [&"places", &"only_at", &"order"]:
+				if not list in page or target_uid.is_empty(): continue
+				var paths: Array[String] = [ ]
+				var stored: Array = page.get(list)
+				paths.assign(stored)
+				if not paths.has(target_uid): continue
+				paths.erase(target_uid)
+				changes.append([page, list, paths, file])
 	return changes
+
+## Changes listing [param events] on [param host], each [resource, property, value, file]: a scenario's options, or a location's own events
+## (in its own scenario, made here if it has none, picking all that fit)
+static func get_changes_listing(host: AdventurePage, events: Array[AdventureEvent]) -> Array[Array]:
+	var file: Resource = get_file(host)
+	var scenario: AdventureEventScenario = host as AdventureEventScenario
+	var location: AdventureLocation = host as AdventureLocation
+	if location != null: scenario = location.scenario
+	if scenario != null: return [[scenario, &"events", events, file]]
+	if location == null: return [ ]
+	var own: AdventureEventScenario = AdventureMakers.make_scenario()
+	own.events = events
+	return [[location, &"scenario", own, file]]
 
 ## Changes taking [param area] off the pages in it
 static func get_changes_forgetting_area(area: AdventureArea, pages: Array[AdventurePage]) -> Array[Array]:
 	var changes: Array[Array] = [ ]
-	for page: AdventurePage in pages: if page.area == area: changes.append([page, &"area", null, page])
+	for page: AdventurePage in pages: if page is AdventureLocation and (page as AdventureLocation).area == area: changes.append([page, &"area", null, page])
 	return changes
 
 static func _leads_to(link: AdventurePageReference, target: AdventurePage) -> bool:
@@ -86,90 +112,3 @@ static func find_event_files(folder: String) -> Array[String]:
 		found.append_array(find_event_files(path))
 	return found
 
-## A "↺ Host" or "↶ Previous location" link to be stored inside a file
-static func make_special_reference(previous_location: bool) -> AdventurePageReference:
-	var link: AdventurePageReference = AdventurePreviousLocationReference.new() if previous_location else AdventureHostReference.new()
-	return _in_file(link) as AdventurePageReference
-
-## A page to be stored inside a file
-static func make_page() -> AdventurePage:
-	return _in_file(AdventurePage.new()) as AdventurePage
-
-static func make_choice() -> AdventureDecision:
-	var choice: AdventureDecision = _in_file(AdventureDecision.new()) as AdventureDecision
-	choice.description = "New choice."
-	return choice
-
-## Enemies are set in the Inspector
-static func make_fight() -> AdventureFightDecision:
-	var fight: AdventureFightDecision = _in_file(AdventureFightDecision.new()) as AdventureFightDecision
-	fight.description = "Fight!"
-	return fight
-
-## Attribute and difficulty are set in the Inspector
-static func make_save() -> AdventureSaveDecision:
-	var save: AdventureSaveDecision = _in_file(AdventureSaveDecision.new()) as AdventureSaveDecision
-	save.description = "New save."
-	return save
-
-static func make_event(title: String, scenario: bool) -> AdventurePage:
-	var event: AdventurePage = AdventureEventScenario.new() if scenario else AdventurePage.new()
-	event.title = title
-	return event
-
-## In the [code]events[/code] folder next to [param host]'s file (its own folder, if it is in one already)
-static func get_event_path(host: AdventurePage, title: String) -> String:
-	var folder: String = get_file_path(host).get_base_dir()
-	if folder.get_file() != "events": folder = folder.path_join("events")
-	return folder.path_join(AdventureMapEditing.get_file_name(title))
-
-## Every kind of consequence there is (scripts extending [AdventureConsequence] that can be made), by class name
-static func get_consequence_types() -> Dictionary[String, Script]: return _get_types("AdventureConsequence")
-
-## Every kind of condition there is, by class name
-static func get_condition_types() -> Dictionary[String, Script]: return _get_types("AdventureCondition")
-
-static func _get_types(base_name: String) -> Dictionary[String, Script]:
-	var bases: Dictionary[String, String] = {}
-	var paths: Dictionary[String, String] = {}
-	for entry: Dictionary in ProjectSettings.get_global_class_list():
-		bases[entry["class"]] = entry["base"]
-		paths[entry["class"]] = entry["path"]
-	var types: Dictionary[String, Script] = {}
-	for type_name: String in bases:
-		var base: String = bases[type_name]
-		while bases.has(base) and base != base_name: base = bases[base]
-		if base != base_name: continue
-		var script: Script = load(paths[type_name])
-		if script.can_instantiate(): types[type_name] = script
-	return types
-
-## "AdventureKillMonsterConsequence" -> "Kill Monster", "AdventureMonsterCondition" -> "Monster"
-static func get_type_name(type_name: String) -> String:
-	return type_name.trim_prefix("Adventure").trim_suffix("Consequence").trim_suffix("Condition").capitalize()
-
-static func make_condition(type: Script) -> AdventureCondition:
-	return _in_file(type.new() as Resource) as AdventureCondition
-
-## A condition on [param holder] about the [param index]th [param monster] spawned by [param spawning]'s fight; none if [param holder] can't point at it
-## (it would loop: [param spawning] holds [param holder] in the same file)
-static func make_monster_condition(state: AdventureMonsterCondition.State, monster: MonsterProfile, index: int, spawning: AdventurePage, holder: AdventurePage) -> AdventureMonsterCondition:
-	var link: AdventureMonsterReference = _in_file(AdventureMonsterReference.new()) as AdventureMonsterReference
-	link.monster = monster
-	link.index = index
-	if spawning != holder:
-		if get_file_path(spawning) == get_file_path(holder) and would_loop(holder, spawning): return null
-		link.spawned_by = make_reference(spawning, get_file_path(holder))
-	var condition: AdventureMonsterCondition = _in_file(AdventureMonsterCondition.new()) as AdventureMonsterCondition
-	condition.monster = link
-	condition.state = state
-	return condition
-
-static func make_consequence(type: Script) -> AdventureConsequence:
-	return _in_file(type.new() as Resource) as AdventureConsequence
-
-
-## Gives [param resource] its ID inside the file now, so the layout can key it before it is saved
-static func _in_file(resource: Resource) -> Resource:
-	resource.resource_scene_unique_id = Resource.generate_scene_unique_id()
-	return resource

@@ -9,3 +9,4 @@ script = ExtResource("3_vi0tg")
 name = "Beach"
 background = ExtResource("2_q3inh")
 ambience = ExtResource("1_gecjr")
+description = "The sound of seagulls and the smell of salt on the cold wind."

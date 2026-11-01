@@ -164,7 +164,7 @@ func _refresh() -> void:
 		var cell: Vector2i = _selection[0]
 		_heading.text = "%s vs %s by %s" % [characters[cell.x], monsters[cell.y], _result["sweep"]]
 		for entry: Dictionary in _get_cells(cell.x, cell.y):
-			categories.append(str(int(entry["value"])))
+			categories.append("%d" % entry["value"])
 			stats.append(entry["stats"])
 	elif detail:
 		var cell: Vector2i = _selection[0]
@@ -218,7 +218,7 @@ func _show_distributions(stats: Dictionary) -> void:
 	if _shows("cost"):
 		var won: Dictionary = stats["won"]
 		var contents: Array[Control] = []
-		if int(won["runs"]) == 0: contents.append(_note("No fight was won."))
+		if won["runs"] == 0: contents.append(_note("No fight was won."))
 		else: contents.append_array([_histogram("Injury taken in won fights", won, "taken", FOE), _histogram("Breath dice spent in won fights", won, "breath_spent", YOU)])
 		contents.append_array([_outcome_histogram("Outcome by injury taken", stats, "taken"), _outcome_histogram("Outcome by breath dice spent", stats, "breath_spent")])
 		_add_section("cost", contents)
@@ -313,14 +313,16 @@ static func _percentiles(histogram: Dictionary) -> Array[float]:
 	var total: int = 0
 	for value: String in histogram:
 		values.append(value.to_int())
-		total += int(histogram[value])
+		var count: int = histogram[value]
+		total += count
 	if total == 0: return []
 	values.sort()
 	var percentiles: Array[float] = []
 	for share: float in [0.1, 0.25, 0.5, 0.75, 0.9]:
 		var counted: int = 0
 		for value: int in values:
-			counted += int(histogram[str(value)])
+			var count: int = histogram[str(value)]
+			counted += count
 			if counted >= share * total:
 				percentiles.append(float(value))
 				break
@@ -357,7 +359,7 @@ func _get_monsters() -> Array[String]:
 func _get_cells(character: int, monster: int) -> Array[Dictionary]:
 	var cells: Array[Dictionary] = []
 	for cell: Dictionary in _result.get("cells", []):
-		if int(cell["a"]) == character and int(cell["b"]) == monster: cells.append(cell)
+		if cell["a"] == character and cell["b"] == monster: cells.append(cell)
 	return cells
 
 ## The pairing's cell at the chosen sweep value; empty for skipped fighters

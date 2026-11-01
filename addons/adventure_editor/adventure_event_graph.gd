@@ -28,7 +28,7 @@ class Outlet:
 
 	func goes_back() -> bool: return target == null and not to_host and not to_previous and not to_check
 
-var event: AdventurePage
+var event: AdventureEvent
 ## The event first, then the pages behind it
 var pages: Array[AdventurePage] = [ ]
 ## Locations (pages with an area) it leads to
@@ -38,7 +38,7 @@ var leads_to_host: bool = false
 ## Steps from the event (pages, exits), for placing nodes
 var depths: Dictionary[AdventurePage, int] = {}
 
-func _init(root_event: AdventurePage) -> void:
+func _init(root_event: AdventureEvent) -> void:
 	event = root_event
 	pages.append(root_event)
 	depths[root_event] = 0
@@ -86,12 +86,20 @@ static func get_outcomes(check: AdventureDecision) -> Array[Outlet]:
 		outcomes.append(outlet)
 	return outcomes
 
+static func describe_conditions(conditions: Array[AdventureCondition]) -> String:
+	var texts: Array[String] = [ ]
+	for condition: AdventureCondition in conditions:
+		if condition != null and not condition.describe().is_empty(): texts.append(condition.describe())
+	return ", ".join(texts)
+
 ## What a check is about: "Fight: Lurker", "Save: Blood 7"
 static func describe_check(check: AdventureDecision) -> String:
 	if check is AdventureFightDecision:
+		var fight: AdventureFightDecision = check as AdventureFightDecision
+		if not fight.encounter.is_empty(): return "Fight: %s" % AdventureStageCondition.name_subject(fight.encounter)
 		var names: Array[String] = [ ]
-		for enemy: MonsterProfile in (check as AdventureFightDecision).enemies: if enemy != null: names.append(enemy.name)
-		return "Fight: %s" % ", ".join(names)
+		for enemy: MonsterProfile in fight.enemies: if enemy != null: names.append(enemy.name)
+		return "Fight: %s" % (", ".join(names) if not names.is_empty() else "its encounter")
 	if check is AdventureSaveDecision:
 		var save: AdventureSaveDecision = check as AdventureSaveDecision
 		return "Save: %s %d" % [save.attribute.descriptor if save.attribute != null else "?", save.difficulty]
@@ -112,5 +120,5 @@ func _reach(outlet: Outlet, depth: int) -> void:
 	if outlet.to_host: leads_to_host = true
 	if outlet.target == null or depths.has(outlet.target): return
 	depths[outlet.target] = depth
-	if outlet.target.area != null: exits.append(outlet.target)
+	if outlet.target is AdventureLocation: exits.append(outlet.target)
 	else: pages.append(outlet.target)

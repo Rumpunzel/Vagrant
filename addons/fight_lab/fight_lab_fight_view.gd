@@ -34,8 +34,10 @@ func _init() -> void:
 func show_result(result: Dictionary) -> void:
 	var fight: Dictionary = result["fight"]
 	var record: Dictionary = fight["record"]
-	var character: String = result["side_a"][int(fight["a"])]
-	var monster: String = result["side_b"][int(fight["b"])]
+	var a: int = fight["a"]
+	var b: int = fight["b"]
+	var character: String = result["side_a"][a]
+	var monster: String = result["side_b"][b]
 	var exchange_log: Array = record["log"]
 	_heading.text = "%s vs %s: %s after %d exchange%s" % [character, monster, record["outcome"], exchange_log.size(), "" if exchange_log.size() == 1 else "s"]
 	var categories: Array[String] = []

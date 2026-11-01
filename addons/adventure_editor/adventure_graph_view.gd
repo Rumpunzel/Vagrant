@@ -6,11 +6,11 @@ extends GraphEdit
 ## Shared by the adventure editor's graphs: page nodes (background, event cards), frames, dashed links, selection to the Inspector, positions in the [AdventureLayout]
 
 ## [param host]: the page whose card was clicked, if any
-signal event_opened(event: AdventurePage, host: AdventurePage)
+signal event_opened(event: AdventureEvent, host: AdventurePage)
 ## Nodes moved; their positions are in [member layout] already
 signal layout_changed
 ## Start the game at [param page]; [param event]: the event it is part of, none for a location
-signal play_requested(page: AdventurePage, event: AdventurePage)
+signal play_requested(page: AdventurePage, event: AdventureEvent)
 ## Its nodes' positions were forgotten; showing it again puts them back in their default places
 signal tidied
 ## A location, event or area to delete: what points at it goes, its file to the trash ([AdventureEditor] asks first)
@@ -33,16 +33,16 @@ const IMAGE_EXTENSIONS: Array[String] = ["png", "jpg", "jpeg", "webp", "svg"]
 const ARROW_END: int = 1
 const ARROW_START: int = 2
 const ARROW_SIZE: float = 12.0
-const ICON_SIZE: int = 16
-## [words, editor icon] for menu items, the first that fits
-const MENU_ICONS: Array[Array] = [
-	[["play"], "Play"], [["unlink"], "Unlinked"], [["remove", "delete", "not nearby"], "Remove"], [["other file"], "Load"],
-	[["(scenario)"], "GraphEdit"], [["new ", "add "], "Add"],
-]
+const ICON_SIZE: int = AdventureActionMenu.ICON_SIZE
+## How far the mouse wheel scrolls a page holding the graph ([member outer_scroll])
+const WHEEL_STEP: int = 80
 
 var layout: AdventureLayout
 ## Shown on the nodes of their pages
 var problems: Array[AdventureProblems.Problem] = [ ]
+
+## Set when it sits in a scrolling page: the plain mouse wheel scrolls the page; Ctrl + wheel still zooms it, Shift + wheel and middle-drag move it
+var outer_scroll: ScrollContainer
 
 ## By layout key
 var _nodes: Dictionary[String, GraphNode] = {}
@@ -50,9 +50,29 @@ var _resources: Dictionary[GraphElement, Resource] = {}
 ## [from, to, color, dashed, arrows] lines drawn above everything ([member ARROW_END], [member ARROW_START])
 var _dashed: Array[Array] = [ ]
 var _dashed_layer: Control
-var _menu: PopupMenu
-## Item text -> what it does, for the open menu
-var _menu_actions: Dictionary[String, Callable] = {}
+var _menu: AdventureActionMenu
+## Waits for the mouse button to be up ([method call_after_release])
+var _after_release: Callable
+
+## Calls [param action] once the left mouse button is up: switching tabs from a double-click while it is down leaves the node being dragged
+func call_after_release(action: Callable) -> void:
+	_after_release = action
+	set_process(true)
+
+func _gui_input(event: InputEvent) -> void:
+	var wheel: InputEventMouseButton = event as InputEventMouseButton
+	if outer_scroll == null or wheel == null or not wheel.pressed or wheel.ctrl_pressed or wheel.shift_pressed: return
+	if wheel.button_index == MOUSE_BUTTON_WHEEL_UP: outer_scroll.scroll_vertical -= WHEEL_STEP
+	elif wheel.button_index == MOUSE_BUTTON_WHEEL_DOWN: outer_scroll.scroll_vertical += WHEEL_STEP
+	else: return
+	accept_event()
+
+func _process(_delta: float) -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): return
+	set_process(false)
+	var action: Callable = _after_release
+	_after_release = Callable()
+	if action.is_valid(): action.call()
 
 ## Called by [AdventureEditor], not in [method Node._ready], so opening the scene in the editor doesn't run it
 func setup() -> void:
@@ -60,8 +80,7 @@ func setup() -> void:
 	delete_nodes_request.connect(_on_delete_nodes)
 	end_node_move.connect(_on_end_node_move)
 	_add_dashed_layer()
-	_menu = PopupMenu.new()
-	_menu.index_pressed.connect(func(index: int) -> void: _menu_actions[_menu.get_item_text(index)].call())
+	_menu = AdventureActionMenu.new()
 	add_child(_menu, false, Node.INTERNAL_MODE_FRONT)
 	scroll_offset_changed.connect(func(_offset: Vector2) -> void: _dashed_layer.queue_redraw())
 	_add_tidy_button()
@@ -86,33 +105,19 @@ func focus_resource(resource: Resource) -> void:
 			focus_node(element as GraphNode)
 			return
 
-@abstract func _on_event_card_pressed(event: AdventurePage, page: AdventurePage) -> void
+@abstract func _on_event_card_pressed(event: AdventureEvent, page: AdventurePage) -> void
 
 ## What right-clicking [param event]'s card on [param page] offers
-func _get_event_card_actions(_event: AdventurePage, _page: AdventurePage) -> Dictionary[String, Callable]: return {}
+func _get_event_card_actions(_event: AdventureEvent, _page: AdventurePage) -> Dictionary[String, Callable]: return {}
 
 ## A context menu at the mouse, for [AdventureEditor]
 func show_actions(actions: Dictionary[String, Callable]) -> void: _show_menu(actions)
 
 ## A context menu at the mouse: item text -> what it does; each item gets an icon by what it does ([method _get_menu_icon])
-func _show_menu(actions: Dictionary[String, Callable]) -> void:
-	_menu_actions = actions
-	_menu.clear()
-	for text: String in actions:
-		var icon: Texture2D = _get_menu_icon(text)
-		if icon != null: _menu.add_icon_item(icon, text)
-		else: _menu.add_item(text)
-		_menu.set_item_icon_max_width(_menu.item_count - 1, ICON_SIZE)
-	_menu.position = DisplayServer.mouse_get_position()
-	_menu.reset_size()
-	_menu.popup()
+func _show_menu(actions: Dictionary[String, Callable]) -> void: _menu.show_actions(actions, _get_menu_icon)
 
-## The icon of a menu item, by the words in it; none where there is no editor (previews)
-func _get_menu_icon(text: String) -> Texture2D:
-	var lower: String = text.to_lower()
-	for words: Array in MENU_ICONS:
-		for word: String in words[0]: if lower.contains(word): return _get_editor_icon(words[1])
-	return _get_editor_icon("Object")
+## The icon of a menu item ([method AdventureActionMenu.get_icon]); views with icons of their own add theirs
+func _get_menu_icon(text: String) -> Texture2D: return AdventureActionMenu.get_icon(text)
 
 ## [param pick] gets the actions when [param node] is right-clicked
 func _on_right_click(node: GraphElement, pick: Callable) -> void:
@@ -215,19 +220,6 @@ func _mark_problems(node: GraphNode, resource: Resource) -> void:
 	node.get_titlebar_hbox().add_child(icon)
 	node.get_titlebar_hbox().move_child(icon, 0)
 
-func _add_frame(title: String, resource: Resource, background_texture: Texture2D) -> GraphFrame:
-	var frame: GraphFrame = GraphFrame.new()
-	frame.name = "Frame%d" % _resources.size()
-	frame.title = title
-	frame.autoshrink_margin = FRAME_MARGIN
-	if background_texture != null:
-		var background: TextureRect = _make_texture_rect(background_texture)
-		background.modulate.a = FRAME_BACKGROUND_ALPHA
-		frame.add_child(background)
-	add_child(frame)
-	_resources[frame] = resource
-	return frame
-
 func _add_dashed(from: Control, to: Control, color: Color = DASHED_COLOR) -> void: _add_line(from, to, color, true, 0)
 
 ## Between two nodes: straight from edge to edge, toward each other's center; otherwise from the sides facing each other
@@ -247,12 +239,14 @@ func _make_page_content(page: AdventurePage) -> VBoxContainer:
 		var thumbnail: TextureRect = _make_texture_rect(page.background)
 		thumbnail.custom_minimum_size = THUMBNAIL_SIZE
 		content.add_child(thumbnail)
-	for event: AdventurePage in page.events: content.add_child(_make_event_card(event, page))
+	for event: AdventureEvent in AdventureGraph.get_listed_on(page): content.add_child(_make_event_card(event, page))
 	return content
 
-func _make_event_card(event: AdventurePage, page: AdventurePage) -> Button:
+func _make_event_card(event: AdventureEvent, page: AdventurePage) -> Button:
 	var card: Button = Button.new()
 	card.text = AdventureGraph.get_title(event)
+	card.icon = AdventureActionMenu.get_event_icon(event)
+	card.add_theme_constant_override(&"icon_max_width", ICON_SIZE)
 	card.tooltip_text = "%s: %s" % ["Scenario" if event is AdventureEventScenario else "Event", event.resource_path]
 	card.pressed.connect(_on_event_card_pressed.bind(event, page))
 	card.gui_input.connect(func(input: InputEvent) -> void:
@@ -314,8 +308,7 @@ func _make_tool_button(icon_name: String, fallback: String, tooltip: String, on_
 	button.pressed.connect(on_pressed)
 	return button
 
-static func _get_editor_icon(icon_name: String) -> Texture2D:
-	return EditorInterface.get_editor_theme().get_icon(icon_name, &"EditorIcons") if Engine.is_editor_hint() else null
+static func _get_editor_icon(icon_name: String) -> Texture2D: return AdventureActionMenu.get_editor_icon(icon_name)
 
 func _on_node_selected(element: Node) -> void:
 	var resource: Resource = _resources.get(element as GraphElement)

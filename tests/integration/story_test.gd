@@ -5,14 +5,14 @@ extends GdUnitTestSuite
 const STORY: String = "uid://db6oui711vqep"  # story.tscn
 
 var _story: Story
-var _start: AdventurePage
-var _next: AdventurePage
+var _start: AdventureLocation
+var _next: AdventureLocation
 var _to_next: AdventureDecision
 var _back: AdventureDecision
 
 func before_test() -> void:
-	_start = _page("Start")
-	_next = _page("Next")
+	_start = _location("Start")
+	_next = _location("Next")
 	_to_next = _decision("Go on", _next)
 	_start.decisions = [_to_next] as Array[AdventureDecision]
 	# No transition: back to the previous page
@@ -57,31 +57,6 @@ func test_decision_can_go_back_several_pages() -> void:
 	await _choose(0)
 	assert_object(_story._current_story_page.adventure_page).is_same(_start)
 
-func test_monster_condition_follows_the_monster() -> void:
-	var reference: AdventureMonsterReference = AdventureMonsterReference.new()
-	reference.monster = TestMonsters.cutthroat()
-	var can_fight: AdventureMonsterCondition = _monster_condition(reference, AdventureMonsterCondition.State.CAN_FIGHT)
-	var beaten: AdventureMonsterCondition = _monster_condition(reference, AdventureMonsterCondition.State.INCAPACITATED)
-	var dead: AdventureMonsterCondition = _monster_condition(reference, AdventureMonsterCondition.State.DEAD)
-	assert_array([can_fight.is_true(_story, _start), beaten.is_true(_story, _start), dead.is_true(_story, _start)]).is_equal([true, false, false])
-	reference.get_monster(_story, _start).incapacitated = true
-	assert_array([can_fight.is_true(_story, _start), beaten.is_true(_story, _start), dead.is_true(_story, _start)]).is_equal([false, true, false])
-	# Another page's monster of the same profile is a different one
-	assert_bool(can_fight.is_true(_story, _next)).is_true()
-
-func test_killing_a_monster() -> void:
-	var reference: AdventureMonsterReference = AdventureMonsterReference.new()
-	reference.monster = TestMonsters.cutthroat()
-	reference.spawned_by = _start
-	var kill: AdventureKillMonsterConsequence = AdventureKillMonsterConsequence.new()
-	kill.monster = reference
-	kill.resolve(_story, 0)
-	var monster: Monster = _story.get_monster(_start, reference.monster)
-	assert_bool(monster.dead).is_true()
-	assert_bool(monster.can_fight()).is_false()
-	# Referenced from another page, it is still the start page's monster
-	assert_bool(_monster_condition(reference, AdventureMonsterCondition.State.DEAD).is_true(_story, _next)).is_true()
-
 func test_dead_end_offers_turn_back() -> void:
 	_next.decisions = [] as Array[AdventureDecision]
 	await _choose(0)
@@ -105,13 +80,13 @@ func test_consequences_resolve() -> void:
 	assert_object(_story._current_story_page.adventure_page).is_same(_next)
 
 func test_host_reference_returns_to_the_page_the_event_was_on() -> void:
-	var event: AdventurePage = _page("")
+	var event: AdventureEvent = _page("")
 	var inside: AdventurePage = _page("Inside")
 	event.decisions = [_decision("Look closer", inside)] as Array[AdventureDecision]
 	var back_to_host: AdventureDecision = _decision("Return", null)
 	back_to_host.transition = AdventureHostReference.new()
 	inside.decisions = [back_to_host] as Array[AdventureDecision]
-	_start.events = [event] as Array[AdventurePage]
+	TestAdventures.list(_start, [event] as Array[AdventureEvent])
 	_story.enter_page(_start)
 	# The event's decisions come first
 	await _choose(0)
@@ -121,7 +96,7 @@ func test_host_reference_returns_to_the_page_the_event_was_on() -> void:
 	assert_object(_story._current_story_page.adventure_page).is_same(_start)
 
 func test_previous_location_is_the_page_before_the_host() -> void:
-	var event: AdventurePage = _page("")
+	var event: AdventureEvent = _page("")
 	var inside: AdventurePage = _page("Inside")
 	var deeper: AdventurePage = _page("Deeper")
 	event.decisions = [_decision("Fight", inside)] as Array[AdventureDecision]
@@ -129,7 +104,7 @@ func test_previous_location_is_the_page_before_the_host() -> void:
 	var flee: AdventureDecision = _decision("Away", null)
 	flee.transition = AdventurePreviousLocationReference.new()
 	deeper.decisions = [flee] as Array[AdventureDecision]
-	_next.events = [event] as Array[AdventurePage]
+	TestAdventures.list(_next, [event] as Array[AdventureEvent])
 	await _choose(0)
 	# On the host: the event's decision first
 	await _choose(0)
@@ -155,19 +130,19 @@ func test_starts_behind_an_event_on_its_host() -> void:
 	await _choose(0)
 	assert_object(_story._current_story_page.adventure_page).is_same(_next)
 
-func test_generic_events_spawn_per_host() -> void:
-	var event: AdventurePage = _page("Ambush")
+func test_encounters_keep_their_monster_one_off_fights_get_one_per_location() -> void:
 	var cutthroat: MonsterProfile = TestMonsters.cutthroat()
-	_story._host = _start
-	var at_start: Monster = _story.get_monster(event, cutthroat)
-	_story._host = _next
-	# Shared by default: one monster wherever the event is
-	assert_object(_story.get_monster(event, cutthroat)).is_same(at_start)
-	event.generic = true
-	var at_next: Monster = _story.get_monster(event, cutthroat)
-	assert_object(at_next).is_not_same(at_start)
-	_story._host = _start
-	assert_object(_story.get_monster(event, cutthroat)).is_not_same(at_next)
+	var encounter: AdventureEncounter = AdventureEncounter.new()
+	var event: AdventureEvent = _page("Ambush")
+	_story._location = _start
+	var encounter_at_start: Monster = _story.get_monster(encounter, cutthroat)
+	var one_off_at_start: Monster = _story.get_monster(event, cutthroat)
+	_story._location = _next
+	assert_object(_story.get_monster(encounter, cutthroat)).is_same(encounter_at_start)
+	var one_off_at_next: Monster = _story.get_monster(event, cutthroat)
+	assert_object(one_off_at_next).is_not_same(one_off_at_start)
+	_story._location = _start
+	assert_object(_story.get_monster(event, cutthroat)).is_same(one_off_at_start)
 
 func _choose(index: int) -> void:
 	var page: StoryPage = _story._current_story_page
@@ -177,8 +152,14 @@ func _choose(index: int) -> void:
 		await await_millis(10)
 		waited += 10
 
-func _page(title: String) -> AdventurePage:
-	var page: AdventurePage = AdventurePage.new()
+func _location(title: String) -> AdventureLocation:
+	var location: AdventureLocation = AdventureLocation.new()
+	location.title = title
+	return location
+
+## An event, also usable as a plain page
+func _page(title: String) -> AdventureEvent:
+	var page: AdventureEvent = AdventureEvent.new()
 	page.title = title
 	return page
 
@@ -187,9 +168,3 @@ func _decision(description: String, transition: AdventurePage) -> AdventureDecis
 	decision.description = description
 	decision.transition = transition
 	return decision
-
-func _monster_condition(reference: AdventureMonsterReference, state: AdventureMonsterCondition.State) -> AdventureMonsterCondition:
-	var condition: AdventureMonsterCondition = AdventureMonsterCondition.new()
-	condition.monster = reference
-	condition.state = state
-	return condition

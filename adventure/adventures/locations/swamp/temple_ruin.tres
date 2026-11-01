@@ -1,12 +1,11 @@
-[gd_resource type="Resource" script_class="AdventurePage" format=3 uid="uid://cs40ge42lw0ry"]
+[gd_resource type="Resource" script_class="AdventureLocation" format=3 uid="uid://cs40ge42lw0ry"]
 
 [ext_resource type="Resource" uid="uid://kfbf7v18dp6a" path="res://adventure/adventures/locations/swamp/swamp.tres" id="1_8bxsp"]
-[ext_resource type="Script" uid="uid://d3ptncl23y3js" path="res://adventure/conditions/adventure_condition.gd" id="2_6pnwp"]
 [ext_resource type="Script" uid="uid://by3e6dkiypd3j" path="res://adventure/decisions/adventure_decision.gd" id="2_r3twy"]
-[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="3_6p547"]
+[ext_resource type="Script" uid="uid://cmrl4agp3nbt0" path="res://adventure/adventure_location.gd" id="3_6p547_location"]
 [ext_resource type="Script" uid="uid://buhl8mbur0qma" path="res://adventure/adventure_transition.gd" id="3_34ol8"]
 [ext_resource type="Script" uid="uid://0ji5d7bgfn02" path="res://adventure/decisions/consequences/adventure_consequence.gd" id="4_hij0g"]
-[ext_resource type="Resource" uid="uid://c16ehct0w6n48" path="res://adventure/adventures/locations/swamp/events/lurker.tres" id="6_lurker"]
+[ext_resource type="Script" uid="uid://by0krlemues6g" path="res://adventure/adventure_stage_track.gd" id="10_ypxqa"]
 
 [sub_resource type="Resource" id="Resource_vvpox"]
 script = ExtResource("3_34ol8")
@@ -27,10 +26,8 @@ description = "Go to Old Tree."
 transition = SubResource("Resource_hij0g")
 
 [resource]
-script = ExtResource("3_6p547")
-title = "Temple Ruin"
-description = "The air is damp and smells of rotten earth.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed orci orci. Donec tincidunt arcu viverra, lacinia enim at, pharetra orci. Integer ac neque sit amet nunc venenatis fermentum ut mollis eros. Maecenas egestas tortor at dui mattis pulvinar. Mauris rutrum ligula id massa euismod scelerisque. Cras sed molestie orci. Phasellus non finibus felis. Aenean purus lectus, tempus quis enim in, tincidunt laoreet arcu. Nullam in eleifend purus. Etiam eros lacus, lacinia id metus sed, faucibus viverra tortor. Phasellus sit amet leo sit amet massa consectetur porttitor. Vestibulum in facilisis lorem. Etiam est sapien, condimentum sed convallis vel, auctor in mi. Proin sit amet ornare tortor. Proin commodo quam mi, at placerat dolor cursus faucibus. Ut dictum accumsan neque eget consectetur."
+script = ExtResource("3_6p547_location")
 area = ExtResource("1_8bxsp")
+title = "Temple Ruin"
+description = "A ruined temple rots in the heart of the swamp."
 decisions = Array[ExtResource("2_r3twy")]([SubResource("Resource_e22nq"), SubResource("Resource_n6tfh")])
-events = Array[ExtResource("3_6p547")]([ExtResource("6_lurker")])

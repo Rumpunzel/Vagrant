@@ -20,7 +20,7 @@ static func summarize(records: Array[Dictionary]) -> Dictionary[String, Variant]
 	var outcomes: Dictionary[String, float] = {}
 	for outcome: String in OUTCOMES: outcomes[outcome] = _share(records, func(record: Dictionary) -> bool: return record["outcome"] == outcome)
 	var rates: Dictionary[String, float] = {}
-	for key: String in RATES: rates[key] = _share(records, func(record: Dictionary) -> bool: return int(record[key]) > 0)
+	for key: String in RATES: rates[key] = _share(records, func(record: Dictionary) -> bool: return true if record[key] else false)
 	var won: Array[Dictionary] = []
 	won.assign(records.filter(func(record: Dictionary) -> bool: return record["outcome"] == "won"))
 	return {
@@ -60,7 +60,7 @@ static func _histograms(records: Array[Dictionary], keys: Array[String]) -> Dict
 	for key: String in keys:
 		var histogram: Dictionary[String, int] = {}
 		for record: Dictionary in records:
-			var value: String = str(int(record[key]))
+			var value: String = "%d" % record[key]
 			histogram[value] = histogram.get(value, 0) + 1
 		histograms[key] = histogram
 	return histograms

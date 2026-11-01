@@ -4,6 +4,7 @@ extends GdUnitTestSuite
 
 const TEMPLE_RUIN: String = "uid://cs40ge42lw0ry"  # temple_ruin.tres
 const LURKER_AMBUSH: String = "uid://bxwqtk0p80o4g"  # lurker_ambush.tres
+const LURKER_ENCOUNTER: String = "uid://c16ehct0w6n48"  # encounters/lurker/lurker.tres
 const OUTCOME_PAGES: Dictionary[Fight.Outcome, String] = {
 	Fight.Outcome.WON: "uid://m4wl5ad8o0i7",  # lurker_ambush_won.tres
 	Fight.Outcome.LOST: "uid://dgfjjbm210jot",  # lurker_ambush_lost.tres
@@ -18,18 +19,28 @@ func test_flee_from_ambush_in_story() -> void:
 	# Ends on the ambush's flee page
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = load(TEMPLE_RUIN)
+	adventure.encounters = [load(LURKER_ENCOUNTER)] as Array[AdventureEncounter]
 	var story: Story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
 	story._reveal_delay = 0.01
 	add_child(story)
+	story.chance_roller = func(_condition: AdventureChanceCondition) -> bool: return true
 	story.start_adventure(adventure, TestCharacters.adventurer())
+	# The water stirs first; only "Continue." leads into the ambush
+	var ripples: StoryPage = story._current_story_page
+	assert_int(ripples.choices.size()).is_equal(1)
+	ripples.choices[0].chose()
+	var waited_for_ambush: int = 0
+	while story._current_story_page == ripples and waited_for_ambush < 5000:
+		await await_millis(10)
+		waited_for_ambush += 10
 	var fight_choices: Array[StoryFightDecision] = []
 	for choice: StoryChoice in story._current_story_page.choices:
 		if choice is StoryFightDecision: fight_choices.append(choice)
 	assert_int(fight_choices.size()).is_equal(2)
 	var flee: StoryFightDecision = fight_choices[1]
 	assert_str(flee.get_description()).is_equal("Wun away!")
-	# The Lurker belongs to the ambush event, not the temple ruin
-	assert_object((flee.fight.second as Monster).spawned_from).is_same(load(LURKER_AMBUSH))
+	# The Lurker belongs to its encounter, not the temple ruin or the ambush
+	assert_object((flee.fight.second as Monster).spawned_from).is_same(load(LURKER_ENCOUNTER))
 	flee.chose()
 	flee.roll()
 	var waited: int = 0

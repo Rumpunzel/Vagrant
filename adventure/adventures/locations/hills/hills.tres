@@ -7,3 +7,4 @@
 script = ExtResource("1_od8fq")
 name = "Hills"
 background = ExtResource("1_jdyhj")
+description = "A soft wind blows across the hills."

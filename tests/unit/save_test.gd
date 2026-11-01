@@ -84,6 +84,18 @@ func test_story_decision_follows_outcome() -> void:
 	assert_object(choice.get_transition_reference()).is_same(_failure_page)
 	assert_object(choice.get_consequences()[0]._adventure_consequence).is_same(_failure_consequence)
 
+func test_no_breath_dice_left_it_cannot_be_chosen() -> void:
+	var choice: StorySaveDecision = StoryChoice.from_adventure_decision(_decision, _character)
+	assert_bool(choice.is_available()).is_true()
+	var changes: Array[bool] = []
+	choice.availability_changed.connect(func() -> void: changes.append(choice.is_available()))
+	_character.lose_breath_dice(_character.get_breath_dice_pool())
+	assert_bool(choice.is_available()).is_false()
+	assert_str(choice.get_unavailable_reason()).is_equal(StoryDiceDecision.NO_BREATH)
+	_character.catch_breath(Rules.d4)
+	assert_bool(choice.is_available()).is_true()
+	assert_array(changes).is_equal([false, true])
+
 func test_icon_and_color_default_to_attribute() -> void:
 	assert_object(_decision.get_icon()).is_same(Rules.AGILITY.icon)
 	assert_object(_decision.get_color()).is_equal(Rules.AGILITY.color)

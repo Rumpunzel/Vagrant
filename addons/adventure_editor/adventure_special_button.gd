@@ -2,10 +2,20 @@
 class_name AdventureSpecialButton
 extends Button
 
-## A special node in the events tab's sidebar; dragged onto an event's frame, places one there ([AdventureEventView])
+## A special node in an event graph's toolbar; dragged into the graph, places one there ([AdventureEventView])
 
 ## Its kind as [AdventureEventView] names it in layout keys: "host", "previous"
 @export var kind: String
+
+static func make(kind_name: String, label: String, tooltip: String, texture: Texture2D) -> AdventureSpecialButton:
+	var button: AdventureSpecialButton = AdventureSpecialButton.new()
+	button.kind = kind_name
+	button.text = label
+	button.tooltip_text = tooltip + " (drag it into the graph)"
+	button.icon = texture
+	button.flat = true
+	button.add_theme_constant_override(&"icon_max_width", AdventureActionMenu.ICON_SIZE)
+	return button
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	var preview: Button = Button.new()

@@ -19,6 +19,7 @@ extends PanelContainer
 
 var _can_catch_breath: bool = false
 var _is_fighting: bool = false
+var _forbids_rest: bool = false
 
 func _ready() -> void:
 	_catch_breath_popup.get_ok_button().mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -28,6 +29,7 @@ func _ready() -> void:
 
 func _on_story_page_entered(story_page: StoryPage) -> void:
 	_is_fighting = story_page.is_fighting()
+	_forbids_rest = story_page.forbids_rest
 	_update_buttons()
 
 func _on_catch_breaths_status_changed(can_catch_breath: bool) -> void:
@@ -36,5 +38,8 @@ func _on_catch_breaths_status_changed(can_catch_breath: bool) -> void:
 	_update_buttons()
 
 func _update_buttons() -> void:
-	_make_camp_button.disabled = _is_fighting
-	_catch_breath_button.disabled = _is_fighting or not (_can_catch_breath or _party.characters.values().any(func(character: Character) -> bool: return character.can_catch_breath(null)))
+	var blocked: bool = _is_fighting or _forbids_rest
+	var reason: String = "Not while fighting." if _is_fighting else ("You can't rest here." if _forbids_rest else "")
+	for button: Button in [_make_camp_button, _catch_breath_button]: button.tooltip_text = reason
+	_make_camp_button.disabled = blocked
+	_catch_breath_button.disabled = blocked or not (_can_catch_breath or _party.characters.values().any(func(character: Character) -> bool: return character.can_catch_breath(null)))

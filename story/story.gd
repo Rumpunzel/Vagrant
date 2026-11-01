@@ -16,6 +16,11 @@ signal dice_requested(dice_request: DiceRequest)
 @export var _title: TypingLabel
 @export var _story_book: StoryBook
 
+## Where the story stands (stages, where encounters are)
+var world: StoryWorld = StoryWorld.new()
+## Rolls a chance; tests put a fixed result in
+var chance_roller: Callable = func(condition: AdventureChanceCondition) -> bool: return randi_range(1, condition.out_of) <= condition.times
+
 var _adventure: Adventure:
 	set(new_adventure):
 		assert(not _adventure or Engine.is_editor_hint())
@@ -76,41 +81,84 @@ var _current_dice_request: DiceRequest :
 var _page_stack: Array[AdventurePage] = []
 ## The page on which an event's decision was last chosen; the pages behind the event keep it
 var _host: AdventurePage
-## Nearby events by page, found once per page built
-var _nearby_events: Dictionary[AdventurePage, Array] = {}
+## The last location entered: "here"
+var _location: AdventureLocation
+## The encounter of the event one is in (also on the pages behind it); none at a location's own decisions
+var _encounter: AdventureEncounter
+## Chance conditions' rolls for the current arrival at a location ([AdventureChanceCondition])
+var _chance_rolls: Dictionary[AdventureChanceCondition, bool] = {}
+## The area just entered on arriving at the current location (from another area, or at the start), else none; the first time there or not
+var _entered_area: AdventureArea
+var _first_time_in_area: bool = false
+var _areas_been_in: Array[AdventureArea] = [ ]
+## Played from in the adventure editor ([AdventurePlayFrom]): on the first arrival its conditions count as met ([method is_forced])
+var _forced: AdventureEvent
+var _arrivals_while_forced: int = 0
 # StoryPage -> Array[StoryPage]
 var _page_log: Dictionary[AdventurePage, Array] = {}
 # AdventureDecision -> StoryChoice (individual times the decision has been made)
 var _decision_log: Dictionary[AdventureDecision, Array] = {}
 
 ## [param page]: start there instead of the starting page; [param host]: the page its event is on, entered first so going back and host links work
-func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterProfile, page: AdventurePage = null, host: AdventurePage = null) -> void:
+## [param forced]: an event played from in the adventure editor, shown on the first arrival whatever its conditions
+func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterProfile, page: AdventurePage = null, host: AdventurePage = null, forced: AdventureEvent = null) -> void:
 	assert(new_adventure)
 	assert(protagonist_profile)
 	assert(protagonist_profile.is_valid())
 	_adventure = new_adventure
+	world = StoryWorld.new(new_adventure.encounters)
 	_protagonist = _party.create_character(protagonist_profile)
+	_forced = forced
 	if host != null and host != page:
 		enter_page(host)
 		_host = host
 	enter_page(page if page != null else _adventure.starting_page)
 
 func enter_page(adventure_page: AdventurePage) -> void:
-	_nearby_events.clear()
+	if adventure_page is AdventureLocation:
+		var area: AdventureArea = (adventure_page as AdventureLocation).area
+		_entered_area = area if area != null and (_location == null or _location.area != area) else null
+		_first_time_in_area = _entered_area != null and not _areas_been_in.has(area)
+		if _first_time_in_area: _areas_been_in.append(area)
+		_location = adventure_page as AdventureLocation
+		_chance_rolls.clear()
+		_arrivals_while_forced += 1
+		if _arrivals_while_forced > 1: _forced = null
 	_current_story_page = _create_story_page(adventure_page) if adventure_page else null
 
-## The nearby events of the events around [param page] ([method AdventurePage.find_nearby_events]); their own conditions are checked like any event's
-func get_nearby_events(page: AdventurePage) -> Array[AdventurePage]:
-	if not _nearby_events.has(page): _nearby_events[page] = page.find_nearby_events().map(func(pair: Array) -> AdventurePage: return pair[0])
-	var nearby: Array[AdventurePage] = [ ]
-	nearby.assign(_nearby_events[page])
-	return nearby
+func get_location() -> AdventureLocation: return _location
+
+## The text of the area just entered on arriving at [param location] ([member AdventureArea.description], its first-time text the first time),
+## as a paragraph; empty if no area was entered
+func get_area_text(location: AdventureLocation) -> String:
+	if _entered_area == null or location.area != _entered_area: return ""
+	var first: bool = _first_time_in_area and not _entered_area.first_description.is_empty()
+	var text: String = _entered_area.first_description if first else _entered_area.description
+	return "[p]%s[/p]" % text if not text.is_empty() else ""
+
+## The event played from in the adventure editor, or a scenario holding it, until the player arrives at a location the second time
+func is_forced(event: AdventureEvent) -> bool:
+	if _forced == null or event == null: return false
+	return event == _forced or event is AdventureEventScenario and (event as AdventureEventScenario).get_listed_events().has(_forced)
+
+## Whether [param condition]'s chance came up on this arrival at the location: rolled the first time it is asked, then kept until the next arrival
+func roll_chance(condition: AdventureChanceCondition) -> bool:
+	if not _chance_rolls.has(condition): _chance_rolls[condition] = chance_roller.call(condition)
+	return _chance_rolls[condition]
+
+## The encounter or location [param path] (a UID) names; empty: the encounter of [param event] (none given: of the event one is in), else the
+## current location
+func get_subject(path: String, event: AdventurePage = null) -> Resource:
+	if not path.is_empty(): return Files.load_existing(path)
+	var encounter: AdventureEncounter = world.get_encounter_of(event as AdventureEvent) if event is AdventureEvent else _encounter
+	if encounter != null: return encounter
+	return _location
 
 func get_protagonist() -> Character: return _protagonist
 
-## The monster [param monster_profile] spawned by [param spawning_page] (spawned now if it wasn't yet); a generic event's at the current host
-func get_monster(spawning_page: AdventurePage, monster_profile: MonsterProfile, index: int = 0) -> Monster:
-	return _monsters.get_monster(spawning_page, monster_profile, index, _host if spawning_page.generic else null)
+## The monster of [param holder]: an encounter's, the same for the whole story; a one-off fight's (owned by its page), one per location
+func get_monster(holder: AdventurePage, monster_profile: MonsterProfile) -> Monster:
+	return _monsters.get_monster(holder, monster_profile, 0, null if holder is AdventureEncounter else _location)
 
 ## The page the current event is shown on ([AdventureHostReference])
 func get_host() -> AdventurePage: return _host
@@ -126,49 +174,59 @@ func get_how_often_page_has_been_entered(adventure_page: AdventurePage) -> int:
 func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	assert(_protagonist)
 	assert(adventure_page)
-	var forced_choices: Array[StoryChoice] = []
+	var choices: Array[StoryChoice] = _create_story_choices(adventure_page, adventure_page.get_decisions(self))
+	# Nothing to choose (only dice decisions, no breath dice left): the first one fails right away
+	var failed: StoryChoice = null
+	if not choices.any(func(choice: StoryChoice) -> bool: return choice.is_available()):
+		var first: StoryChoice = choices.front()
+		failed = StoryChoice.from_adventure_decision(_create_failed_decision(first.get_adventure_decision() as AdventureDiceDecision), _protagonist)
+		choices = [failed]
 	var story_page: StoryPage = StoryPage.new(
 		adventure_page,
 		adventure_page.get_page_title(self),
 		adventure_page.get_description(self),
 		adventure_page.get_background(self),
 		adventure_page.get_ambience(self),
-		_create_story_choices(adventure_page, adventure_page.get_decisions(self), forced_choices),
+		choices,
 		adventure_page.get_events(self),
 	)
-	if not forced_choices.is_empty(): story_page.forced_choice = forced_choices.front()
+	story_page.forced_choice = failed
+	story_page.forbids_rest = adventure_page.forbids_rest(self)
 	return story_page
 
-## Choices that must be taken right away (fights lost on arrival) are also added to [param forced_choices]
-func _create_story_choices(adventure_page: AdventurePage, decisions: Array[AdventureDecision], forced_choices: Array[StoryChoice]) -> Array[StoryChoice]:
+func _create_story_choices(adventure_page: AdventurePage, decisions: Array[AdventureDecision]) -> Array[StoryChoice]:
 	if decisions.is_empty(): decisions.append(AdventureDecision.get_turn_back())
 	var story_choices: Array[StoryChoice] = []
 	for decision: AdventureDecision in decisions:
-		if decision is AdventureFightDecision:
-			var fight: Fight = _create_fight(adventure_page, decision as AdventureFightDecision)
-			if fight.is_ongoing(): story_choices.append_array(_create_fight_choices(fight))
-			else:
-				var lost_choice: StoryChoice = StoryChoice.from_adventure_decision(_create_lost_fight_decision(fight), _protagonist)
-				story_choices.append(lost_choice)
-				forced_choices.append(lost_choice)
+		if decision is AdventureFightDecision: story_choices.append_array(_create_fight_choices(_create_fight(adventure_page, decision as AdventureFightDecision)))
 		else: story_choices.append(StoryChoice.from_adventure_decision(decision, _protagonist))
 	return story_choices
 
+## Against the monster of its encounter (named, or the one of the event it is in), else a one-off fight against its first enemy
 func _create_fight(adventure_page: AdventurePage, decision: AdventureFightDecision) -> Fight:
-	assert(not decision.enemies.is_empty(), "Fight decision \"%s\" has no enemies" % decision.description)
-	# The monster belongs to the page (or event) that defines the fight, not the page it is shown on
-	var spawning_page: AdventurePage = adventure_page.find_decision_owner(decision)
-	if not spawning_page: spawning_page = adventure_page
-	return Fight.new(decision, _protagonist, get_monster(spawning_page, decision.enemies[0]), _protagonist)
+	var holder: AdventurePage = _find_decision_owner(adventure_page, decision)
+	if holder == null: holder = adventure_page
+	var encounter: AdventureEncounter = get_subject(decision.encounter, holder) as AdventureEncounter
+	if encounter != null and encounter.profile is MonsterProfile:
+		return Fight.new(decision, _protagonist, get_monster(encounter, encounter.profile as MonsterProfile), _protagonist)
+	assert(not decision.enemies.is_empty(), "Fight decision \"%s\" has no monster encounter and no enemies" % decision.description)
+	return Fight.new(decision, _protagonist, get_monster(holder, decision.enemies[0]), _protagonist)
 
-## A fight already lost on arrival (no breath dice to resist with) only offers its failure path
-func _create_lost_fight_decision(fight: Fight) -> AdventureDecision:
-	assert(fight.outcome == Fight.Outcome.LOST)
-	var lost_decision: AdventureDecision = AdventureDecision.new()
-	lost_decision.description = "You can no longer resist."
-	lost_decision.transition = fight.decision.failure_transition
-	lost_decision.consequences = fight.decision.failure_consequences
-	return lost_decision
+## The page (it, or one of the events shown on it) that defines [param decision]
+func _find_decision_owner(page: AdventurePage, decision: AdventureDecision) -> AdventurePage:
+	if page.decisions.has(decision): return page
+	for event: AdventureEvent in page.get_events(self):
+		var holder: AdventurePage = event.find_decision_owner(decision)
+		if holder != null: return holder
+	return null
+
+## A save or fight failed without rolling (no breath dice to roll): its failure path
+func _create_failed_decision(decision: AdventureDiceDecision) -> AdventureDecision:
+	var failed_decision: AdventureDecision = AdventureDecision.new()
+	failed_decision.description = "You can no longer resist." if decision is AdventureFightDecision else "You are out of breath."
+	failed_decision.transition = decision.failure_transition
+	failed_decision.consequences = decision.failure_consequences
+	return failed_decision
 
 func _create_fight_choices(fight: Fight) -> Array[StoryChoice]:
 	return [StoryFightDecision.new(fight, false), StoryFightDecision.new(fight, true)]
@@ -197,8 +255,10 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 		return
 	var story_decision: AdventureDecision = story_choice.get_adventure_decision()
 	var shown_on: AdventurePage = _current_story_page.adventure_page
-	var holder: AdventurePage = shown_on.find_decision_owner(story_decision)
+	var holder: AdventurePage = _find_decision_owner(shown_on, story_decision)
 	if holder != null and holder != shown_on: _host = shown_on
+	if holder is AdventureEvent: _encounter = world.get_encounter_of(holder as AdventureEvent)
+	elif holder is AdventureLocation: _encounter = null
 	if story_decision != AdventureDecision.get_turn_back():
 		var decision_log: Array[StoryChoice] = _decision_log.get_or_add(story_decision, [] as Array[StoryChoice])
 		decision_log.append(story_choice)
