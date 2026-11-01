@@ -101,6 +101,13 @@ func _add_entry(entry: AdventureEventOverview.Entry, origin: Vector2) -> int:
 			if not target_key.is_empty(): connect_node(_nodes[_key(entry, page)].name, port, _nodes[target_key].name, 0)
 	return column_count + 1
 
+## Its height and view on the event screen go too, so it fits its nodes again
+func _tidy() -> void:
+	if layout != null and get_event() != null:
+		layout.graph_heights.erase(AdventureLayout.get_key(get_event()))
+		layout.graph_views.erase(AdventureLayout.get_key(get_event()))
+	super()
+
 ## The effect chips (and a won fight's "→ beaten") leading into the picked stage, marked
 func _highlight_picked() -> void:
 	if picked_stage.is_empty(): return

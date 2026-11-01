@@ -14,8 +14,7 @@ static func make(kind_name: String, label: String, tooltip: String, texture: Tex
 	button.tooltip_text = tooltip + " (drag it into the graph)"
 	button.icon = texture
 	button.flat = true
-	button.expand_icon = true
-	button.custom_minimum_size.y = 24
+	button.add_theme_constant_override(&"icon_max_width", AdventureActionMenu.ICON_SIZE)
 	return button
 
 func _get_drag_data(_at_position: Vector2) -> Variant:

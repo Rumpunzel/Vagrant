@@ -337,6 +337,8 @@ func _fill_event_shelf() -> void:
 		if not _fits(event): continue
 		var button: AdventureEventButton = AdventureEventButton.new()
 		button.event = event
+		button.icon = AdventureActionMenu.get_event_icon(event)
+		button.add_theme_constant_override(&"icon_max_width", AdventureActionMenu.ICON_SIZE)
 		button.text = _describe_event(event)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS

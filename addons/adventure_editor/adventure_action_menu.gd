@@ -36,6 +36,11 @@ static func get_icon(text: String) -> Texture2D:
 		for word: String in words[0]: if lower.contains(word): return get_editor_icon(words[1])
 	return get_editor_icon("Object")
 
+## An event's kind: an encounter (a monster's or someone's), a scenario, a plain event
+static func get_event_icon(event: AdventureEvent) -> Texture2D:
+	if event is AdventureEncounter: return get_editor_icon("Skeleton2D" if (event as AdventureEncounter).profile is MonsterProfile else "CharacterBody2D")
+	return get_editor_icon("GraphEdit" if event is AdventureEventScenario else "Signal")
+
 ## None where there is no editor (previews)
 static func get_editor_icon(icon_name: String) -> Texture2D:
 	return EditorInterface.get_editor_theme().get_icon(icon_name, &"EditorIcons") if Engine.is_editor_hint() else null

@@ -258,6 +258,8 @@ func _make_page_content(page: AdventurePage) -> VBoxContainer:
 func _make_event_card(event: AdventureEvent, page: AdventurePage) -> Button:
 	var card: Button = Button.new()
 	card.text = AdventureGraph.get_title(event)
+	card.icon = AdventureActionMenu.get_event_icon(event)
+	card.add_theme_constant_override(&"icon_max_width", ICON_SIZE)
 	card.tooltip_text = "%s: %s" % ["Scenario" if event is AdventureEventScenario else "Event", event.resource_path]
 	card.pressed.connect(_on_event_card_pressed.bind(event, page))
 	card.gui_input.connect(func(input: InputEvent) -> void:

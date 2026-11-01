@@ -226,7 +226,9 @@ func _on_folding_changed(is_folded: bool, section: FoldableContainer, option: Ad
 ## Its pages as a graph, about as high as they need; a scenario option opens on its own
 func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
 	if option is AdventureEventScenario:
-		section.add_child(_make_button("Open its options", "A scenario inside: its own options", event_opened.emit.bind(option, _host)))
+		var open: Button = _make_button("Open its options", "A scenario inside: its own options", event_opened.emit.bind(option, _host))
+		open.icon = AdventureActionMenu.get_event_icon(option)
+		section.add_child(open)
 		return
 
 	var graph: AdventureEventView = make_graph.call()
@@ -241,9 +243,30 @@ func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
 	graph.setup()
 	graph.show_event(option, _host)
 	_graphs.append(graph)
-	var height: float = graph.layout.graph_heights.get(AdventureLayout.get_key(option), 0.0) if graph.layout != null else 0.0
+	var key: String = AdventureLayout.get_key(option)
+	var height: float = graph.layout.graph_heights.get(key, 0.0) if graph.layout != null else 0.0
 	if height > 0.0: graph.custom_minimum_size.y = height
 	else: get_tree().process_frame.connect(_fit.bind(graph), CONNECT_ONE_SHOT)
+	if graph.layout != null and graph.layout.graph_views.has(key): get_tree().process_frame.connect(_restore_view.bind(graph, key), CONNECT_ONE_SHOT)
+	graph.scroll_offset_changed.connect(_on_view_changed.bind(graph, key))
+	graph.tree_exiting.connect(_save_view.bind(graph))
+
+## Where it was scrolled to and how far zoomed, once its nodes are laid out
+func _restore_view(graph: AdventureEventView, key: String) -> void:
+	if not is_instance_valid(graph): return
+	var view: Vector3 = graph.layout.graph_views[key]
+	graph.zoom = view.z
+	graph.scroll_offset = Vector2(view.x, view.y)
+	graph.set_meta(&"view_changed", false)
+
+## Kept in the layout as it changes; written when the graph goes (the layout is saved then, not on every scroll)
+func _on_view_changed(_offset: Vector2, graph: AdventureEventView, key: String) -> void:
+	if graph.layout == null: return
+	graph.layout.graph_views[key] = Vector3(graph.scroll_offset.x, graph.scroll_offset.y, graph.zoom)
+	graph.set_meta(&"view_changed", true)
+
+func _save_view(graph: AdventureEventView) -> void:
+	if graph.get_meta(&"view_changed", false): graph.layout_changed.emit()
 
 ## A bar to drag [param graph]'s height with; let go, the height is kept in the layout under [param key]
 func _make_handle(graph: AdventureEventView, key: String) -> Control:
@@ -272,7 +295,6 @@ func _fit(graph: AdventureEventView) -> void:
 		var element: GraphElement = child as GraphElement
 		if element != null: bottom = maxf(bottom, element.position_offset.y + element.size.y)
 	graph.custom_minimum_size.y = clampf(bottom * graph.zoom + GRAPH_MARGIN, GRAPH_HEIGHT_MIN, GRAPH_HEIGHT_MAX)
-	graph.scroll_offset = Vector2.ZERO
 
 ## Where it can happen (click to change) and where it leads; marked if it leads into the picked stage
 func _add_story_controls(section: FoldableContainer, option: AdventureEvent) -> void:
@@ -285,6 +307,7 @@ func _add_story_controls(section: FoldableContainer, option: AdventureEvent) -> 
 	happens.text = "In " + "  ·  ".join(stages) + ("  ·  when %s" % others if not others.is_empty() else "")
 	happens.tooltip_text = "The stages it can happen in; click to change them"
 	happens.flat = true
+	happens.icon = AdventureActionMenu.get_editor_icon("Edit")
 	happens.custom_minimum_size.x = COLUMN_WIDTH
 	happens.pressed.connect(_offer_stages.bind(option))
 	section.add_title_bar_control(happens)

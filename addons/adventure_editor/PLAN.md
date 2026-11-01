@@ -345,3 +345,4 @@ loot (user, 2026-10-31): a monster encounter's stage after Dead to search its bo
 - 2026-11-01: never-shows problem check; tests: stages, monsters (2), content has none (1)
 - 2026-11-01: Host / Previous in the sections' title bars (sidebar gone); a height handle under each graph
 - 2026-11-01: Host / Previous moved into the event graphs' toolbars
+- 2026-11-01: icons on the specials, event cards, the map's event buttons, "In …" and "Open its options"; each graph's scroll and zoom kept in the layout (`graph_views`) with its height; tidying a graph forgets both

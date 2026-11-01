@@ -12,6 +12,8 @@ const PLACED_SPECIALS: String = "special"
 @export var special_links: Dictionary[String, String] = {}
 ## How high an event's page graph is on the event screen, by the event's key; unset: as high as its nodes need
 @export var graph_heights: Dictionary[String, float] = {}
+## Where an event's page graph is scrolled to (x, y) and how far it is zoomed (z), by the event's key
+@export var graph_views: Dictionary[String, Vector3] = {}
 
 static func get_path_for(adventure: Adventure) -> String:
 	return adventure.resource_path.get_basename() + ".layout.tres"
