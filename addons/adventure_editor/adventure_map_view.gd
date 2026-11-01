@@ -186,6 +186,8 @@ func _remove_event(location: AdventureLocation, event: AdventureEvent) -> void:
 
 func _link(from: AdventurePage, to: AdventurePage) -> void:
 	if from == null or to == null or from == to: return
+	# Already linked: dragging the same link again would offer it twice
+	if AdventureMapEditing.without_links(from, to).size() != from.decisions.size(): return
 	var decisions: Array[AdventureDecision] = from.decisions.duplicate()
 	decisions.append(AdventureMakers.make_link(to))
 	_request(from, &"decisions", decisions, "Link %s to %s" % [AdventureGraph.get_title(from), AdventureGraph.get_title(to)], from)
