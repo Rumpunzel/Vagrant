@@ -26,8 +26,13 @@ func test_lurker_profile() -> void:
 
 func test_ambush_decision() -> void:
 	var ambush: AdventureEvent = load(LURKER_AMBUSH)
+	# First the water stirs: only "Continue." leads on, into the fight
 	assert_int(ambush.decisions.size()).is_equal(1)
-	var decision: AdventureFightDecision = ambush.decisions[0]
+	assert_str(ambush.decisions[0].description).is_equal("Continue.")
+	assert_str(ambush.title).is_empty()
+	var strikes: AdventurePage = ambush.decisions[0].transition as AdventurePage
+	assert_str(strikes.title).is_equal("Lurker Ambush")
+	var decision: AdventureFightDecision = strikes.decisions[0]
 	assert_str(decision.flee_description).is_equal("Wun away!")
 	# Its own encounter's monster fights
 	assert_str(decision.encounter).is_empty()
@@ -60,6 +65,9 @@ func test_ambush_only_while_the_lurker_can_fight() -> void:
 	var condition: AdventureMonsterCondition = ambush.conditions[0]
 	assert_str(condition.encounter).is_empty()
 	assert_int(condition.state).is_equal(AdventureMonsterCondition.State.CAN_FIGHT)
+	# And only by chance
+	var chance: AdventureChanceCondition = ambush.conditions[1]
+	assert_str(chance.describe()).is_equal("1 in 2 chance")
 
 func test_won_event_offers_to_kill_the_beaten_lurker() -> void:
 	var won: AdventureEvent = load(OUTCOME_PAGES[Fight.Outcome.WON])
@@ -79,6 +87,7 @@ func test_the_encounter_shows_the_ambush_or_the_beaten_lurker() -> void:
 	assert_array((load(TEMPLE_RUIN) as AdventureLocation).get_own_events()).is_empty()
 	var story: Story = auto_free(Story.new())
 	story._monsters = auto_free(Monsters.new())
+	story.chance_roller = func(_condition: AdventureChanceCondition) -> bool: return true
 	story.world = StoryWorld.new([lurker] as Array[AdventureEncounter])
 	var temple: AdventureLocation = load(TEMPLE_RUIN)
 	assert_array(temple.get_events(story)).contains_exactly([load(LURKER_AMBUSH)])

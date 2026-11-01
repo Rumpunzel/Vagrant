@@ -18,6 +18,8 @@ signal dice_requested(dice_request: DiceRequest)
 
 ## Where the story stands (stages, where encounters are)
 var world: StoryWorld = StoryWorld.new()
+## Rolls a chance; tests put a fixed result in
+var chance_roller: Callable = func(condition: AdventureChanceCondition) -> bool: return randi_range(1, condition.out_of) <= condition.times
 
 var _adventure: Adventure:
 	set(new_adventure):
@@ -83,6 +85,8 @@ var _host: AdventurePage
 var _location: AdventureLocation
 ## The encounter of the event one is in (also on the pages behind it); none at a location's own decisions
 var _encounter: AdventureEncounter
+## Chance conditions' rolls for the current arrival at a location ([AdventureChanceCondition])
+var _chance_rolls: Dictionary[AdventureChanceCondition, bool] = {}
 # StoryPage -> Array[StoryPage]
 var _page_log: Dictionary[AdventurePage, Array] = {}
 # AdventureDecision -> StoryChoice (individual times the decision has been made)
@@ -102,10 +106,17 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	enter_page(page if page != null else _adventure.starting_page)
 
 func enter_page(adventure_page: AdventurePage) -> void:
-	if adventure_page is AdventureLocation: _location = adventure_page as AdventureLocation
+	if adventure_page is AdventureLocation:
+		_location = adventure_page as AdventureLocation
+		_chance_rolls.clear()
 	_current_story_page = _create_story_page(adventure_page) if adventure_page else null
 
 func get_location() -> AdventureLocation: return _location
+
+## Whether [param condition]'s chance came up on this arrival at the location: rolled the first time it is asked, then kept until the next arrival
+func roll_chance(condition: AdventureChanceCondition) -> bool:
+	if not _chance_rolls.has(condition): _chance_rolls[condition] = chance_roller.call(condition)
+	return _chance_rolls[condition]
 
 ## The encounter or location [param path] (a UID) names; empty: the encounter of [param event] (none given: of the event one is in), else the
 ## current location

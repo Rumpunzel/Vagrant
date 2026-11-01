@@ -13,9 +13,16 @@
 [ext_resource type="Resource" uid="uid://qcl0jfm16ys8" path="res://adventure/adventures/encounters/lurker/lurker_ambush_fled.tres" id="11_ar80c"]
 [ext_resource type="Script" uid="uid://by4c6kid8h44s" path="res://adventure/adventure_host_reference.gd" id="11_host"]
 [ext_resource type="Script" uid="uid://dvkt7afs014e3" path="res://adventure/conditions/adventure_monster_condition.gd" id="20_monster_condition"]
+[ext_resource type="Script" uid="uid://cxveirqh4qic4" path="res://adventure/conditions/adventure_chance_condition.gd" id="21_chance"]
+[ext_resource type="Script" uid="uid://dcyvgy61ihfo0" path="res://adventure/adventure_page.gd" id="22_page"]
 
 [sub_resource type="Resource" id="Resource_lurking"]
 script = ExtResource("20_monster_condition")
+
+[sub_resource type="Resource" id="Resource_chance"]
+script = ExtResource("21_chance")
+times = 1
+out_of = 2
 
 [sub_resource type="Resource" id="Resource_to_host"]
 script = ExtResource("11_host")
@@ -31,12 +38,22 @@ description = "Fight!"
 transition = SubResource("Resource_to_host")
 metadata/_custom_type_script = "uid://b8exmtc8feoad"
 
-[resource]
-script = ExtResource("3_1x56p_event")
-conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurking")])
-exclusivity = 7
+[sub_resource type="Resource" id="Resource_strikes"]
+script = ExtResource("22_page")
 title = "Lurker Ambush"
 description = "Something foul and wicked your way comes!"
 background = ExtResource("1_74683")
 decisions = Array[ExtResource("2_74683")]([SubResource("Resource_2rcic")])
+
+[sub_resource type="Resource" id="Resource_continue"]
+script = ExtResource("2_74683")
+description = "Continue."
+transition = SubResource("Resource_strikes")
+
+[resource]
+script = ExtResource("3_1x56p_event")
+conditions = Array[ExtResource("1_6v84y")]([SubResource("Resource_lurking"), SubResource("Resource_chance")])
+exclusivity = 7
+description = "The water beside the path stirs. Rings spread across the black surface, though nothing broke it, and the reeds go quiet."
+decisions = Array[ExtResource("2_74683")]([SubResource("Resource_continue")])
 metadata/_custom_type_script = "uid://dcyvgy61ihfo0"

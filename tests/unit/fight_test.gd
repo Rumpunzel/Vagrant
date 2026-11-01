@@ -156,6 +156,7 @@ func test_find_decision_owner_in_events() -> void:
 	var ambush: AdventurePage = load("uid://bxwqtk0p80o4g")  # lurker_ambush.tres
 	var story: Story = auto_free(Story.new())
 	story._monsters = auto_free(Monsters.new())
+	story.chance_roller = func(_condition: AdventureChanceCondition) -> bool: return true
 	story.world = StoryWorld.new([load("uid://c16ehct0w6n48")] as Array[AdventureEncounter])  # encounters/lurker/lurker.tres
 	for ambush_decision: AdventureDecision in ambush.decisions:
 		assert_object(story._find_decision_owner(base, ambush_decision)).is_same(ambush)

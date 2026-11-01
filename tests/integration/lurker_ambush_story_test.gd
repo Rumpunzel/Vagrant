@@ -23,7 +23,16 @@ func test_flee_from_ambush_in_story() -> void:
 	var story: Story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
 	story._reveal_delay = 0.01
 	add_child(story)
+	story.chance_roller = func(_condition: AdventureChanceCondition) -> bool: return true
 	story.start_adventure(adventure, TestCharacters.adventurer())
+	# The water stirs first; only "Continue." leads into the ambush
+	var ripples: StoryPage = story._current_story_page
+	assert_int(ripples.choices.size()).is_equal(1)
+	ripples.choices[0].chose()
+	var waited_for_ambush: int = 0
+	while story._current_story_page == ripples and waited_for_ambush < 5000:
+		await await_millis(10)
+		waited_for_ambush += 10
 	var fight_choices: Array[StoryFightDecision] = []
 	for choice: StoryChoice in story._current_story_page.choices:
 		if choice is StoryFightDecision: fight_choices.append(choice)

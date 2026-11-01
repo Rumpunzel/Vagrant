@@ -179,6 +179,26 @@ func test_the_body_is_its_monsters() -> void:
 	_eleanor.profile = null
 	assert_bool(can_fight.is_true(_story, _meeting)).is_false()
 
+func test_chance_is_rolled_once_per_arrival() -> void:
+	var chance: AdventureChanceCondition = AdventureChanceCondition.new()
+	chance.times = 1
+	chance.out_of = 3
+	_meeting.conditions = [chance] as Array[AdventureCondition]
+	var rolls: Array[bool] = [false, true]
+	var rolled: Array[int] = [0]
+	_story.chance_roller = func(condition: AdventureChanceCondition) -> bool:
+		assert_object(condition).is_same(chance)
+		rolled[0] += 1
+		return rolls[rolled[0] - 1]
+	# Asked several times while there (title, text, decisions): one roll
+	assert_array(_castle.get_events(_story)).is_empty()
+	assert_array(_castle.get_events(_story)).is_empty()
+	assert_int(rolled[0]).is_equal(1)
+	# The next arrival rolls again
+	_story._chance_rolls.clear()
+	assert_array(_castle.get_events(_story)).contains_exactly([_meeting])
+	assert_str(chance.describe()).is_equal("1 in 3 chance")
+
 func _save(resource: Resource, path: String) -> void:
 	ResourceSaver.save(resource, path)
 	resource.take_over_path(path)
