@@ -77,7 +77,8 @@ func _note_decisions(page: AdventurePage, own: Array[Resource], encounter: Adven
 				var stage: AdventureStageConsequence = consequence as AdventureStageConsequence
 				if stage == null: continue
 				for subject: Resource in _resolve(stage.subject, own):
-					var stages: Array = (_set_stages.get_or_add(subject, {}) as Dictionary).get_or_add(stage.track, [ ])
+					var tracks: Dictionary = _set_stages.get_or_add(subject, {})
+					var stages: Array = tracks.get_or_add(stage.track, [ ])
 					if not stages.has(stage.stage): stages.append(stage.stage)
 
 func _note_encounter(into: Array[AdventureEncounter], path: String, own: AdventureEncounter) -> void:
@@ -117,10 +118,15 @@ func _can_reach(subject: Resource, condition: AdventureStageCondition) -> bool:
 	return condition.stages.any(func(stage: String) -> bool: return set_stages.has(stage))
 
 func _check_decisions(page: AdventurePage, event: AdventureEvent) -> void:
+	var texts: Array[String] = [ ]
 	for decision: AdventureDecision in page.decisions:
-		if decision == null or _checked.has(decision): continue
+		if decision == null: continue
+		var seen: bool = texts.has(decision.description)
+		texts.append(decision.description)
+		if _checked.has(decision): continue
 		_checked.append(decision)
 		var where: String = "%s, \"%s\"" % [AdventureGraph.get_title(page), decision.description.get_slice("\n", 0)]
+		if seen: _add("%s is offered twice" % where, page, event)
 		if decision is AdventureFightDecision and not _has_monster(decision as AdventureFightDecision, event): _add("%s: the fight has no monster encounter and no enemies" % where, page, event)
 		if decision is AdventureSaveDecision and (decision as AdventureSaveDecision).attribute == null: _add("%s: the save has no attribute" % where, page, event)
 		for link: AdventurePageReference in decision.get_page_references():

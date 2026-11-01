@@ -54,6 +54,11 @@ func test_missing_files_and_host_links_outside_events() -> void:
 		"Ruin, \"Home\": \"Host\" and \"Previous location\" only work inside events",
 	])
 
+func test_the_same_decision_twice() -> void:
+	_link(_ruin, _shore)
+	_link(_ruin, _shore)
+	assert_array(_texts([ ])).contains_exactly(['Ruin, "To Shore" is offered twice'])
+
 func test_options_after_one_without_conditions() -> void:
 	var always: AdventureEvent = _event("Always")
 	var never: AdventureEvent = _event("Never")
