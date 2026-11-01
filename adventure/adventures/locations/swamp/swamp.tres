@@ -7,3 +7,4 @@
 script = ExtResource("1_nwy5p")
 name = "Swamp"
 background = ExtResource("1_r7gu4")
+description = "The air is damp and smells of rotten earth."

@@ -7,6 +7,7 @@
 [ext_resource type="Resource" uid="uid://bxwqtk0p80o4g" path="res://adventure/adventures/encounters/lurker/lurker_ambush.tres" id="3_ambush"]
 [ext_resource type="Resource" uid="uid://m4wl5ad8o0i7" path="res://adventure/adventures/encounters/lurker/lurker_ambush_won.tres" id="4_won"]
 [ext_resource type="Resource" uid="uid://d3ytncs0be7oo" path="res://characters/monsters/lurker.tres" id="6_profile"]
+[ext_resource type="Script" uid="uid://by0krlemues6g" path="res://adventure/adventure_stage_track.gd" id="8_uqsc8"]
 
 [resource]
 script = ExtResource("2_scenario")
