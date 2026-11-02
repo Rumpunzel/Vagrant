@@ -51,14 +51,14 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_connect_lists()
 	EditorInterface.get_inspector().property_edited.connect(_on_property_edited)
 
-## Built here rather than in the scene: the panel between the map and the shelf, hidden until a location is selected
+## Built here rather than in the scene: the panel left of the map, hidden until a location is selected
 func _make_location_panel() -> void:
 	_location_view = AdventureLocationView.new()
 	_location_view.name = "Location"
 	_location_view.setup()
 	_location_view.hide()
 	_map_tab.add_child(_location_view)
-	_map_tab.move_child(_location_view, _map.get_index() + 1)
+	_map_tab.move_child(_location_view, 0)
 
 ## Built here: the screen of the event shown, before the special nodes' sidebar
 func _make_event_screen() -> void:
