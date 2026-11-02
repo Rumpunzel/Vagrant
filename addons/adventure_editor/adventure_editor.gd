@@ -266,11 +266,13 @@ static func describe_event(event: AdventureEvent) -> String:
 	var kind: String = " (encounter)" if event is AdventureEncounter else " (scenario)" if event is AdventureEventScenario else ""
 	return AdventureGraph.get_title(event) + kind
 
-## The sidebar's events: drag one onto a location, press one to open it
+## The sidebar's events: drag one onto a location, press one to open it. Options of an encounter or scenario come with it, so they aren't offered alone
 func _fill_event_shelf() -> void:
 	for button: Node in _event_shelf.get_children(): button.queue_free()
+	var options: Array[AdventureEvent] = [ ]
+	for event: AdventureEvent in _all_events: if event is AdventureEventScenario: options.append_array((event as AdventureEventScenario).events)
 	for event: AdventureEvent in _all_events:
-		if not _fits(event): continue
+		if options.has(event) or not _fits(event): continue
 		var button: AdventureEventButton = AdventureEventButton.new()
 		button.event = event
 		button.icon = AdventureActionMenu.get_event_icon(event)
