@@ -31,7 +31,7 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
 | `adventure_event_editing.gd`, `adventure_map_editing.gd` | Changes as data: listing events, forgetting what is deleted (also UID back-pointers), putting / removing / placing at locations, unlinking; file and reference helpers |
 | `adventure_graph.gd` (`AdventureGraph`) | Map model: pages, areas, links (also through events), event hosts, encounters and the locations they could show on, titles |
 | `adventure_event_graph.gd` (`AdventureEventGraph`) | One event's pages: outlets and ports, outcomes, exits, depths; texts for checks, effects, conditions and what Hide flags hide |
-| `adventure_location_overview.gd`, `adventure_location_view.gd` | The Location tab: what can happen at a location in its order (own events, encounters there / near / anywhere / that can come), banner with background and ambience, editing |
+| `adventure_location_overview.gd`, `adventure_location_view.gd` | The location panel beside the map (follows the selected location): what can happen there in its order (own events, encounters there / near / anywhere / that can come), a small banner, its texts to edit |
 | `adventure_storyline.gd` (`AdventureStoryline`) | An encounter's story: where its events can happen (stages, body), where their decisions lead, toggling, adding tracks and stages |
 | `adventure_event_screen.gd` (`AdventureEventScreen`) | The event screen: a plain event as one section, a scenario or encounter as a foldable section per option with its story columns and track bars; each section's page graph, its height handle |
 | `adventure_graph_view.gd` / `adventure_card_view.gd` / `adventure_event_view.gd` / `adventure_map_view.gd` | Graph views: shared nodes, lines, menus, problems, tidy; page and decision cards with condition and effect chips; an event's page graph (Host / Previous in its toolbar); the map (area frames, links) |
@@ -44,7 +44,8 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
   of a frame, drop events, encounters, monster profiles and images; delete; Tidy; play from here; Find; ★ starting page (set from the menu);
   exits on each node (click: text and first-time text; new links ask for them; + way back where there is none); ▶ ambience on locations and
   areas (one at a time); area texts from the frame's menu; 🎲 on events that happen by chance.
-- **Location tab:** banner (background, ambience), text, sections in the location's order with ▲ ▼, + event, + encounter, ✕, can come here.
+- **Location panel** (beside the map, follows the selected location): small banner (background, Play, + encounter, close), its text and
+  first-visit text to edit, sections in the location's order with ▲ ▼, + event, ✕, can come here.
 - **Event screen:** one per event; scenarios and encounters as foldable sections with their page graphs (height handle, scroll and zoom kept),
   pick first / every, + Option, Add event…; encounters with track bars (+ stage, + track), the Body bar, "In" (click to change) and "Leads to";
   picking a stage dims what can't happen then and marks what leads into it.
@@ -65,7 +66,7 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
   roaming by itself (random, routes, time of day)
 - Fight decisions with input ports for who takes part; fights against several opponents (needs the fight UI first)
 - Portals: a link into another area ends in a small portal node inside the source frame
-- The location tab growing into a full location editor
+- The location panel growing into a full location editor
 
 ## Log
 - 2026-10-25: plan agreed (main-screen tab, one adventure, `AdventureTransition` kept, location = page with area, events as shared attachments, side layout file, v1 view only, portals later)
@@ -135,3 +136,4 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
 - 2026-11-01: Hide flags replaced by text and decisions layering (adds / replaces the location's / only this; of two "only", the earlier wins); area texts on entering an area (first-time text); the event node previews the page (click a row to show or hide it); "Play from here" forces its event (all conditions met on the first arrival, its scenario picks it) and has ▶ buttons on the event screen's sections and the location banner; tests: layering (4), area text (1), forced (1)
 - 2026-11-01: no breath dice left: saves and fights are greyed out (tooltip) and come back after catching breath; with nothing else to do, the first fails at once (generalizes the fight lost on arrival, which moved from `Fight` to `Story`); "no rest here" (`AdventurePage.no_rest`, a page or any event on it) disables catching breath and making camp, set on meeting Eleanor and the Lurker's stirring water; tests: availability (1), no rest (1), greyed out and failing on arrival (2)
 - 2026-11-01: a choice's first-time text (`AdventureDecision.first_description`, until the page it leads to was visited, read from the load cache so nothing loads early); map: exits with their texts, linking asks for them, + way back, ▶ ambience, ★ starting page, area texts dialog (`AdventureTextsDialog`), 🎲 on chance events; duplicate decisions are a problem, linking twice adds none; tests: first-time text (1), offered twice (1)
+- 2026-11-02: the event shelf no longer offers encounters' and scenarios' options alone; the Location tab became a panel beside the map that follows the selected location (smaller banner, texts editable there, its ambience left to the map's ▶)

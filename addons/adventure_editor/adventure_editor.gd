@@ -45,19 +45,20 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_actions = AdventureEditorActions.new()
 	add_child(_actions)
 	_actions.setup(self)
-	_make_location_tab()
+	_make_location_panel()
 	_make_event_screen()
 	_connect_views()
 	_connect_lists()
 	EditorInterface.get_inspector().property_edited.connect(_on_property_edited)
 
-## Built here rather than in the scene: a tab after the map
-func _make_location_tab() -> void:
+## Built here rather than in the scene: the panel between the map and the shelf, hidden until a location is selected
+func _make_location_panel() -> void:
 	_location_view = AdventureLocationView.new()
 	_location_view.name = "Location"
 	_location_view.setup()
-	_tabs.add_child(_location_view)
-	_tabs.move_child(_location_view, _map_tab.get_index() + 1)
+	_location_view.hide()
+	_map_tab.add_child(_location_view)
+	_map_tab.move_child(_location_view, _map.get_index() + 1)
 
 ## Built here: the screen of the event shown, before the special nodes' sidebar
 func _make_event_screen() -> void:
@@ -92,7 +93,6 @@ func _find_scenario_of(event: AdventureEvent) -> AdventureEventScenario:
 	return null
 
 func _show_location(location: AdventureLocation) -> void:
-	_tabs.current_tab = _tabs.get_tab_idx_from_control(_location_view)
 	_location_view.show_location(location, _get_encounters(), _graph.pages)
 
 func _get_encounters() -> Array[AdventureEncounter]:
@@ -112,7 +112,7 @@ func _connect_views() -> void:
 	_map.event_requested.connect(_actions.ask_for_event)
 	_map.existing_event_requested.connect(func(location: AdventureLocation) -> void: _actions.offer_events(location, _map.show_actions))
 	_map.encounter_requested.connect(_actions.ask_for_encounter)
-	_map.location_opened.connect(_show_location)
+	_map.location_selected.connect(_show_location)
 	_location_view.event_opened.connect(open_event)
 	_location_view.changes_requested.connect(_edits.apply)
 	_location_view.event_requested.connect(_actions.ask_for_event)
@@ -158,7 +158,7 @@ func rebuild() -> void:
 	var listed: Array[AdventureEvent] = _list_events()
 	_fill_event_shelf()
 	_list_problems()
-	var shown: AdventureLocation = _location_view.get_location()
+	var shown: AdventureLocation = _location_view.get_location() if _location_view.visible else null
 	_location_view.show_location(shown if _graph.pages.has(shown) else null, _get_encounters(), _graph.pages)
 	var current: AdventureEvent = _event_screen.get_event()
 	if listed.has(current): _show_event(current, _event_screen.get_host())
@@ -208,6 +208,7 @@ func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
 func _open_location(location: AdventurePage) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_map_tab)
 	_map.focus_page(location)
+	if location is AdventureLocation: _show_location(location as AdventureLocation)
 
 func get_edits() -> AdventureEdits: return _edits
 

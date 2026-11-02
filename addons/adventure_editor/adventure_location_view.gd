@@ -1,11 +1,11 @@
 @tool
 class_name AdventureLocationView
-extends Control
+extends VBoxContainer
 
-## One location at a glance: a banner with its background (or its area's) and a player for its ambience, its text, and ([AdventureLocationOverview])
-## a section per source of events in its order (its own events, then the encounters
-## that can show there), each with the events that could show and what they need; what can come here below. ▲ ▼ change the order, + adds
-## events or encounters, ✕ takes them off here. Selecting a row shows it in the Inspector; double-click an event to open it.
+## The panel beside the map for the location selected there: a small banner with its background (or its area's), its texts to edit, and
+## ([AdventureLocationOverview]) a section per source of events in its order (its own events, then the encounters that can show there), each
+## with the events that could show and what they need; what can come here below. ▲ ▼ change the order, + adds events or encounters, ✕ takes
+## them off here. Selecting a row shows it in the Inspector; double-click an event to open it.
 
 signal event_opened(event: AdventureEvent, host: AdventurePage)
 signal changes_requested(changes: Array[Array], action: String, file: Resource)
@@ -19,62 +19,49 @@ signal play_requested(page: AdventurePage, event: AdventureEvent)
 
 enum Act { UP, DOWN, ADD, REMOVE }
 
-const BANNER_HEIGHT: float = 220.0
-const BACKDROP: Color = Color(1, 1, 1, 0.12)
-const TEXT_LINES: int = 4
+const WIDTH: float = 400.0
+const BANNER_HEIGHT: float = 110.0
+const TEXT_HEIGHT: float = 70.0
 
 var _overview: AdventureLocationOverview
 var _encounters: Array[AdventureEncounter] = [ ]
 var _title: Label
 var _subtitle: Label
-var _text: Label
 var _banner: TextureRect
-var _backdrop: TextureRect
-var _ambience: AudioStreamPlayer
-var _ambience_button: Button
+var _text: TextEdit
+var _first_text: TextEdit
 var _tree: Tree
 var _menu: AdventureActionMenu
 
 func setup() -> void:
-	_backdrop = _make_cover()
-	_backdrop.modulate = BACKDROP
-	add_child(_backdrop)
-	_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var column: VBoxContainer = VBoxContainer.new()
-	add_child(column)
-	column.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	column.add_child(_make_banner())
-	_text = Label.new()
-	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text.max_lines_visible = TEXT_LINES
-	_text.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	_text.modulate = Color(1, 1, 1, 0.8)
-	_text.mouse_filter = Control.MOUSE_FILTER_PASS
-	column.add_child(_text)
-	_ambience = AudioStreamPlayer.new()
-	add_child(_ambience)
-	_ambience.finished.connect(_update_ambience_button)
-	visibility_changed.connect(_on_visibility_changed)
+	custom_minimum_size.x = WIDTH
+	add_child(_make_banner())
+	_text = _make_text_box("Its text", &"description")
+	_first_text = _make_text_box("The first visit (none: its text)", &"first_description")
 	_tree = Tree.new()
 	_tree.add_theme_stylebox_override(&"panel", StyleBoxEmpty.new())
 	_tree.columns = 2
 	_tree.hide_root = true
 	_tree.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_tree.set_column_expand_ratio(0, 1)
-	_tree.set_column_expand_ratio(1, 2)
+	_tree.set_column_expand_ratio(1, 1)
+	_tree.set_column_clip_content(1, true)
 	_tree.item_activated.connect(_on_item_activated)
 	_tree.item_selected.connect(_on_item_selected)
 	_tree.button_clicked.connect(_on_button_clicked)
-	column.add_child(_tree)
+	add_child(_tree)
 	_menu = AdventureActionMenu.new()
 	add_child(_menu)
 
-## The background over the whole width, faded at the bottom under its title; the ambience and encounter buttons at the top
+## The background, faded at the bottom under its title; the buttons at the top
 func _make_banner() -> Control:
 	var banner: Control = Control.new()
 	banner.custom_minimum_size.y = BANNER_HEIGHT
 	banner.clip_contents = true
-	_banner = _make_cover()
+	_banner = TextureRect.new()
+	_banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_banner.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	banner.add_child(_banner)
 	_banner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var fade: TextureRect = TextureRect.new()
@@ -82,7 +69,7 @@ func _make_banner() -> Control:
 	gradient.gradient = Gradient.new()
 	gradient.gradient.set_color(0, Color(0, 0, 0, 0))
 	gradient.gradient.set_color(1, Color(0, 0, 0, 0.85))
-	gradient.gradient.set_offset(0, 0.35)
+	gradient.gradient.set_offset(0, 0.2)
 	gradient.fill_from = Vector2(0, 0)
 	gradient.fill_to = Vector2(0, 1)
 	fade.texture = gradient
@@ -92,95 +79,70 @@ func _make_banner() -> Control:
 	banner.add_child(fade)
 	fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var margin: MarginContainer = MarginContainer.new()
-	for side: String in ["left", "top", "right", "bottom"]: margin.add_theme_constant_override("margin_" + side, 12)
+	for side: String in ["left", "top", "right", "bottom"]: margin.add_theme_constant_override("margin_" + side, 8)
 	banner.add_child(margin)
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var stack: VBoxContainer = VBoxContainer.new()
+	stack.add_theme_constant_override(&"separation", 0)
 	margin.add_child(stack)
 	var buttons: HBoxContainer = HBoxContainer.new()
 	buttons.alignment = BoxContainer.ALIGNMENT_END
 	buttons.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stack.add_child(buttons)
-	_ambience_button = Button.new()
-	_ambience_button.text = "Ambience"
-	_ambience_button.pressed.connect(_toggle_ambience)
-	_ambience_button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	buttons.add_child(_ambience_button)
-	var play: Button = Button.new()
-	play.text = "Play"
-	play.icon = AdventureActionMenu.get_editor_icon("PlayScene")
-	play.tooltip_text = "Play from here (chance decides what happens, as in the game)"
-	play.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	play.pressed.connect(_on_play)
-	buttons.add_child(play)
-	var add: Button = Button.new()
-	add.text = "Encounter"
-	add.icon = AdventureActionMenu.get_editor_icon("Add")
-	add.tooltip_text = "A new encounter here, or one made already"
-	add.pressed.connect(_on_add_encounter)
-	add.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	buttons.add_child(add)
-	_title = _make_banner_label(&"HeaderLarge")
+	buttons.add_child(_make_banner_button("PlayScene", "Play from here (chance decides what happens, as in the game)", _on_play))
+	buttons.add_child(_make_banner_button("Add", "A new encounter here, or one made already", _on_add_encounter))
+	buttons.add_child(_make_banner_button("Close", "Close (select a location on the map to show it again)", hide))
+	_title = _make_banner_label(&"HeaderMedium")
 	stack.add_child(_title)
 	_subtitle = _make_banner_label(&"")
 	stack.add_child(_subtitle)
 	return banner
 
-static func _make_cover() -> TextureRect:
-	var cover: TextureRect = TextureRect.new()
-	cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	cover.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return cover
+func _make_banner_button(icon_name: String, tooltip: String, on_pressed: Callable) -> Button:
+	var button: Button = Button.new()
+	button.icon = AdventureActionMenu.get_editor_icon(icon_name)
+	button.tooltip_text = tooltip
+	button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	button.pressed.connect(on_pressed)
+	return button
 
 ## Outlined, so it reads on any background
 static func _make_banner_label(variation: StringName) -> Label:
 	var label: Label = Label.new()
 	label.theme_type_variation = variation
+	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	label.add_theme_constant_override(&"outline_size", 6)
 	label.add_theme_color_override(&"font_outline_color", Color(0, 0, 0, 0.8))
 	return label
 
-## Its own background, else its area's; the same for the ambience
+## Changed once it loses focus (one undo step)
+func _make_text_box(placeholder: String, property: StringName) -> TextEdit:
+	var box: TextEdit = TextEdit.new()
+	box.placeholder_text = placeholder
+	box.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+	box.scroll_fit_content_height = true
+	box.custom_minimum_size.y = TEXT_HEIGHT
+	box.focus_exited.connect(_on_text_edited.bind(box, property))
+	add_child(box)
+	return box
+
+func _on_text_edited(box: TextEdit, property: StringName) -> void:
+	var location: AdventureLocation = get_location()
+	if location == null or box.text == location.get(property): return
+	changes_requested.emit([[location, property, box.text]], "%s's %s" % [AdventureGraph.get_title(location), "text" if property == &"description" else "first-visit text"], location)
+
+## Its own background, else its area's
 func _show_header(location: AdventureLocation) -> void:
 	var background: Texture2D = null
-	var ambience: AudioStream = null
 	var notes: Array[String] = [ ]
 	if location != null:
 		background = location.background if location.background != null else location.get_area_background()
-		ambience = location.ambience if location.ambience != null else location.area.ambience if location.area != null else null
 		if location.area != null: notes.append(location.area.name)
 		if location.background == null: notes.append("the area's background" if background != null else "no background")
-		if location.ambience == null and ambience != null: notes.append("the area's ambience")
 	_banner.texture = background
-	_backdrop.texture = background
 	_subtitle.text = " · ".join(notes)
-	var parts: Array[String] = [ ]
-	if location != null and not location.first_description.is_empty(): parts.append("First visit: " + location.first_description)
-	if location != null: parts.append(location.description)
-	_text.text = "\n".join(parts)
-	_text.tooltip_text = _text.text
-	_text.visible = not _text.text.is_empty()
-	if _ambience.stream != ambience:
-		_ambience.stop()
-		_ambience.stream = ambience
-	_ambience_button.disabled = ambience == null
-	_ambience_button.tooltip_text = "No ambience" if ambience == null else ambience.resource_path.get_file()
-	_update_ambience_button()
-
-func _toggle_ambience() -> void:
-	if _ambience.playing: _ambience.stop()
-	else: _ambience.play()
-	_update_ambience_button()
-
-func _update_ambience_button() -> void:
-	_ambience_button.icon = AdventureActionMenu.get_editor_icon("Stop" if _ambience.playing else "Play")
-
-## Silent while another tab is shown
-func _on_visibility_changed() -> void:
-	if is_visible_in_tree(): return
-	_ambience.stop()
-	_update_ambience_button()
+	_text.text = location.description if location != null else ""
+	_first_text.text = location.first_description if location != null else ""
 
 func _on_play() -> void:
 	if get_location() != null: play_requested.emit(get_location(), null)
@@ -190,14 +152,15 @@ func _on_add_encounter() -> void:
 
 func get_location() -> AdventureLocation: return _overview.location if _overview != null else null
 
-## Shows [param location] (none: nothing); [param pages]: the map's pages, whose decisions may bring encounters here
+## Shows [param location] (none: hides); [param pages]: the map's pages, whose decisions may bring encounters here
 func show_location(location: AdventureLocation, encounters: Array[AdventureEncounter], pages: Array[AdventurePage]) -> void:
 	_tree.clear()
 	_encounters = encounters
 	_overview = AdventureLocationOverview.new(location, encounters, pages) if location != null else null
-	_title.text = "Double-click a location on the map" if location == null else AdventureGraph.get_title(location)
+	visible = location != null
+	if location == null: return
+	_title.text = AdventureGraph.get_title(location)
 	_show_header(location)
-	if _overview == null: return
 	var root: TreeItem = _tree.create_item()
 	for index: int in _overview.sections.size(): _add_section(root, index)
 	if _overview.arrivals.is_empty(): return
@@ -208,6 +171,7 @@ func show_location(location: AdventureLocation, encounters: Array[AdventureEncou
 		var item: TreeItem = _tree.create_item(arrivals)
 		item.set_text(0, AdventureGraph.get_title(arrival.encounter))
 		item.set_text(1, "%s: \"%s\"" % [AdventureGraph.get_title(arrival.page), arrival.decision.description.get_slice("\n", 0)])
+		item.set_tooltip_text(1, item.get_text(1))
 		item.set_metadata(0, arrival.page if arrival.page is AdventureEvent else arrival.encounter)
 
 func _add_section(root: TreeItem, index: int) -> void:
@@ -217,7 +181,7 @@ func _add_section(root: TreeItem, index: int) -> void:
 	item.set_text(1, section.reason)
 	item.set_icon(0, AdventureActionMenu.get_editor_icon("CharacterBody2D" if section.encounter != null else "Environment"))
 	item.set_metadata(0, section.encounter if section.encounter != null else _overview.location)
-	if index > 0: item.add_button(1, AdventureActionMenu.get_editor_icon("MoveUp"), Act.UP, false, "Earlier: shown first, Hide Below of earlier ones can hide it")
+	if index > 0: item.add_button(1, AdventureActionMenu.get_editor_icon("MoveUp"), Act.UP, false, "Earlier: shown first; an earlier \"only this\" event hides it")
 	if index < _overview.sections.size() - 1: item.add_button(1, AdventureActionMenu.get_editor_icon("MoveDown"), Act.DOWN, false, "Later")
 	if section.encounter == null: item.add_button(1, AdventureActionMenu.get_editor_icon("Add"), Act.ADD, false, "A new event here, or one made already")
 	elif section.encounter.places.has(AdventureLayout.get_key(_overview.location)):
@@ -229,6 +193,7 @@ func _add_section(root: TreeItem, index: int) -> void:
 		row.set_text(0, AdventureGraph.get_title(event) + (" (near)" if event.where == AdventureEvent.Where.NEAR and section.encounter != null else ""))
 		var needs: String = AdventureEventGraph.describe_conditions(event.conditions)
 		row.set_text(1, "when %s" % needs if not needs.is_empty() else "")
+		row.set_tooltip_text(1, row.get_text(1))
 		row.set_metadata(0, event)
 		if section.encounter == null and not AdventureEventEditing.is_inside_file(event):
 			row.add_button(1, AdventureActionMenu.get_editor_icon("Remove"), Act.REMOVE, false, "Remove from here (the file stays)")

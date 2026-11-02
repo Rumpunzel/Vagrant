@@ -10,8 +10,8 @@ signal location_requested(at: Vector2)
 signal event_requested(location: AdventureLocation, scenario: bool)
 ## An event already made, to be listed on [param location] too
 signal existing_event_requested(location: AdventureLocation)
-## Double-clicked: show it in the location tab
-signal location_opened(location: AdventureLocation)
+## Selected: show it in the panel beside the map
+signal location_selected(location: AdventureLocation)
 ## A new encounter that could be at [param location]: an NPC, or (with [param profile], none: ask for one) a monster
 signal encounter_requested(location: AdventureLocation, monster: bool, profile: MonsterProfile)
 
@@ -86,11 +86,6 @@ func show_graph(graph: AdventureGraph) -> void:
 		if page.ambience != null: _add_ambience_button(node.get_titlebar_hbox(), page.ambience, "Play its ambience")
 		elif area != null: _add_ambience_button(node.get_titlebar_hbox(), area.ambience, "Play its area's ambience")
 		_on_right_click(node, func() -> Dictionary[String, Callable]: return _get_location_actions(graph, page))
-		if location != null:
-			node.gui_input.connect(func(input: InputEvent) -> void:
-				var click: InputEventMouseButton = input as InputEventMouseButton
-				if click != null and click.double_click: call_after_release(location_opened.emit.bind(location))
-			)
 		if graph.unreachable.has(page):
 			node.modulate = FADED
 			node.tooltip_text = "Not reached from the starting page"
@@ -325,3 +320,8 @@ func _page_of(node_name: StringName) -> AdventurePage:
 	return _resources.get(get_node(NodePath(node_name)) as GraphElement) as AdventurePage
 
 static func _key(page: AdventurePage) -> String: return AdventureLayout.get_key(page)
+
+func _on_node_selected(element: Node) -> void:
+	super(element)
+	var location: AdventureLocation = _resources.get(element as GraphElement) as AdventureLocation
+	if location != null: location_selected.emit(location)
