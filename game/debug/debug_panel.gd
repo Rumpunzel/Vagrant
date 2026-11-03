@@ -414,7 +414,7 @@ func _build() -> void:
 	_filter.clear_button_enabled = true
 	_filter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_filter.add_theme_font_size_override("font_size", FONT_SIZE)
-	_filter.text_changed.connect(func(_text: String) -> void: _render_log())
+	_filter.text_changed.connect(func(_t: String) -> void: _render_log())
 	bar.add_child(_filter)
 	var clear: Button = Button.new()
 	clear.text = "Clear"

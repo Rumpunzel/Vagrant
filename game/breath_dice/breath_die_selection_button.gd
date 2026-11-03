@@ -68,8 +68,8 @@ func get_record() -> Dictionary:
 func show_record(record: Dictionary) -> void:
 	active = false
 	text = record.text
-	var pressed: bool = record.pressed
-	set_pressed_no_signal(pressed)
+	var record_pressed: bool = record.pressed
+	set_pressed_no_signal(record_pressed)
 	var color: String = record.color
 	if not color.is_empty(): set_font_colors(Color.html(color))
 	disabled = record.disabled

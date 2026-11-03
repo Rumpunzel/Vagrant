@@ -124,8 +124,8 @@ static func describe(resource: Resource) -> String:
 ## What content is called: its title, name or description, a chance's odds; empty if nothing names it
 static func label(resource: Resource) -> String:
 	if resource is AdventureChanceCondition:
-		var chance: AdventureChanceCondition = resource
-		return "chance %d in %d" % [chance.times, chance.out_of]
+		var chance_condition: AdventureChanceCondition = resource
+		return "chance_condition %d in %d" % [chance_condition.times, chance_condition.out_of]
 	for property: String in ["title", "name", "descriptor"]:
 		var value: Variant = resource.get(property)
 		var text: String = value if value is String else ""
@@ -135,7 +135,7 @@ static func label(resource: Resource) -> String:
 
 static func _get_class_name(resource: Resource) -> String:
 	var script: Script = resource.get_script()
-	return script.get_global_name() if script != null else resource.get_class()
+	return script.get_global_name() as String if script != null else resource.get_class()
 
 ## A loaded save's entries; the counts are rebuilt from them
 func restore(saved: Array) -> void:
