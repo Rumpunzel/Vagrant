@@ -110,6 +110,7 @@ func test_save_game_written_and_read() -> void:
 	var read: SaveGame = SaveGame.read("save_state_test")
 	assert_dict(read.story).is_equal(save_game.story)
 	assert_array(read.get_problems()).is_empty()
+	assert_array(SaveGame.get_runs()).contains(["save_state_test"])
 	assert_object(SaveGame.read("save_state_test_none")).is_null()
 
 func test_refuses_what_is_gone() -> void:

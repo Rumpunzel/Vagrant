@@ -29,6 +29,11 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			viewport.set_input_as_handled()
 			var current_story: Story = scene_tree.current_scene
 			_enter_story(current_story._adventure, current_story._protagonist.character_profile)
+	elif event.is_action_released("debug_continue_run"):
+		viewport.set_input_as_handled()
+		var runs: Array[String] = SaveGame.get_runs()
+		if runs.is_empty(): printerr("No saved run to continue!")
+		else: continue_run(runs.back())
 
 func enter_character_creation(protagonist: CharacterProfile) -> CharacterCreation:
 	var scene_tree: SceneTree = get_tree()
@@ -55,7 +60,8 @@ func _enter_story(adventure: Adventure, protagonist: CharacterProfile, page: Adv
 	await scene_tree.scene_changed
 	assert(scene_tree.current_scene is Story)
 	var story: Story = scene_tree.current_scene
-	story.run = SaveGame.start_run()
+	# Only runs from the start are saved, not "Play from here" (which starts on a page)
+	if page == null: story.run = SaveGame.start_run()
 	story.start_adventure(adventure, protagonist, page, host, forced)
 	return story
 

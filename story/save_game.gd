@@ -17,6 +17,13 @@ static func start_run() -> String: return Time.get_datetime_string_from_system()
 
 static func get_path_of(of_run: String) -> String: return DIRECTORY.path_join(of_run + ".json")
 
+## The saved runs, oldest first (their names are their start times)
+static func get_runs() -> Array[String]:
+	var runs: Array[String] = []
+	for file: String in DirAccess.get_files_at(DIRECTORY): if file.get_extension() == "json": runs.append(file.get_basename())
+	runs.sort()
+	return runs
+
 static func capture(of_run: String, from_story: Story) -> SaveGame:
 	var save_game: SaveGame = SaveGame.new()
 	save_game.run = of_run

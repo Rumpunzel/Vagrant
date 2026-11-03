@@ -42,3 +42,18 @@ func test_story_writes_chance_once_per_arrival() -> void:
 	story.roll_chance(condition)
 	assert_array(story.journal.entries).has_size(1)
 	assert_dict(story.journal.entries[0]).contains_key_value("came_up", true)
+
+func test_watches_actors_once() -> void:
+	var character: Character = auto_free(load("uid://bl0pdxri24fnh").instantiate())  # character.tscn
+	add_child(character)
+	character.character_profile = TestCharacters.adventurer()
+	_journal.watch_actor(character)
+	_journal.watch_actor(character)
+	character.suffer_injury(Injury.new(2))
+	character.lose_breath_dice([Die.new(Rules.d6, 6)] as Array[Die])
+	assert_array(_journal.entries).has_size(2)
+	assert_dict(_journal.entries[0]).is_equal({type = "injury", actor = "Tester", magnitude = 2, total = 2})
+	assert_dict(_journal.entries[1]).contains_key_value("dice", ["d6"])
+
+func test_plain_text() -> void:
+	assert_str(StoryJournal._to_plain_text("[color=#fff]You[/color] take [img=20]res://wound.png[/img]2.")).is_equal("You take 2.")

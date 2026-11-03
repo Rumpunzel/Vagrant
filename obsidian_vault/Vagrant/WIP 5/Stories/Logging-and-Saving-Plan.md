@@ -1,6 +1,6 @@
 # Logging and Saving — Plan
 
-Status (2026-11-03): design chosen (option C); steps 1–6 built (`ResourceId`, `GameRandom`, `GameLog`, `StoryJournal`, save data + `SaveGame`, loading + autosave); no UI to continue a run yet, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
+Status (2026-11-03): design chosen (option C); steps 1–6 built (`ResourceId`, `GameRandom`, `GameLog`, `StoryJournal`, save data + `SaveGame`, loading + autosave); UI for runs waits (user), F9 continues the latest run, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
 Goal: (1) a log of what happens in a story, for debugging; (2) saving and loading a game in progress. Both need the same thing: a clear
 list of the runtime state and a stable way to name content (pages, decisions, monsters) outside the running game.
 
@@ -10,6 +10,8 @@ list of the runtime state and a stable way to name content (pages, decisions, mo
 - **A save slot per run, autosaved.** Starting a new run (new character / adventure) makes a new slot; each safe point overwrites it.
 - **Refuse to load** if the adventure changed and a saved id no longer resolves (or the format version is unknown); say what is missing.
 - **Log to disk only in debug builds** (`OS.is_debug_build()`); the journal itself is always kept (it goes into the save).
+- **"Play from here" isn't saved** (no run slot when a story starts on a given page).
+- **No UI for saving and loading yet** (later); F9 (debug) continues the latest run.
 - **Seeded RNG now**: one RNG for dice and chance rolls, its seed and state in the save and the log. Cosmetic randomness (roll sounds) stays
   on the global one, so it doesn't shift game results.
 
@@ -58,8 +60,10 @@ there. − Two mechanisms, but each simple.
   written to `GameLog` as a readable line ("entered "Ruin" (uid://…)"). Entry types: `start` (adventure, seed), `enter` (page), `choose`
   (decision), `roll` (decision, attribute, dice, outcome, margin; not fight rolls), `chance` (condition, came_up), `stage` (subject, track,
   stage), `move` (encounter, places), `exchange` (fight decision, number, outcome). `StoryWorld` emits `stage_set` / `moved`, the journal
-  watches it (`Story.world`'s setter). Counts are kept by object for the running story (test resources have no id); a loaded save rebuilds
-  them from the entries. Not yet: breath, injuries, exhaustion (actor signals), consequences by name.
+  watches it (`Story.world`'s setter). Also `injury`, `breath_lost`, `breath_caught` (by actor name; `watch_actor`, once per actor: the
+  protagonist, and each monster as `Story.get_monster` hands it out), and `load` (run). The `exchange` log line also tells the exchange's
+  paragraphs as plain text. Counts are kept by object for the running story (test resources have no id); a loaded save rebuilds
+  them from the entries.
 - **Game log**: `GameLog.write(category, message)` (`custom_nodes/game_log.gd`, static, no dependencies) prints "HH:MM:SS category: …"
   in debug builds only. No own file: Godot's file logging (on by default) already writes stdout and the engine's errors to
   `user://logs/godot*.log`, the last few runs. No levels until something needs them. Later maybe an in-game debug panel
@@ -89,11 +93,11 @@ there. − Two mechanisms, but each simple.
 - **Loading UI**: a list of runs (slots) on the title / main scene: continue one, or start a new run.
 
 ## Open
-- Journal: also breath / injuries / exhaustion (from `Actor` / `Character` signals)? Not needed for saving (snapshots cover them); only for the log.
 - Runtime-made resources in saved places have an empty id and come back as null; fine for real content (all files), checked by step 6's test.
 - Where the run list lives (main scene has no title screen yet).
-- "Play from here" and the debug restart (Escape) start new runs, so they make slots too: skip saving for "Play from here"?
-- `Main.continue_run` is not tested end to end (scene change); check by hand with step 7's UI.
+- The debug restart (Escape) starts a new run (a new slot).
+- `Main.continue_run` is not tested end to end (scene change); check by hand with F9.
+- Old runs pile up in `user://saves` (one per new game / Escape restart); deleting comes with the UI.
 - Delete old runs from the list?
 
 ## Steps
@@ -103,7 +107,7 @@ there. − Two mechanisms, but each simple.
 4. ~~`StoryJournal`; `Story` writes entries; visit/decision counts from it.~~ Done.
 5. ~~Snapshots per owner + `SaveGame` (version, adventure id, RNG, journal); round-trip unit tests per owner; refusing unknown ids.~~ Done.
 6. ~~`Story.restore` + `Main.continue_run`; autosave at safe points to the run's slot.~~ Done. Test: `tests/integration/story_save_test.gd`.
-7. UI: list of runs, continue / new run.
+7. Later (user): UI, a list of runs, continue / new run. For now F9 continues the latest.
 8. Later: saving in fights, debug panel.
 
 ## Log
@@ -115,3 +119,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: step 4: `StoryJournal` replaces `_page_log` / `_decision_log`; entries for start, enter, choose, roll, chance, stage, move, exchange, each logged. `StoryWorld` signals. Tests: `story_journal_test.gd`; tests that filled `_page_log` use `journal.enter`.
 - 2026-11-03: step 5: `get_save` / `restore` on `Actor`, `Character` (+ `restore_profile`), `Monster`, `Monsters`, `StoryWorld`, `StoryJournal`; `Story.get_save` / `can_save`; `EventQueue.is_idle`; `SaveGame`; `ResourceId.of_each` / `find_each`. Tests: `save_state_test.gd`.
 - 2026-11-03: step 6: `Story.run`, autosave on each page (deferred, if `can_save`), `Story.restore`, `Main.continue_run` (refuses on problems), journal `load` entry. Tests: `story_save_test.gd` (go on from the save: page, way back, counts, character, random numbers).
+- 2026-11-03: "Play from here" makes no run slot; F9 continues the latest run (`SaveGame.get_runs`); journal watches actors (injuries, breath) and logs exchange texts.

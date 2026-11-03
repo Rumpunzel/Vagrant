@@ -118,6 +118,7 @@ func restore(new_adventure: Adventure, of_run: String, data: Dictionary) -> void
 	Character.restore_profile(protagonist_profile, protagonist_data.profile as Dictionary)
 	_protagonist = _party.create_character(protagonist_profile)
 	_protagonist.restore(protagonist_data)
+	journal.watch_actor(_protagonist)
 	_monsters.restore(data.monsters as Array)
 	_page_stack.assign(ResourceId.find_each(data.page_stack as Array))
 	_host = ResourceId.find(data.host as String) as AdventurePage
@@ -158,6 +159,7 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	journal.start(new_adventure, GameRandom.get_seed())
 	world = StoryWorld.new(new_adventure.encounters)
 	_protagonist = _party.create_character(protagonist_profile)
+	journal.watch_actor(_protagonist)
 	_forced = forced
 	if host != null and host != page:
 		enter_page(host)
@@ -210,7 +212,9 @@ func get_protagonist() -> Character: return _protagonist
 
 ## The monster of [param holder]: an encounter's, the same for the whole story; a one-off fight's (owned by its page), one per location
 func get_monster(holder: AdventurePage, monster_profile: MonsterProfile) -> Monster:
-	return _monsters.get_monster(holder, monster_profile, 0, null if holder is AdventureEncounter else _location)
+	var monster: Monster = _monsters.get_monster(holder, monster_profile, 0, null if holder is AdventureEncounter else _location)
+	journal.watch_actor(monster)
+	return monster
 
 ## The page the current event is shown on ([AdventureHostReference])
 func get_host() -> AdventurePage: return _host

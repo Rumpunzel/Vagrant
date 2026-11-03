@@ -8,6 +8,8 @@ var entries: Array[Dictionary] = []
 
 var _times_entered: Dictionary[AdventurePage, int] = {}
 var _times_made: Dictionary[AdventureDecision, int] = {}
+## Instance IDs of the actors [method watch_actor] already listens to
+var _watched: Dictionary[int, bool] = {}
 
 func get_times_entered(page: AdventurePage) -> int: return _times_entered.get(page, 0)
 func get_times_made(decision: AdventureDecision) -> int: return _times_made.get(decision, 0)
@@ -40,12 +42,24 @@ func chance(condition: AdventureChanceCondition, came_up: bool) -> void:
 		"chance %d in %d %s (%s)" % [condition.times, condition.out_of, "came up" if came_up else "did not come up", ResourceId.of(condition)],
 	)
 
+## The log line also tells what happened in it
 func end_exchange(fight: Fight) -> void:
 	var outcome: String = Fight.Outcome.find_key(fight.outcome)
+	var told: String = ""
+	for paragraph: String in fight.get_exchange_summary().split("[/p]", false): told += "
+	" + _to_plain_text(paragraph)
 	_write(
 		{type = "exchange", fight = ResourceId.of(fight.decision), number = fight.get_exchange_count(), outcome = outcome},
-		"exchange %d of %s vs %s: %s" % [fight.get_exchange_count(), fight.first.get_actor_name(), fight.second.get_actor_name(), outcome.to_lower()],
+		"exchange %d of %s vs %s: %s%s" % [fight.get_exchange_count(), fight.first.get_actor_name(), fight.second.get_actor_name(), outcome.to_lower(), told],
 	)
+
+## Writes what happens to [param actor]'s breath dice and injuries, and a character catching breath; once per actor
+func watch_actor(actor: Actor) -> void:
+	if _watched.has(actor.get_instance_id()): return
+	_watched[actor.get_instance_id()] = true
+	actor.suffered_injury.connect(_on_suffered_injury.bind(actor))
+	actor.lost_breath.connect(_on_lost_breath.bind(actor))
+	if actor is Character: (actor as Character).caught_breath.connect(_on_caught_breath.bind(actor))
 
 ## Writes the stage changes and moves of [param world]
 func watch(world: StoryWorld) -> void:
@@ -61,6 +75,30 @@ func _on_moved(encounter: AdventureEncounter, places: Array[AdventureLocation]) 
 	var names: Array[String] = []
 	for place: AdventureLocation in places: names.append(_name(place))
 	_write({type = "move", encounter = ResourceId.of(encounter), places = place_ids}, "%s moved to %s" % [_name(encounter), ", ".join(names)])
+
+func _on_suffered_injury(injury: Injury, actor: Actor) -> void:
+	_write(
+		{type = "injury", actor = actor.get_actor_name(), magnitude = injury.magnitude, total = actor.get_injury_total()},
+		"%s suffered an injury of %d (%d in all)" % [actor.get_actor_name(), injury.magnitude, actor.get_injury_total()],
+	)
+
+func _on_lost_breath(lost: Array[Die], actor: Actor) -> void:
+	var dice: Array[String] = []
+	for die: Die in lost: dice.append(str(die.die_type))
+	_write(
+		{type = "breath_lost", actor = actor.get_actor_name(), dice = dice, left = actor.get_breath_dice_count()},
+		"%s lost %s breath (%d left)" % [actor.get_actor_name(), " ".join(dice), actor.get_breath_dice_count()],
+	)
+
+func _on_caught_breath(recovered: Dictionary, character: Character) -> void:
+	var dice: Dictionary[String, int] = {}
+	for die_type: DieType in recovered: dice[str(die_type)] = recovered[die_type]
+	var exhausted: Array[String] = []
+	for die_type: DieType in character.exhaustion: exhausted.append(str(die_type))
+	_write(
+		{type = "breath_caught", actor = character.get_actor_name(), recovered = dice, exhaustion = exhausted},
+		"%s caught breath: recovered %s, exhausted %s" % [character.get_actor_name(), dice, " ".join(exhausted)],
+	)
 
 func _write(entry: Dictionary, line: String) -> void:
 	entries.append(entry)
@@ -93,3 +131,8 @@ func restore(saved: Array) -> void:
 
 func load_run(run: String) -> void:
 	_write({type = "load", run = run}, "loaded run %s" % run)
+
+static func _to_plain_text(bbcode: String) -> String:
+	var images: RegEx = RegEx.create_from_string("\\[img[^\\]]*\\].*?\\[/img\\]")
+	var tags: RegEx = RegEx.create_from_string("\\[[^\\]]*\\]")
+	return tags.sub(images.sub(bbcode, "", true), "", true).strip_edges()
