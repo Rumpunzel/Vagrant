@@ -162,3 +162,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: State tab compacted; empty rows and sections left out.
 - 2026-11-03: debug panel cost: `Story.get_state()` (the story's own place, cheap) split out of `get_save()`; the State tab reads it, the world, the monsters (`Story.get_monsters`) and `Actor.get_injuries()` instead of the whole save (journal, book).
 - 2026-11-03: tooltips in every window: tooltips_pro's manager puts mouse tooltips in their trigger's window (fixes popped-out character sheets too); `MetaTooltipTrigger` for links; the debug panel's links preview their content (background / portrait / icon, name, first line). Tests: `tooltip_window_test.gd` (2).
+- 2026-11-03: saves are written next to the slot and then renamed over it (a crash mid-write keeps the last save); autosave writes on a worker thread (`SaveGame.write_in_background`, one at a time; `read` and leaving the story wait for it).

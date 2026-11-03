@@ -7,6 +7,9 @@ extends RefCounted
 const VERSION: int = 1
 const DIRECTORY: String = "user://saves"
 
+## The [WorkerThreadPool] task writing a save, or -1
+static var _writing: int = -1
+
 ## The run's slot: its file name without extension
 var run: String
 ## [method Story.get_save]
@@ -32,15 +35,34 @@ static func capture(of_run: String, from_story: Story) -> SaveGame:
 	save_game.saved_at = Time.get_datetime_string_from_system()
 	return save_game
 
+## Into a file next to the slot first, which then replaces it: a crash while writing leaves the last save as it was
 func write() -> Error:
 	DirAccess.make_dir_recursive_absolute(DIRECTORY)
-	var file: FileAccess = FileAccess.open(get_path_of(run), FileAccess.WRITE)
+	var path: String = get_path_of(run)
+	var written: String = path + ".tmp"
+	var file: FileAccess = FileAccess.open(written, FileAccess.WRITE)
 	if file == null: return FileAccess.get_open_error()
 	file.store_string(JSON.stringify({version = VERSION, saved_at = saved_at, story = story}, "\t"))
-	return OK
+	file.close()
+	return DirAccess.rename_absolute(written, path)
+
+## [method write] on a worker thread, so a long run's save doesn't hold up the game; one write at a time
+func write_in_background() -> void:
+	wait_for_writes()
+	_writing = WorkerThreadPool.add_task(func() -> void:
+		var error: Error = write()
+		if error != OK: push_error("Saving %s failed: %s" % [run, error_string(error)])
+	)
+
+## Until the last [method write_in_background] is done (e.g. before reading the save)
+static func wait_for_writes() -> void:
+	if _writing < 0: return
+	WorkerThreadPool.wait_for_task_completion(_writing)
+	_writing = -1
 
 ## Null if there is no such save, or it can't be read
 static func read(of_run: String) -> SaveGame:
+	wait_for_writes()
 	var text: String = FileAccess.get_file_as_string(get_path_of(of_run))
 	var parsed: Variant = JSON.parse_string(text) if not text.is_empty() else null
 	if not parsed is Dictionary: return null
