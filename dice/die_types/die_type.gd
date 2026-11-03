@@ -17,7 +17,7 @@ static func compare_descending(first_die: DieType, second_die: DieType) -> bool:
 	return first_die.faces > second_die.faces
 
 func roll(play_sound: bool) -> int:
-	var result: int = randi_range(1, faces)
+	var result: int = GameRandom.range_int(1, faces)
 	rolled.emit(self, result, roll_sound if play_sound else null)
 	return result
 

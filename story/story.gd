@@ -19,7 +19,7 @@ signal dice_requested(dice_request: DiceRequest)
 ## Where the story stands (stages, where encounters are)
 var world: StoryWorld = StoryWorld.new()
 ## Rolls a chance; tests put a fixed result in
-var chance_roller: Callable = func(condition: AdventureChanceCondition) -> bool: return randi_range(1, condition.out_of) <= condition.times
+var chance_roller: Callable = func(condition: AdventureChanceCondition) -> bool: return GameRandom.chance(condition.times, condition.out_of)
 
 var _adventure: Adventure:
 	set(new_adventure):
@@ -106,6 +106,7 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	assert(protagonist_profile)
 	assert(protagonist_profile.is_valid())
 	_adventure = new_adventure
+	GameRandom.start()
 	world = StoryWorld.new(new_adventure.encounters)
 	_protagonist = _party.create_character(protagonist_profile)
 	_forced = forced

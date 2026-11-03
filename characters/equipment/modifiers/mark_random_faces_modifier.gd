@@ -9,5 +9,5 @@ extends EquipmentModifier
 func modify(equipment: Equipment) -> void:
 	var unmarked_faces: Array[int] = []
 	for face: int in equipment.get_markable_faces(): if not equipment.is_marked(face): unmarked_faces.append(face)
-	unmarked_faces.shuffle()
+	GameRandom.shuffle(unmarked_faces)
 	for face: int in unmarked_faces.slice(0, count): equipment.mark(face)
