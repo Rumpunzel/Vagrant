@@ -70,9 +70,7 @@ func continue_run(run: String) -> Story:
 	var save_game: SaveGame = SaveGame.read(run)
 	var problems: Array[String] = save_game.get_problems() if save_game != null else ["No such save."] as Array[String]
 	if not problems.is_empty():
-		push_warning("Run %s can't be loaded:
-%s" % [run, "
-".join(problems)])
+		push_warning("Run %s can't be loaded:\n%s" % [run, "\n".join(problems)])
 		return null
 	var adventure: Adventure = ResourceId.find_at(save_game.story, "adventure") as Adventure
 	var scene_tree: SceneTree = get_tree()

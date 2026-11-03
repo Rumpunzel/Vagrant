@@ -57,8 +57,7 @@ func end_exchange(fight: Fight) -> void:
 	var second: String = fight.second.get_actor_name()
 	_write(
 		{type = "exchange", fight = ResourceId.of(fight.decision), number = fight.get_exchange_count(), first = first, second = second, outcome = outcome, told = told},
-		"exchange %d of %s vs %s: %s%s" % [fight.get_exchange_count(), first, second, outcome.to_lower(), "".join(told.map(func(line: String) -> String: return "
-	" + line))],
+		"exchange %d of %s vs %s: %s%s" % [fight.get_exchange_count(), first, second, outcome.to_lower(), "".join(told.map(func(line: String) -> String: return "\n\t" + line))],
 	)
 
 ## Writes what happens to [param actor]'s breath dice and injuries, and a character catching breath; once per actor
