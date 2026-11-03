@@ -69,8 +69,11 @@ there. − Two mechanisms, but each simple.
   `user://logs/godot*.log`, the last few runs. No levels until something needs them.
 - **Debug panel** (autoload `DebugPanel`, `game/debug/debug_panel.gd`, debug builds only, F10): in a `PopoutWindow` (pops out into
   a native, resizable window). A `LogBuffer` (`custom_nodes/log_buffer.gd`, a `Logger` added with `OS.add_logger`, locked since Godot
-  calls it from any thread, keeps the newest `LIMIT` lines) feeds the Log tab: time dim, category coloured, warnings yellow, errors red,
-  "At:" lines dim, a filter and Clear. The State tab (every half second): Story (run, can save, seed, page, location, area, host,
+  calls it from any thread, keeps the newest `LIMIT` lines) and the running story's journal feed the Log tab. Journal entries are drawn
+  from their data (`StoryJournal.written`), not from their log lines (those are skipped): an icon per kind (page entered, choice, chance,
+  roll, stage, move, injury, breath lost / caught, exchange with its text indented), names as links, numbers bold, outcomes coloured. Other
+  lines (engine messages) dim, warnings yellow, errors red, "At: …" indented; each line with the time it came in; a filter and Clear.
+  Journal entries keep everything they need for that (`exchange`: both sides, `told`; `roll`: the attribute's id). The State tab (every half second): Story (run, can save, seed, page, location, area, host,
   encounter, way back, chances), the protagonist (attribute icons and scores, breath dice icons incl. spent and exhausted, injuries,
   gear, items, origins), the world (stages, moved encounters), monsters met (breath, injuries, beaten / dead). Built from
   `Story.get_save()` (works any time; `SaveGame.capture` checks `can_save`) and the live protagonist; content named by
@@ -132,3 +135,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: "Play from here" makes no run slot; F9 continues the latest run (`SaveGame.get_runs`); journal watches actors (injuries, breath) and logs exchange texts.
 - 2026-11-03: debug panel (F10): Log tab from a `Logger` (`LogBuffer`), State tab from `Story.get_save`. `StoryJournal.describe` public. Tests: `debug_panel_test.gd`.
 - 2026-11-03: debug panel v2: `PopoutWindow`, coloured log, links that open in the editor (`game_debugger` addon), State tab in sections with icons; `StoryJournal.label` names content for both. Checked by recording frames (`--write-movie`); the editor links not yet by hand.
+- 2026-11-03: debug panel log v2: journal entries drawn from their data (icons, links, bold numbers, coloured outcomes) instead of the "story" text lines, which told nothing a line couldn't show better; `StoryJournal.written`, `LOG_CATEGORY`, `to_plain_text`.

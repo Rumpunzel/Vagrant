@@ -56,7 +56,7 @@ func test_watches_actors_once() -> void:
 	assert_dict(_journal.entries[1]).contains_key_value("dice", ["d6"])
 
 func test_plain_text() -> void:
-	assert_str(StoryJournal._to_plain_text("[color=#fff]You[/color] take [img=20]res://wound.png[/img]2.")).is_equal("You take 2.")
+	assert_str(StoryJournal.to_plain_text("[color=#fff]You[/color] take [img=20]res://wound.png[/img]2.")).is_equal("You take 2.")
 
 func test_labels() -> void:
 	var chance: AdventureChanceCondition = AdventureChanceCondition.new()

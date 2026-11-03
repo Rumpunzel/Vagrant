@@ -17,11 +17,24 @@ const KIND_COLORS: Dictionary[LogBuffer.Kind, Color] = {
 	LogBuffer.Kind.WARNING: Color(1.0, 0.8, 0.3),
 	LogBuffer.Kind.ERROR: Color(1.0, 0.45, 0.45),
 }
-const CATEGORY_COLORS: Dictionary[String, Color] = {"story": Color(0.55, 0.85, 0.6)}
+const GOOD: Color = Color(0.55, 0.85, 0.6)
+const START_ICON: Texture2D = preload("uid://bi61e6du7f1m0")  # play.svg
+const LOAD_ICON: Texture2D = preload("uid://d3nxl0j06xumb")  # arrow-path.svg
+const ENTER_ICON: Texture2D = preload("uid://d3og4m8anwfes")  # map-pin.svg
+const CHOOSE_ICON: Texture2D = preload("uid://drgkk842oa5ja")  # cursor-arrow-rays.svg
+const STAGE_ICON: Texture2D = preload("uid://dwkyq7qlsoqtp")  # flag.svg
+const MOVE_ICON: Texture2D = preload("uid://cva2ujh4tfewg")  # arrows-right-left.svg
+const FIGHT_ICON: Texture2D = preload("uid://5vyvb0dueieq")  # crossed-swords.svg
+const CAMP_ICON: Texture2D = preload("uid://qbxnlgxl1qta")  # campfire.svg
+const BREATH_ICON: Texture2D = preload("uid://bhp2ma6kjfmk")  # information-circle.svg
+const INFO_ICON: Texture2D = preload("uid://c8itegtg34bpi")  # chat-bubble-left.svg
+const WARNING_ICON: Texture2D = preload("uid://drwku5rg0je33")  # exclamation-triangle.svg
+const ERROR_ICON: Texture2D = preload("uid://cap0rc53s8cmp")  # x-circle.svg
 
 var _buffer: LogBuffer = LogBuffer.new()
-## Everything collected from [member _buffer], at most [constant LogBuffer.LIMIT]
+## { bbcode, search (its plain text) } of each line, at most [constant LogBuffer.LIMIT]
 var _lines: Array[Dictionary] = []
+var _story: Story
 var _window: PopoutWindow
 var _tabs: TabContainer
 var _filter: LineEdit
@@ -55,13 +68,8 @@ func toggle() -> void:
 		_window.popup(Rect2i(Vector2i(int(screen.x - SIZE.x - 16.0), 16), Vector2i(SIZE)))
 
 func _process(delta: float) -> void:
-	var new_lines: Array[Dictionary] = _buffer.take()
-	if not new_lines.is_empty():
-		_lines.append_array(new_lines)
-		if _lines.size() > LogBuffer.LIMIT:
-			_lines = _lines.slice(-LogBuffer.LIMIT)
-			_render_log()
-		else: for line: Dictionary in new_lines: _append_line(line)
+	_take_buffer()
+	_watch_story()
 	if not _window.visible or _tabs.current_tab != _state.get_index(): return
 	_since_state_refresh += delta
 	if _since_state_refresh < STATE_REFRESH_SECONDS: return
@@ -74,35 +82,130 @@ func _process(delta: float) -> void:
 
 #region Log
 
+## The journal of the story running now, to show its entries as they are written
+func _watch_story() -> void:
+	var story: Story = get_tree().current_scene as Story
+	if story == _story: return
+	if _story != null and is_instance_valid(_story) and _story.journal.written.is_connected(_on_journal_written):
+		_story.journal.written.disconnect(_on_journal_written)
+	_story = story
+	if _story == null: return
+	# Started in the frame the scene changed: its first entries are written already
+	for entry: Dictionary in _story.journal.entries: _add(format_entry(entry))
+	_story.journal.written.connect(_on_journal_written)
+
+func _on_journal_written(entry: Dictionary) -> void:
+	# What was logged before it comes first
+	_take_buffer()
+	_add(format_entry(entry))
+
+func _take_buffer() -> void:
+	var journal_line: RegEx = RegEx.create_from_string("^\\d\\d:\\d\\d:\\d\\d %s: " % StoryJournal.LOG_CATEGORY)
+	for line: Dictionary in _buffer.take():
+		var text: String = line.text
+		# Shown from the journal itself
+		if journal_line.search(text) != null: continue
+		_add(format_message(text, line.kind as LogBuffer.Kind))
+
+## A line, with the time it came in
+func _add(bbcode: String) -> void:
+	var time: String = "[color=#%s][font_size=%d]%s[/font_size][/color]  " % [DIM.to_html(false), FONT_SIZE - 2, Time.get_time_string_from_system()]
+	var line: Dictionary = {bbcode = time + bbcode, search = StoryJournal.to_plain_text(bbcode)}
+	_lines.append(line)
+	if _lines.size() > LogBuffer.LIMIT:
+		_lines = _lines.slice(-LogBuffer.LIMIT)
+		_render_log()
+	else: _append_line(line)
+
 func _render_log() -> void:
 	_log.clear()
 	for line: Dictionary in _lines: _append_line(line)
 
 func _append_line(line: Dictionary) -> void:
-	var text: String = line.text
-	if not _filter.text.is_empty() and not text.containsn(_filter.text): return
-	_log.append_text(format_line(text, line.kind as LogBuffer.Kind) + "\n")
+	if not _filter.text.is_empty() and not (line.search as String).containsn(_filter.text): return
+	_log.append_text((line.bbcode as String) + "\n")
 
-## BBCode: the time dim, the category in its colour, errors and warnings in theirs, "At: …" lines dim, paths and IDs as links
-static func format_line(text: String, kind: LogBuffer.Kind) -> String:
-	var lines: PackedStringArray = text.split("\n")
-	var formatted: Array[String] = []
-	for index: int in lines.size():
-		var line: String = _linked(_escaped(lines[index]))
-		var stamp: RegExMatch = RegEx.create_from_string("^(\\d\\d:\\d\\d:\\d\\d) (\\w+): ").search(lines[index]) if index == 0 else null
-		if stamp != null:
-			var category: String = stamp.get_string(2)
-			var category_color: Color = CATEGORY_COLORS.get(category, LINK)
-			line = "[color=#%s]%s[/color] [color=#%s][b]%s[/b][/color] %s" % [
-				DIM.to_html(false), stamp.get_string(1), category_color.to_html(false), category, line.substr(stamp.get_end())
+## A journal entry ([StoryJournal]) with an icon, names as links, numbers bold, outcomes coloured
+static func format_entry(entry: Dictionary) -> String:
+	match entry.get("type"):
+		"start": return "%s Started %s, seed %s" % [_icon(START_ICON), _link(entry.adventure as String), _bold(str(entry.seed))]
+		"load": return "%s Loaded run %s" % [_icon(LOAD_ICON), _bold(_escaped(entry.run as String))]
+		"enter": return "%s [b]%s[/b]" % [_icon(ENTER_ICON, HEADING), _link(entry.page as String)]
+		"choose": return "%s [i]%s[/i]" % [_icon(CHOOSE_ICON, LINK), _link(entry.decision as String)]
+		"chance":
+			var came_up: bool = entry.came_up
+			return "%s %s %s" % [_icon(Rules.d6.icon_filled), _link(entry.condition as String), _outcome("came up" if came_up else "missed", came_up)]
+		"roll": return _format_roll(entry)
+		"stage":
+			return "%s %s: %s → %s" % [_icon(STAGE_ICON), _link(entry.subject as String), _escaped(entry.track as String), _bold(_escaped(entry.stage as String))]
+		"move":
+			var places: Array[String] = []
+			for place: Variant in entry.places as Array: places.append(_link(place as String))
+			return "%s %s moves to %s" % [_icon(MOVE_ICON), _link(entry.encounter as String), ", ".join(places)]
+		"injury":
+			return "%s %s is hurt for %s (%s in all)" % [
+				_icon(Injury.ICON, KIND_COLORS[LogBuffer.Kind.ERROR]), _actor(entry), _bold(str(int(entry.magnitude))), _bold(str(int(entry.total)))
 			]
-		var dim: bool = index > 0 and kind == LogBuffer.Kind.MESSAGE or lines[index].strip_edges().begins_with("At:")
-		var color: Color = DIM if dim else KIND_COLORS[kind]
-		formatted.append("[color=#%s]%s[/color]" % [color.to_html(false), line])
-	return "\n".join(formatted)
+		"breath_lost":
+			var dice: String = ""
+			for die: Variant in entry.dice as Array: dice += _die_icon(die as String)
+			return "%s %s loses %s(%s left)" % [_icon(BREATH_ICON), _actor(entry), dice, _bold(str(int(entry.left)))]
+		"breath_caught":
+			var recovered: String = ""
+			var saved: Dictionary = entry.recovered
+			for die: String in saved: for _index: int in int(saved[die]): recovered += _die_icon(die)
+			var exhausted: String = ""
+			for die: Variant in entry.exhaustion as Array: exhausted += _die_icon(die as String, Color(0.4, 0.4, 0.4))
+			return "%s %s catches breath: %s, exhausted %s" % [_icon(CAMP_ICON), _actor(entry), recovered, exhausted]
+		"exchange": return _format_exchange(entry)
+	return _escaped(str(entry))
+
+static func _format_roll(entry: Dictionary) -> String:
+	var attribute: CharacterAttribute = ResourceId.find(entry.attribute as String) as CharacterAttribute
+	var faces: Array[String] = []
+	for face: Variant in entry.dice as Array: faces.append(_bold(str(int(face))))
+	var outcome: String = entry.outcome
+	var icon: String = _icon(attribute.icon, attribute.color) + " " + _escaped(attribute.descriptor) if attribute != null else _icon(Rules.d6.icon_filled)
+	return "%s rolls %s: %s by %s, for %s" % [
+		icon, " ".join(faces), _outcome(outcome.to_lower(), outcome == "SUCCESS", outcome == "DRAW"), _bold(str(int(entry.margin))), _link(entry.decision as String)
+	]
+
+## The exchange's result, then what was told about it below
+static func _format_exchange(entry: Dictionary) -> String:
+	var outcome: String = entry.outcome
+	var text: String = "%s Exchange %s: %s vs %s, %s" % [
+		_icon(FIGHT_ICON, HEADING), _bold(str(int(entry.number))), _bold(_escaped(entry.get("first", "") as String)),
+		_bold(_escaped(entry.get("second", "") as String)), _outcome(outcome.to_lower(), outcome == "WON", outcome != "LOST"),
+	]
+	for told: Variant in entry.get("told", []) as Array: text += "\n[indent][color=#%s]%s[/color][/indent]" % [DIM.to_html(false), _escaped(told as String)]
+	return text
+
+## A line logged by anything else: errors and warnings in their colour, the rest dim; "At: …" lines indented; paths as links
+static func format_message(text: String, kind: LogBuffer.Kind) -> String:
+	var color: Color = KIND_COLORS[kind] if kind != LogBuffer.Kind.MESSAGE else DIM
+	var lines: Array[String] = []
+	for line: String in text.split("\n"):
+		var linked: String = _linked(_escaped(line.strip_edges()))
+		if line.strip_edges().begins_with("At:"): lines.append("[indent][color=#%s]%s[/color][/indent]" % [DIM.to_html(false), linked])
+		else: lines.append("[color=#%s]%s[/color]" % [color.to_html(false), linked])
+	var icons: Dictionary[LogBuffer.Kind, Texture2D] = {LogBuffer.Kind.MESSAGE: INFO_ICON, LogBuffer.Kind.WARNING: WARNING_ICON, LogBuffer.Kind.ERROR: ERROR_ICON}
+	return "%s %s" % [_icon(icons[kind], color), "\n".join(lines)]
 
 static func _linked(escaped: String) -> String:
 	return RegEx.create_from_string(GameDebuggerLinks.PATTERN).sub(escaped, "[url=$0][color=#%s]$0[/color][/url]" % LINK.to_html(false), true)
+
+static func _actor(entry: Dictionary) -> String: return _bold(_escaped(entry.actor as String))
+
+static func _outcome(text: String, good: bool, middling: bool = false) -> String:
+	var color: Color = GOOD if good else KIND_COLORS[LogBuffer.Kind.WARNING] if middling else KIND_COLORS[LogBuffer.Kind.ERROR]
+	return "[b][color=#%s]%s[/color][/b]" % [color.to_html(false), text]
+
+static func _bold(text: String) -> String: return "[b]%s[/b]" % text
+
+## The die type named [param die_name] ("d6") as its icon
+static func _die_icon(die_name: String, color: Color = Color.WHITE) -> String:
+	for die_type: DieType in Rules.BREATH_DICE: if str(die_type) == die_name: return _icon(die_type.icon_filled, color) + " "
+	return die_name + " "
 
 #endregion
 
@@ -235,7 +338,7 @@ static func _icon(texture: Texture2D, color: Color = Color.WHITE) -> String:
 	return "[img color=#%s width=%d height=%d valign=center]%s[/img]" % [color.to_html(), ICON_SIZE, ICON_SIZE, texture.resource_path]
 
 static func _yes_no(yes: bool) -> String:
-	var color: Color = KIND_COLORS[LogBuffer.Kind.ERROR] if not yes else CATEGORY_COLORS["story"]
+	var color: Color = KIND_COLORS[LogBuffer.Kind.ERROR] if not yes else GOOD
 	return "[color=#%s]%s[/color]" % [color.to_html(false), "yes" if yes else "no"]
 
 static func _dim(text: String) -> String: return "[color=#%s]%s[/color]" % [DIM.to_html(false), text]
@@ -270,6 +373,7 @@ func _build() -> void:
 	background.bg_color = Color(0.06, 0.06, 0.08, 0.94)
 	background.set_corner_radius_all(6)
 	var panel: PanelContainer = PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_FULL_RECT)
 	panel.add_theme_stylebox_override("panel", background)
 	panel.add_child(content)
 	panel.name = "Debug"

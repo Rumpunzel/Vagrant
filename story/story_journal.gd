@@ -4,6 +4,12 @@ extends RefCounted
 ## What happened in a story, in order: each entry is written to the [GameLog] and kept (plain values and [ResourceId]s, for the save).
 ## Also counts how often each page was entered and each decision made, which conditions and texts ask for.
 
+## Each entry as it is written (the debug panel shows them)
+signal written(entry: Dictionary)
+
+## Its lines in the [GameLog]
+const LOG_CATEGORY: String = "story"
+
 var entries: Array[Dictionary] = []
 
 var _times_entered: Dictionary[AdventurePage, int] = {}
@@ -29,11 +35,11 @@ func roll(result: DiceRequestResult) -> void:
 	var request: DiceRequest = result.get_dice_request()
 	var faces: Array[int] = []
 	for die: Die in result.dice: faces.append(die.result)
-	var attribute: String = request.attribute.resource_path.get_file().get_basename() if request.attribute != null else ""
+	var attribute: String = ResourceId.of(request.attribute)
 	var outcome: String = DiceRequestResult.Outcome.find_key(result.get_outcome())
 	_write(
 		{type = "roll", decision = ResourceId.of(request.get_source()), attribute = attribute, dice = faces, outcome = outcome, margin = result.get_margin()},
-		"rolled %s %s for %s: %s by %d" % [attribute, faces, describe(request.get_source()), outcome.to_lower(), result.get_margin()],
+		"rolled %s %s for %s: %s by %d" % [label(request.attribute) if request.attribute != null else "", faces, describe(request.get_source()), outcome.to_lower(), result.get_margin()],
 	)
 
 func chance(condition: AdventureChanceCondition, came_up: bool) -> void:
@@ -42,15 +48,17 @@ func chance(condition: AdventureChanceCondition, came_up: bool) -> void:
 		"chance %d in %d %s (%s)" % [condition.times, condition.out_of, "came up" if came_up else "did not come up", ResourceId.of(condition)],
 	)
 
-## The log line also tells what happened in it
+## Also what was told about it, as plain text
 func end_exchange(fight: Fight) -> void:
 	var outcome: String = Fight.Outcome.find_key(fight.outcome)
-	var told: String = ""
-	for paragraph: String in fight.get_exchange_summary().split("[/p]", false): told += "
-	" + _to_plain_text(paragraph)
+	var told: Array[String] = []
+	for paragraph: String in fight.get_exchange_summary().split("[/p]", false): told.append(to_plain_text(paragraph))
+	var first: String = fight.first.get_actor_name()
+	var second: String = fight.second.get_actor_name()
 	_write(
-		{type = "exchange", fight = ResourceId.of(fight.decision), number = fight.get_exchange_count(), outcome = outcome},
-		"exchange %d of %s vs %s: %s%s" % [fight.get_exchange_count(), fight.first.get_actor_name(), fight.second.get_actor_name(), outcome.to_lower(), told],
+		{type = "exchange", fight = ResourceId.of(fight.decision), number = fight.get_exchange_count(), first = first, second = second, outcome = outcome, told = told},
+		"exchange %d of %s vs %s: %s%s" % [fight.get_exchange_count(), first, second, outcome.to_lower(), "".join(told.map(func(line: String) -> String: return "
+	" + line))],
 	)
 
 ## Writes what happens to [param actor]'s breath dice and injuries, and a character catching breath; once per actor
@@ -102,7 +110,8 @@ func _on_caught_breath(recovered: Dictionary, character: Character) -> void:
 
 func _write(entry: Dictionary, line: String) -> void:
 	entries.append(entry)
-	GameLog.write("story", line)
+	GameLog.write(LOG_CATEGORY, line)
+	written.emit(entry)
 
 ## "Title" (id), for the log
 static func describe(resource: Resource) -> String:
@@ -144,7 +153,8 @@ func restore(saved: Array) -> void:
 func load_run(run: String) -> void:
 	_write({type = "load", run = run}, "loaded run %s" % run)
 
-static func _to_plain_text(bbcode: String) -> String:
+## BBCode without its tags and images
+static func to_plain_text(bbcode: String) -> String:
 	var images: RegEx = RegEx.create_from_string("\\[img[^\\]]*\\].*?\\[/img\\]")
 	var tags: RegEx = RegEx.create_from_string("\\[[^\\]]*\\]")
 	return tags.sub(images.sub(bbcode, "", true), "", true).strip_edges()
