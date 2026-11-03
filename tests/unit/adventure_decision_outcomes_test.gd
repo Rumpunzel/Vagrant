@@ -50,7 +50,7 @@ func test_first_time_text_until_its_page_was_visited() -> void:
 	assert_str(decision.get_description(story)).is_equal("Go to the castle.")
 	decision.first_description = "Climb the narrow path."
 	assert_str(decision.get_description(story)).is_equal("Climb the narrow path.")
-	story._page_log[castle] = [StoryPage.new(castle, "", "", null, null, [StoryChoice.from_adventure_decision(AdventureDecision.new(), null)] as Array[StoryChoice], [] as Array[AdventureEvent])] as Array[StoryPage]
+	story.journal.enter(castle)
 	assert_str(decision.get_description(story)).is_equal("Go to the castle.")
 	# A file not loaded yet wasn't visited, and isn't loaded to find out
 	var transition: AdventureTransition = AdventureTransition.new()

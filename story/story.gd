@@ -16,8 +16,13 @@ signal dice_requested(dice_request: DiceRequest)
 @export var _title: TypingLabel
 @export var _story_book: StoryBook
 
+## What happened so far, in order; how often pages were entered and decisions made
+var journal: StoryJournal = StoryJournal.new()
 ## Where the story stands (stages, where encounters are)
-var world: StoryWorld = StoryWorld.new()
+var world: StoryWorld:
+	set(new_world):
+		world = new_world
+		journal.watch(world)
 ## Rolls a chance; tests put a fixed result in
 var chance_roller: Callable = func(condition: AdventureChanceCondition) -> bool: return GameRandom.chance(condition.times, condition.out_of)
 
@@ -58,8 +63,7 @@ var _current_story_page: StoryPage:
 		_current_story_page = story_page
 		assert(_current_story_page)
 		if not _current_story_page.is_fight_exchange():
-			var page_log: Array[StoryPage] = _page_log.get_or_add(_current_story_page.adventure_page, [] as Array[StoryPage])
-			page_log.append(_current_story_page)
+			journal.enter(_current_story_page.adventure_page)
 		for choice: StoryChoice in _current_story_page.choices:
 			choice.chosen.connect(_on_choice_made.bind(choice))
 			choice.dice_requested.connect(_on_dice_requested.bind(choice))
@@ -94,10 +98,8 @@ var _areas_been_in: Array[AdventureArea] = [ ]
 ## Played from in the adventure editor ([AdventurePlayFrom]): on the first arrival its conditions count as met ([method is_forced])
 var _forced: AdventureEvent
 var _arrivals_while_forced: int = 0
-# StoryPage -> Array[StoryPage]
-var _page_log: Dictionary[AdventurePage, Array] = {}
-# AdventureDecision -> StoryChoice (individual times the decision has been made)
-var _decision_log: Dictionary[AdventureDecision, Array] = {}
+
+func _init() -> void: world = StoryWorld.new()
 
 ## [param page]: start there instead of the starting page; [param host]: the page its event is on, entered first so going back and host links work
 ## [param forced]: an event played from in the adventure editor, shown on the first arrival whatever its conditions
@@ -107,7 +109,7 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	assert(protagonist_profile.is_valid())
 	_adventure = new_adventure
 	GameRandom.start()
-	GameLog.write("story", "%s started (%s), seed %d" % [new_adventure.title, ResourceId.of(new_adventure), GameRandom.get_seed()])
+	journal.start(new_adventure, GameRandom.get_seed())
 	world = StoryWorld.new(new_adventure.encounters)
 	_protagonist = _party.create_character(protagonist_profile)
 	_forced = forced
@@ -145,7 +147,9 @@ func is_forced(event: AdventureEvent) -> bool:
 
 ## Whether [param condition]'s chance came up on this arrival at the location: rolled the first time it is asked, then kept until the next arrival
 func roll_chance(condition: AdventureChanceCondition) -> bool:
-	if not _chance_rolls.has(condition): _chance_rolls[condition] = chance_roller.call(condition)
+	if not _chance_rolls.has(condition):
+		_chance_rolls[condition] = chance_roller.call(condition)
+		journal.chance(condition, _chance_rolls[condition])
 	return _chance_rolls[condition]
 
 ## The encounter or location [param path] (a UID) names; empty: the encounter of [param event] (none given: of the event one is in), else the
@@ -165,13 +169,8 @@ func get_monster(holder: AdventurePage, monster_profile: MonsterProfile) -> Mons
 ## The page the current event is shown on ([AdventureHostReference])
 func get_host() -> AdventurePage: return _host
 
-func get_how_often_decision_has_been_made(story_decision: AdventureDecision) -> int:
-	if not _decision_log.has(story_decision): return 0
-	return _decision_log[story_decision].size()
-
-func get_how_often_page_has_been_entered(adventure_page: AdventurePage) -> int:
-	var visited_story_pages: Array[StoryPage] = _page_log.get(adventure_page, [] as Array[StoryPage])
-	return visited_story_pages.size()
+func get_how_often_decision_has_been_made(story_decision: AdventureDecision) -> int: return journal.get_times_made(story_decision)
+func get_how_often_page_has_been_entered(adventure_page: AdventurePage) -> int: return journal.get_times_entered(adventure_page)
 
 func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	assert(_protagonist)
@@ -264,9 +263,7 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 	if holder != null and holder != shown_on: _host = shown_on
 	if holder is AdventureEvent: _encounter = world.get_encounter_of(holder as AdventureEvent)
 	elif holder is AdventureLocation: _encounter = null
-	if story_decision != AdventureDecision.get_turn_back():
-		var decision_log: Array[StoryChoice] = _decision_log.get_or_add(story_decision, [] as Array[StoryChoice])
-		decision_log.append(story_choice)
+	if story_decision != AdventureDecision.get_turn_back(): journal.choose(story_decision)
 	var consequences: Array[StoryConsequence] = story_choice.get_consequences()
 	for consequence: StoryConsequence in consequences:
 		# A lambda keeps the RefCounted consequence alive until the queue reaches it; a bound Callable does not
@@ -301,6 +298,8 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	var dice_result: DiceRequestResult = _current_dice_request.roll()
 	assert(dice_result)
 	assert(dice_result.get_dice_request() == _current_dice_request)
+	# Fight rolls are told by their exchange
+	if not dice_result is FightResult: journal.roll(dice_result)
 	if story_choice == _incapacitation_save:
 		_current_dice_request = null
 		_end_incapacitation_choice(dice_result as SaveResult)
@@ -364,6 +363,7 @@ func _play_fight_step(fight: Fight, fight_result: FightResult, story_choice: Sto
 
 func _end_exchange(fight: Fight, fight_result: FightResult, story_choice: StoryFightDecision) -> void:
 	var told: String = fight.end_exchange()
+	journal.end_exchange(fight)
 	_reveal(fight, told, not told.is_empty())
 	_event_queue.queue_callable(func() -> void:
 		if fight.is_ongoing():

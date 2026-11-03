@@ -1,6 +1,6 @@
 # Logging and Saving — Plan
 
-Status (2026-11-03): design chosen (option C); steps 1–3 (`ResourceId`, `GameRandom`, `GameLog`) built, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
+Status (2026-11-03): design chosen (option C); steps 1–4 (`ResourceId`, `GameRandom`, `GameLog`, `StoryJournal`) built, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
 Goal: (1) a log of what happens in a story, for debugging; (2) saving and loading a game in progress. Both need the same thing: a clear
 list of the runtime state and a stable way to name content (pages, decisions, monsters) outside the running game.
 
@@ -17,7 +17,7 @@ list of the runtime state and a stable way to name content (pages, decisions, mo
 | Owner | State | Notes |
 |---|---|---|
 | `Story` | `_adventure`, `_page_stack`, `_host`, `_location`, `_encounter`, `_entered_area` / `_first_time_in_area`, `_areas_been_in`, `_chance_rolls`, `_forced` / `_arrivals_while_forced` | Keys are `AdventurePage` objects |
-| `Story` | `_page_log` (page → `StoryPage`s), `_decision_log` (decision → `StoryChoice`s) | Only their **counts** are read (`get_how_often_…`); the objects are history kept by accident |
+| `Story.journal` | `StoryJournal`: entries in order, visit and decision counts | Replaced `_page_log` / `_decision_log` (only their counts were read) |
 | `Story` (mid-fight) | `_current_story_page.fight`, `_incapacitation_save`, `_after_incapacitation_save`, `_pending_choices`, `_summary_start`, the `EventQueue` | Callables and queued lambdas: can't be saved as is |
 | `StoryWorld` | `_stages` (subject → track → stage), `_places` (encounter → locations) | `_encounter_of`, `_distances` are caches, rebuilt from the adventure |
 | `Party` / `Character` | `character_profile` (may be made in character creation, not a file), `breath_dice`, `exhaustion`, `_injuries`, `weapons` / `armor` / `shields` (carried, droppable), `items`, `most_recently_chosen_attribute` | Nodes |
@@ -54,9 +54,12 @@ there. − Two mechanisms, but each simple.
 - **`ResourceId`** (`custom_nodes/resource_id.gd`, static): resource ↔ string id: the file's UID (its path if it has none, e.g. `user://`),
   plus `::<resource_scene_unique_id>` for a resource stored inside a file, found again by walking what that file stores (Godot can't load
   a sub-resource by itself). Any resource, not only pages; runtime-made ones have no id (empty). `AdventurePlayFrom` uses it.
-- **Journal** (`StoryJournal`, RefCounted, owned by `Story`): append-only `Array` of entries (`{t: "enter", page: id}`, `{t: "choose",
-  decision: id}`, `{t: "roll", dice: …, margin: …}`, `{t: "stage", subject, track, stage}`, …). Signals for listeners. Replaces
-  `_page_log` / `_decision_log` (counts per id).
+- **Journal** (`story/story_journal.gd`, `Story.journal`): `entries: Array[Dictionary]` of plain values and `ResourceId`s, each also
+  written to `GameLog` as a readable line ("entered "Ruin" (uid://…)"). Entry types: `start` (adventure, seed), `enter` (page), `choose`
+  (decision), `roll` (decision, attribute, dice, outcome, margin; not fight rolls), `chance` (condition, came_up), `stage` (subject, track,
+  stage), `move` (encounter, places), `exchange` (fight decision, number, outcome). `StoryWorld` emits `stage_set` / `moved`, the journal
+  watches it (`Story.world`'s setter). Counts are kept by object for the running story (test resources have no id); a loaded save rebuilds
+  them from the entries. Not yet: breath, injuries, exhaustion (actor signals), consequences by name.
 - **Game log**: `GameLog.write(category, message)` (`custom_nodes/game_log.gd`, static, no dependencies) prints "HH:MM:SS category: …"
   in debug builds only. No own file: Godot's file logging (on by default) already writes stdout and the engine's errors to
   `user://logs/godot*.log`, the last few runs. No levels until something needs them. Later maybe an in-game debug panel
@@ -76,7 +79,7 @@ there. − Two mechanisms, but each simple.
 - **Loading UI**: a list of runs (slots) on the title / main scene: continue one, or start a new run.
 
 ## Open
-- Journal entry types: final list while building step 3.
+- Journal: also breath / injuries / exhaustion (from `Actor` / `Character` signals)? Probably once the save covers actors (step 5).
 - Where the run list lives (main scene has no title screen yet).
 - Delete old runs from the list?
 
@@ -84,7 +87,7 @@ there. − Two mechanisms, but each simple.
 1. ~~`ResourceId` helper (from `AdventurePlayFrom`), unit tests.~~ Done.
 2. ~~Seeded RNG (`GameRandom`); dice, chances and marked faces use it.~~ Done.
 3. ~~`GameLog` (debug builds; Godot's file logging writes it to disk).~~ Done.
-4. `StoryJournal`; `Story` writes entries; visit/decision counts from it. Tests: counts unchanged.
+4. ~~`StoryJournal`; `Story` writes entries; visit/decision counts from it.~~ Done.
 5. Snapshots per owner + `SaveGame` (version, adventure id, RNG, journal); round-trip unit tests per owner; refusing unknown ids.
 6. `Story.restore` + `Main.load_game`; autosave at safe points to the run's slot. Integration test: save on a page, load, same page and state.
 7. UI: list of runs, continue / new run.
@@ -96,3 +99,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: step 1: `ResourceId` (`of` / `find`); `AdventurePlayFrom` writes ids instead of [file, id] pairs. Tests: `resource_id_test.gd`.
 - 2026-11-03: step 2: `GameRandom` (static, not in `DiceRoller`: load cycle); dice, chance conditions, `MarkRandomFacesModifier` use it; `Story.start_adventure` starts a new seed. Tests: `game_random_test.gd`.
 - 2026-11-03: step 3: `GameLog.write` (static, prints; Godot's own `user://logs` files hold it); story start logs adventure + seed.
+- 2026-11-03: step 4: `StoryJournal` replaces `_page_log` / `_decision_log`; entries for start, enter, choose, roll, chance, stage, move, exchange, each logged. `StoryWorld` signals. Tests: `story_journal_test.gd`; tests that filled `_page_log` use `journal.enter`.

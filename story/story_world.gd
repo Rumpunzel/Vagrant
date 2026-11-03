@@ -3,6 +3,9 @@ extends RefCounted
 
 ## Where the story stands: each encounter's and location's stage per track, and where each encounter could be
 
+signal stage_set(subject: Resource, track_name: String, stage: String)
+signal moved(encounter: AdventureEncounter, places: Array[AdventureLocation])
+
 var _encounters: Array[AdventureEncounter] = [ ]
 ## { subject -> { track name -> stage } }; unset tracks are at their first stage
 var _stages: Dictionary[Resource, Dictionary] = {}
@@ -34,6 +37,7 @@ func get_stage(subject: Resource, track_name: String) -> String:
 func set_stage(subject: Resource, track_name: String, stage: String) -> void:
 	var set_stages: Dictionary = _stages.get_or_add(subject, {})
 	set_stages[track_name] = stage
+	stage_set.emit(subject, track_name, stage)
 
 func get_places(encounter: AdventureEncounter) -> Array[AdventureLocation]:
 	var places: Array[AdventureLocation] = [ ]
@@ -43,6 +47,7 @@ func get_places(encounter: AdventureEncounter) -> Array[AdventureLocation]:
 
 func move(encounter: AdventureEncounter, places: Array[AdventureLocation]) -> void:
 	_places[encounter] = places.duplicate()
+	moved.emit(encounter, places)
 
 ## Whether [param location] is within [param reach] links of where [param encounter] could be (0: anywhere in the same area),
 ## but not one of those places itself
