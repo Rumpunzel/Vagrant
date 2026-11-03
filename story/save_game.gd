@@ -25,6 +25,7 @@ static func get_runs() -> Array[String]:
 	return runs
 
 static func capture(of_run: String, from_story: Story) -> SaveGame:
+	assert(from_story.can_save())
 	var save_game: SaveGame = SaveGame.new()
 	save_game.run = of_run
 	save_game.story = from_story.get_save()

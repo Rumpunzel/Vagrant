@@ -228,9 +228,8 @@ func can_save() -> bool:
 	return _event_queue.is_idle() and _pending_choices.is_empty() and _incapacitation_save == null
 
 ## Everything a run needs to go on, as plain values and [ResourceId]s ([SaveGame]); random numbers' seed and state as text (JSON
-## numbers are floats)
+## numbers are floats). Only a save from when it [method can_save] can be loaded; the debug panel shows it any time.
 func get_save() -> Dictionary:
-	assert(can_save())
 	var chances: Dictionary[String, bool] = {}
 	for condition: AdventureChanceCondition in _chance_rolls: chances[ResourceId.of(condition)] = _chance_rolls[condition]
 	return {

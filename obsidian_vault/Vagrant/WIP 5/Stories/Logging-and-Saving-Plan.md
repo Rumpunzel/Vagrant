@@ -1,6 +1,6 @@
 # Logging and Saving — Plan
 
-Status (2026-11-03): design chosen (option C); steps 1–6 built (`ResourceId`, `GameRandom`, `GameLog`, `StoryJournal`, save data + `SaveGame`, loading + autosave); UI for runs waits (user), F9 continues the latest run, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
+Status (2026-11-03): design chosen (option C); steps 1–6 built (`ResourceId`, `GameRandom`, `GameLog`, `StoryJournal`, save data + `SaveGame`, loading + autosave); UI for runs waits (user), F9 continues the latest run, F10 opens the debug panel, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
 Goal: (1) a log of what happens in a story, for debugging; (2) saving and loading a game in progress. Both need the same thing: a clear
 list of the runtime state and a stable way to name content (pages, decisions, monsters) outside the running game.
 
@@ -66,8 +66,12 @@ there. − Two mechanisms, but each simple.
   them from the entries.
 - **Game log**: `GameLog.write(category, message)` (`custom_nodes/game_log.gd`, static, no dependencies) prints "HH:MM:SS category: …"
   in debug builds only. No own file: Godot's file logging (on by default) already writes stdout and the engine's errors to
-  `user://logs/godot*.log`, the last few runs. No levels until something needs them. Later maybe an in-game debug panel
-  (`OS.add_logger` could feed it). `Story.start_adventure` logs the adventure and seed; the journal will write each entry.
+  `user://logs/godot*.log`, the last few runs. No levels until something needs them.
+- **Debug panel** (autoload `DebugPanel`, `game/debug/debug_panel.gd`, debug builds only, F10): a `LogBuffer` (`custom_nodes/log_buffer.gd`,
+  a `Logger` added with `OS.add_logger`, locked since Godot calls it from any thread, keeps the newest `LIMIT` lines) feeds the Log tab:
+  every print, warning (yellow) and error (red), with a filter and Clear. The State tab shows `Story.get_save()` (without the journal)
+  every half second, IDs as names, plus the run and whether it can be saved now. `Story.get_save` works any time; `SaveGame.capture`
+  checks `can_save`. Built in code (a developer overlay, not the game's look). `Story.start_adventure` logs the adventure and seed; the journal will write each entry.
 - **Snapshots**: each owner saves its own state as plain values and ids (`get_save()`) and takes it back (`restore(data)`, on a fresh
   object): `Actor` (breath dice, injuries, gear's marked faces and ruined, by index in the profile's lists), `Character` (+ exhaustion,
   items, last chosen attribute; `Character.restore_profile` puts what character creation chose — name, title, portrait, rolled dice,
@@ -108,7 +112,7 @@ there. − Two mechanisms, but each simple.
 5. ~~Snapshots per owner + `SaveGame` (version, adventure id, RNG, journal); round-trip unit tests per owner; refusing unknown ids.~~ Done.
 6. ~~`Story.restore` + `Main.continue_run`; autosave at safe points to the run's slot.~~ Done. Test: `tests/integration/story_save_test.gd`.
 7. Later (user): UI, a list of runs, continue / new run. For now F9 continues the latest.
-8. Later: saving in fights, debug panel.
+8. ~~Debug panel.~~ Done. Later: saving in fights.
 
 ## Log
 - 2026-11-03: plan started; state inventory and options.
@@ -120,3 +124,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: step 5: `get_save` / `restore` on `Actor`, `Character` (+ `restore_profile`), `Monster`, `Monsters`, `StoryWorld`, `StoryJournal`; `Story.get_save` / `can_save`; `EventQueue.is_idle`; `SaveGame`; `ResourceId.of_each` / `find_each`. Tests: `save_state_test.gd`.
 - 2026-11-03: step 6: `Story.run`, autosave on each page (deferred, if `can_save`), `Story.restore`, `Main.continue_run` (refuses on problems), journal `load` entry. Tests: `story_save_test.gd` (go on from the save: page, way back, counts, character, random numbers).
 - 2026-11-03: "Play from here" makes no run slot; F9 continues the latest run (`SaveGame.get_runs`); journal watches actors (injuries, breath) and logs exchange texts.
+- 2026-11-03: debug panel (F10): Log tab from a `Logger` (`LogBuffer`), State tab from `Story.get_save`. `StoryJournal.describe` public. Tests: `debug_panel_test.gd`.

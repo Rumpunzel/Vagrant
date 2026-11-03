@@ -15,15 +15,15 @@ func get_times_entered(page: AdventurePage) -> int: return _times_entered.get(pa
 func get_times_made(decision: AdventureDecision) -> int: return _times_made.get(decision, 0)
 
 func start(adventure: Adventure, random_seed: int) -> void:
-	_write({type = "start", adventure = ResourceId.of(adventure), seed = random_seed}, "started %s, seed %d" % [_name(adventure), random_seed])
+	_write({type = "start", adventure = ResourceId.of(adventure), seed = random_seed}, "started %s, seed %d" % [describe(adventure), random_seed])
 
 func enter(page: AdventurePage) -> void:
 	_times_entered[page] = get_times_entered(page) + 1
-	_write({type = "enter", page = ResourceId.of(page)}, "entered %s" % _name(page))
+	_write({type = "enter", page = ResourceId.of(page)}, "entered %s" % describe(page))
 
 func choose(decision: AdventureDecision) -> void:
 	_times_made[decision] = get_times_made(decision) + 1
-	_write({type = "choose", decision = ResourceId.of(decision)}, "chose %s" % _name(decision))
+	_write({type = "choose", decision = ResourceId.of(decision)}, "chose %s" % describe(decision))
 
 func roll(result: DiceRequestResult) -> void:
 	var request: DiceRequest = result.get_dice_request()
@@ -33,7 +33,7 @@ func roll(result: DiceRequestResult) -> void:
 	var outcome: String = DiceRequestResult.Outcome.find_key(result.get_outcome())
 	_write(
 		{type = "roll", decision = ResourceId.of(request.get_source()), attribute = attribute, dice = faces, outcome = outcome, margin = result.get_margin()},
-		"rolled %s %s for %s: %s by %d" % [attribute, faces, _name(request.get_source()), outcome.to_lower(), result.get_margin()],
+		"rolled %s %s for %s: %s by %d" % [attribute, faces, describe(request.get_source()), outcome.to_lower(), result.get_margin()],
 	)
 
 func chance(condition: AdventureChanceCondition, came_up: bool) -> void:
@@ -67,14 +67,14 @@ func watch(world: StoryWorld) -> void:
 	world.moved.connect(_on_moved)
 
 func _on_stage_set(subject: Resource, track: String, stage: String) -> void:
-	_write({type = "stage", subject = ResourceId.of(subject), track = track, stage = stage}, "%s: %s is now %s" % [_name(subject), track, stage])
+	_write({type = "stage", subject = ResourceId.of(subject), track = track, stage = stage}, "%s: %s is now %s" % [describe(subject), track, stage])
 
 func _on_moved(encounter: AdventureEncounter, places: Array[AdventureLocation]) -> void:
 	var place_ids: Array[String] = []
 	for place: AdventureLocation in places: place_ids.append(ResourceId.of(place))
 	var names: Array[String] = []
-	for place: AdventureLocation in places: names.append(_name(place))
-	_write({type = "move", encounter = ResourceId.of(encounter), places = place_ids}, "%s moved to %s" % [_name(encounter), ", ".join(names)])
+	for place: AdventureLocation in places: names.append(describe(place))
+	_write({type = "move", encounter = ResourceId.of(encounter), places = place_ids}, "%s moved to %s" % [describe(encounter), ", ".join(names)])
 
 func _on_suffered_injury(injury: Injury, actor: Actor) -> void:
 	_write(
@@ -104,8 +104,8 @@ func _write(entry: Dictionary, line: String) -> void:
 	entries.append(entry)
 	GameLog.write("story", line)
 
-## "Title" (id) for the log
-static func _name(resource: Resource) -> String:
+## "Title" (id), for the log
+static func describe(resource: Resource) -> String:
 	if resource == null: return "nothing"
 	var label: String = ""
 	if resource is AdventurePage: label = (resource as AdventurePage).title
