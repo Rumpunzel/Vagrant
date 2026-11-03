@@ -2,7 +2,7 @@ class_name GameDebugPanel
 extends Node
 
 ## Debug builds only, F10 ("debug_panel"): a window (it pops out into one of its own, [PopoutWindow]) with what was logged (prints,
-## warnings, errors; [LogBuffer]) and how the story stands ([method Story.get_save] and the protagonist). Script paths and content IDs are
+## warnings, errors; [LogBuffer]) and how the story stands ([method Story.get_state], the world, the protagonist, the monsters). Script paths and content IDs are
 ## links that open in the editor the game runs from ([GameDebuggerLinks]). Built in code: a developer tool, not the game's look.
 
 const POPOUT_WINDOW: PackedScene = preload("uid://d1kbbfs6j3ty6")  # popout_window.tscn
@@ -218,7 +218,7 @@ func _describe_state() -> String:
 	if story == null: return "[i]No story running.[/i]"
 	var protagonist: Character = story.get_protagonist()
 	if protagonist == null: return "[i]The story hasn't started.[/i]"
-	var save: Dictionary = story.get_save()
+	var save: Dictionary = story.get_state()
 	var random: Dictionary = save.random
 	var run: String = story.run if not story.run.is_empty() else "not saved"
 	var text: String = _dim("Run %s · saving %s · seed %s" % [run, _yes_no(story.can_save()), str(random.seed)]) + "\n"
@@ -242,8 +242,8 @@ func _describe_state() -> String:
 	if not chances.is_empty(): rows.append(["Chances", ", ".join(chances)])
 	text += _table(rows)
 	text += _describe_protagonist(protagonist)
-	text += _describe_world(_dict(save, "world"))
-	text += _describe_monsters(_list(save, "monsters"))
+	text += _describe_world(story.world.get_save())
+	text += _describe_monsters(story.get_monsters().get_save())
 	return text
 
 func _describe_protagonist(protagonist: Character) -> String:
@@ -269,7 +269,8 @@ func _describe_protagonist(protagonist: Character) -> String:
 		var have: int = protagonist.breath_dice.get(die_type, 0)
 		for _index: int in have: breath += _icon(die_type.icon_filled) + " "
 		for _index: int in Rules.BREATH_DICE[die_type] - have: breath += _icon(die_type.icon_blank, Color(1.0, 1.0, 1.0, 0.35)) + " "
-	var injuries: Array = _list(protagonist.get_save(), "injuries")
+	var injuries: Array[int] = []
+	for injury: Injury in protagonist.get_injuries(): injuries.append(injury.magnitude)
 	rows.append(["Breath", breath + _dim("(%d)" % protagonist.get_breath_dice_count()) + ("   " + _injuries(injuries) if not injuries.is_empty() else "")])
 	var gear: String = _gear(protagonist)
 	if not gear.is_empty(): rows.append(["Gear", gear])
@@ -391,9 +392,6 @@ static func _list(data: Dictionary, key: Variant) -> Array:
 	var list: Array = data.get(key, [])
 	return list
 
-static func _dict(data: Dictionary, key: Variant) -> Dictionary:
-	var table: Dictionary = data.get(key, {})
-	return table
 
 #endregion
 

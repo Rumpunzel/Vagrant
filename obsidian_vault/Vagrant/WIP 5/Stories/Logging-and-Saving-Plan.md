@@ -160,3 +160,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: story book history, stage 1: `PageRecord`, `StoryBook` keeps 5 entries, builds older ones on scrolling up, saves and restores them; commit panel leaves its pick. Dice records still to do. Tests: `story_book_history_test.gd` (3).
 - 2026-11-03: story book history, stage 2: dice records (`get_record` / `show_record` on the dice widgets). Test: dice built again as they were (1). Checked on screen by recording frames.
 - 2026-11-03: State tab compacted; empty rows and sections left out.
+- 2026-11-03: debug panel cost: `Story.get_state()` (the story's own place, cheap) split out of `get_save()`; the State tab reads it, the world, the monsters (`Story.get_monsters`) and `Actor.get_injuries()` instead of the whole save (journal, book).

@@ -63,6 +63,8 @@ func suffer_injury(injury: Injury) -> void:
 	injuries_changed.emit(_injuries)
 	suffered_injury.emit(injury)
 
+func get_injuries() -> Array[Injury]: return _injuries.duplicate()
+
 func get_injury_total() -> int:
 	var total: int = 0
 	for injury: Injury in _injuries: total += injury.magnitude

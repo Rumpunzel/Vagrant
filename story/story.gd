@@ -216,6 +216,7 @@ func get_subject(path: String, event: AdventurePage = null) -> Resource:
 	return _location
 
 func get_protagonist() -> Character: return _protagonist
+func get_monsters() -> Monsters: return _monsters
 
 ## The monster of [param holder]: an encounter's, the same for the whole story; a one-off fight's (owned by its page), one per location
 func get_monster(holder: AdventurePage, monster_profile: MonsterProfile) -> Monster:
@@ -234,19 +235,25 @@ func can_save() -> bool:
 	if _current_story_page == null or _current_story_page.is_fight_exchange(): return false
 	return _event_queue.is_idle() and _pending_choices.is_empty() and _incapacitation_save == null
 
-## Everything a run needs to go on, as plain values and [ResourceId]s ([SaveGame]); random numbers' seed and state as text (JSON
-## numbers are floats). Only a save from when it [method can_save] can be loaded; the debug panel shows it any time.
+## Everything a run needs to go on, as plain values and [ResourceId]s ([SaveGame]): [method get_state] and what the journal, world,
+## characters and book hold. Only a save from when it [method can_save] can be loaded.
 func get_save() -> Dictionary:
+	var save: Dictionary = get_state()
+	save.journal = journal.entries.duplicate(true)
+	save.world = world.get_save()
+	save.protagonist = _protagonist.get_save()
+	save.monsters = _monsters.get_save()
+	save.book = _story_book.get_save() if _story_book != null else []
+	return save
+
+## Where the story itself stands, by [ResourceId]: the page shown and how it was reached, chance rolls; random numbers' seed and state as
+## text (JSON numbers are floats). Cheap: the debug panel shows it while open.
+func get_state() -> Dictionary:
 	var chances: Dictionary[String, bool] = {}
 	for condition: AdventureChanceCondition in _chance_rolls: chances[ResourceId.of(condition)] = _chance_rolls[condition]
 	return {
 		adventure = ResourceId.of(_adventure),
 		random = {seed = str(GameRandom.get_seed()), state = str(GameRandom.get_state())},
-		journal = journal.entries.duplicate(true),
-		world = world.get_save(),
-		protagonist = _protagonist.get_save(),
-		monsters = _monsters.get_save(),
-		book = _story_book.get_save() if _story_book != null else [],
 		page = ResourceId.of(_current_story_page.adventure_page),
 		page_stack = ResourceId.of_each(_page_stack),
 		host = ResourceId.of(_host),
