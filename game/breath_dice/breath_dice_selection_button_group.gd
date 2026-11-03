@@ -68,3 +68,17 @@ func _on_die_type_changed(_die_typ: DieType) -> void:
 
 func _on_breath_die_button_added(breath_die_button: BreathDieSelectionButton) -> void:
 	breath_die_button.toggled.connect(_on_button_toggled)
+
+## What it shows, as data ([PageRecord]): its die type, how many, whether exhausted, and each button
+func get_record() -> Dictionary:
+	var buttons: Array[Dictionary] = []
+	if _breath_dice_count > 0: for button: BreathDieSelectionButton in get_elements(): buttons.append(button.get_record())
+	return {die = ResourceId.of(_die_type), count = _breath_dice_count, exhausted = is_exhausted(), buttons = buttons}
+
+## The buttons as they were; the count and exhaustion are set before ([method BreathDiceSelectionButtons.show_record])
+func show_record_buttons(record: Dictionary) -> void:
+	var buttons: Array = record.buttons
+	var elements: Array[Control] = get_elements()
+	for index: int in mini(buttons.size(), elements.size()): (elements[index] as BreathDieSelectionButton).show_record(buttons[index] as Dictionary)
+	_all_button.active = false
+	_all_button.disabled = true

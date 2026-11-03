@@ -23,7 +23,11 @@ var current_dice_request: DiceRequest :
 		text = ""
 		current_dice_request.selected_breath_dice_changed.connect(_on_selected_breath_dice_changed)
 
+## The result it shows, or will once its delay is over ([method get_record] doesn't wait for it)
+var _result_text: String = ""
+
 func update_result(result: int) -> void:
+	_result_text = "%d" % result
 	var update_delay: float = randf_range(_min_update_delay, _max_update_delay)
 	if is_inside_tree() and _randomly_delay_update:
 		_update_delay_timer.start(update_delay)
@@ -55,3 +59,15 @@ func _on_toggled(toggled_on: bool) -> void:
 	assert(current_dice_request)
 	if toggled_on: current_dice_request.select_breath_die(die_type)
 	else: current_dice_request.deselect_breath_die(die_type)
+
+## What it shows, as data ([PageRecord]): its result, colour, whether it was selected and whether it was lost
+func get_record() -> Dictionary:
+	var color: String = get_theme_color("font_color").to_html() if has_theme_color_override("font_color") else ""
+	return {text = _result_text if not _result_text.is_empty() else text, color = color, pressed = button_pressed, disabled = disabled}
+
+func show_record(record: Dictionary) -> void:
+	active = false
+	text = record.text
+	set_pressed_no_signal(record.pressed as bool)
+	if not (record.color as String).is_empty(): set_font_colors(Color.html(record.color as String))
+	disabled = record.disabled

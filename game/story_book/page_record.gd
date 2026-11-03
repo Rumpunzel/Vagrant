@@ -16,6 +16,8 @@ var injuries: Array[Dictionary] = []
 var picks: Array[String] = []
 ## The last outcome typed below it
 var outcome: String = ""
+## What the dice showed once rolled ([method BreathDiceSelection.get_record]); empty if nothing was rolled
+var dice: Dictionary = {}
 
 static func from_story_page(story_page: StoryPage) -> PageRecord:
 	var record: PageRecord = PageRecord.new()
@@ -43,6 +45,7 @@ func get_save() -> Dictionary:
 	return {
 		title = title, description = description, background = background, area_background = area_background,
 		choices = choices.duplicate(true), injuries = injuries.duplicate(true), picks = picks.duplicate(), outcome = outcome,
+		dice = dice.duplicate(true),
 	}
 
 static func from_save(data: Dictionary) -> PageRecord:
@@ -55,4 +58,5 @@ static func from_save(data: Dictionary) -> PageRecord:
 	record.injuries.assign(data.get("injuries", []) as Array)
 	record.picks.assign(data.get("picks", []) as Array)
 	record.outcome = data.get("outcome", "")
+	record.dice = data.get("dice", {})
 	return record

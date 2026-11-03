@@ -65,6 +65,47 @@ func test_a_loaded_run_shows_its_pages() -> void:
 	assert_str((entries[0] as StoryEntry)._title.text).is_equal("Start")
 	assert_str((entries[1] as StoryEntry)._title.text).is_equal("Next")
 
+func test_dice_are_built_again_as_they_were() -> void:
+	var decision: AdventureSaveDecision = AdventureSaveDecision.new()
+	decision.description = "Jump"
+	decision.attribute = Rules.AGILITY
+	decision.difficulty = 1
+	var end_page: AdventurePage = AdventurePage.new()
+	end_page.title = "End"
+	decision.transition = end_page
+	decision.failure_transition = end_page
+	var page: AdventurePage = AdventurePage.new()
+	page.title = "Ledge"
+	page.decisions = [decision] as Array[AdventureDecision]
+	var adventure: Adventure = Adventure.new()
+	adventure.starting_page = page
+	var story: Story = _new_story()
+	story.start_adventure(adventure, TestCharacters.adventurer())
+	var choice: StoryChoice = story._current_story_page.choices[0]
+	choice.chose()
+	await await_millis(50)
+	var shown: StoryPage = story._current_story_page
+	choice.roll()
+	var waited: int = 0
+	while story._current_story_page == shown and waited < 5000:
+		await await_millis(20)
+		waited += 20
+	var book: StoryBook = story._story_book
+	var record: PageRecord = book._records[0]
+	assert_dict(record.dice).is_not_empty()
+	var live: BreathDiceSelection = (book._pages.get_elements()[0] as StoryEntry)._breath_dice_selection
+	var rebuilt_entry: StoryEntry = auto_free(load("uid://cy2ymcfk2tejn").instantiate())  # story_entry.tscn
+	add_child(rebuilt_entry)
+	rebuilt_entry.show_record(PageRecord.from_save(_through_json(record.get_save()) as Dictionary))
+	var rebuilt: BreathDiceSelection = rebuilt_entry._breath_dice_selection
+	assert_str(rebuilt._dice_log_save_result_entry.get_text()).is_equal(live._dice_log_save_result_entry.get_text())
+	assert_str(rebuilt._description.text).is_equal(live._description.text)
+	assert_array(_through_json(rebuilt._breath_dice_selection_buttons.get_record()) as Array).is_equal(_through_json(record.dice.dice) as Array)
+	assert_str(rebuilt_entry._title.text).is_equal("Ledge")
+	# Open, as on the live page
+	await await_millis(100)
+	assert_int(rebuilt_entry._breath_dice_collapsible_container.get_opened_state()).is_equal(CollapsibleContainer.OpenedStates.OPENED)
+
 func _new_story() -> Story:
 	var story: Story = auto_free(load(STORY).instantiate())
 	story._reveal_delay = 0.01

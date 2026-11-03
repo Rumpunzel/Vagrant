@@ -24,10 +24,13 @@ time, nothing trimmed while browsing); entering a new page trims back to 5. Old 
   every left page's record (`_records`); `StoryEntry.show_record` builds a past entry from one (no typing, no fading; `DialogButton.show_record`).
 - **Mid-fight panels** stay as they are while open; once committed, the page shows (and keeps) what was picked instead (`show_pick`,
   `Story._describe_commit`). The user reworks the fight panels later.
-- **Dice** (option (i), to build): the dice widgets (`BreathDiceSelection`, its buttons, the dice log entries) record what they show as
-  data (portrait, request text, chosen breath dice, each die's type, face and colour as shown, weapon / stance / Nerves target picks, the
-  result line) and get a second way in to show such a record; the live entry produces its record from the same values. (ii), rebuilding
-  the request/result objects from character snapshots, was dropped: fights would need the monster and the exchange too.
+- **Dice** (option (i)): each dice widget saves its own final look as data (`get_record`) and shows such a record again (`show_record`):
+  `BreathDiceSelection` (portrait, request text, result line, weapons, stance, Nerves target), `BreathDiceSelectionButtons` → groups →
+  `BreathDieSelectionButton` (die type, count, exhausted; each button's face, colour, selected, lost), `WeaponSelection` (each option as
+  shown, which was picked), `StanceSelection` (attribute and its text), `DiceLogEntry` (its text). The book takes it when the page is left
+  (`StoryEntry.get_dice_record`); a die button keeps its face from the moment it gets it (its display waits a random moment). Rebuilt
+  collapsible containers set `starts_opened` too: their `_ready` opens or closes them deferred. (ii), rebuilding the request/result
+  objects from character snapshots, was dropped: fights would need the monster and the exchange too.
 - **Saved** with the run (`Story.get_save().book`, the pages before the current one); a loaded run shows its last pages again.
 - **Scrolling**: at the top (scroll bar reaching 0, or the wheel turned up when it can't scroll) `show_older_pages` adds older entries
   above; `AutoScrollContainer.shift_vertical` keeps what was in view where it was.
@@ -154,3 +157,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: debug panel v2: `PopoutWindow`, coloured log, links that open in the editor (`game_debugger` addon), State tab in sections with icons; `StoryJournal.label` names content for both. Checked by recording frames (`--write-movie`); the editor links not yet by hand.
 - 2026-11-03: debug panel log v2: journal entries drawn from their data (icons, links, bold numbers, coloured outcomes) instead of the "story" text lines, which told nothing a line couldn't show better; `StoryJournal.written`, `LOG_CATEGORY`, `to_plain_text`.
 - 2026-11-03: story book history, stage 1: `PageRecord`, `StoryBook` keeps 5 entries, builds older ones on scrolling up, saves and restores them; commit panel leaves its pick. Dice records still to do. Tests: `story_book_history_test.gd` (3).
+- 2026-11-03: story book history, stage 2: dice records (`get_record` / `show_record` on the dice widgets). Test: dice built again as they were (1). Checked on screen by recording frames.

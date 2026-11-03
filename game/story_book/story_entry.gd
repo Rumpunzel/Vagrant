@@ -75,6 +75,11 @@ func show_record(record: PageRecord) -> void:
 		var dialog_button: DialogButton = _dialog_button.instantiate()
 		_choices.add(dialog_button)
 		dialog_button.show_record(choice)
+	if not record.dice.is_empty():
+		_breath_dice_selection.show_record(record.dice)
+		# Its _ready closes it deferred, unless it starts opened
+		_breath_dice_collapsible_container.starts_opened = true
+		_breath_dice_collapsible_container.open()
 	for injury: Dictionary in record.injuries: show_injury(injury.target as String, int(injury.magnitude))
 	for pick: String in record.picks: show_pick(pick)
 	if not record.outcome.is_empty():
@@ -83,6 +88,9 @@ func show_record(record: PageRecord) -> void:
 	_fade_out_delay = 0.0
 	_fade_out_duration = 0.0
 	state = State.PAST
+
+## What the dice showed once rolled ([PageRecord]); empty if nothing was rolled here
+func get_dice_record() -> Dictionary: return _breath_dice_selection.get_record()
 
 func display_dice_result(dice_result: DiceRequestResult) -> void:
 	_breath_dice_selection.display_dice_result(dice_result)

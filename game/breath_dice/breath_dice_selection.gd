@@ -42,6 +42,46 @@ var _dice_request: DiceRequest :
 		character.exhaustion_changed.connect(_breath_dice_selection_buttons.set_exhaustion)
 		#_ok_button.grab_focus()
 
+## Rolled: [method get_record] has something to tell
+var _rolled: bool = false
+var _stance_shown: bool = false
+
+## What it shows once rolled, as data ([PageRecord]); empty before a roll
+func get_record() -> Dictionary:
+	if not _rolled: return {}
+	return {
+		portrait = ResourceId.of(_portrait.texture),
+		description = _description.text,
+		result = _dice_log_save_result_entry.get_text(),
+		dice = _breath_dice_selection_buttons.get_record(),
+		weapons = _weapon_selection.get_record() if _weapon_selection.visible else [],
+		stance = _stance_selection.get_record() if _stance_shown else {},
+		nerves_target = _nerves_target_selection.get_record() if _nerves_target_selection.visible else {},
+	}
+
+## As it was once rolled ([method get_record]), nothing to click
+func show_record(record: Dictionary) -> void:
+	_portrait.texture = ResourceId.find(record.portrait as String) as Texture2D
+	_description.set_text_normally(record.description as String)
+	_dice_log_dice_request_entry.visible = false
+	_dice_log_save_result_entry.visible = true
+	_dice_log_save_result_entry.show_text(record.result as String)
+	_breath_dice_selection_buttons.show_record(record.dice as Array)
+	_disable_hud()
+	var weapons: Array = record.weapons
+	_weapon_selection.visible = not weapons.is_empty()
+	if not weapons.is_empty(): _weapon_selection.show_record(weapons)
+	var stance: Dictionary = record.stance
+	# Its _ready opens or closes it deferred, by starts_opened
+	_stance_selection_collapsible_container.starts_opened = not stance.is_empty()
+	if stance.is_empty(): _stance_selection_collapsible_container.close()
+	else:
+		_stance_selection_collapsible_container.open()
+		_stance_selection.show_record(stance)
+	var nerves_target: Dictionary = record.nerves_target
+	_nerves_target_selection.visible = not nerves_target.is_empty()
+	if not nerves_target.is_empty(): _nerves_target_selection.show_record(nerves_target)
+
 func request_dice(dice_request: DiceRequest) -> void:
 	if dice_request is SaveRequest: request_save(dice_request as SaveRequest)
 	elif dice_request is FightRequest: request_fight(dice_request as FightRequest)
@@ -72,6 +112,7 @@ func _update_stance_choice(fight_request: FightRequest, open_instantly: bool = f
 	if not fight_request.has_stance_choice():
 		_hide_stance_choice()
 		return
+	_stance_shown = true
 	if open_instantly: _stance_selection_collapsible_container.open()
 	_stance_selection.setup_for_fight(fight_request)
 	_stance_selection.attribute_selected.connect(fight_request.set_attribute)
@@ -83,6 +124,7 @@ func _update_stance_choice(fight_request: FightRequest, open_instantly: bool = f
 	_update_nerves_target_selection(fight_request.attribute)
 
 func _hide_stance_choice() -> void:
+	_stance_shown = false
 	_stance_selection_collapsible_container.close_tween()
 	_nerves_target_selection.visible = false
 
@@ -142,6 +184,7 @@ func _on_fight_rolled(fight_result: FightResult) -> void:
 	_on_rolled(fight_result)
 
 func _on_rolled(dice_result: DiceRequestResult) -> void:
+	_rolled = true
 	_dice_request.selected_breath_dice_changed.disconnect(_update_all_in_button)
 	_dice_request.character.exhaustion_changed.disconnect(_breath_dice_selection_buttons.set_exhaustion)
 	_dice_log_dice_request_entry.visible = false

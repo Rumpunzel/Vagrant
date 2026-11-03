@@ -38,6 +38,7 @@ func enter_story_page(story_page: StoryPage) -> void:
 		_current_page_entry.custom_minimum_size.y = 0
 		_current_page_entry.state = PageEntry.State.PAST
 		_current_record.take_chosen(_current_page_entry.get_story_page())
+		_current_record.dice = (_current_page_entry as StoryEntry).get_dice_record()
 		_records.append(_current_record)
 	_current_page_entry = story_page.create_story_entry()
 	_current_record = PageRecord.from_story_page(story_page)
