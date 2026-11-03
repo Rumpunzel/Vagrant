@@ -161,3 +161,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: story book history, stage 2: dice records (`get_record` / `show_record` on the dice widgets). Test: dice built again as they were (1). Checked on screen by recording frames.
 - 2026-11-03: State tab compacted; empty rows and sections left out.
 - 2026-11-03: debug panel cost: `Story.get_state()` (the story's own place, cheap) split out of `get_save()`; the State tab reads it, the world, the monsters (`Story.get_monsters`) and `Actor.get_injuries()` instead of the whole save (journal, book).
+- 2026-11-03: tooltips in every window: tooltips_pro's manager puts mouse tooltips in their trigger's window (fixes popped-out character sheets too); `MetaTooltipTrigger` for links; the debug panel's links preview their content (background / portrait / icon, name, first line). Tests: `tooltip_window_test.gd` (2).

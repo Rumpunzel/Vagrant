@@ -10,6 +10,9 @@ const SIZE: Vector2 = Vector2(640, 760)
 const STATE_REFRESH_SECONDS: float = 0.5
 const FONT_SIZE: int = 14
 const ICON_SIZE: int = 18
+const TOOLTIP_PICTURE_WIDTH: int = 280
+## The tooltip's label doesn't wrap: longer first lines are cut
+const TOOLTIP_TEXT_LENGTH: int = 60
 const DIM: Color = Color(0.55, 0.58, 0.62)
 const HEADING: Color = Color(0.95, 0.8, 0.5)
 const LINK: Color = Color(0.5, 0.75, 1.0)
@@ -366,6 +369,29 @@ static func _link(id: String, label: String = "") -> String:
 	var text: String = _escaped(label if not label.is_empty() else _label(resource))
 	return "[url=%s][color=#%s]%s[/color][/url]" % [id, LINK.to_html(false), text]
 
+## A link's preview: its picture (a page's background, a portrait, an icon), its name and the start of its text; none for script paths
+static func _tooltip_for(meta: Variant) -> Array[String]:
+	var resource: Resource = ResourceId.find(str(meta))
+	if resource == null or resource is Script: return []
+	var picture: Texture2D = null
+	var text: String = ""
+	if resource is AdventurePage:
+		var page: AdventurePage = resource
+		picture = page.background if page.background != null else page.get_area_background()
+		text = page.description
+	elif resource is AdventureEncounter and (resource as AdventureEncounter).profile != null:
+		picture = (resource as AdventureEncounter).profile.get("portrait") as Texture2D
+	elif resource.get("portrait") is Texture2D: picture = resource.get("portrait")
+	elif resource.get("icon") is Texture2D: picture = resource.get("icon")
+	var lines: Array[String] = []
+	if picture != null: lines.append("[img=%d]%s[/img]" % [TOOLTIP_PICTURE_WIDTH, picture.resource_path])
+	lines.append("[b]%s[/b]" % _escaped(_label(resource)))
+	var first_line: String = StoryJournal.to_plain_text(text).get_slice("\n", 0)
+	if first_line.length() > TOOLTIP_TEXT_LENGTH: first_line = first_line.left(TOOLTIP_TEXT_LENGTH).strip_edges() + "…"
+	if not first_line.is_empty(): lines.append(_dim(_escaped(first_line)))
+	lines.append(_dim(str(meta)))
+	return ["\n".join(lines)] as Array[String]
+
 ## [method StoryJournal.label], else its file's name (its ID in there)
 static func _label(resource: Resource) -> String:
 	var label: String = StoryJournal.label(resource)
@@ -455,6 +481,13 @@ func _create_text() -> RichTextLabel:
 	label.add_theme_font_size_override("bold_font_size", FONT_SIZE)
 	label.add_theme_constant_override("line_separation", 3)
 	label.meta_clicked.connect(func(meta: Variant) -> void: GameDebuggerLinks.open(str(meta)))
+	var tooltips: MetaTooltipTrigger = MetaTooltipTrigger.new()
+	tooltips.trigger_node = label
+	tooltips.origin = TooltipEnums.TooltipOrigin.MOUSE_POSITION_START
+	tooltips.offset = Vector2(16.0, 16.0)
+	tooltips.overflow_mode = TooltipEnums.OverflowMode.CLAMP
+	tooltips.tooltip_for = _tooltip_for
+	label.add_child(tooltips)
 	label.meta_hover_started.connect(func(_meta: Variant) -> void: label.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND)
 	label.meta_hover_ended.connect(func(_meta: Variant) -> void: label.mouse_default_cursor_shape = Control.CURSOR_IBEAM)
 	return label
