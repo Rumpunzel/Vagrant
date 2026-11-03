@@ -12,10 +12,9 @@ extends FancyButton
 				if _story_choice: _story_choice.discard()
 				_set_index()
 			StoryEntry.State.PAST:
-				deactivate()
-				var chosen: bool = _story_choice.is_chosen() if _story_choice else _recorded_chosen
-				disabled = not chosen
-				if chosen: set(&"icon", _chosen_icon)
+				lock()
+				disabled = not _is_chosen()
+				if _is_chosen(): set(&"icon", _chosen_icon)
 				elif _story_choice: _story_choice.discard()
 				release_focus()
 				_update_style()
@@ -43,6 +42,8 @@ var _story_choice: StoryChoice:
 
 ## Built from a [PageRecord]: whether it was the one taken
 var _recorded_chosen: bool = false
+## [method lock]ed: availability no longer changes it (losing breath dice in the roll would enable it again)
+var _locked: bool = false
 
 func _ready() -> void:
 	_set_index()
@@ -62,9 +63,19 @@ func show_record(choice: Dictionary) -> void:
 	set(&"icon", ResourceId.find(choice.icon as String) as Texture2D)
 	set_icon_colors(Color.from_string(choice.color as String, Color.WHITE))
 	_recorded_chosen = choice.chosen
+	set_pressed_no_signal(_recorded_chosen)
 	modulate.a = 1.0
 	show()
 	state = StoryEntry.State.PAST
+
+## Once a choice of its page is taken (a dice choice: rolled), none reacts any more, to a click or its key; the taken one stays as it is
+func lock() -> void:
+	_locked = true
+	shortcut = null
+	deactivate()
+	if not _is_chosen(): disabled = true
+
+func _is_chosen() -> bool: return _story_choice.is_chosen() if _story_choice else _recorded_chosen
 
 func _update_icon() -> void:
 	set(&"icon", _story_choice.get_icon())
@@ -72,7 +83,7 @@ func _update_icon() -> void:
 
 ## Only while it is the present choice; a past page's buttons go by what was chosen
 func _update_availability() -> void:
-	if state != StoryEntry.State.PRESENT: return
+	if state != StoryEntry.State.PRESENT or _locked: return
 	var reason: String = _story_choice.get_unavailable_reason() if _story_choice else ""
 	set(&"disabled", not reason.is_empty())
 	tooltip_text = reason

@@ -150,6 +150,11 @@ func _on_description_finished_typing() -> void:
 
 func _on_choice_made(story_decision: StoryChoice) -> void:
 	chosen_decision = story_decision
+	_lock_choices()
+
+## Taken: e.g. while a fight exchange plays out on this page, Fight and Flee can't be clicked again
+func _lock_choices() -> void:
+	for dialog_button: DialogButton in _choices.get_elements(): dialog_button.lock()
 
 func _on_dice_requested(dice_request: DiceRequest, story_dice_decision: StoryDiceDecision) -> void:
 	chosen_decision = story_dice_decision
@@ -157,4 +162,5 @@ func _on_dice_requested(dice_request: DiceRequest, story_dice_decision: StoryDic
 
 func _on_breath_dice_selection_confirmed() -> void:
 	chosen_decision.roll()
+	_lock_choices()
 	_breath_dice_collapsible_container.auto_update_size = CollapsibleContainer.AutoUpdateSizeOptions.DISABLED
