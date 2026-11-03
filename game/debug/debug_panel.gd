@@ -220,25 +220,27 @@ func _describe_state() -> String:
 	if protagonist == null: return "[i]The story hasn't started.[/i]"
 	var save: Dictionary = story.get_save()
 	var random: Dictionary = save.random
-	var text: String = _heading("Story")
-	var chances: Array[String] = []
-	var saved_chances: Dictionary = save.chance_rolls
-	for id: String in saved_chances: chances.append("%s %s" % [_link(id), _yes_no(_flag(saved_chances, id))])
+	var run: String = story.run if not story.run.is_empty() else "not saved"
+	var text: String = _dim("Run %s · saving %s · seed %s" % [run, _yes_no(story.can_save()), str(random.seed)]) + "\n"
+	text += _heading("Story")
+	var rows: Array[Array] = []
+	var where: String = _link(_text(save, "page"))
+	if _text(save, "location") != _text(save, "page"): where += _dim(" at ") + _link(_text(save, "location"))
+	if not _text(save, "entered_area").is_empty():
+		where += _dim(" · entered ") + _link(_text(save, "entered_area")) + (_dim(" (first time)") if save.first_time_in_area else "")
+	rows.append(["Page", where])
+	var event: Array[String] = []
+	if not _text(save, "host").is_empty(): event.append(_dim("on ") + _link(_text(save, "host")))
+	if not _text(save, "encounter").is_empty(): event.append(_dim("encounter ") + _link(_text(save, "encounter")))
+	if not event.is_empty(): rows.append(["Event", " · ".join(event)])
 	var way_back: Array[String] = []
 	for id: String in _list(save, "page_stack"): way_back.append(_link(id))
-	var area: String = _link(_text(save, "entered_area")) + (" [color=#%s](first time)[/color]" % DIM.to_html(false) if save.first_time_in_area else "")
-	text += _table([
-		["Run", story.run if not story.run.is_empty() else _dim("not saved")],
-		["Can save", _yes_no(story.can_save())],
-		["Seed", str(random.seed)],
-		["Page", _link(_text(save, "page"))],
-		["Location", _link(_text(save, "location"))],
-		["Area entered", area],
-		["Host", _link(_text(save, "host"))],
-		["Encounter", _link(_text(save, "encounter"))],
-		["Way back", " › ".join(way_back) if not way_back.is_empty() else _dim("—")],
-		["Chances", "\n".join(chances) if not chances.is_empty() else _dim("—")],
-	])
+	if not way_back.is_empty(): rows.append(["Back", _dim(" › ").join(way_back)])
+	var chances: Array[String] = []
+	var saved_chances: Dictionary = save.chance_rolls
+	for id: String in saved_chances: chances.append("%s %s" % [_link(id), _outcome("came up" if _flag(saved_chances, id) else "missed", _flag(saved_chances, id))])
+	if not chances.is_empty(): rows.append(["Chances", ", ".join(chances)])
+	text += _table(rows)
 	text += _describe_protagonist(protagonist)
 	text += _describe_world(_dict(save, "world"))
 	text += _describe_monsters(_list(save, "monsters"))
@@ -246,52 +248,56 @@ func _describe_state() -> String:
 
 func _describe_protagonist(protagonist: Character) -> String:
 	var profile: CharacterProfile = protagonist.character_profile
-	var text: String = _heading("%s %s" % [_escaped(profile.name), _dim(_escaped(profile.title))])
+	var origins: Array[String] = []
+	for origin: Origin in profile.origins:
+		if origin == null: continue
+		var id: String = ResourceId.of(origin)
+		origins.append(_link(id, _label(origin)) if not id.is_empty() else _escaped(_label(origin)))
+	var text: String = _heading("%s %s" % [_escaped(profile.name), _dim(_escaped(profile.title))], ", ".join(origins))
 	var rows: Array[Array] = []
+	var scores: Array[String] = []
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
 		var score: int = protagonist.get_score(attribute)
 		var base: int = profile.get_attribute_score(attribute)
-		var value: String = "[b]%d[/b]" % score + (_dim(" (rolled %d)" % base) if base != score else "")
-		rows.append([_icon(attribute.icon, attribute.color) + " " + _escaped(attribute.descriptor), value])
+		scores.append("%s [b]%d[/b]%s" % [_icon(attribute.icon, attribute.color), score, _dim("/%d" % base) if base != score else ""])
+	rows.append(["Scores", "   ".join(scores)])
 	var breath: String = ""
 	for die_type: DieType in Rules.BREATH_DICE:
 		if protagonist.exhaustion.has(die_type):
-			breath += _icon(die_type.icon_blank, Color(0.35, 0.35, 0.35)) + " "
+			breath += _icon(die_type.icon_blank, Color(0.6, 0.25, 0.25)) + " "
 			continue
 		var have: int = protagonist.breath_dice.get(die_type, 0)
 		for _index: int in have: breath += _icon(die_type.icon_filled) + " "
-		for _index: int in Rules.BREATH_DICE[die_type] - have: breath += _icon(die_type.icon_blank) + " "
-	rows.append(["Breath dice", breath + _dim("(%d)" % protagonist.get_breath_dice_count())])
-	var exhausted: Array[String] = []
-	for die_type: DieType in protagonist.exhaustion: exhausted.append(str(die_type))
-	rows.append(["Exhausted", ", ".join(exhausted) if not exhausted.is_empty() else _dim("—")])
-	rows.append(["Injuries", _injuries(_list(protagonist.get_save(), "injuries"))])
-	rows.append(["Gear", _gear(protagonist)])
+		for _index: int in Rules.BREATH_DICE[die_type] - have: breath += _icon(die_type.icon_blank, Color(1.0, 1.0, 1.0, 0.35)) + " "
+	var injuries: Array = _list(protagonist.get_save(), "injuries")
+	rows.append(["Breath", breath + _dim("(%d)" % protagonist.get_breath_dice_count()) + ("   " + _injuries(injuries) if not injuries.is_empty() else "")])
+	var gear: String = _gear(protagonist)
+	if not gear.is_empty(): rows.append(["Gear", gear])
 	var items: Array[String] = []
-	for item: ItemProfile in protagonist.items: items.append("%s %s ×%d" % [_icon(item.icon), _escaped(item.name), protagonist.items[item]])
-	rows.append(["Items", "\n".join(items) if not items.is_empty() else _dim("—")])
-	var origins: Array[String] = []
-	for origin: Origin in profile.origins: if origin != null: origins.append(_link(ResourceId.of(origin), _label(origin)))
-	rows.append(["Origins", ", ".join(origins)])
+	for item: ItemProfile in protagonist.items: items.append("%s%s ×%d" % [_icon(item.icon), _escaped(item.name), protagonist.items[item]])
+	if not items.is_empty(): rows.append(["Items", ", ".join(items)])
 	return text + _table(rows)
 
+## Only what changed: stages set, encounters moved
 func _describe_world(world: Dictionary) -> String:
-	var text: String = _heading("World")
 	var rows: Array[Array] = []
 	var stages: Dictionary = world.stages
 	for subject: String in stages:
 		var tracks: Dictionary = stages[subject]
-		for track: String in tracks: rows.append([_link(subject), "%s → [b]%s[/b]" % [_escaped(track), _escaped(_text(tracks, track))]])
+		var changed: Array[String] = []
+		for track: String in tracks: changed.append("%s %s" % [_dim(_escaped(track) + " →"), _bold(_escaped(_text(tracks, track)))])
+		rows.append([_link(subject), ", ".join(changed)])
 	var places: Dictionary = world.places
 	for encounter: String in places:
 		var locations: Array[String] = []
 		for location: String in _list(places, encounter): locations.append(_link(location))
-		rows.append([_link(encounter), "at " + (", ".join(locations) if not locations.is_empty() else _dim("nowhere"))])
-	return text + (_table(rows) if not rows.is_empty() else _dim("Every track at its first stage, every encounter where it starts.") + "\n")
+		rows.append([_link(encounter), _dim("at ") + (", ".join(locations) if not locations.is_empty() else _dim("nowhere"))])
+	if rows.is_empty(): return ""
+	return _heading("World") + _table(rows)
 
+## One row each: where it belongs, breath, injuries, beaten or dead
 func _describe_monsters(monsters: Array) -> String:
-	var text: String = _heading("Monsters")
-	if monsters.is_empty(): return text + _dim("None met yet.") + "\n"
+	if monsters.is_empty(): return ""
 	var rows: Array[Array] = []
 	for monster: Dictionary in monsters:
 		var state: Dictionary = monster.state
@@ -300,14 +306,19 @@ func _describe_monsters(monsters: Array) -> String:
 		for id: String in saved_breath:
 			var die_type: DieType = ResourceId.find(id) as DieType
 			for _index: int in _number(saved_breath, id): breath += _icon(die_type.icon_filled if die_type != null else null) + " "
-		var status: String = "[color=#%s]dead[/color]" % KIND_COLORS[LogBuffer.Kind.ERROR].to_html(false) if state.dead \
-			else "[color=#%s]beaten[/color]" % KIND_COLORS[LogBuffer.Kind.WARNING].to_html(false) if state.incapacitated else "can fight"
-		var where: String = _link(_text(monster, "owner")) + (" at " + _link(_text(monster, "location")) if not _text(monster, "location").is_empty() else "")
-		rows.append(["%s #%d" % [_link(_text(monster, "profile")), _number(monster, "index")], "%s\n%s %s\n%s" % [where, breath, _injuries(_list(state, "injuries")), status]])
-	return text + _table(rows)
+		var status: String = _outcome("dead", false) if state.dead else _outcome("beaten", false, true) if state.incapacitated else ""
+		var where: String = _dim("from ") + _link(_text(monster, "owner"))
+		if not _text(monster, "location").is_empty(): where += _dim(" at ") + _link(_text(monster, "location"))
+		var injuries: Array = _list(state, "injuries")
+		var condition: Array[String] = [breath.strip_edges()]
+		if not injuries.is_empty(): condition.append(_injuries(injuries))
+		if not status.is_empty(): condition.append(status)
+		rows.append([_link(_text(monster, "profile")), "%s   %s" % ["  ".join(condition), where]])
+	return _heading("Monsters") + _table(rows)
 
+## Inline: "Sword, Buckler (marked 2, 3)"
 func _gear(actor: Actor) -> String:
-	var lines: Array[String] = []
+	var pieces: Array[String] = []
 	var gear: Array[Equipment] = []
 	gear.append_array(actor.weapons)
 	gear.append_array(actor.armor)
@@ -317,8 +328,8 @@ func _gear(actor: Actor) -> String:
 		if not equipment.marked_faces.is_empty(): notes.append("marked %s" % ", ".join(equipment.marked_faces.map(func(face: int) -> String: return str(face))))
 		if equipment.ruined: notes.append("ruined")
 		if equipment.dropped: notes.append("dropped")
-		lines.append(_escaped(equipment.get_equipment_name()) + (" " + _dim("(%s)" % ", ".join(notes)) if not notes.is_empty() else ""))
-	return "\n".join(lines) if not lines.is_empty() else _dim("—")
+		pieces.append(_escaped(equipment.get_equipment_name()) + (" " + _dim("(%s)" % ", ".join(notes)) if not notes.is_empty() else ""))
+	return ", ".join(pieces)
 
 static func _injuries(magnitudes: Array) -> String:
 	if magnitudes.is_empty(): return _dim("unhurt")
@@ -326,13 +337,14 @@ static func _injuries(magnitudes: Array) -> String:
 	for magnitude: int in magnitudes: icons.append(Injury.to_bbcode(magnitude, ICON_SIZE))
 	return " ".join(icons)
 
-static func _heading(title: String) -> String:
-	return "\n[font_size=%d][b][color=#%s]%s[/color][/b][/font_size]\n" % [FONT_SIZE + 3, HEADING.to_html(false), title]
+## [param aside]: dim, after the title
+static func _heading(title: String, aside: String = "") -> String:
+	return "\n[font_size=%d][b][color=#%s]%s[/color][/b][/font_size]%s\n" % [FONT_SIZE + 2, HEADING.to_html(false), title, "  " + aside if not aside.is_empty() else ""]
 
 static func _table(rows: Array) -> String:
 	var text: String = "[table=2]"
 	for row: Array in rows:
-		text += "[cell padding=0,3,16,3][color=#%s]%s[/color][/cell][cell expand=1 padding=0,3,0,3]%s[/cell]" % [DIM.to_html(false), row[0], row[1]]
+		text += "[cell padding=0,1,12,1][color=#%s]%s[/color][/cell][cell expand=1 padding=0,1,0,1]%s[/cell]" % [DIM.to_html(false), row[0], row[1]]
 	return text + "[/table]\n"
 
 static func _icon(texture: Texture2D, color: Color = Color.WHITE) -> String:

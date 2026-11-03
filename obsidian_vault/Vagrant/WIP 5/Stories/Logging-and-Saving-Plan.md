@@ -93,9 +93,10 @@ there. − Two mechanisms, but each simple.
   from their data (`StoryJournal.written`), not from their log lines (those are skipped): an icon per kind (page entered, choice, chance,
   roll, stage, move, injury, breath lost / caught, exchange with its text indented), names as links, numbers bold, outcomes coloured. Other
   lines (engine messages) dim, warnings yellow, errors red, "At: …" indented; each line with the time it came in; a filter and Clear.
-  Journal entries keep everything they need for that (`exchange`: both sides, `told`; `roll`: the attribute's id). The State tab (every half second): Story (run, can save, seed, page, location, area, host,
-  encounter, way back, chances), the protagonist (attribute icons and scores, breath dice icons incl. spent and exhausted, injuries,
-  gear, items, origins), the world (stages, moved encounters), monsters met (breath, injuries, beaten / dead). Built from
+  Journal entries keep everything they need for that (`exchange`: both sides, `told`; `roll`: the attribute's id). The State tab (every half second), compact (user): one dim line run · saving · seed; Story rows only
+  where there is something (page at location · area entered; event host · encounter; way back; chances); the protagonist (origins
+  beside the name; scores in one row; breath dice incl. spent and exhausted, and injuries, in one row; gear and items inline); the world
+  only once something changed (stages, moved encounters); monsters met one row each (breath, injuries, beaten / dead, where from). Built from
   `Story.get_save()` (works any time; `SaveGame.capture` checks `can_save`) and the live protagonist; content named by
   `StoryJournal.label` (shared with the log).
 - **Links to the editor**: script paths (with a line) and content IDs are links in both tabs. `GameDebuggerLinks.open` sends
@@ -158,3 +159,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: debug panel log v2: journal entries drawn from their data (icons, links, bold numbers, coloured outcomes) instead of the "story" text lines, which told nothing a line couldn't show better; `StoryJournal.written`, `LOG_CATEGORY`, `to_plain_text`.
 - 2026-11-03: story book history, stage 1: `PageRecord`, `StoryBook` keeps 5 entries, builds older ones on scrolling up, saves and restores them; commit panel leaves its pick. Dice records still to do. Tests: `story_book_history_test.gd` (3).
 - 2026-11-03: story book history, stage 2: dice records (`get_record` / `show_record` on the dice widgets). Test: dice built again as they were (1). Checked on screen by recording frames.
+- 2026-11-03: State tab compacted; empty rows and sections left out.
