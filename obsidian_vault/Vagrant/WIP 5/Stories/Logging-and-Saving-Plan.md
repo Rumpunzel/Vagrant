@@ -1,6 +1,6 @@
 # Logging and Saving — Plan
 
-Status (2026-11-03): design chosen (option C); steps 1–2 (`ResourceId`, `GameRandom`) built, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
+Status (2026-11-03): design chosen (option C); steps 1–3 (`ResourceId`, `GameRandom`, `GameLog`) built, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
 Goal: (1) a log of what happens in a story, for debugging; (2) saving and loading a game in progress. Both need the same thing: a clear
 list of the runtime state and a stable way to name content (pages, decisions, monsters) outside the running game.
 
@@ -57,9 +57,10 @@ there. − Two mechanisms, but each simple.
 - **Journal** (`StoryJournal`, RefCounted, owned by `Story`): append-only `Array` of entries (`{t: "enter", page: id}`, `{t: "choose",
   decision: id}`, `{t: "roll", dice: …, margin: …}`, `{t: "stage", subject, track, stage}`, …). Signals for listeners. Replaces
   `_page_log` / `_decision_log` (counts per id).
-- **Game log** (autoload `GameLog`, no references to `Rules` / content classes — load-cycle trap): levels and categories, sinks: console,
-  `user://logs/<date>.log` (debug builds only), later an in-game debug panel. The journal writes to it; other code (fights, editor play) can too. Check
-  Godot 4.5+'s `Logger` / `OS.add_logger` to also catch engine errors in the same file.
+- **Game log**: `GameLog.write(category, message)` (`custom_nodes/game_log.gd`, static, no dependencies) prints "HH:MM:SS category: …"
+  in debug builds only. No own file: Godot's file logging (on by default) already writes stdout and the engine's errors to
+  `user://logs/godot*.log`, the last few runs. No levels until something needs them. Later maybe an in-game debug panel
+  (`OS.add_logger` could feed it). `Story.start_adventure` logs the adventure and seed; the journal will write each entry.
 - **Snapshots**: each owner saves its own state (`Story`, `StoryWorld`, `Character`, `Monster` / `Monsters`) as plain Dictionaries of ids
   and numbers; `SaveGame` (RefCounted) collects them with a format version, the adventure id, the RNG state and the journal, and writes
   JSON to `user://saves/<run id>.json` (run id: start time).
@@ -82,7 +83,7 @@ there. − Two mechanisms, but each simple.
 ## Steps
 1. ~~`ResourceId` helper (from `AdventurePlayFrom`), unit tests.~~ Done.
 2. ~~Seeded RNG (`GameRandom`); dice, chances and marked faces use it.~~ Done.
-3. `GameLog` autoload with console + file sinks (file only in debug builds).
+3. ~~`GameLog` (debug builds; Godot's file logging writes it to disk).~~ Done.
 4. `StoryJournal`; `Story` writes entries; visit/decision counts from it. Tests: counts unchanged.
 5. Snapshots per owner + `SaveGame` (version, adventure id, RNG, journal); round-trip unit tests per owner; refusing unknown ids.
 6. `Story.restore` + `Main.load_game`; autosave at safe points to the run's slot. Integration test: save on a page, load, same page and state.
@@ -94,3 +95,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: chose C; no fight saves; slot per run with autosave; refuse to load on missing ids; disk log in debug builds; seeded RNG now.
 - 2026-11-03: step 1: `ResourceId` (`of` / `find`); `AdventurePlayFrom` writes ids instead of [file, id] pairs. Tests: `resource_id_test.gd`.
 - 2026-11-03: step 2: `GameRandom` (static, not in `DiceRoller`: load cycle); dice, chance conditions, `MarkRandomFacesModifier` use it; `Story.start_adventure` starts a new seed. Tests: `game_random_test.gd`.
+- 2026-11-03: step 3: `GameLog.write` (static, prints; Godot's own `user://logs` files hold it); story start logs adventure + seed.

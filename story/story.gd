@@ -107,6 +107,7 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	assert(protagonist_profile.is_valid())
 	_adventure = new_adventure
 	GameRandom.start()
+	GameLog.write("story", "%s started (%s), seed %d" % [new_adventure.title, ResourceId.of(new_adventure), GameRandom.get_seed()])
 	world = StoryWorld.new(new_adventure.encounters)
 	_protagonist = _party.create_character(protagonist_profile)
 	_forced = forced
