@@ -45,6 +45,19 @@ func test_inside_a_file() -> void:
 		assert_str(id).starts_with(PATH + ResourceId.SEPARATOR)
 		assert_object(ResourceId.find(id)).is_same(inside)
 
+## A file is indexed once; something added to it later (in the adventure editor) is still found
+func test_finds_what_was_added_after_indexing() -> void:
+	assert_object(ResourceId.find(ResourceId.of(_decision))).is_same(_decision)
+	var added: AdventureDecision = AdventureDecision.new()
+	_nested.decisions.append(added)
+	ResourceSaver.save(_event, PATH)
+	# Loaded again into the same file (as the editor keeps it): the new decision now has an ID in there
+	var reloaded: AdventureEvent = ResourceLoader.load(PATH, "", ResourceLoader.CACHE_MODE_REPLACE)
+	var scenario: AdventureEventScenario = reloaded.decisions[0].transition as AdventureEventScenario
+	var found_later: AdventureDecision = scenario.events[0].decisions[1]
+	assert_str(ResourceId.of(found_later)).starts_with(PATH + ResourceId.SEPARATOR)
+	assert_object(ResourceId.find(ResourceId.of(found_later))).is_same(found_later)
+
 func test_made_at_runtime_has_no_name() -> void:
 	assert_str(ResourceId.of(AdventureDecision.new())).is_empty()
 	assert_str(ResourceId.of(null)).is_empty()

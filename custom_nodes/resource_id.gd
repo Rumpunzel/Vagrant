@@ -6,6 +6,9 @@ extends RefCounted
 
 const SEPARATOR: String = "::"
 
+## A loaded file's index: each resource stored inside it by its ID there, as [WeakRef]s (the file holds them); by the file's instance
+static var _indexes: Dictionary[int, Dictionary] = {}
+
 ## Empty for a resource made at runtime (no file)
 static func of(resource: Resource) -> String:
 	if resource == null or resource.resource_path.is_empty(): return ""
@@ -20,34 +23,42 @@ static func find(id: String) -> Resource:
 	if id.is_empty(): return null
 	var root: Resource = Files.load_existing(id.get_slice(SEPARATOR, 0))
 	if root == null or not id.contains(SEPARATOR): return root
-	return _find_inside(root, root.resource_path, id.get_slice(SEPARATOR, 1), {})
+	var inner_id: String = id.get_slice(SEPARATOR, 1)
+	var found: Resource = _find_indexed(root, inner_id, false)
+	# Not there: the file may have changed since it was indexed (the adventure editor), so once more from scratch
+	if found == null: found = _find_indexed(root, inner_id, true)
+	return found
 
-## Godot can't load a resource stored inside a file by itself: walks what the file stores, not into other files
-static func _find_inside(value: Variant, file: String, inner_id: String, seen: Dictionary[Resource, bool]) -> Resource:
+static func _find_indexed(root: Resource, inner_id: String, rebuild: bool) -> Resource:
+	var key: int = root.get_instance_id()
+	if rebuild or not _indexes.has(key):
+		var index: Dictionary[String, WeakRef] = {}
+		_index_inside(root, root.resource_path, index, {})
+		_indexes[key] = index
+	var reference: WeakRef = _indexes[key].get(inner_id)
+	return reference.get_ref() as Resource if reference != null else null
+
+## Godot can't load a resource stored inside a file by itself: walks what the file stores once (not into other files)
+static func _index_inside(value: Variant, file: String, index: Dictionary[String, WeakRef], seen: Dictionary[Resource, bool]) -> void:
 	if value is Array:
 		var items: Array = value
-		for item: Variant in items:
-			var found: Resource = _find_inside(item, file, inner_id, seen)
-			if found != null: return found
+		for item: Variant in items: _index_inside(item, file, index, seen)
 	elif value is Dictionary:
 		var dictionary: Dictionary = value
-		for key: Variant in dictionary:
-			var found: Resource = _find_inside(key, file, inner_id, seen)
-			if found == null: found = _find_inside(dictionary[key], file, inner_id, seen)
-			if found != null: return found
+		for item_key: Variant in dictionary:
+			_index_inside(item_key, file, index, seen)
+			_index_inside(dictionary[item_key], file, index, seen)
 	elif value is Resource:
 		var resource: Resource = value
-		if seen.has(resource): return null
+		if seen.has(resource): return
 		seen[resource] = true
-		if resource.resource_path != file and not resource.resource_path.begins_with(file + SEPARATOR): return null
-		if resource.resource_path != file and resource.resource_scene_unique_id == inner_id: return resource
+		if resource.resource_path != file and not resource.resource_path.begins_with(file + SEPARATOR): return
+		if resource.resource_path != file: index[resource.resource_scene_unique_id] = weakref(resource)
 		for property: Dictionary in resource.get_property_list():
 			var usage: int = property["usage"]
 			if not usage & PROPERTY_USAGE_STORAGE: continue
 			var property_name: String = property["name"]
-			var found: Resource = _find_inside(resource.get(property_name), file, inner_id, seen)
-			if found != null: return found
-	return null
+			_index_inside(resource.get(property_name), file, index, seen)
 
 static func of_each(resources: Array) -> Array[String]:
 	var ids: Array[String] = []
