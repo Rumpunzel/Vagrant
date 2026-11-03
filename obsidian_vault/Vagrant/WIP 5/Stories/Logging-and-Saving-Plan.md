@@ -1,6 +1,6 @@
 # Logging and Saving — Plan
 
-Status (2026-11-03): design chosen (option C); steps 1–4 (`ResourceId`, `GameRandom`, `GameLog`, `StoryJournal`) built, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
+Status (2026-11-03): design chosen (option C); steps 1–5 (`ResourceId`, `GameRandom`, `GameLog`, `StoryJournal`, save data + `SaveGame`) built, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
 Goal: (1) a log of what happens in a story, for debugging; (2) saving and loading a game in progress. Both need the same thing: a clear
 list of the runtime state and a stable way to name content (pages, decisions, monsters) outside the running game.
 
@@ -64,10 +64,15 @@ there. − Two mechanisms, but each simple.
   in debug builds only. No own file: Godot's file logging (on by default) already writes stdout and the engine's errors to
   `user://logs/godot*.log`, the last few runs. No levels until something needs them. Later maybe an in-game debug panel
   (`OS.add_logger` could feed it). `Story.start_adventure` logs the adventure and seed; the journal will write each entry.
-- **Snapshots**: each owner saves its own state (`Story`, `StoryWorld`, `Character`, `Monster` / `Monsters`) as plain Dictionaries of ids
-  and numbers; `SaveGame` (RefCounted) collects them with a format version, the adventure id, the RNG state and the journal, and writes
-  JSON to `user://saves/<run id>.json` (run id: start time).
-  Character profiles made in character creation are saved by value (attributes, origins, name, portrait id).
+- **Snapshots**: each owner saves its own state as plain values and ids (`get_save()`) and takes it back (`restore(data)`, on a fresh
+  object): `Actor` (breath dice, injuries, gear's marked faces and ruined, by index in the profile's lists), `Character` (+ exhaustion,
+  items, last chosen attribute; `Character.restore_profile` puts what character creation chose — name, title, portrait, rolled dice,
+  origins — into a copy of the adventure's protagonist), `Monster` (+ incapacitated, dead), `Monsters` (owner, location, profile, index,
+  state), `StoryWorld` (stages, places; restoring emits nothing), `StoryJournal` (entries; counts rebuilt). `Story.get_save()` collects it
+  all with its own state (page shown, page stack, host, location, encounter, area, chance rolls, forced) and `GameRandom`'s seed and state
+  as text (JSON numbers are floats); only when `Story.can_save()` (not in a fight exchange, `EventQueue.is_idle()`, nothing pending).
+- **`SaveGame`** (`story/save_game.gd`): run (slot name, from the start time), `story` data, `saved_at`; `write()` / `read(run)` JSON in
+  `user://saves/<run>.json` with a format `VERSION`; `get_problems()` lists every id that no longer resolves (or "another version").
 - **Safe points / autosave**: when a page is shown with nothing queued and no fight ongoing. The snapshot holds the shown page's state
   (incl. this arrival's chance rolls), so rebuilding the page on load gives the same page.
 - **Loading**: `Main.load_game()` → load scene → `Story.restore(save)`, which rebuilds owners, then enters the top page without running its
@@ -79,7 +84,8 @@ there. − Two mechanisms, but each simple.
 - **Loading UI**: a list of runs (slots) on the title / main scene: continue one, or start a new run.
 
 ## Open
-- Journal: also breath / injuries / exhaustion (from `Actor` / `Character` signals)? Probably once the save covers actors (step 5).
+- Journal: also breath / injuries / exhaustion (from `Actor` / `Character` signals)? Not needed for saving (snapshots cover them); only for the log.
+- Runtime-made resources in saved places have an empty id and come back as null; fine for real content (all files), checked by step 6's test.
 - Where the run list lives (main scene has no title screen yet).
 - Delete old runs from the list?
 
@@ -88,7 +94,7 @@ there. − Two mechanisms, but each simple.
 2. ~~Seeded RNG (`GameRandom`); dice, chances and marked faces use it.~~ Done.
 3. ~~`GameLog` (debug builds; Godot's file logging writes it to disk).~~ Done.
 4. ~~`StoryJournal`; `Story` writes entries; visit/decision counts from it.~~ Done.
-5. Snapshots per owner + `SaveGame` (version, adventure id, RNG, journal); round-trip unit tests per owner; refusing unknown ids.
+5. ~~Snapshots per owner + `SaveGame` (version, adventure id, RNG, journal); round-trip unit tests per owner; refusing unknown ids.~~ Done.
 6. `Story.restore` + `Main.load_game`; autosave at safe points to the run's slot. Integration test: save on a page, load, same page and state.
 7. UI: list of runs, continue / new run.
 8. Later: saving in fights, debug panel.
@@ -100,3 +106,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: step 2: `GameRandom` (static, not in `DiceRoller`: load cycle); dice, chance conditions, `MarkRandomFacesModifier` use it; `Story.start_adventure` starts a new seed. Tests: `game_random_test.gd`.
 - 2026-11-03: step 3: `GameLog.write` (static, prints; Godot's own `user://logs` files hold it); story start logs adventure + seed.
 - 2026-11-03: step 4: `StoryJournal` replaces `_page_log` / `_decision_log`; entries for start, enter, choose, roll, chance, stage, move, exchange, each logged. `StoryWorld` signals. Tests: `story_journal_test.gd`; tests that filled `_page_log` use `journal.enter`.
+- 2026-11-03: step 5: `get_save` / `restore` on `Actor`, `Character` (+ `restore_profile`), `Monster`, `Monsters`, `StoryWorld`, `StoryJournal`; `Story.get_save` / `can_save`; `EventQueue.is_idle`; `SaveGame`; `ResourceId.of_each` / `find_each`. Tests: `save_state_test.gd`.

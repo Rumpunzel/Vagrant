@@ -87,3 +87,37 @@ func is_out_of_breath() -> bool: return get_breath_dice_count() == 0
 
 func get_breath_dice_pool() -> Array[Die]:
 	return DiceRoller.generate_dice_pool(breath_dice)
+
+## Breath dice, injuries and the state of carried gear, as plain values ([SaveGame]); gear by its place in the profile's lists
+func get_save() -> Dictionary:
+	var breath: Dictionary[String, int] = {}
+	for die_type: DieType in breath_dice: breath[ResourceId.of(die_type)] = breath_dice[die_type]
+	var injuries: Array[int] = []
+	for injury: Injury in _injuries: injuries.append(injury.magnitude)
+	return {breath_dice = breath, injuries = injuries, weapons = _save_gear(weapons), armor = _save_gear(armor), shields = _save_gear(shields)}
+
+## After the profile is set (which hands out the gear)
+func restore(data: Dictionary) -> void:
+	var breath: Dictionary[DieType, int] = {}
+	var saved_breath: Dictionary = data.breath_dice
+	for id: String in saved_breath: breath[ResourceId.find(id) as DieType] = int(saved_breath[id])
+	breath_dice = breath
+	var injuries: Array[Injury] = []
+	for magnitude: Variant in data.injuries as Array: injuries.append(Injury.new(int(magnitude)))
+	_injuries = injuries
+	_restore_gear(weapons, data.weapons as Array)
+	_restore_gear(armor, data.armor as Array)
+	_restore_gear(shields, data.shields as Array)
+
+static func _save_gear(gear: Array) -> Array[Dictionary]:
+	var saved: Array[Dictionary] = []
+	for equipment: Equipment in gear: saved.append({marked_faces = equipment.marked_faces.duplicate(), ruined = equipment.ruined})
+	return saved
+
+static func _restore_gear(gear: Array, saved: Array) -> void:
+	assert(gear.size() == saved.size(), "The saved gear doesn't match the profile's")
+	for index: int in gear.size():
+		var equipment: Equipment = gear[index]
+		var state: Dictionary = saved[index]
+		equipment.marked_faces.assign((state.marked_faces as Array).map(func(face: Variant) -> int: return int(face)))
+		equipment.ruined = state.ruined

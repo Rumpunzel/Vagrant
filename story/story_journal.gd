@@ -76,3 +76,17 @@ static func _name(resource: Resource) -> String:
 	var script: Script = resource.get_script()
 	if label.is_empty(): return id if not id.is_empty() else "(unsaved %s)" % (script.get_global_name() if script != null else resource.get_class())
 	return "\"%s\" (%s)" % [label, id] if not id.is_empty() else "\"%s\"" % label
+
+## A loaded save's entries; the counts are rebuilt from them
+func restore(saved: Array) -> void:
+	entries.assign(saved)
+	_times_entered.clear()
+	_times_made.clear()
+	for entry: Dictionary in entries:
+		match entry.type:
+			"enter":
+				var page: AdventurePage = ResourceId.find(entry.page as String) as AdventurePage
+				if page != null: _times_entered[page] = get_times_entered(page) + 1
+			"choose":
+				var decision: AdventureDecision = ResourceId.find(entry.decision as String) as AdventureDecision
+				if decision != null: _times_made[decision] = get_times_made(decision) + 1

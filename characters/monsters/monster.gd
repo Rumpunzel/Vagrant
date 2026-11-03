@@ -49,3 +49,14 @@ func get_fight_plan() -> FightPlan:
 	plan.shield_tactic = monster_profile.shield_tactic
 	plan.armor_tactic = monster_profile.armor_tactic
 	return plan
+
+func get_save() -> Dictionary:
+	var data: Dictionary = super()
+	data.incapacitated = incapacitated
+	data.dead = dead
+	return data
+
+func restore(data: Dictionary) -> void:
+	super(data)
+	incapacitated = data.incapacitated
+	dead = data.dead

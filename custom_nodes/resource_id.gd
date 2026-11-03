@@ -45,3 +45,14 @@ static func _find_inside(value: Variant, file: String, inner_id: String, seen: D
 			var found: Resource = _find_inside(resource.get(property["name"] as String), file, inner_id, seen)
 			if found != null: return found
 	return null
+
+static func of_each(resources: Array) -> Array[String]:
+	var ids: Array[String] = []
+	for resource: Resource in resources: ids.append(of(resource))
+	return ids
+
+## Into a typed array with [method Array.assign]
+static func find_each(ids: Array) -> Array[Resource]:
+	var resources: Array[Resource] = []
+	for id: String in ids: resources.append(find(id))
+	return resources

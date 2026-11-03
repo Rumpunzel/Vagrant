@@ -172,6 +172,37 @@ func get_host() -> AdventurePage: return _host
 func get_how_often_decision_has_been_made(story_decision: AdventureDecision) -> int: return journal.get_times_made(story_decision)
 func get_how_often_page_has_been_entered(adventure_page: AdventurePage) -> int: return journal.get_times_entered(adventure_page)
 
+## On a page with nothing going on: no fight under way, nothing queued, no decision in the middle of an exchange
+func can_save() -> bool:
+	if _current_story_page == null or _current_story_page.is_fight_exchange(): return false
+	return _event_queue.is_idle() and _pending_choices.is_empty() and _incapacitation_save == null
+
+## Everything a run needs to go on, as plain values and [ResourceId]s ([SaveGame]); random numbers' seed and state as text (JSON
+## numbers are floats)
+func get_save() -> Dictionary:
+	assert(can_save())
+	var chances: Dictionary[String, bool] = {}
+	for condition: AdventureChanceCondition in _chance_rolls: chances[ResourceId.of(condition)] = _chance_rolls[condition]
+	return {
+		adventure = ResourceId.of(_adventure),
+		random = {seed = str(GameRandom.get_seed()), state = str(GameRandom.get_state())},
+		journal = journal.entries.duplicate(true),
+		world = world.get_save(),
+		protagonist = _protagonist.get_save(),
+		monsters = _monsters.get_save(),
+		page = ResourceId.of(_current_story_page.adventure_page),
+		page_stack = ResourceId.of_each(_page_stack),
+		host = ResourceId.of(_host),
+		location = ResourceId.of(_location),
+		encounter = ResourceId.of(_encounter),
+		entered_area = ResourceId.of(_entered_area),
+		first_time_in_area = _first_time_in_area,
+		areas_been_in = ResourceId.of_each(_areas_been_in),
+		chance_rolls = chances,
+		forced = ResourceId.of(_forced),
+		arrivals_while_forced = _arrivals_while_forced,
+	}
+
 func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	assert(_protagonist)
 	assert(adventure_page)

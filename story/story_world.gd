@@ -62,3 +62,21 @@ func is_near(encounter: AdventureEncounter, location: AdventureLocation, reach: 
 		if reach > 0 and int(distances[location]) > reach: continue
 		return true
 	return false
+
+## Stages and moved encounters, by [ResourceId]
+func get_save() -> Dictionary:
+	var stages: Dictionary[String, Dictionary] = {}
+	for subject: Resource in _stages: stages[ResourceId.of(subject)] = _stages[subject].duplicate()
+	var places: Dictionary[String, Array] = {}
+	for encounter: AdventureEncounter in _places: places[ResourceId.of(encounter)] = ResourceId.of_each(_places[encounter])
+	return {stages = stages, places = places}
+
+## Into a new world (no signals: the journal holds what already happened)
+func restore(data: Dictionary) -> void:
+	var stages: Dictionary = data.stages
+	for id: String in stages: _stages[ResourceId.find(id)] = (stages[id] as Dictionary).duplicate()
+	var places: Dictionary = data.places
+	for id: String in places:
+		var locations: Array[AdventureLocation] = []
+		locations.assign(ResourceId.find_each(places[id] as Array))
+		_places[ResourceId.find(id) as AdventureEncounter] = locations

@@ -5,6 +5,8 @@ var _queue: Array[Event] = []
 ## Events may await anything (not just this timer), so the timer alone cannot tell whether the queue is busy
 var _is_executing: bool = false
 
+func is_idle() -> bool: return _queue.is_empty() and not _is_executing
+
 func queue(delay: float, callable: Callable) -> void:
 	queue_delay(delay)
 	queue_callable(callable)
