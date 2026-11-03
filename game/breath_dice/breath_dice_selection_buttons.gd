@@ -32,6 +32,8 @@ func show_record(groups: Array) -> void:
 	var exhausted: Array[DieType] = []
 	for group: Dictionary in groups:
 		var die_type: DieType = ResourceId.find_at(group, "die") as DieType
+		# Gone from the game since: not shown
+		if die_type == null: continue
 		var count: int = group.count
 		counts[die_type] = count
 		if group.exhausted: exhausted.append(die_type)

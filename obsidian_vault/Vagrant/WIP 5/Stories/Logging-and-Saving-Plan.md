@@ -8,7 +8,7 @@ list of the runtime state and a stable way to name content (pages, decisions, mo
 - **Option C**: a story journal (debug log + visit counts) plus snapshots for saving.
 - **No saving during fights** for now: no autosave while a fight is ongoing; loading puts one back at the last page before it.
 - **A save slot per run, autosaved.** Starting a new run (new character / adventure) makes a new slot; each safe point overwrites it.
-- **Refuse to load** if the adventure changed and a saved id no longer resolves (or the format version is unknown); say what is missing.
+- **Refuse to load** if the adventure changed and an id in the **current state** no longer resolves (or the format version is unknown); say what is missing. History (journal, book) doesn't count (user, 2026-11-03): what is gone from it is left out, so editing the adventure while writing it keeps saves loadable.
 - **Log to disk only in debug builds** (`OS.is_debug_build()`); the journal itself is always kept (it goes into the save).
 - **"Play from here" isn't saved** (no run slot when a story starts on a given page).
 - **No UI for saving and loading yet** (later); F9 (debug) continues the latest run.
@@ -163,3 +163,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: debug panel cost: `Story.get_state()` (the story's own place, cheap) split out of `get_save()`; the State tab reads it, the world, the monsters (`Story.get_monsters`) and `Actor.get_injuries()` instead of the whole save (journal, book).
 - 2026-11-03: tooltips in every window: tooltips_pro's manager puts mouse tooltips in their trigger's window (fixes popped-out character sheets too); `MetaTooltipTrigger` for links; the debug panel's links preview their content (background / portrait / icon, name, first line). Tests: `tooltip_window_test.gd` (2).
 - 2026-11-03: saves are written next to the slot and then renamed over it (a crash mid-write keeps the last save); autosave writes on a worker thread (`SaveGame.write_in_background`, one at a time; `read` and leaving the story wait for it).
+- 2026-11-03: loading is lenient about history: `SaveGame.HISTORY` (journal, book) isn't checked; the journal skips entries naming gone content, the book shows what is left.

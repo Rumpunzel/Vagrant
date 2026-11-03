@@ -2,10 +2,12 @@ class_name SaveGame
 extends RefCounted
 
 ## One run's save, a slot per run that is autosaved: JSON in [constant DIRECTORY]. Names content by [ResourceId]; a save from another
-## format version, or naming something that is gone (the adventure changed), can't be loaded.
+## format version, or whose current state names something that is gone (the adventure changed), can't be loaded.
 
 const VERSION: int = 1
 const DIRECTORY: String = "user://saves"
+## What a save keeps of the past rather than where the run stands ([method get_problems])
+const HISTORY: Array[String] = ["journal", "book"]
 
 ## The [WorkerThreadPool] task writing a save, or -1
 static var _writing: int = -1
@@ -75,11 +77,14 @@ static func read(of_run: String) -> SaveGame:
 	if version != VERSION: save_game.story = {}
 	return save_game
 
-## Why it can't be loaded (each ID that is gone), or nothing
+## Why it can't be loaded (each ID in the current state that is gone), or nothing. History ([constant HISTORY]) doesn't count:
+## what is gone from it is left out (the journal doesn't count it, the book doesn't show it), so editing the adventure keeps saves loadable.
 func get_problems() -> Array[String]:
 	if story.is_empty(): return ["Saved by another version of the game."] as Array[String]
+	var current: Dictionary = story.duplicate()
+	for key: String in HISTORY: current.erase(key)
 	var problems: Array[String] = []
-	for id: String in _find_ids(story):
+	for id: String in _find_ids(current):
 		var problem: String = "Gone from the adventure: %s" % id
 		if not problems.has(problem) and ResourceId.find(id) == null: problems.append(problem)
 	return problems

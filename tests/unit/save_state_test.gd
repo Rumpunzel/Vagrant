@@ -131,6 +131,10 @@ func test_refuses_what_is_gone() -> void:
 	var save_game: SaveGame = SaveGame.new()
 	save_game.story = {page = DIRECTORY.path_join("gone.tres"), stack = ["uid://bxxxxxxxxxxxx"]}
 	assert_array(save_game.get_problems()).has_size(2)
+	# What is gone from the history doesn't keep a save from loading
+	var page: AdventurePage = _saved(AdventurePage.new(), "page")
+	save_game.story = {page = ResourceId.of(page), journal = [{type = "enter", page = "uid://bxxxxxxxxxxxx"}], book = [{background = "uid://bxxxxxxxxxxxx"}]}
+	assert_array(save_game.get_problems()).is_empty()
 	save_game.story = {}
 	assert_array(save_game.get_problems()).has_size(1)
 
