@@ -22,6 +22,9 @@ func get_places() -> Array[AdventureLocation]:
 func resolve_events(story: Story, location: AdventureLocation, _encounter: AdventureEncounter) -> Array[AdventureEvent]:
 	return super(story, location, self)
 
+func could_show_at(story: Story, location: AdventureLocation, _encounter: AdventureEncounter) -> bool:
+	return super(story, location, self)
+
 func _validate_property(property: Dictionary) -> void:
 	super(property)
 	if ENCOUNTER_UNUSED.has(property.name): property.usage = PROPERTY_USAGE_NO_EDITOR

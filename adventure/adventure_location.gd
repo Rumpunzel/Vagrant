@@ -137,7 +137,8 @@ func get_linked_locations() -> Array[AdventureLocation]:
 func _get_candidate_events(story: Story) -> Array[AdventureEvent]:
 	var candidates: Array[AdventureEvent] = [ ]
 	for source: AdventureEvent in get_sources(story.world.get_encounters()):
-		if source.are_all_prerequisites_fullfilled(story): candidates.append_array(source.resolve_events(story, self, null))
+		if source.could_show_at(story, self, null) and source.are_all_prerequisites_fullfilled(story):
+			candidates.append_array(source.resolve_events(story, self, null))
 	return candidates
 
 ## The first of [param active_events] whose [param property] (text or decisions layering) is [param layering]
