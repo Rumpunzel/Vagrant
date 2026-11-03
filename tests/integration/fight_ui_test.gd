@@ -20,7 +20,8 @@ func _start(weapon_dice: Array[DieType]) -> void:
 	page.decisions = [decision] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = page
-	_story = auto_free(load(STORY).instantiate())
+	var scene: PackedScene = load(STORY)
+	_story = auto_free(scene.instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
 	var profile: CharacterProfile = TestCharacters.adventurer()
@@ -163,7 +164,8 @@ func test_dice_log_shows_save_result() -> void:
 	page.decisions = [decision] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = page
-	_story = auto_free(load(STORY).instantiate())
+	var scene: PackedScene = load(STORY)
+	_story = auto_free(scene.instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
 	_story.start_adventure(adventure, TestCharacters.adventurer())
@@ -201,7 +203,7 @@ func test_weapon_selection_shows_marks_and_ruin() -> void:
 	_story._protagonist.weapons[1].ruined = true
 	await _choose(0)
 	var weapons: WeaponSelection = _selection()._weapon_selection
-	weapons.setup(_story._current_story_page.choices[0].get_dice_request())
+	weapons.setup(_story._current_story_page.choices[0].get_dice_request() as FightRequest)
 	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]2[/s]")
 	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]5[/s]")
 	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[1])).contains("ruined")

@@ -380,7 +380,7 @@ static func _tooltip_for(meta: Variant) -> Array[String]:
 		picture = page.background if page.background != null else page.get_area_background()
 		text = page.description
 	elif resource is AdventureEncounter and (resource as AdventureEncounter).profile != null:
-		picture = (resource as AdventureEncounter).profile.get("portrait") as Texture2D
+		picture = (resource as AdventureEncounter).profile.get("portrait")
 	elif resource.get("portrait") is Texture2D: picture = resource.get("portrait")
 	elif resource.get("icon") is Texture2D: picture = resource.get("icon")
 	var lines: Array[String] = []

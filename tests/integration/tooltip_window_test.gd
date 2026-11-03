@@ -38,13 +38,15 @@ func test_links_get_their_own_tooltips() -> void:
 		if meta == "a": strings.append("About a")
 		return strings
 	label.add_child(trigger)
+	var open_delay: float = TooltipManager.tooltip_settings.open_delay
+	var wait: int = int(open_delay * 1000.0) + 300
 	# No tooltip for a link without one
 	label.meta_hover_started.emit("b")
-	await await_millis(TooltipManager.tooltip_settings.open_delay * 1000.0 + 300.0)
+	await await_millis(wait)
 	assert_object(trigger.active_tooltip).is_null()
 	label.meta_hover_ended.emit("b")
 	label.meta_hover_started.emit("a")
-	await await_millis(TooltipManager.tooltip_settings.open_delay * 1000.0 + 300.0)
+	await await_millis(wait)
 	assert_object(trigger.active_tooltip).is_not_null()
 	assert_array(trigger.tooltip_strings).contains_exactly(["About a"])
 	assert_object(trigger.active_tooltip.get_viewport()).is_same(_window)

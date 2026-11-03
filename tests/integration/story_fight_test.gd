@@ -28,7 +28,8 @@ func before_test() -> void:
 	var adventure: Adventure = Adventure.new()
 	adventure.title = "Test"
 	adventure.starting_page = _fight_page
-	_story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
+	var scene: PackedScene = load("uid://db6oui711vqep")  # story.tscn
+	_story = auto_free(scene.instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
 	var profile: CharacterProfile = TestCharacters.adventurer()
