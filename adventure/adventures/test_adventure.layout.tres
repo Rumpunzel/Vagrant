@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_b0ump")
 positions = Dictionary[String, Vector2]({
-"uid://blk8tjmugvitx": Vector2(220, -240),
+"uid://blk8tjmugvitx": Vector2(120, -200),
 "uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g": Vector2(0, 0),
 "uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g/::Resource_strikes": Vector2(280, 0),
 "uid://bxwqtk0p80o4g/uid://bxwqtk0p80o4g/host": Vector2(720, -60),
@@ -52,7 +52,7 @@ positions = Dictionary[String, Vector2]({
 "uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh/uid://d3cv8d5e65vwh": Vector2(0, 0),
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/host": Vector2(-520, 260),
 "uid://d3cv8d5e65vwh/uid://dffxphat87a8a/uid://dffxphat87a8a": Vector2(-800, 260),
-"uid://dk3q4ia5u7q6m": Vector2(440, 380),
+"uid://dk3q4ia5u7q6m": Vector2(540, 380),
 "uid://dkfro0d37xt6n/switch/uid://dkfro0d37xt6n": Vector2(0, 0),
 "uid://dkfro0d37xt6n/uid://d3cv8d5e65vwh/::Resource_0x8r7": Vector2(630, 575),
 "uid://dkfro0d37xt6n/uid://d3cv8d5e65vwh/::Resource_b3ed1": Vector2(630, 337),
@@ -75,7 +75,7 @@ graph_heights = Dictionary[String, float]({
 "uid://d3cv8d5e65vwh": 854.0
 })
 graph_views = Dictionary[String, Vector3]({
-"uid://bxwqtk0p80o4g": Vector3(-492, -159, 1),
-"uid://d3cv8d5e65vwh": Vector3(-119, -14, 1),
+"uid://bxwqtk0p80o4g": Vector3(0, 0, 1),
+"uid://d3cv8d5e65vwh": Vector3(0, 0, 1),
 "uid://m4wl5ad8o0i7": Vector3(-100, -59, 1)
 })
