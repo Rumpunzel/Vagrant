@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 
-## The debug panel's log collects lines once, keeps only the newest; its state view names content instead of showing IDs.
+## The debug panel's log collects lines once and keeps only the newest; it colours them and turns paths and IDs into links.
 
 const DEBUG_PANEL: GDScript = preload("uid://du6eu37qg1k3p")  # debug_panel.gd
 
@@ -24,6 +24,11 @@ func test_keeps_the_newest() -> void:
 	assert_array(lines).has_size(LogBuffer.LIMIT)
 	assert_str(lines.back().text as String).is_equal(str(LogBuffer.LIMIT + 4))
 
-func test_state_names_content() -> void:
-	var text: String = DEBUG_PANEL._to_text({breath_dice = {ResourceId.of(Rules.d6): 2}, places = [ResourceId.of(Rules.STRENGTH)], gone = "user://gone.tres"}, 0)
-	assert_str(text).contains("d6: 2").contains("places: [strength]").contains("gone: user://gone.tres (gone)")
+func test_links_paths_and_ids() -> void:
+	var line: String = DEBUG_PANEL.format_line("12:00:00 story: entered \"[Ruin]\" (uid://abc::Resource_x)\n   At: res://a.gd:13:f()", LogBuffer.Kind.MESSAGE)
+	assert_str(line).contains("[b]story[/b]").contains("[lb]Ruin]").contains("[url=uid://abc::Resource_x]").contains("[url=res://a.gd:13:f]")
+
+func test_names_content() -> void:
+	assert_str(DEBUG_PANEL._label(Rules.STRENGTH)).is_equal(Rules.STRENGTH.descriptor)
+	assert_str(DEBUG_PANEL._link("user://gone.tres")).contains("(gone)")
+	assert_str(DEBUG_PANEL._link(ResourceId.of(Rules.d6))).contains("[url=%s]" % ResourceId.of(Rules.d6))

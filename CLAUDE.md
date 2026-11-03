@@ -42,6 +42,6 @@ Debug inputs: Backspace = restart game, Escape = restart current story, F9 = con
 
 Many scripts are `@tool` and use `@abstract` classes; setters guard with `Engine.is_editor_hint()`. Node wiring is done through `@export` vars in a "Configuration" export group rather than `$` paths.
 
-**Addons**: `collapsible_container` (enabled editor plugin, originally third-party but changed by us, so linted except its `examples (OPTIONAL)`), `tooltips_pro` (enabled editor plugin), `godot-git-plugin`, `gdUnit4` (vendored); `fight_lab` (bottom panel) and `adventure_editor` (main-screen tab "Adventure": map of one adventure, plan and design in `addons/adventure_editor/PLAN.md`) are ours. Treat the other third-party addons as vendored.
+**Addons**: `collapsible_container` (enabled editor plugin, originally third-party but changed by us, so linted except its `examples (OPTIONAL)`), `tooltips_pro` (enabled editor plugin), `godot-git-plugin`, `gdUnit4` (vendored); `fight_lab` (bottom panel), `adventure_editor` (main-screen tab "Adventure": map of one adventure, plan and design in `addons/adventure_editor/PLAN.md`) and `game_debugger` (opens in the editor what the running game's debug panel links to, over the debugger connection) are ours. Treat the other third-party addons as vendored.
 
 Folder colors in `project.godot` mirror this layout (adventure orange, characters yellow, dice purple, game green, story blue).

@@ -57,3 +57,16 @@ func test_watches_actors_once() -> void:
 
 func test_plain_text() -> void:
 	assert_str(StoryJournal._to_plain_text("[color=#fff]You[/color] take [img=20]res://wound.png[/img]2.")).is_equal("You take 2.")
+
+func test_labels() -> void:
+	var chance: AdventureChanceCondition = AdventureChanceCondition.new()
+	chance.times = 1
+	chance.out_of = 3
+	assert_str(StoryJournal.label(chance)).is_equal("chance 1 in 3")
+	var page: AdventurePage = AdventurePage.new()
+	page.description = "A long text."
+	assert_str(StoryJournal.label(page)).is_empty()
+	var decision: AdventureDecision = AdventureDecision.new()
+	decision.description = "Go on."
+	assert_str(StoryJournal.label(decision)).is_equal("Go on.")
+	assert_str(StoryJournal.label(Rules.STRENGTH)).is_equal(Rules.STRENGTH.descriptor)

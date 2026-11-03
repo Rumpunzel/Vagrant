@@ -67,11 +67,17 @@ there. − Two mechanisms, but each simple.
 - **Game log**: `GameLog.write(category, message)` (`custom_nodes/game_log.gd`, static, no dependencies) prints "HH:MM:SS category: …"
   in debug builds only. No own file: Godot's file logging (on by default) already writes stdout and the engine's errors to
   `user://logs/godot*.log`, the last few runs. No levels until something needs them.
-- **Debug panel** (autoload `DebugPanel`, `game/debug/debug_panel.gd`, debug builds only, F10): a `LogBuffer` (`custom_nodes/log_buffer.gd`,
-  a `Logger` added with `OS.add_logger`, locked since Godot calls it from any thread, keeps the newest `LIMIT` lines) feeds the Log tab:
-  every print, warning (yellow) and error (red), with a filter and Clear. The State tab shows `Story.get_save()` (without the journal)
-  every half second, IDs as names, plus the run and whether it can be saved now. `Story.get_save` works any time; `SaveGame.capture`
-  checks `can_save`. Built in code (a developer overlay, not the game's look). `Story.start_adventure` logs the adventure and seed; the journal will write each entry.
+- **Debug panel** (autoload `DebugPanel`, `game/debug/debug_panel.gd`, debug builds only, F10): in a `PopoutWindow` (pops out into
+  a native, resizable window). A `LogBuffer` (`custom_nodes/log_buffer.gd`, a `Logger` added with `OS.add_logger`, locked since Godot
+  calls it from any thread, keeps the newest `LIMIT` lines) feeds the Log tab: time dim, category coloured, warnings yellow, errors red,
+  "At:" lines dim, a filter and Clear. The State tab (every half second): Story (run, can save, seed, page, location, area, host,
+  encounter, way back, chances), the protagonist (attribute icons and scores, breath dice icons incl. spent and exhausted, injuries,
+  gear, items, origins), the world (stages, moved encounters), monsters met (breath, injuries, beaten / dead). Built from
+  `Story.get_save()` (works any time; `SaveGame.capture` checks `can_save`) and the live protagonist; content named by
+  `StoryJournal.label` (shared with the log).
+- **Links to the editor**: script paths (with a line) and content IDs are links in both tabs. `GameDebuggerLinks.open` sends
+  `vagrant:open` over the debugger connection (`EngineDebugger`, only when run from the editor); the `game_debugger` editor addon
+  (`EditorDebuggerPlugin`, `GameDebuggerCapture`) opens a script at its line, or a resource in the Inspector. `Story.start_adventure` logs the adventure and seed; the journal will write each entry.
 - **Snapshots**: each owner saves its own state as plain values and ids (`get_save()`) and takes it back (`restore(data)`, on a fresh
   object): `Actor` (breath dice, injuries, gear's marked faces and ruined, by index in the profile's lists), `Character` (+ exhaustion,
   items, last chosen attribute; `Character.restore_profile` puts what character creation chose — name, title, portrait, rolled dice,
@@ -125,3 +131,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: step 6: `Story.run`, autosave on each page (deferred, if `can_save`), `Story.restore`, `Main.continue_run` (refuses on problems), journal `load` entry. Tests: `story_save_test.gd` (go on from the save: page, way back, counts, character, random numbers).
 - 2026-11-03: "Play from here" makes no run slot; F9 continues the latest run (`SaveGame.get_runs`); journal watches actors (injuries, breath) and logs exchange texts.
 - 2026-11-03: debug panel (F10): Log tab from a `Logger` (`LogBuffer`), State tab from `Story.get_save`. `StoryJournal.describe` public. Tests: `debug_panel_test.gd`.
+- 2026-11-03: debug panel v2: `PopoutWindow`, coloured log, links that open in the editor (`game_debugger` addon), State tab in sections with icons; `StoryJournal.label` names content for both. Checked by recording frames (`--write-movie`); the editor links not yet by hand.

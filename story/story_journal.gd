@@ -107,13 +107,25 @@ func _write(entry: Dictionary, line: String) -> void:
 ## "Title" (id), for the log
 static func describe(resource: Resource) -> String:
 	if resource == null: return "nothing"
-	var label: String = ""
-	if resource is AdventurePage: label = (resource as AdventurePage).title
-	elif resource is AdventureDecision: label = (resource as AdventureDecision).description
 	var id: String = ResourceId.of(resource)
+	var name: String = label(resource)
+	if name.is_empty(): return id if not id.is_empty() else "(unsaved %s)" % _get_class_name(resource)
+	return "\"%s\" (%s)" % [name, id] if not id.is_empty() else "\"%s\"" % name
+
+## What content is called: its title, name or description, a chance's odds; empty if nothing names it
+static func label(resource: Resource) -> String:
+	if resource is AdventureChanceCondition:
+		var chance: AdventureChanceCondition = resource
+		return "chance %d in %d" % [chance.times, chance.out_of]
+	for property: String in ["title", "name", "descriptor"]:
+		var value: Variant = resource.get(property)
+		if value is String and not (value as String).is_empty(): return value
+	# A page's description is its whole text
+	return (resource as AdventureDecision).description if resource is AdventureDecision else ""
+
+static func _get_class_name(resource: Resource) -> String:
 	var script: Script = resource.get_script()
-	if label.is_empty(): return id if not id.is_empty() else "(unsaved %s)" % (script.get_global_name() if script != null else resource.get_class())
-	return "\"%s\" (%s)" % [label, id] if not id.is_empty() else "\"%s\"" % label
+	return script.get_global_name() if script != null else resource.get_class()
 
 ## A loaded save's entries; the counts are rebuilt from them
 func restore(saved: Array) -> void:
