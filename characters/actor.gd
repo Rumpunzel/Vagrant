@@ -100,14 +100,22 @@ func get_save() -> Dictionary:
 func restore(data: Dictionary) -> void:
 	var breath: Dictionary[DieType, int] = {}
 	var saved_breath: Dictionary = data.breath_dice
-	for id: String in saved_breath: breath[ResourceId.find(id) as DieType] = int(saved_breath[id])
+	for id: String in saved_breath:
+		var count: int = saved_breath[id]
+		breath[ResourceId.find(id) as DieType] = count
 	breath_dice = breath
 	var injuries: Array[Injury] = []
-	for magnitude: Variant in data.injuries as Array: injuries.append(Injury.new(int(magnitude)))
+	var magnitudes: Array = data.injuries
+	for saved_magnitude: Variant in magnitudes:
+		var magnitude: int = saved_magnitude
+		injuries.append(Injury.new(magnitude))
 	_injuries = injuries
-	_restore_gear(weapons, data.weapons as Array)
-	_restore_gear(armor, data.armor as Array)
-	_restore_gear(shields, data.shields as Array)
+	var saved_weapons: Array = data.weapons
+	var saved_armor: Array = data.armor
+	var saved_shields: Array = data.shields
+	_restore_gear(weapons, saved_weapons)
+	_restore_gear(armor, saved_armor)
+	_restore_gear(shields, saved_shields)
 
 static func _save_gear(gear: Array) -> Array[Dictionary]:
 	var saved: Array[Dictionary] = []
@@ -119,5 +127,9 @@ static func _restore_gear(gear: Array, saved: Array) -> void:
 	for index: int in gear.size():
 		var equipment: Equipment = gear[index]
 		var state: Dictionary = saved[index]
-		equipment.marked_faces.assign((state.marked_faces as Array).map(func(face: Variant) -> int: return int(face)))
+		var faces: Array = state.marked_faces
+		equipment.marked_faces.clear()
+		for saved_face: Variant in faces:
+			var face: int = saved_face
+			equipment.marked_faces.append(face)
 		equipment.ruined = state.ruined

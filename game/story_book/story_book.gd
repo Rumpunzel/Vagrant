@@ -8,6 +8,7 @@ signal page_entered(page_entry: PageEntry)
 
 ## Entries left in the book when a new page is entered (the new one among them); scrolling up adds this many older ones each time
 const KEPT_PAGES: int = 5
+const STORY_ENTRY: PackedScene = preload("uid://cy2ymcfk2tejn")  # story_entry.tscn
 
 @export_range(0.0, 1.0, 0.05, "suffix:percentage") var _initial_page_size: float = 0.5
 
@@ -85,7 +86,7 @@ func show_older_pages() -> void:
 	var scroll_bar: VScrollBar = _scroll_container.get_v_scroll_bar()
 	scroll_bar.changed.connect(_keep_view.bind(scroll_bar.max_value), CONNECT_ONE_SHOT)
 	for index: int in range(_first_shown - 1, from - 1, -1):
-		var entry: StoryEntry = load("uid://cy2ymcfk2tejn").instantiate()  # story_entry.tscn
+		var entry: StoryEntry = STORY_ENTRY.instantiate()
 		_pages.add(entry)
 		entry.get_parent().move_child(entry, 0)
 		entry.show_record(_records[index])

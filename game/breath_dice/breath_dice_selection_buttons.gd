@@ -31,11 +31,12 @@ func show_record(groups: Array) -> void:
 	var counts: Dictionary[DieType, int] = {}
 	var exhausted: Array[DieType] = []
 	for group: Dictionary in groups:
-		var die_type: DieType = ResourceId.find(group.die as String) as DieType
-		counts[die_type] = int(group.count)
+		var die_type: DieType = ResourceId.find_at(group, "die") as DieType
+		var count: int = group.count
+		counts[die_type] = count
 		if group.exhausted: exhausted.append(die_type)
 	setup_breath_dice(counts)
 	set_exhaustion(exhausted)
 	for group: Dictionary in groups:
-		var button_group: BreathDiceSelectionButtonGroup = button_groups.get(ResourceId.find(group.die as String)) as BreathDiceSelectionButtonGroup
+		var button_group: BreathDiceSelectionButtonGroup = button_groups.get(ResourceId.find_at(group, "die"))
 		if button_group != null: button_group.show_record_buttons(group)

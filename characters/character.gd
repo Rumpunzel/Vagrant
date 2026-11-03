@@ -168,26 +168,32 @@ func get_save() -> Dictionary:
 static func restore_profile(profile: CharacterProfile, data: Dictionary) -> void:
 	profile.name = data.name
 	profile.title = data.title
-	profile.portrait = ResourceId.find(data.portrait as String) as Texture2D
+	profile.portrait = ResourceId.find_at(data, "portrait") as Texture2D
 	var scores: Dictionary[CharacterAttribute, RolledAttributeScore] = {}
 	var saved_scores: Dictionary = data.attribute_scores
 	for id: String in saved_scores:
 		var dice: Array[Die] = []
-		for die: Array in saved_scores[id] as Array: dice.append(Die.new(ResourceId.find(die[0] as String) as DieType, int(die[1])))
+		var saved_dice: Array = saved_scores[id]
+		for die: Array in saved_dice:
+			var die_type: String = die[0]
+			var result: int = die[1]
+			dice.append(Die.new(ResourceId.find(die_type) as DieType, result))
 		scores[ResourceId.find(id) as CharacterAttribute] = RolledAttributeScore.new(dice) if not dice.is_empty() else null
 	profile.attribute_scores = scores
 	var origins: Array[Origin] = []
-	origins.assign(ResourceId.find_each(data.origins as Array))
+	origins.assign(ResourceId.find_each_at(data, "origins"))
 	profile.origins = origins
 
 ## After [member character_profile] is set
 func restore(data: Dictionary) -> void:
 	super(data)
 	var exhausted: Array[DieType] = []
-	exhausted.assign(ResourceId.find_each(data.exhaustion as Array))
+	exhausted.assign(ResourceId.find_each_at(data, "exhaustion"))
 	exhaustion = exhausted
 	var carried: Dictionary[ItemProfile, int] = {}
 	var saved_items: Dictionary = data.items
-	for id: String in saved_items: carried[ResourceId.find(id) as ItemProfile] = int(saved_items[id])
+	for id: String in saved_items:
+		var count: int = saved_items[id]
+		carried[ResourceId.find(id) as ItemProfile] = count
 	items = carried
-	most_recently_chosen_attribute = ResourceId.find(data.most_recently_chosen_attribute as String) as CharacterAttribute
+	most_recently_chosen_attribute = ResourceId.find_at(data, "most_recently_chosen_attribute") as CharacterAttribute

@@ -36,7 +36,8 @@ func test_character_comes_back() -> void:
 
 	var copy_profile: CharacterProfile = TestCharacters.adventurer()
 	copy_profile.weapons = knife
-	Character.restore_profile(copy_profile, data.profile as Dictionary)
+	var saved_profile: Dictionary = data.profile
+	Character.restore_profile(copy_profile, saved_profile)
 	var copy: Character = _character(copy_profile)
 	copy.restore(data)
 	assert_str(copy_profile.name).is_equal("Mira")
@@ -83,7 +84,8 @@ func test_world_comes_back() -> void:
 	world.set_stage(location, "Door", "open")
 	world.move(encounter, [location] as Array[AdventureLocation])
 	var copy: StoryWorld = StoryWorld.new()
-	copy.restore(_through_json(world.get_save()) as Dictionary)
+	var saved_world: Dictionary = _through_json(world.get_save())
+	copy.restore(saved_world)
 	assert_str(copy.get_stage(encounter, "Mood")).is_equal("angry")
 	assert_str(copy.get_stage(location, "Door")).is_equal("open")
 	assert_array(copy.get_places(encounter)).contains_exactly([location])
@@ -96,7 +98,8 @@ func test_journal_counts_come_back() -> void:
 	journal.choose(decision)
 	journal.enter(page)
 	var copy: StoryJournal = StoryJournal.new()
-	copy.restore(_through_json(journal.entries) as Array)
+	var saved_entries: Array = _through_json(journal.entries)
+	copy.restore(saved_entries)
 	assert_int(copy.get_times_entered(page)).is_equal(2)
 	assert_int(copy.get_times_made(decision)).is_equal(1)
 	assert_array(copy.entries).has_size(3)
@@ -127,7 +130,8 @@ func _saved(resource: Resource, file_name: String) -> Resource:
 	return ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_REPLACE)
 
 func _character(profile: CharacterProfile) -> Character:
-	var character: Character = auto_free(load(CHARACTER).instantiate())
+	var scene: PackedScene = load(CHARACTER)
+	var character: Character = auto_free(scene.instantiate())
 	add_child(character)
 	character.character_profile = profile
 	return character

@@ -28,9 +28,11 @@ static func take() -> AdventurePlayFrom:
 	file.load(PATH)
 	DirAccess.remove_absolute(PATH)
 	var start: AdventurePlayFrom = AdventurePlayFrom.new()
-	start.adventure = ResourceId.find(file.get_value("start", "adventure", "") as String) as Adventure
-	start.page = ResourceId.find(file.get_value("start", "page", "") as String) as AdventurePage
+	var saved: Dictionary = {}
+	for key: String in file.get_section_keys("start"): saved[key] = file.get_value("start", key)
+	start.adventure = ResourceId.find_at(saved, "adventure") as Adventure
+	start.page = ResourceId.find_at(saved, "page") as AdventurePage
 	if start.adventure == null or start.page == null: return null
-	start.host = ResourceId.find(file.get_value("start", "host", "") as String) as AdventurePage
-	start.forced = ResourceId.find(file.get_value("start", "forced", "") as String) as AdventureEvent
+	start.host = ResourceId.find_at(saved, "host") as AdventurePage
+	start.forced = ResourceId.find_at(saved, "forced") as AdventureEvent
 	return start

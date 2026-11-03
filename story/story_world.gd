@@ -59,7 +59,8 @@ func is_near(encounter: AdventureEncounter, location: AdventureLocation, reach: 
 		var distances: Dictionary = _distances[place]
 		if not distances.has(location): continue
 		if (reach == 0 or stays_in_area) and location.area != place.area: continue
-		if reach > 0 and int(distances[location]) > reach: continue
+		var distance: int = distances[location]
+		if reach > 0 and distance > reach: continue
 		return true
 	return false
 
@@ -74,9 +75,11 @@ func get_save() -> Dictionary:
 ## Into a new world (no signals: the journal holds what already happened)
 func restore(data: Dictionary) -> void:
 	var stages: Dictionary = data.stages
-	for id: String in stages: _stages[ResourceId.find(id)] = (stages[id] as Dictionary).duplicate()
+	for id: String in stages:
+		var tracks: Dictionary = stages[id]
+		_stages[ResourceId.find(id)] = tracks.duplicate()
 	var places: Dictionary = data.places
 	for id: String in places:
 		var locations: Array[AdventureLocation] = []
-		locations.assign(ResourceId.find_each(places[id] as Array))
+		locations.assign(ResourceId.find_each_at(places, id))
 		_places[ResourceId.find(id) as AdventureEncounter] = locations

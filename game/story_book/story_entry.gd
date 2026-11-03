@@ -80,7 +80,10 @@ func show_record(record: PageRecord) -> void:
 		# Its _ready closes it deferred, unless it starts opened
 		_breath_dice_collapsible_container.starts_opened = true
 		_breath_dice_collapsible_container.open()
-	for injury: Dictionary in record.injuries: show_injury(injury.target as String, int(injury.magnitude))
+	for injury: Dictionary in record.injuries:
+		var target: String = injury.target
+		var magnitude: int = injury.magnitude
+		show_injury(target, magnitude)
 	for pick: String in record.picks: show_pick(pick)
 	if not record.outcome.is_empty():
 		_outcome.visible = true

@@ -27,7 +27,7 @@ func set_selected_attribute(attribute: CharacterAttribute) -> void:
 func get_record() -> Dictionary: return {attribute = ResourceId.of(get_panel().attribute), text = get_panel().label.text}
 
 func show_record(record: Dictionary) -> void:
-	var attribute: CharacterAttribute = ResourceId.find(record.attribute as String) as CharacterAttribute
+	var attribute: CharacterAttribute = ResourceId.find_at(record, "attribute") as CharacterAttribute
 	var text: String = record.text
 	get_panel().setup_with_descriptor(attribute, func(_attribute: CharacterAttribute) -> String: return text)
 	set_selected_attribute(attribute)

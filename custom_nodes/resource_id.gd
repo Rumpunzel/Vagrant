@@ -25,7 +25,8 @@ static func find(id: String) -> Resource:
 ## Godot can't load a resource stored inside a file by itself: walks what the file stores, not into other files
 static func _find_inside(value: Variant, file: String, inner_id: String, seen: Dictionary[Resource, bool]) -> Resource:
 	if value is Array:
-		for item: Variant in value as Array:
+		var items: Array = value
+		for item: Variant in items:
 			var found: Resource = _find_inside(item, file, inner_id, seen)
 			if found != null: return found
 	elif value is Dictionary:
@@ -41,8 +42,10 @@ static func _find_inside(value: Variant, file: String, inner_id: String, seen: D
 		if resource.resource_path != file and not resource.resource_path.begins_with(file + SEPARATOR): return null
 		if resource.resource_path != file and resource.resource_scene_unique_id == inner_id: return resource
 		for property: Dictionary in resource.get_property_list():
-			if not (property["usage"] as int) & PROPERTY_USAGE_STORAGE: continue
-			var found: Resource = _find_inside(resource.get(property["name"] as String), file, inner_id, seen)
+			var usage: int = property["usage"]
+			if not usage & PROPERTY_USAGE_STORAGE: continue
+			var property_name: String = property["name"]
+			var found: Resource = _find_inside(resource.get(property_name), file, inner_id, seen)
 			if found != null: return found
 	return null
 
@@ -50,6 +53,16 @@ static func of_each(resources: Array) -> Array[String]:
 	var ids: Array[String] = []
 	for resource: Resource in resources: ids.append(of(resource))
 	return ids
+
+## The resource whose ID is at [param key] in saved data (a [Dictionary] read from JSON), or null
+static func find_at(data: Dictionary, key: String) -> Resource:
+	var id: String = data.get(key, "")
+	return find(id)
+
+## The resources whose IDs are listed at [param key] in saved data; into a typed array with [method Array.assign]
+static func find_each_at(data: Dictionary, key: String) -> Array[Resource]:
+	var ids: Array = data.get(key, [])
+	return find_each(ids)
 
 ## Into a typed array with [method Array.assign]
 static func find_each(ids: Array) -> Array[Resource]:

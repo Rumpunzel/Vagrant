@@ -60,8 +60,9 @@ func show_record(choice: Dictionary) -> void:
 	var description: String = choice.description
 	set(&"text", description)
 	name = description.validate_node_name()
-	set(&"icon", ResourceId.find(choice.icon as String) as Texture2D)
-	set_icon_colors(Color.from_string(choice.color as String, Color.WHITE))
+	set(&"icon", ResourceId.find_at(choice, "icon") as Texture2D)
+	var color: String = choice.color
+	set_icon_colors(Color.from_string(color, Color.WHITE))
 	_recorded_chosen = choice.chosen
 	set_pressed_no_signal(_recorded_chosen)
 	modulate.a = 1.0

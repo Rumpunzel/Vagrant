@@ -40,7 +40,12 @@ func show_record(rows: Array) -> void:
 			check_box.text = row.check
 			check_box.button_pressed = row.pressed
 			add_child(check_box)
-		else: _add_row(row.text as String, row.faces as String, row.disabled as bool, row.pressed as bool, button_group)
+		else:
+			var text: String = row.text
+			var faces: String = row.faces
+			var disabled: bool = row.disabled
+			var pressed: bool = row.pressed
+			_add_row(text, faces, disabled, pressed, button_group)
 
 func _clear() -> void:
 	for child: Node in get_children():

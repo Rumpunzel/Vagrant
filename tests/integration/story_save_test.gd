@@ -53,7 +53,7 @@ func test_autosaves_and_goes_on_from_there() -> void:
 	assert_int(loaded.get_how_often_decision_has_been_made(start.decisions[0])).is_equal(1)
 	assert_int(loaded.get_protagonist().get_injury_total()).is_equal(2)
 	assert_str(loaded.get_protagonist().get_actor_name()).is_equal("Tester")
-	assert_str(loaded.journal.entries.back().type as String).is_equal("enter")
+	assert_str(loaded.journal.entries.back().type).is_equal("enter")
 	# Back the way it came, and not there for the first time
 	await _choose(loaded, 0)
 	assert_object(loaded._current_story_page.adventure_page).is_same(start)
@@ -76,7 +76,8 @@ func test_no_save_without_a_run() -> void:
 	assert_bool(FileAccess.file_exists(SaveGame.get_path_of(RUN))).is_false()
 
 func _new_story() -> Story:
-	var story: Story = auto_free(load(STORY).instantiate())
+	var scene: PackedScene = load(STORY)
+	var story: Story = auto_free(scene.instantiate())
 	story._reveal_delay = 0.01
 	add_child(story)
 	return story

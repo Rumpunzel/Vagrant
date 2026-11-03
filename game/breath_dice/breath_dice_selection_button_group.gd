@@ -79,6 +79,8 @@ func get_record() -> Dictionary:
 func show_record_buttons(record: Dictionary) -> void:
 	var buttons: Array = record.buttons
 	var elements: Array[Control] = get_elements()
-	for index: int in mini(buttons.size(), elements.size()): (elements[index] as BreathDieSelectionButton).show_record(buttons[index] as Dictionary)
+	for index: int in mini(buttons.size(), elements.size()):
+		var button: Dictionary = buttons[index]
+		(elements[index] as BreathDieSelectionButton).show_record(button)
 	_all_button.active = false
 	_all_button.disabled = true

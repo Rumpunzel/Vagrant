@@ -112,36 +112,42 @@ func restore(new_adventure: Adventure, of_run: String, data: Dictionary) -> void
 	_adventure = new_adventure
 	run = of_run
 	world = StoryWorld.new(new_adventure.encounters)
-	world.restore(data.world as Dictionary)
+	var saved_world: Dictionary = data.world
+	world.restore(saved_world)
 	var protagonist_profile: CharacterProfile = new_adventure.protagonist.duplicate(true)
 	var protagonist_data: Dictionary = data.protagonist
-	Character.restore_profile(protagonist_profile, protagonist_data.profile as Dictionary)
+	var saved_profile: Dictionary = protagonist_data.profile
+	Character.restore_profile(protagonist_profile, saved_profile)
 	_protagonist = _party.create_character(protagonist_profile)
 	_protagonist.restore(protagonist_data)
 	journal.watch_actor(_protagonist)
-	_monsters.restore(data.monsters as Array)
-	_page_stack.assign(ResourceId.find_each(data.page_stack as Array))
-	_host = ResourceId.find(data.host as String) as AdventurePage
-	_location = ResourceId.find(data.location as String) as AdventureLocation
-	_encounter = ResourceId.find(data.encounter as String) as AdventureEncounter
-	_entered_area = ResourceId.find(data.entered_area as String) as AdventureArea
+	var saved_monsters: Array = data.monsters
+	_monsters.restore(saved_monsters)
+	_page_stack.assign(ResourceId.find_each_at(data, "page_stack"))
+	_host = ResourceId.find_at(data, "host") as AdventurePage
+	_location = ResourceId.find_at(data, "location") as AdventureLocation
+	_encounter = ResourceId.find_at(data, "encounter") as AdventureEncounter
+	_entered_area = ResourceId.find_at(data, "entered_area") as AdventureArea
 	_first_time_in_area = data.first_time_in_area
-	_areas_been_in.assign(ResourceId.find_each(data.areas_been_in as Array))
+	_areas_been_in.assign(ResourceId.find_each_at(data, "areas_been_in"))
 	var chances: Dictionary = data.chance_rolls
 	for id: String in chances: _chance_rolls[ResourceId.find(id) as AdventureChanceCondition] = chances[id]
-	_forced = ResourceId.find(data.forced as String) as AdventureEvent
-	_arrivals_while_forced = int(data.arrivals_while_forced)
+	_forced = ResourceId.find_at(data, "forced") as AdventureEvent
+	_arrivals_while_forced = data.arrivals_while_forced
 	var random: Dictionary = data.random
-	GameRandom.start(int(random.seed as String))
-	GameRandom.set_state(int(random.state as String))
+	var random_seed: String = random.seed
+	var random_state: String = random.state
+	GameRandom.start(random_seed.to_int())
+	GameRandom.set_state(random_state.to_int())
 	# The page is entered again (its texts as on arriving there), so its arrival is taken out of the journal
 	var entries: Array = data.journal
-	var page: AdventurePage = ResourceId.find(data.page as String) as AdventurePage
+	var page: AdventurePage = ResourceId.find_at(data, "page") as AdventurePage
 	var last: Dictionary = entries.back() if not entries.is_empty() else {}
 	if last.get("type") == "enter" and last.get("page") == data.page: entries = entries.slice(0, -1)
 	journal.restore(entries)
 	journal.load_run(of_run)
-	if _story_book != null: _story_book.restore(data.get("book", []) as Array)
+	var book: Array = data.get("book", [])
+	if _story_book != null: _story_book.restore(book)
 	_current_story_page = _create_story_page(page)
 
 func _autosave() -> void:

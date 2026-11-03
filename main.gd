@@ -33,7 +33,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		viewport.set_input_as_handled()
 		var runs: Array[String] = SaveGame.get_runs()
 		if runs.is_empty(): printerr("No saved run to continue!")
-		else: continue_run(runs.back())
+		else: continue_run(runs[-1])
 
 func enter_character_creation(protagonist: CharacterProfile) -> CharacterCreation:
 	var scene_tree: SceneTree = get_tree()
@@ -74,10 +74,11 @@ func continue_run(run: String) -> Story:
 %s" % [run, "
 ".join(problems)])
 		return null
-	var adventure: Adventure = ResourceId.find(save_game.story.adventure as String) as Adventure
+	var adventure: Adventure = ResourceId.find_at(save_game.story, "adventure") as Adventure
 	var scene_tree: SceneTree = get_tree()
 	ResourceLoader.load_threaded_request(_story_scene_path)
-	scene_tree.change_scene_to_packed(Files.load_async(_story_scene_path) as PackedScene)
+	var story_scene: PackedScene = Files.load_async(_story_scene_path)
+	scene_tree.change_scene_to_packed(story_scene)
 	await scene_tree.scene_changed
 	var story: Story = scene_tree.current_scene
 	story.restore(adventure, run, save_game.story)

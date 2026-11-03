@@ -128,7 +128,8 @@ static func label(resource: Resource) -> String:
 		return "chance %d in %d" % [chance.times, chance.out_of]
 	for property: String in ["title", "name", "descriptor"]:
 		var value: Variant = resource.get(property)
-		if value is String and not (value as String).is_empty(): return value
+		var text: String = value if value is String else ""
+		if not text.is_empty(): return text
 	# A page's description is its whole text
 	return (resource as AdventureDecision).description if resource is AdventureDecision else ""
 
@@ -144,10 +145,10 @@ func restore(saved: Array) -> void:
 	for entry: Dictionary in entries:
 		match entry.type:
 			"enter":
-				var page: AdventurePage = ResourceId.find(entry.page as String) as AdventurePage
+				var page: AdventurePage = ResourceId.find_at(entry, "page") as AdventurePage
 				if page != null: _times_entered[page] = get_times_entered(page) + 1
 			"choose":
-				var decision: AdventureDecision = ResourceId.find(entry.decision as String) as AdventureDecision
+				var decision: AdventureDecision = ResourceId.find_at(entry, "decision") as AdventureDecision
 				if decision != null: _times_made[decision] = get_times_made(decision) + 1
 
 func load_run(run: String) -> void:

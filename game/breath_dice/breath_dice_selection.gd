@@ -61,12 +61,15 @@ func get_record() -> Dictionary:
 
 ## As it was once rolled ([method get_record]), nothing to click
 func show_record(record: Dictionary) -> void:
-	_portrait.texture = ResourceId.find(record.portrait as String) as Texture2D
-	_description.set_text_normally(record.description as String)
+	_portrait.texture = ResourceId.find_at(record, "portrait") as Texture2D
+	var description: String = record.description
+	_description.set_text_normally(description)
 	_dice_log_dice_request_entry.visible = false
 	_dice_log_save_result_entry.visible = true
-	_dice_log_save_result_entry.show_text(record.result as String)
-	_breath_dice_selection_buttons.show_record(record.dice as Array)
+	var result: String = record.result
+	var dice: Array = record.dice
+	_dice_log_save_result_entry.show_text(result)
+	_breath_dice_selection_buttons.show_record(dice)
 	_disable_hud()
 	var weapons: Array = record.weapons
 	_weapon_selection.visible = not weapons.is_empty()

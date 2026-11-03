@@ -1,3 +1,4 @@
+class_name GameDebugPanel
 extends Node
 
 ## Debug builds only, F10 ("debug_panel"): a window (it pops out into one of its own, [PopoutWindow]) with what was logged (prints,
@@ -105,7 +106,8 @@ func _take_buffer() -> void:
 		var text: String = line.text
 		# Shown from the journal itself
 		if journal_line.search(text) != null: continue
-		_add(format_message(text, line.kind as LogBuffer.Kind))
+		var kind: LogBuffer.Kind = line.kind
+		_add(format_message(text, kind))
 
 ## A line, with the time it came in
 func _add(bbcode: String) -> void:
@@ -122,62 +124,62 @@ func _render_log() -> void:
 	for line: Dictionary in _lines: _append_line(line)
 
 func _append_line(line: Dictionary) -> void:
-	if not _filter.text.is_empty() and not (line.search as String).containsn(_filter.text): return
-	_log.append_text((line.bbcode as String) + "\n")
+	if not _filter.text.is_empty() and not _text(line, "search").containsn(_filter.text): return
+	_log.append_text(_text(line, "bbcode") + "\n")
 
 ## A journal entry ([StoryJournal]) with an icon, names as links, numbers bold, outcomes coloured
 static func format_entry(entry: Dictionary) -> String:
 	match entry.get("type"):
-		"start": return "%s Started %s, seed %s" % [_icon(START_ICON), _link(entry.adventure as String), _bold(str(entry.seed))]
-		"load": return "%s Loaded run %s" % [_icon(LOAD_ICON), _bold(_escaped(entry.run as String))]
-		"enter": return "%s [b]%s[/b]" % [_icon(ENTER_ICON, HEADING), _link(entry.page as String)]
-		"choose": return "%s [i]%s[/i]" % [_icon(CHOOSE_ICON, LINK), _link(entry.decision as String)]
+		"start": return "%s Started %s, seed %s" % [_icon(START_ICON), _link(_text(entry, "adventure")), _bold(str(entry.seed))]
+		"load": return "%s Loaded run %s" % [_icon(LOAD_ICON), _bold(_escaped(_text(entry, "run")))]
+		"enter": return "%s [b]%s[/b]" % [_icon(ENTER_ICON, HEADING), _link(_text(entry, "page"))]
+		"choose": return "%s [i]%s[/i]" % [_icon(CHOOSE_ICON, LINK), _link(_text(entry, "decision"))]
 		"chance":
 			var came_up: bool = entry.came_up
-			return "%s %s %s" % [_icon(Rules.d6.icon_filled), _link(entry.condition as String), _outcome("came up" if came_up else "missed", came_up)]
+			return "%s %s %s" % [_icon(Rules.d6.icon_filled), _link(_text(entry, "condition")), _outcome("came up" if came_up else "missed", came_up)]
 		"roll": return _format_roll(entry)
 		"stage":
-			return "%s %s: %s → %s" % [_icon(STAGE_ICON), _link(entry.subject as String), _escaped(entry.track as String), _bold(_escaped(entry.stage as String))]
+			return "%s %s: %s → %s" % [_icon(STAGE_ICON), _link(_text(entry, "subject")), _escaped(_text(entry, "track")), _bold(_escaped(_text(entry, "stage")))]
 		"move":
 			var places: Array[String] = []
-			for place: Variant in entry.places as Array: places.append(_link(place as String))
-			return "%s %s moves to %s" % [_icon(MOVE_ICON), _link(entry.encounter as String), ", ".join(places)]
+			for place: String in _list(entry, "places"): places.append(_link(place))
+			return "%s %s moves to %s" % [_icon(MOVE_ICON), _link(_text(entry, "encounter")), ", ".join(places)]
 		"injury":
 			return "%s %s is hurt for %s (%s in all)" % [
-				_icon(Injury.ICON, KIND_COLORS[LogBuffer.Kind.ERROR]), _actor(entry), _bold(str(int(entry.magnitude))), _bold(str(int(entry.total)))
+				_icon(Injury.ICON, KIND_COLORS[LogBuffer.Kind.ERROR]), _actor(entry), _bold(str(_number(entry, "magnitude"))), _bold(str(_number(entry, "total")))
 			]
 		"breath_lost":
 			var dice: String = ""
-			for die: Variant in entry.dice as Array: dice += _die_icon(die as String)
-			return "%s %s loses %s(%s left)" % [_icon(BREATH_ICON), _actor(entry), dice, _bold(str(int(entry.left)))]
+			for die: String in _list(entry, "dice"): dice += _die_icon(die)
+			return "%s %s loses %s(%s left)" % [_icon(BREATH_ICON), _actor(entry), dice, _bold(str(_number(entry, "left")))]
 		"breath_caught":
 			var recovered: String = ""
 			var saved: Dictionary = entry.recovered
-			for die: String in saved: for _index: int in int(saved[die]): recovered += _die_icon(die)
+			for die: String in saved: for _index: int in _number(saved, die): recovered += _die_icon(die)
 			var exhausted: String = ""
-			for die: Variant in entry.exhaustion as Array: exhausted += _die_icon(die as String, Color(0.4, 0.4, 0.4))
+			for die: String in _list(entry, "exhaustion"): exhausted += _die_icon(die, Color(0.4, 0.4, 0.4))
 			return "%s %s catches breath: %s, exhausted %s" % [_icon(CAMP_ICON), _actor(entry), recovered, exhausted]
 		"exchange": return _format_exchange(entry)
 	return _escaped(str(entry))
 
 static func _format_roll(entry: Dictionary) -> String:
-	var attribute: CharacterAttribute = ResourceId.find(entry.attribute as String) as CharacterAttribute
+	var attribute: CharacterAttribute = ResourceId.find(_text(entry, "attribute")) as CharacterAttribute
 	var faces: Array[String] = []
-	for face: Variant in entry.dice as Array: faces.append(_bold(str(int(face))))
+	for face: int in _list(entry, "dice"): faces.append(_bold(str(face)))
 	var outcome: String = entry.outcome
 	var icon: String = _icon(attribute.icon, attribute.color) + " " + _escaped(attribute.descriptor) if attribute != null else _icon(Rules.d6.icon_filled)
 	return "%s rolls %s: %s by %s, for %s" % [
-		icon, " ".join(faces), _outcome(outcome.to_lower(), outcome == "SUCCESS", outcome == "DRAW"), _bold(str(int(entry.margin))), _link(entry.decision as String)
+		icon, " ".join(faces), _outcome(outcome.to_lower(), outcome == "SUCCESS", outcome == "DRAW"), _bold(str(_number(entry, "margin"))), _link(_text(entry, "decision"))
 	]
 
 ## The exchange's result, then what was told about it below
 static func _format_exchange(entry: Dictionary) -> String:
 	var outcome: String = entry.outcome
 	var text: String = "%s Exchange %s: %s vs %s, %s" % [
-		_icon(FIGHT_ICON, HEADING), _bold(str(int(entry.number))), _bold(_escaped(entry.get("first", "") as String)),
-		_bold(_escaped(entry.get("second", "") as String)), _outcome(outcome.to_lower(), outcome == "WON", outcome != "LOST"),
+		_icon(FIGHT_ICON, HEADING), _bold(str(_number(entry, "number"))), _bold(_escaped(_text(entry, "first"))),
+		_bold(_escaped(_text(entry, "second"))), _outcome(outcome.to_lower(), outcome == "WON", outcome != "LOST"),
 	]
-	for told: Variant in entry.get("told", []) as Array: text += "\n[indent][color=#%s]%s[/color][/indent]" % [DIM.to_html(false), _escaped(told as String)]
+	for told: String in _list(entry, "told"): text += "\n[indent][color=#%s]%s[/color][/indent]" % [DIM.to_html(false), _escaped(told)]
 	return text
 
 ## A line logged by anything else: errors and warnings in their colour, the rest dim; "At: …" lines indented; paths as links
@@ -194,7 +196,7 @@ static func format_message(text: String, kind: LogBuffer.Kind) -> String:
 static func _linked(escaped: String) -> String:
 	return RegEx.create_from_string(GameDebuggerLinks.PATTERN).sub(escaped, "[url=$0][color=#%s]$0[/color][/url]" % LINK.to_html(false), true)
 
-static func _actor(entry: Dictionary) -> String: return _bold(_escaped(entry.actor as String))
+static func _actor(entry: Dictionary) -> String: return _bold(_escaped(_text(entry, "actor")))
 
 static func _outcome(text: String, good: bool, middling: bool = false) -> String:
 	var color: Color = GOOD if good else KIND_COLORS[LogBuffer.Kind.WARNING] if middling else KIND_COLORS[LogBuffer.Kind.ERROR]
@@ -221,25 +223,25 @@ func _describe_state() -> String:
 	var text: String = _heading("Story")
 	var chances: Array[String] = []
 	var saved_chances: Dictionary = save.chance_rolls
-	for id: String in saved_chances: chances.append("%s %s" % [_link(id), _yes_no(saved_chances[id] as bool)])
+	for id: String in saved_chances: chances.append("%s %s" % [_link(id), _yes_no(_flag(saved_chances, id))])
 	var way_back: Array[String] = []
-	for id: String in save.page_stack as Array: way_back.append(_link(id))
-	var area: String = _link(save.entered_area as String) + (" [color=#%s](first time)[/color]" % DIM.to_html(false) if save.first_time_in_area else "")
+	for id: String in _list(save, "page_stack"): way_back.append(_link(id))
+	var area: String = _link(_text(save, "entered_area")) + (" [color=#%s](first time)[/color]" % DIM.to_html(false) if save.first_time_in_area else "")
 	text += _table([
 		["Run", story.run if not story.run.is_empty() else _dim("not saved")],
 		["Can save", _yes_no(story.can_save())],
 		["Seed", str(random.seed)],
-		["Page", _link(save.page as String)],
-		["Location", _link(save.location as String)],
+		["Page", _link(_text(save, "page"))],
+		["Location", _link(_text(save, "location"))],
 		["Area entered", area],
-		["Host", _link(save.host as String)],
-		["Encounter", _link(save.encounter as String)],
+		["Host", _link(_text(save, "host"))],
+		["Encounter", _link(_text(save, "encounter"))],
 		["Way back", " › ".join(way_back) if not way_back.is_empty() else _dim("—")],
 		["Chances", "\n".join(chances) if not chances.is_empty() else _dim("—")],
 	])
 	text += _describe_protagonist(protagonist)
-	text += _describe_world(save.world as Dictionary)
-	text += _describe_monsters(save.monsters as Array)
+	text += _describe_world(_dict(save, "world"))
+	text += _describe_monsters(_list(save, "monsters"))
 	return text
 
 func _describe_protagonist(protagonist: Character) -> String:
@@ -263,7 +265,7 @@ func _describe_protagonist(protagonist: Character) -> String:
 	var exhausted: Array[String] = []
 	for die_type: DieType in protagonist.exhaustion: exhausted.append(str(die_type))
 	rows.append(["Exhausted", ", ".join(exhausted) if not exhausted.is_empty() else _dim("—")])
-	rows.append(["Injuries", _injuries(protagonist.get_save().injuries as Array)])
+	rows.append(["Injuries", _injuries(_list(protagonist.get_save(), "injuries"))])
 	rows.append(["Gear", _gear(protagonist)])
 	var items: Array[String] = []
 	for item: ItemProfile in protagonist.items: items.append("%s %s ×%d" % [_icon(item.icon), _escaped(item.name), protagonist.items[item]])
@@ -279,11 +281,11 @@ func _describe_world(world: Dictionary) -> String:
 	var stages: Dictionary = world.stages
 	for subject: String in stages:
 		var tracks: Dictionary = stages[subject]
-		for track: String in tracks: rows.append([_link(subject), "%s → [b]%s[/b]" % [_escaped(track), _escaped(tracks[track] as String)]])
+		for track: String in tracks: rows.append([_link(subject), "%s → [b]%s[/b]" % [_escaped(track), _escaped(_text(tracks, track))]])
 	var places: Dictionary = world.places
 	for encounter: String in places:
 		var locations: Array[String] = []
-		for location: String in places[encounter] as Array: locations.append(_link(location))
+		for location: String in _list(places, encounter): locations.append(_link(location))
 		rows.append([_link(encounter), "at " + (", ".join(locations) if not locations.is_empty() else _dim("nowhere"))])
 	return text + (_table(rows) if not rows.is_empty() else _dim("Every track at its first stage, every encounter where it starts.") + "\n")
 
@@ -297,11 +299,11 @@ func _describe_monsters(monsters: Array) -> String:
 		var saved_breath: Dictionary = state.breath_dice
 		for id: String in saved_breath:
 			var die_type: DieType = ResourceId.find(id) as DieType
-			for _index: int in int(saved_breath[id]): breath += _icon(die_type.icon_filled if die_type != null else null) + " "
+			for _index: int in _number(saved_breath, id): breath += _icon(die_type.icon_filled if die_type != null else null) + " "
 		var status: String = "[color=#%s]dead[/color]" % KIND_COLORS[LogBuffer.Kind.ERROR].to_html(false) if state.dead \
 			else "[color=#%s]beaten[/color]" % KIND_COLORS[LogBuffer.Kind.WARNING].to_html(false) if state.incapacitated else "can fight"
-		var where: String = _link(monster.owner as String) + (" at " + _link(monster.location as String) if not (monster.location as String).is_empty() else "")
-		rows.append(["%s #%d" % [_link(monster.profile as String), int(monster.index)], "%s\n%s %s\n%s" % [where, breath, _injuries(state.injuries as Array), status]])
+		var where: String = _link(_text(monster, "owner")) + (" at " + _link(_text(monster, "location")) if not _text(monster, "location").is_empty() else "")
+		rows.append(["%s #%d" % [_link(_text(monster, "profile")), _number(monster, "index")], "%s\n%s %s\n%s" % [where, breath, _injuries(_list(state, "injuries")), status]])
 	return text + _table(rows)
 
 func _gear(actor: Actor) -> String:
@@ -321,7 +323,7 @@ func _gear(actor: Actor) -> String:
 static func _injuries(magnitudes: Array) -> String:
 	if magnitudes.is_empty(): return _dim("unhurt")
 	var icons: Array[String] = []
-	for magnitude: Variant in magnitudes: icons.append(Injury.to_bbcode(int(magnitude), ICON_SIZE))
+	for magnitude: int in magnitudes: icons.append(Injury.to_bbcode(magnitude, ICON_SIZE))
 	return " ".join(icons)
 
 static func _heading(title: String) -> String:
@@ -359,6 +361,27 @@ static func _label(resource: Resource) -> String:
 	return path.get_file().get_basename() if not path.contains(ResourceId.SEPARATOR) else path.get_slice(ResourceId.SEPARATOR, 1)
 
 static func _escaped(text: String) -> String: return text.replace("[", "[lb]")
+
+## Typed reads of saved data (JSON: untyped, numbers are floats)
+static func _text(data: Dictionary, key: Variant) -> String:
+	var text: String = data.get(key, "")
+	return text
+
+static func _number(data: Dictionary, key: Variant) -> int:
+	var number: int = data.get(key, 0)
+	return number
+
+static func _flag(data: Dictionary, key: Variant) -> bool:
+	var flag: bool = data.get(key, false)
+	return flag
+
+static func _list(data: Dictionary, key: Variant) -> Array:
+	var list: Array = data.get(key, [])
+	return list
+
+static func _dict(data: Dictionary, key: Variant) -> Dictionary:
+	var table: Dictionary = data.get(key, {})
+	return table
 
 #endregion
 

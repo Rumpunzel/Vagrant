@@ -22,7 +22,7 @@ func test_entries_are_plain_values() -> void:
 	_journal.start(Adventure.new(), 42)
 	_journal.enter(AdventurePage.new())
 	var json: String = JSON.stringify(_journal.entries)
-	assert_array(JSON.parse_string(json) as Array).has_size(2)
+	assert_array(JSON.parse_string(json)).has_size(2)
 	assert_dict(_journal.entries[0]).is_equal({type = "start", adventure = "", seed = 42})
 
 func test_watches_the_world() -> void:
@@ -44,7 +44,8 @@ func test_story_writes_chance_once_per_arrival() -> void:
 	assert_dict(story.journal.entries[0]).contains_key_value("came_up", true)
 
 func test_watches_actors_once() -> void:
-	var character: Character = auto_free(load("uid://bl0pdxri24fnh").instantiate())  # character.tscn
+	var scene: PackedScene = load("uid://bl0pdxri24fnh")  # character.tscn
+	var character: Character = auto_free(scene.instantiate())
 	add_child(character)
 	character.character_profile = TestCharacters.adventurer()
 	_journal.watch_actor(character)

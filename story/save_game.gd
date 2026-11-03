@@ -49,7 +49,8 @@ static func read(of_run: String) -> SaveGame:
 	save_game.run = of_run
 	save_game.saved_at = data.get("saved_at", "")
 	save_game.story = data.get("story", {})
-	if int(data.get("version", 0)) != VERSION: save_game.story = {}
+	var version: int = data.get("version", 0)
+	if version != VERSION: save_game.story = {}
 	return save_game
 
 ## Why it can't be loaded (each ID that is gone), or nothing
@@ -68,7 +69,8 @@ static func _find_ids(value: Variant) -> Array[String]:
 		var text: String = value
 		if text.begins_with("uid://") or text.begins_with("res://") or text.begins_with("user://"): ids.append(text)
 	elif value is Array:
-		for item: Variant in value as Array: ids.append_array(_find_ids(item))
+		var items: Array = value
+		for item: Variant in items: ids.append_array(_find_ids(item))
 	elif value is Dictionary:
 		var dictionary: Dictionary = value
 		for key: Variant in dictionary:
