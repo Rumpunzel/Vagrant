@@ -141,6 +141,7 @@ func restore(new_adventure: Adventure, of_run: String, data: Dictionary) -> void
 	if last.get("type") == "enter" and last.get("page") == data.page: entries = entries.slice(0, -1)
 	journal.restore(entries)
 	journal.load_run(of_run)
+	if _story_book != null: _story_book.restore(data.get("book", []) as Array)
 	_current_story_page = _create_story_page(page)
 
 func _autosave() -> void:
@@ -239,6 +240,7 @@ func get_save() -> Dictionary:
 		world = world.get_save(),
 		protagonist = _protagonist.get_save(),
 		monsters = _monsters.get_save(),
+		book = _story_book.get_save() if _story_book != null else [],
 		page = ResourceId.of(_current_story_page.adventure_page),
 		page_stack = ResourceId.of_each(_page_stack),
 		host = ResourceId.of(_host),
@@ -467,6 +469,7 @@ func _ask_to_commit(fight: Fight, step: CommitStep, fight_result: FightResult, s
 	panel.setup(fight, step)
 	panel.committed.connect(func(weapon_die: Die, raises_shield: bool) -> void:
 		panel.queue_free()
+		_story_book.show_pick(_describe_commit(fight, step, weapon_die, raises_shield))
 		fight.resolve_player_choice(func(player: FightSide) -> void:
 			if step.has_weapon_choice(fight):
 				player.chosen_weapon_die = weapon_die
@@ -494,6 +497,13 @@ func _ask_for_armor(fight: Fight, step: ArmorStep, fight_result: FightResult, st
 	for option: ArmorPick in ArmorPick.get_options(_protagonist.armor, blocked_die.result):
 		choices.append(_create_pending_choice(_describe_armor_pick(option, blocked_die.result), resume.bind(option)))
 	_show_fight_decision_page(fight, "Your armour catches %s %d." % [step.get_foe_owner(fight), blocked_die.result], choices)
+
+## What was committed to on the panel ([method _ask_to_commit]), for the page to keep in its place
+func _describe_commit(fight: Fight, step: CommitStep, weapon_die: Die, raises_shield: bool) -> String:
+	var picks: Array[String] = []
+	if step.has_weapon_choice(fight): picks.append("You strike with your %s (%d)." % [weapon_die.die_type, weapon_die.result] if weapon_die != null else "You hold back.")
+	if step.has_shield_choice(fight): picks.append("You raise your shield." if raises_shield else "You keep your shield down.")
+	return " ".join(picks)
 
 func _describe_armor_pick(option: ArmorPick, result: int) -> String:
 	var piece: String = option.piece.get_equipment_name()

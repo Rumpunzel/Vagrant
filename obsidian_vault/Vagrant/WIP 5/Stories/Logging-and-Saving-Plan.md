@@ -15,6 +15,23 @@ list of the runtime state and a stable way to name content (pages, decisions, mo
 - **Seeded RNG now**: one RNG for dice and chance rolls, its seed and state in the save and the log. Cosmetic randomness (roll sounds) stays
   on the global one, so it doesn't shift game results.
 
+## Story book history
+Decided (user, 2026-11-03): the book keeps the last **5** entries when a new page is entered; scrolling up just loads older ones (5 at a
+time, nothing trimmed while browsing); entering a new page trims back to 5. Old entries are an **exact reconstruction**, from data.
+- **The book records what it is told** (option B): a `PageRecord` (`game/story_book/page_record.gd`) per page: title, text and choice
+  texts **as shown** (they depend on the state back then; recomputing would need that state), choice icon (id), colour, which was taken,
+  backgrounds (ids), injuries shown, what was picked mid-exchange, the outcome typed. `StoryBook` fills it as `Story` calls it and keeps
+  every left page's record (`_records`); `StoryEntry.show_record` builds a past entry from one (no typing, no fading; `DialogButton.show_record`).
+- **Mid-fight panels** stay as they are while open; once committed, the page shows (and keeps) what was picked instead (`show_pick`,
+  `Story._describe_commit`). The user reworks the fight panels later.
+- **Dice** (option (i), to build): the dice widgets (`BreathDiceSelection`, its buttons, the dice log entries) record what they show as
+  data (portrait, request text, chosen breath dice, each die's type, face and colour as shown, weapon / stance / Nerves target picks, the
+  result line) and get a second way in to show such a record; the live entry produces its record from the same values. (ii), rebuilding
+  the request/result objects from character snapshots, was dropped: fights would need the monster and the exchange too.
+- **Saved** with the run (`Story.get_save().book`, the pages before the current one); a loaded run shows its last pages again.
+- **Scrolling**: at the top (scroll bar reaching 0, or the wheel turned up when it can't scroll) `show_older_pages` adds older entries
+  above; `AutoScrollContainer.shift_vertical` keeps what was in view where it was.
+
 ## Where state lives now
 | Owner | State | Notes |
 |---|---|---|
@@ -136,3 +153,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: debug panel (F10): Log tab from a `Logger` (`LogBuffer`), State tab from `Story.get_save`. `StoryJournal.describe` public. Tests: `debug_panel_test.gd`.
 - 2026-11-03: debug panel v2: `PopoutWindow`, coloured log, links that open in the editor (`game_debugger` addon), State tab in sections with icons; `StoryJournal.label` names content for both. Checked by recording frames (`--write-movie`); the editor links not yet by hand.
 - 2026-11-03: debug panel log v2: journal entries drawn from their data (icons, links, bold numbers, coloured outcomes) instead of the "story" text lines, which told nothing a line couldn't show better; `StoryJournal.written`, `LOG_CATEGORY`, `to_plain_text`.
+- 2026-11-03: story book history, stage 1: `PageRecord`, `StoryBook` keeps 5 entries, builds older ones on scrolling up, saves and restores them; commit panel leaves its pick. Dice records still to do. Tests: `story_book_history_test.gd` (3).

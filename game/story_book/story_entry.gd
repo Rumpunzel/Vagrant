@@ -54,6 +54,36 @@ func show_outcome(outcome: String) -> void:
 func is_outcome_typed() -> bool: return _outcome.visible_ratio >= 1.0
 func get_outcome_typed() -> Signal: return _outcome.finished_typing
 
+## Shows what was picked in the middle of an exchange, above the outcome (in place of the panel it was picked on)
+func show_pick(pick: String) -> void:
+	# Looks like the outcome, without typing
+	var label: TypingLabel = _outcome.duplicate(DUPLICATE_SCRIPTS) as TypingLabel
+	_outcome.add_sibling(label)
+	_outcome.get_parent().move_child(label, _outcome.get_index())
+	label.visible = true
+	label.set_text_normally(pick)
+
+## Built again from what it showed, as a past page: no typing, no fading, nothing to click
+func show_record(record: PageRecord) -> void:
+	_page_background = record.get_background()
+	_area_background = record.get_area_background()
+	if record.title.is_empty(): _title.visible = false
+	else: _title.set_text_normally(record.title)
+	_description.set_text_normally(record.description)
+	_choices.clear()
+	for choice: Dictionary in record.choices:
+		var dialog_button: DialogButton = _dialog_button.instantiate()
+		_choices.add(dialog_button)
+		dialog_button.show_record(choice)
+	for injury: Dictionary in record.injuries: show_injury(injury.target as String, int(injury.magnitude))
+	for pick: String in record.picks: show_pick(pick)
+	if not record.outcome.is_empty():
+		_outcome.visible = true
+		_outcome.set_text_normally(record.outcome)
+	_fade_out_delay = 0.0
+	_fade_out_duration = 0.0
+	state = State.PAST
+
 func display_dice_result(dice_result: DiceRequestResult) -> void:
 	_breath_dice_selection.display_dice_result(dice_result)
 

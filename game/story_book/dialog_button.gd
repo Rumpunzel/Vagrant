@@ -13,9 +13,10 @@ extends FancyButton
 				_set_index()
 			StoryEntry.State.PAST:
 				deactivate()
-				disabled = not _story_choice.is_chosen()
-				if _story_choice.is_chosen(): set(&"icon", _chosen_icon)
-				else: _story_choice.discard()
+				var chosen: bool = _story_choice.is_chosen() if _story_choice else _recorded_chosen
+				disabled = not chosen
+				if chosen: set(&"icon", _chosen_icon)
+				elif _story_choice: _story_choice.discard()
 				release_focus()
 				_update_style()
 			_: assert(false, "Does not exist")
@@ -40,6 +41,9 @@ var _story_choice: StoryChoice:
 		_update_availability()
 		_story_choice.availability_changed.connect(_update_availability)
 
+## Built from a [PageRecord]: whether it was the one taken
+var _recorded_chosen: bool = false
+
 func _ready() -> void:
 	_set_index()
 	var index: int = get_index()
@@ -49,6 +53,18 @@ func _ready() -> void:
 func setup(story_choice: StoryChoice, dialog_button_group: ButtonGroup) -> void:
 	_story_choice = story_choice
 	button_group = dialog_button_group
+
+## As it was on a past page ([PageRecord]): its text and icon, and whether it was taken
+func show_record(choice: Dictionary) -> void:
+	var description: String = choice.description
+	set(&"text", description)
+	name = description.validate_node_name()
+	set(&"icon", ResourceId.find(choice.icon as String) as Texture2D)
+	set_icon_colors(Color.from_string(choice.color as String, Color.WHITE))
+	_recorded_chosen = choice.chosen
+	modulate.a = 1.0
+	show()
+	state = StoryEntry.State.PAST
 
 func _update_icon() -> void:
 	set(&"icon", _story_choice.get_icon())

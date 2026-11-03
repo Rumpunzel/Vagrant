@@ -32,6 +32,11 @@ func scroll_vertical_to_end() -> void:
 	await get_tree().process_frame
 	scroll_vertical = int(get_v_scroll_bar().max_value)
 
+## Moves what is in view by [param by] (content added above it), without scrolling down to it again
+func shift_vertical(by: float) -> void:
+	scroll_vertical += int(by)
+	_has_scrolled_vertically_to += by
+
 func reset_scroll_tracking() -> void:
 	_has_scrolled_horizontally_to = 0.0
 	_has_scrolled_vertically_to = 0.0
