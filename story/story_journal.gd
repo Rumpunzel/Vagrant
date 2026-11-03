@@ -90,3 +90,6 @@ func restore(saved: Array) -> void:
 			"choose":
 				var decision: AdventureDecision = ResourceId.find(entry.decision as String) as AdventureDecision
 				if decision != null: _times_made[decision] = get_times_made(decision) + 1
+
+func load_run(run: String) -> void:
+	_write({type = "load", run = run}, "loaded run %s" % run)

@@ -55,5 +55,24 @@ func _enter_story(adventure: Adventure, protagonist: CharacterProfile, page: Adv
 	await scene_tree.scene_changed
 	assert(scene_tree.current_scene is Story)
 	var story: Story = scene_tree.current_scene
+	story.run = SaveGame.start_run()
 	story.start_adventure(adventure, protagonist, page, host, forced)
+	return story
+
+## Goes on with a saved run; null if it can't be loaded (the reasons are logged)
+func continue_run(run: String) -> Story:
+	var save_game: SaveGame = SaveGame.read(run)
+	var problems: Array[String] = save_game.get_problems() if save_game != null else ["No such save."] as Array[String]
+	if not problems.is_empty():
+		push_warning("Run %s can't be loaded:
+%s" % [run, "
+".join(problems)])
+		return null
+	var adventure: Adventure = ResourceId.find(save_game.story.adventure as String) as Adventure
+	var scene_tree: SceneTree = get_tree()
+	ResourceLoader.load_threaded_request(_story_scene_path)
+	scene_tree.change_scene_to_packed(Files.load_async(_story_scene_path) as PackedScene)
+	await scene_tree.scene_changed
+	var story: Story = scene_tree.current_scene
+	story.restore(adventure, run, save_game.story)
 	return story

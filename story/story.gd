@@ -23,6 +23,8 @@ var world: StoryWorld:
 	set(new_world):
 		world = new_world
 		journal.watch(world)
+## The save slot autosaved to whenever the story can be saved ([SaveGame]); none: not saved (tests, unless they set one)
+var run: String = ""
 ## Rolls a chance; tests put a fixed result in
 var chance_roller: Callable = func(condition: AdventureChanceCondition) -> bool: return GameRandom.chance(condition.times, condition.out_of)
 
@@ -75,6 +77,8 @@ var _current_story_page: StoryPage:
 			return
 		_story_book.enter_story_page(_current_story_page)
 		story_page_entered.emit(_current_story_page)
+		# Deferred: the event entering the page is still running
+		_autosave.call_deferred()
 
 var _current_dice_request: DiceRequest :
 	set(new_current_dice_request):
@@ -100,6 +104,48 @@ var _forced: AdventureEvent
 var _arrivals_while_forced: int = 0
 
 func _init() -> void: world = StoryWorld.new()
+
+## Goes on with a saved run ([method get_save]) of [param new_adventure], on the page it was saved on; the adventure must have
+## everything the save names ([method SaveGame.get_problems])
+func restore(new_adventure: Adventure, of_run: String, data: Dictionary) -> void:
+	assert(new_adventure)
+	_adventure = new_adventure
+	run = of_run
+	world = StoryWorld.new(new_adventure.encounters)
+	world.restore(data.world as Dictionary)
+	var protagonist_profile: CharacterProfile = new_adventure.protagonist.duplicate(true)
+	var protagonist_data: Dictionary = data.protagonist
+	Character.restore_profile(protagonist_profile, protagonist_data.profile as Dictionary)
+	_protagonist = _party.create_character(protagonist_profile)
+	_protagonist.restore(protagonist_data)
+	_monsters.restore(data.monsters as Array)
+	_page_stack.assign(ResourceId.find_each(data.page_stack as Array))
+	_host = ResourceId.find(data.host as String) as AdventurePage
+	_location = ResourceId.find(data.location as String) as AdventureLocation
+	_encounter = ResourceId.find(data.encounter as String) as AdventureEncounter
+	_entered_area = ResourceId.find(data.entered_area as String) as AdventureArea
+	_first_time_in_area = data.first_time_in_area
+	_areas_been_in.assign(ResourceId.find_each(data.areas_been_in as Array))
+	var chances: Dictionary = data.chance_rolls
+	for id: String in chances: _chance_rolls[ResourceId.find(id) as AdventureChanceCondition] = chances[id]
+	_forced = ResourceId.find(data.forced as String) as AdventureEvent
+	_arrivals_while_forced = int(data.arrivals_while_forced)
+	var random: Dictionary = data.random
+	GameRandom.start(int(random.seed as String))
+	GameRandom.set_state(int(random.state as String))
+	# The page is entered again (its texts as on arriving there), so its arrival is taken out of the journal
+	var entries: Array = data.journal
+	var page: AdventurePage = ResourceId.find(data.page as String) as AdventurePage
+	var last: Dictionary = entries.back() if not entries.is_empty() else {}
+	if last.get("type") == "enter" and last.get("page") == data.page: entries = entries.slice(0, -1)
+	journal.restore(entries)
+	journal.load_run(of_run)
+	_current_story_page = _create_story_page(page)
+
+func _autosave() -> void:
+	if run.is_empty() or not can_save(): return
+	var error: Error = SaveGame.capture(run, self).write()
+	if error != OK: push_error("Autosave of %s failed: %s" % [run, error_string(error)])
 
 ## [param page]: start there instead of the starting page; [param host]: the page its event is on, entered first so going back and host links work
 ## [param forced]: an event played from in the adventure editor, shown on the first arrival whatever its conditions

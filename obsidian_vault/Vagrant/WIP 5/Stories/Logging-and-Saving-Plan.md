@@ -1,6 +1,6 @@
 # Logging and Saving — Plan
 
-Status (2026-11-03): design chosen (option C); steps 1–5 (`ResourceId`, `GameRandom`, `GameLog`, `StoryJournal`, save data + `SaveGame`) built, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
+Status (2026-11-03): design chosen (option C); steps 1–6 built (`ResourceId`, `GameRandom`, `GameLog`, `StoryJournal`, save data + `SaveGame`, loading + autosave); no UI to continue a run yet, on branch `feature/logging-and-saving`. "Decisions" holds what is settled, "Open" what isn't; the log at the end has the history.
 Goal: (1) a log of what happens in a story, for debugging; (2) saving and loading a game in progress. Both need the same thing: a clear
 list of the runtime state and a stable way to name content (pages, decisions, monsters) outside the running game.
 
@@ -75,8 +75,13 @@ there. − Two mechanisms, but each simple.
   `user://saves/<run>.json` with a format `VERSION`; `get_problems()` lists every id that no longer resolves (or "another version").
 - **Safe points / autosave**: when a page is shown with nothing queued and no fight ongoing. The snapshot holds the shown page's state
   (incl. this arrival's chance rolls), so rebuilding the page on load gives the same page.
-- **Loading**: `Main.load_game()` → load scene → `Story.restore(save)`, which rebuilds owners, then enters the top page without running its
-  arrival again (no new chance rolls, no visit counted twice).
+- **Autosave**: `Story.run` names the slot (`Main` gives each new story one, `SaveGame.start_run()`: the start time; empty in tests);
+  each page entered queues `_autosave` deferred (the event entering it is still running), which saves if `can_save()`.
+- **Loading**: `Main.continue_run(run)` reads the save, refuses (warning with the reasons, returns null) if `get_problems()` finds any,
+  else loads the Story scene and calls `Story.restore(adventure, run, data)`: world, protagonist (a copy of the adventure's protagonist
+  with what creation chose put back), monsters, Story's own state, then `GameRandom`'s seed and state (after the character is made,
+  since handing out gear may roll). The saved page is entered again, so its texts are as on arrival: the journal is restored without
+  its last entry (that arrival), a `load` entry is added, entering adds the arrival back. Chance rolls are restored, so nothing rerolls.
 - **Randomness**: `GameRandom` (`dice/game_random.gd`, static, no dependencies — `DieType` is preloaded by `Rules`, so the `DiceRoller`
   autoload couldn't own it): one `RandomNumberGenerator` for `DieType.roll`, `Story.chance_roller` and `MarkRandomFacesModifier`.
   `Story.start_adventure` starts a new sequence; seed in the journal, `state` in the save. Character creation rolls before that (its
@@ -87,6 +92,8 @@ there. − Two mechanisms, but each simple.
 - Journal: also breath / injuries / exhaustion (from `Actor` / `Character` signals)? Not needed for saving (snapshots cover them); only for the log.
 - Runtime-made resources in saved places have an empty id and come back as null; fine for real content (all files), checked by step 6's test.
 - Where the run list lives (main scene has no title screen yet).
+- "Play from here" and the debug restart (Escape) start new runs, so they make slots too: skip saving for "Play from here"?
+- `Main.continue_run` is not tested end to end (scene change); check by hand with step 7's UI.
 - Delete old runs from the list?
 
 ## Steps
@@ -95,7 +102,7 @@ there. − Two mechanisms, but each simple.
 3. ~~`GameLog` (debug builds; Godot's file logging writes it to disk).~~ Done.
 4. ~~`StoryJournal`; `Story` writes entries; visit/decision counts from it.~~ Done.
 5. ~~Snapshots per owner + `SaveGame` (version, adventure id, RNG, journal); round-trip unit tests per owner; refusing unknown ids.~~ Done.
-6. `Story.restore` + `Main.load_game`; autosave at safe points to the run's slot. Integration test: save on a page, load, same page and state.
+6. ~~`Story.restore` + `Main.continue_run`; autosave at safe points to the run's slot.~~ Done. Test: `tests/integration/story_save_test.gd`.
 7. UI: list of runs, continue / new run.
 8. Later: saving in fights, debug panel.
 
@@ -107,3 +114,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: step 3: `GameLog.write` (static, prints; Godot's own `user://logs` files hold it); story start logs adventure + seed.
 - 2026-11-03: step 4: `StoryJournal` replaces `_page_log` / `_decision_log`; entries for start, enter, choose, roll, chance, stage, move, exchange, each logged. `StoryWorld` signals. Tests: `story_journal_test.gd`; tests that filled `_page_log` use `journal.enter`.
 - 2026-11-03: step 5: `get_save` / `restore` on `Actor`, `Character` (+ `restore_profile`), `Monster`, `Monsters`, `StoryWorld`, `StoryJournal`; `Story.get_save` / `can_save`; `EventQueue.is_idle`; `SaveGame`; `ResourceId.of_each` / `find_each`. Tests: `save_state_test.gd`.
+- 2026-11-03: step 6: `Story.run`, autosave on each page (deferred, if `can_save`), `Story.restore`, `Main.continue_run` (refuses on problems), journal `load` entry. Tests: `story_save_test.gd` (go on from the save: page, way back, counts, character, random numbers).
