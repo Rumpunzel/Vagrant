@@ -166,3 +166,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: loading is lenient about history: `SaveGame.HISTORY` (journal, book) isn't checked; the journal skips entries naming gone content, the book shows what is left.
 - 2026-11-03: `ResourceId.find` indexes a file's inner resources once (by the loaded file, weak references; a miss indexes again, for files edited since): loading a long run no longer walks the adventure files thousands of times.
 - 2026-11-03: `Story.start_adventure` and `Story.restore` share `_begin` (adventure, world, protagonist, journal watching); starting sets the seed before it (gear may roll), restoring sets the saved random state after.
+- 2026-11-03: rebuilt book entries turn past with `PageEntry.become_past(true)` (no fade) instead of overwriting the fade exports.

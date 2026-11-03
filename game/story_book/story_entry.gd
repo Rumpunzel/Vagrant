@@ -88,9 +88,7 @@ func show_record(record: PageRecord) -> void:
 	if not record.outcome.is_empty():
 		_outcome.visible = true
 		_outcome.set_text_normally(record.outcome)
-	_fade_out_delay = 0.0
-	_fade_out_duration = 0.0
-	state = State.PAST
+	become_past(true)
 
 ## What the dice showed once rolled ([PageRecord]); empty if nothing was rolled here
 func get_dice_record() -> Dictionary: return _breath_dice_selection.get_record()
