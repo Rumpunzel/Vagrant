@@ -112,18 +112,15 @@ func _exit_tree() -> void: SaveGame.wait_for_writes()
 ## everything the save names ([method SaveGame.get_problems])
 func restore(new_adventure: Adventure, of_run: String, data: Dictionary) -> void:
 	assert(new_adventure)
-	_adventure = new_adventure
 	run = of_run
-	world = StoryWorld.new(new_adventure.encounters)
-	var saved_world: Dictionary = data.world
-	world.restore(saved_world)
 	var protagonist_profile: CharacterProfile = new_adventure.protagonist.duplicate(true)
 	var protagonist_data: Dictionary = data.protagonist
 	var saved_profile: Dictionary = protagonist_data.profile
 	Character.restore_profile(protagonist_profile, saved_profile)
-	_protagonist = _party.create_character(protagonist_profile)
+	_begin(new_adventure, protagonist_profile)
+	var saved_world: Dictionary = data.world
+	world.restore(saved_world)
 	_protagonist.restore(protagonist_data)
-	journal.watch_actor(_protagonist)
 	var saved_monsters: Array = data.monsters
 	_monsters.restore(saved_monsters)
 	_page_stack.assign(ResourceId.find_each_at(data, "page_stack"))
@@ -163,12 +160,10 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	assert(new_adventure)
 	assert(protagonist_profile)
 	assert(protagonist_profile.is_valid())
-	_adventure = new_adventure
+	# Before the protagonist: handing out gear may roll (marked faces)
 	GameRandom.start()
+	_begin(new_adventure, protagonist_profile)
 	journal.start(new_adventure, GameRandom.get_seed())
-	world = StoryWorld.new(new_adventure.encounters)
-	_protagonist = _party.create_character(protagonist_profile)
-	journal.watch_actor(_protagonist)
 	_forced = forced
 	if host != null and host != page:
 		enter_page(host)
@@ -188,6 +183,13 @@ func enter_page(adventure_page: AdventurePage) -> void:
 	_current_story_page = _create_story_page(adventure_page) if adventure_page else null
 
 func get_location() -> AdventureLocation: return _location
+
+## What starting a run and going on with a saved one share: the adventure, its world, the protagonist (watched by the journal)
+func _begin(new_adventure: Adventure, protagonist_profile: CharacterProfile) -> void:
+	_adventure = new_adventure
+	world = StoryWorld.new(new_adventure.encounters)
+	_protagonist = _party.create_character(protagonist_profile)
+	journal.watch_actor(_protagonist)
 
 ## The text of the area just entered on arriving at [param location] ([member AdventureArea.description], its first-time text the first time),
 ## as a paragraph; empty if no area was entered
