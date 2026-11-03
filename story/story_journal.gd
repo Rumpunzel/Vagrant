@@ -124,7 +124,7 @@ static func describe(resource: Resource) -> String:
 static func label(resource: Resource) -> String:
 	if resource is AdventureChanceCondition:
 		var chance_condition: AdventureChanceCondition = resource
-		return "chance_condition %d in %d" % [chance_condition.times, chance_condition.out_of]
+		return "chance %d in %d" % [chance_condition.times, chance_condition.out_of]
 	for property: String in ["title", "name", "descriptor"]:
 		var value: Variant = resource.get(property)
 		var text: String = value if value is String else ""
