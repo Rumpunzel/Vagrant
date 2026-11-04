@@ -98,30 +98,36 @@ func _add_pages(origin: Vector2) -> int:
 			if not target_key.is_empty(): connect_node(_nodes[_key(page)].name, port, _nodes[target_key].name, 0)
 	return column_count + 1
 
-## How the page reads with this event, top to bottom: the area's text, the location's, other events', its own; then the decisions. What its
-## text and decisions layering hides is crossed out; clicking a row shows or hides it (one undo step)
-func _make_page_preview() -> VBoxContainer:
-	var rows: VBoxContainer = VBoxContainer.new()
-	rows.add_theme_constant_override(&"separation", 0)
+## How the page reads with this event, on one line: its text and its decisions each add to the page, replace the location's or are the only
+## ones (click: the next), and whether one may rest there (click: switch); each tooltip lists what is shown and hidden (one undo step a click)
+func _make_page_preview() -> HFlowContainer:
+	var line: HFlowContainer = HFlowContainer.new()
+	line.add_child(_make_info("On the page:"))
 	var place: String = AdventureGraph.get_title(_host) if _host is AdventureLocation else "The location"
-	var text: AdventureEvent.Layering = _event.text_layering
-	var choices: AdventureEvent.Layering = _event.decisions_layering
-	rows.add_child(_make_preview_row("The area's text", text == AdventureEvent.Layering.ONLY_THIS, &"text_layering", _toggled_only(text)))
-	rows.add_child(_make_preview_row("%s's text" % place, text != AdventureEvent.Layering.ADDS, &"text_layering", _toggled_location(text)))
-	rows.add_child(_make_preview_row("Other events' text", text == AdventureEvent.Layering.ONLY_THIS, &"text_layering", _toggled_only(text)))
-	rows.add_child(_make_preview_row("▶ Its text", false, &"", 0))
-	rows.add_child(_make_preview_row("%s's decisions" % place, choices != AdventureEvent.Layering.ADDS, &"decisions_layering", _toggled_location(choices)))
-	rows.add_child(_make_preview_row("Other events' decisions", choices == AdventureEvent.Layering.ONLY_THIS, &"decisions_layering", _toggled_only(choices)))
-	rows.add_child(_make_preview_row("▶ Its decisions", false, &"", 0))
-	return rows
+	line.add_child(_make_layering_chip(&"text_layering", "Text", ["The area's text", "%s's text" % place, "Other events' text"], place))
+	line.add_child(_make_layering_chip(&"decisions_layering", "Decisions", ["", "%s's decisions" % place, "Other events' decisions"], place))
+	var rest: Button = _make_rest_row(_event)
+	rest.text = "Rest: %s" % ("no" if _event.no_rest else "yes")
+	line.add_child(rest)
+	return line
 
-## Another event's or the area's part: shown with this one, or only this one
-static func _toggled_only(layering: AdventureEvent.Layering) -> AdventureEvent.Layering:
-	return AdventureEvent.Layering.ADDS if layering == AdventureEvent.Layering.ONLY_THIS else AdventureEvent.Layering.ONLY_THIS
-
-## The location's part: shown, or replaced by this one
-static func _toggled_location(layering: AdventureEvent.Layering) -> AdventureEvent.Layering:
-	return AdventureEvent.Layering.REPLACES_LOCATION if layering == AdventureEvent.Layering.ADDS else AdventureEvent.Layering.ADDS
+## [param parts]: the area's (none for decisions), the location's and the other events' part, which the layering keeps or hides
+func _make_layering_chip(property: StringName, what: String, parts: Array[String], place: String) -> Button:
+	var layering: AdventureEvent.Layering = _event.get(property)
+	var names: Array[String] = ["adds", "replaces %s's" % place, "only its own"]
+	var chip: Button = Button.new()
+	chip.flat = true
+	chip.text = "%s: %s" % [what, names[layering]]
+	chip.modulate = Color.WHITE if layering == AdventureEvent.Layering.ADDS else PICKED_COLOR
+	var shown: Array[bool] = [layering != AdventureEvent.Layering.ONLY_THIS, layering == AdventureEvent.Layering.ADDS, layering != AdventureEvent.Layering.ONLY_THIS]
+	var rows: Array[String] = [ ]
+	for index: int in parts.size(): if not parts[index].is_empty(): rows.append(("✓ " if shown[index] else "✕ ") + parts[index])
+	rows.append("▶ Its %s" % what.to_lower())
+	var next: AdventureEvent.Layering = ((layering + 1) % names.size()) as AdventureEvent.Layering
+	rows.append("Click: %s" % names[next])
+	chip.tooltip_text = "\n".join(rows)
+	chip.pressed.connect(_request.bind(_event, property, next, "%s: %s %s" % [AdventureGraph.get_title(_event), what.to_lower(), names[next]], _file_for(null, _event)))
+	return chip
 
 ## Whether the party may catch its breath and make camp while [param page] shows; clicking toggles it (one undo step)
 func _make_rest_row(page: AdventurePage) -> Button:
@@ -133,22 +139,6 @@ func _make_rest_row(page: AdventurePage) -> Button:
 	row.tooltip_text = "No rest here; click to allow it" if page.no_rest else "Resting is allowed; click to forbid it"
 	var action: String = "%s: %s" % [AdventureGraph.get_title(page), "rest allowed" if page.no_rest else "no rest here"]
 	row.pressed.connect(_request.bind(page, &"no_rest", not page.no_rest, action, _file_for(null, page)))
-	return row
-
-## [param property] empty: its own part, always there
-func _make_preview_row(text: String, hidden: bool, property: StringName, toggled: AdventureEvent.Layering) -> Button:
-	var row: Button = Button.new()
-	row.flat = true
-	row.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	row.text = ("✕ " if hidden else "✓ ") + text
-	row.modulate = FADED if hidden else (PICKED_COLOR if property.is_empty() else Color.WHITE)
-	if property.is_empty():
-		row.disabled = true
-		return row
-	row.tooltip_text = "Hidden by this event; click to show it" if hidden else "Shown with this event; click to hide it"
-	var names: Array[String] = ["adds", "replaces the location's", "only this"]
-	var what: String = "text" if property == &"text_layering" else "decisions"
-	row.pressed.connect(_request.bind(_event, property, toggled, "%s: %s %s" % [AdventureGraph.get_title(_event), what, names[toggled]], _file_for(null, _event)))
 	return row
 
 ## Its height and view on the event screen go too, so it fits its nodes again
@@ -187,9 +177,8 @@ func _add_page(page: AdventurePage, at: Vector2) -> GraphNode:
 	if page == _event:
 		content.add_child(_make_info("When:"))
 		content.add_child(_make_condition_tags(_event, _file_for(null, page)))
-		content.add_child(_make_info("On the page:"))
 		content.add_child(_make_page_preview())
-	if page == _event or page.no_rest: content.add_child(_make_rest_row(page))
+	elif page.no_rest: content.add_child(_make_rest_row(page))
 	var node: GraphNode = _add_node(_key(page), page, AdventureGraph.get_title(page), content, at)
 	node.set_slot(0, page != _event, 0, Color.WHITE, false, 0, Color.WHITE)
 	var outlets: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outlets(page)

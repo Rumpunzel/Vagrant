@@ -9,6 +9,12 @@ extends RefCounted
 ## A link was clicked: show [param resource] (an event opens on its screen, a page on the map)
 signal opened(resource: Resource)
 
+## One stage of a subject's track, for a tooltip about it ([method get_stage])
+class StageOf extends Resource:
+	var subject: Resource
+	var track: String
+	var stage: String
+
 const TEXT_LENGTH: int = 180
 const DIM: Color = Color(1, 1, 1, 0.6)
 const LINK: Color = Color(0.55, 0.75, 1.0)
@@ -18,9 +24,22 @@ const THUMBNAIL_WIDTH: int = 200
 var graph: AdventureGraph
 ## Shown on the tooltips of what they are about
 var problems: Array[AdventureProblems.Problem] = [ ]
+## Who sets and needs each stage
+var stages: AdventureStageIndex
 
 func _init(of: AdventureGraph) -> void:
 	graph = of
+	var events: Array[AdventureEvent] = [ ]
+	events.assign(graph.event_hosts.keys())
+	stages = AdventureStageIndex.new(graph, events)
+
+## A tooltip subject for [param stage] of [param subject]'s [param track]
+static func get_stage(subject: Resource, track: String, stage: String) -> StageOf:
+	var about: StageOf = StageOf.new()
+	about.subject = subject
+	about.track = track
+	about.stage = stage
+	return about
 
 ## A rich tooltip about [param about] on [param control], instead of its plain one
 func attach(control: Control, about: Resource) -> AdventureTooltipTrigger:
@@ -44,7 +63,14 @@ func describe(resource: Resource) -> String:
 	if resource is AdventureEvent: return _describe_event(resource as AdventureEvent)
 	if resource is AdventurePage: return _describe_page(resource as AdventurePage)
 	if resource is AdventureDecision: return _describe_decision(resource as AdventureDecision)
-	return ""
+	return _describe_stages(resource)
+
+## A stage, or the stages a stage condition needs or a stage effect sets; anything else: nothing
+func _describe_stages(resource: Resource) -> String:
+	if resource is AdventureStageCondition: return _describe_stage_condition(resource as AdventureStageCondition)
+	if resource is AdventureStageConsequence: return _describe_stage_effect(resource as AdventureStageConsequence)
+	var about: StageOf = resource as StageOf
+	return "\n".join(_describe_stage(about.subject, about.track, about.stage)) if about != null else ""
 
 ## A link's meta is the instance ID of what it names
 func describe_link(meta: Variant) -> String: return describe(_find(meta))
@@ -92,12 +118,8 @@ func _describe_event(event: AdventureEvent) -> String:
 	lines.append_array(_get_problems(event))
 	var needs: String = _describe_conditions(event.conditions)
 	lines.append("[b]When:[/b] " + (_escape(needs) if not needs.is_empty() else "always"))
-	var layering: Array[String] = [ ]
-	var names: Array[String] = ["adds to the page", "replaces the location's", "only its own"]
-	if event.text_layering != AdventureEvent.Layering.ADDS: layering.append("text: " + names[event.text_layering])
-	if event.decisions_layering != AdventureEvent.Layering.ADDS: layering.append("decisions: " + names[event.decisions_layering])
-	if event.no_rest: layering.append("no rest here")
-	if not layering.is_empty(): lines.append("[b]On the page:[/b] " + "; ".join(layering))
+	var layering: String = _describe_layering(event)
+	if not layering.is_empty(): lines.append("[b]On the page:[/b] " + layering)
 	lines.append_array(_describe_text_and_decisions(event))
 	return "\n".join(lines)
 
@@ -110,17 +132,57 @@ func _describe_page(page: AdventurePage) -> String:
 	if background != null and not background.resource_path.is_empty(): lines.append("[img=%d]%s[/img]" % [THUMBNAIL_WIDTH, background.resource_path])
 	if graph.unreachable.has(page): lines.append(_colored("Not reached from the starting page", WARNING))
 	lines.append_array(_get_problems(page))
-	var events: Array[String] = [ ]
-	for event: AdventureEvent in AdventureGraph.get_listed_on(page): events.append(_link(event))
-	if location != null: for encounter: AdventureEncounter in graph.get_encounters_at(location): events.append(_link(encounter))
-	if not events.is_empty(): lines.append("[b]Events:[/b] " + ", ".join(events))
-	lines.append_array(_describe_text_and_decisions(page))
+	if location != null: lines.append_array(_describe_reading(location))
+	else: lines.append_array(_describe_text_and_decisions(page))
 	return "\n".join(lines)
+
+## How [param location]'s page reads, top to bottom: the area's text (coming from another area), its own, then what can show there in its
+## order, each with when and how it changes the page; then its exits
+func _describe_reading(location: AdventureLocation) -> Array[String]:
+	var lines: Array[String] = ["[b]It reads:[/b]"]
+	var area: AdventureArea = location.area
+	if area != null and not (area.description + area.first_description).strip_edges().is_empty():
+		lines.append("• %s %s" % [_dim("the area's text, coming from another area:"), _shorten(area.description if not area.description.is_empty() else area.first_description)])
+		if not area.first_description.is_empty() and not area.description.is_empty(): lines.append("   %s %s" % [_dim("the first time:"), _shorten(area.first_description)])
+	if not location.description.strip_edges().is_empty(): lines.append("• %s %s" % [_dim("its text:"), _shorten(location.description)])
+	if not location.first_description.is_empty(): lines.append("   %s %s" % [_dim("the first visit:"), _shorten(location.first_description)])
+	var encounters: Array[AdventureEncounter] = [ ]
+	if graph.adventure != null: for encounter: AdventureEncounter in graph.adventure.encounters: if encounter != null: encounters.append(encounter)
+	var overview: AdventureLocationOverview = AdventureLocationOverview.new(location, encounters, graph.pages)
+	for section: AdventureLocationOverview.Section in overview.sections:
+		if section.events.is_empty(): continue
+		lines.append("• %s %s" % [_link(section.encounter) if section.encounter != null else _dim("its own events"), _dim(section.reason) if section.encounter != null else ""])
+		for event: AdventureEvent in section.events:
+			var needs: String = _describe_conditions(event.conditions)
+			var layering: String = _describe_layering(event)
+			lines.append("   %s %s%s" % [_link(event), _dim("when " + _escape(needs)) if not needs.is_empty() else _dim("always"), "  " + layering if not layering.is_empty() else ""])
+	var exits: Array[String] = _describe_decisions(location)
+	if not exits.is_empty():
+		lines.append("[b]Exits:[/b]")
+		lines.append_array(exits)
+	return lines
+
+## How [param event] changes the page it is on; empty: it only adds to it
+static func _describe_layering(event: AdventureEvent) -> String:
+	var names: Array[String] = ["adds to the page", "replaces the location's", "only its own"]
+	var parts: Array[String] = [ ]
+	if event.text_layering != AdventureEvent.Layering.ADDS: parts.append("text: " + names[event.text_layering])
+	if event.decisions_layering != AdventureEvent.Layering.ADDS: parts.append("decisions: " + names[event.decisions_layering])
+	if event.no_rest: parts.append("no rest here")
+	return _colored("; ".join(parts), WARNING) if not parts.is_empty() else ""
+
+static func _shorten(text: String) -> String:
+	var stripped: String = text.strip_edges()
+	return "[i]%s[/i]" % _escape(stripped if stripped.length() <= TEXT_LENGTH else stripped.left(TEXT_LENGTH).strip_edges() + "…")
 
 func _describe_text_and_decisions(page: AdventurePage) -> Array[String]:
 	var lines: Array[String] = [ ]
-	var text: String = page.description.strip_edges()
-	if not text.is_empty(): lines.append("[i]%s[/i]" % _escape(text if text.length() <= TEXT_LENGTH else text.left(TEXT_LENGTH).strip_edges() + "…"))
+	if not page.description.strip_edges().is_empty(): lines.append(_shorten(page.description))
+	lines.append_array(_describe_decisions(page))
+	return lines
+
+func _describe_decisions(page: AdventurePage) -> Array[String]:
+	var lines: Array[String] = [ ]
 	for decision: AdventureDecision in page.decisions:
 		if decision == null: continue
 		var targets: Array[String] = [ ]
@@ -143,6 +205,32 @@ func _describe_decision(decision: AdventureDecision) -> String:
 		var label: String = "[b]%s:[/b] " % outcome.label if not outcome.label.is_empty() else ""
 		lines.append("• %s→ %s%s" % [label, target, "  " + _dim(_escape(effects)) if not effects.is_empty() else ""])
 	return "\n".join(lines)
+
+func _describe_stage_condition(condition: AdventureStageCondition) -> String:
+	var lines: Array[String] = ["[b]%s[/b]  %s" % [_escape(_describe_conditions([condition] as Array[AdventureCondition])), _dim("condition")]]
+	for subject: Resource in stages.get_subjects(condition):
+		for stage: String in condition.stages: lines.append_array(_describe_stage(subject, condition.track, stage))
+	return "\n".join(lines)
+
+func _describe_stage_effect(effect: AdventureStageConsequence) -> String:
+	var lines: Array[String] = ["[b]%s[/b]  %s" % [_escape(effect.describe()), _dim("effect")]]
+	for subject: Resource in stages.get_subjects(effect): lines.append_array(_describe_stage(subject, effect.track, effect.stage))
+	return "\n".join(lines)
+
+## Where [param subject] gets into [param stage] and what waits for it there
+func _describe_stage(subject: Resource, track: String, stage: String) -> Array[String]:
+	var whose: String = _link(subject as AdventurePage) if subject is AdventurePage else _escape(str(subject))
+	var lines: Array[String] = ["%s: %s is [b]%s[/b]%s" % [whose, _escape(track), _escape(stage), "  " + _dim("(its start)") if AdventureStageIndex.is_start(subject, track, stage) else ""]]
+	var setters: Array[String] = [ ]
+	for setter: AdventureStageIndex.Setter in stages.get_setters(subject, track, stage):
+		var where: AdventurePage = setter.event if setter.event != null else setter.page
+		setters.append("• \"%s\" %s %s" % [_escape(setter.decision.description.get_slice("\n", 0)), _dim("in"), _link(where)])
+	lines.append("[b]Set by:[/b]" + (" " + _dim("nothing") if setters.is_empty() else ""))
+	lines.append_array(setters)
+	var needers: Array[String] = [ ]
+	for event: AdventureEvent in stages.get_needers(subject, track, stage): needers.append(_link(event))
+	lines.append("[b]Needed by:[/b] " + (", ".join(needers) if not needers.is_empty() else _dim("nothing")))
+	return lines
 
 func _get_problems(page: AdventurePage) -> Array[String]:
 	var lines: Array[String] = [ ]

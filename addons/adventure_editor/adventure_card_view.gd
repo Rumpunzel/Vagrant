@@ -145,6 +145,7 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 		tag.text = _describe(item)
 		tag.tooltip_text = "Edit in the Inspector"
 		tag.pressed.connect(func() -> void: EditorInterface.edit_resource(item))
+		if tooltips != null and (item is AdventureStageCondition or item is AdventureStageConsequence): tooltips.attach(tag, item)
 		tags.add_child(tag)
 		_tags[item] = tag
 		var without: Array = items.duplicate()

@@ -30,6 +30,8 @@ const HANDLE_HEIGHT: float = 8.0
 
 ## Makes an event graph wired up like the editor's others ([AdventureEventView]); set by [AdventureEditor]
 var make_graph: Callable
+## Rich tooltips for the stages; none: plain ones
+var tooltips: AdventureTooltips
 
 var _event: AdventureEvent
 ## The event shown, if it is a scenario or encounter
@@ -175,6 +177,7 @@ func _add_track_bar(track_name: String) -> void:
 		chip.button_pressed = _picked == [track_name, stage]
 		chip.tooltip_text = "What can happen while it is %s, and what leads here" % stage
 		chip.toggled.connect(_on_stage_picked.bind(track_name, stage))
+		if tooltips != null and track != null: tooltips.attach(chip, AdventureTooltips.get_stage(_storyline.encounter, track_name, stage))
 		bar.add_child(chip)
 	if track == null:
 		_tracks.add_child(bar)

@@ -217,34 +217,25 @@ func _link(texts: Array[String], from: AdventurePage, to: AdventurePage, title: 
 	decisions.append(link)
 	_request(from, &"decisions", decisions, title, from)
 
-## [param page]'s own plain decisions leading to pages on the map, a row each: click to change its texts; the way back is offered where there is none
-func _make_exits(graph: AdventureGraph, page: AdventurePage) -> VBoxContainer:
-	var exits: VBoxContainer = VBoxContainer.new()
-	exits.add_theme_constant_override(&"separation", 0)
+## [param page]'s own plain decisions leading to pages on the map, as "→ Castle", side by side (their texts in their tooltips): click to change
+## the texts; the way back is offered where there is none
+func _make_exits(graph: AdventureGraph, page: AdventurePage) -> HFlowContainer:
+	var exits: HFlowContainer = HFlowContainer.new()
 	for decision: AdventureDecision in page.decisions:
 		if decision == null or decision is AdventureDiceDecision or decision.transition == null: continue
 		var to: AdventurePage = decision.transition.get_adventure_page()
 		if to == null or not graph.pages.has(to): continue
-		var row: HBoxContainer = HBoxContainer.new()
 		var exit: Button = Button.new()
 		exit.flat = true
-		exit.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		exit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		exit.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		exit.text = "→ %s: %s" % [AdventureGraph.get_title(to), decision.description.get_slice("\n", 0)]
+		exit.text = "→ %s" % AdventureGraph.get_title(to)
 		exit.tooltip_text = decision.description
 		if not decision.first_description.is_empty(): exit.tooltip_text += "\nThe first time: %s" % decision.first_description
 		exit.tooltip_text += "\nClick to change"
 		exit.pressed.connect(_ask_exit_texts.bind(page, decision, to))
 		if tooltips != null: tooltips.attach(exit, decision)
-		row.add_child(exit)
+		exits.add_child(exit)
 		if graph.get_link(to, page) == null:
-			row.add_child(_make_tool_button("Back", "+ back", "No way back from %s; click to add one" % AdventureGraph.get_title(to), _ask_link.bind(to, page)))
-		exits.add_child(row)
-		if not decision.first_description.is_empty():
-			var first: Label = _make_info("   the first time: %s" % decision.first_description.get_slice("\n", 0))
-			first.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-			exits.add_child(first)
+			exits.add_child(_make_tool_button("Back", "+ back", "No way back from %s; click to add one" % AdventureGraph.get_title(to), _ask_link.bind(to, page)))
 	return exits
 
 func _get_exit_fields(decision: AdventureDecision, to: AdventurePage) -> Array[AdventureTextsDialog.Field]:

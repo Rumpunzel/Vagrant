@@ -30,7 +30,7 @@ func test_an_event() -> void:
 	assert_str(text).contains("[b]Ambush[/b]")
 	assert_str(text).contains("[b]Listed at:[/b] [url=%d]" % _shore.get_instance_id())
 	assert_str(text).contains("[b]When:[/b] 1 in 2 chance")
-	assert_str(text).contains("[b]On the page:[/b] decisions: only its own; no rest here")
+	assert_str(text).contains("decisions: only its own; no rest here")
 	# Its own brackets aren't BBCode
 	assert_str(text).contains("[i]The water [lb]stirs].[/i]")
 	assert_str(text).contains("• Continue. → [url=%d]" % _strikes.get_instance_id())
@@ -82,6 +82,55 @@ func test_a_page_says_its_problems() -> void:
 	assert_str(text).contains("⚠ Shore is lonely")
 	assert_str(text).contains("[url=%d]" % _ambush.get_instance_id())
 	assert_str(text).contains("[i]Waves.[/i]")
+
+func test_a_location_reads_in_its_order() -> void:
+	var swamp: AdventureArea = AdventureArea.new()
+	swamp.name = "Swamp"
+	swamp.description = "Mist."
+	_shore.area = swamp
+	var text: String = _tooltips().describe(_shore)
+	assert_str(text).contains("[b]It reads:[/b]")
+	var area: int = text.find("Mist.")
+	var own: int = text.find("Waves.")
+	var ambush: int = text.find("[url=%d]" % _ambush.get_instance_id())
+	assert_bool(area >= 0 and area < own and own < ambush).is_true()
+	assert_str(text).contains("1 in 2 chance")
+
+func test_who_sets_and_needs_a_stage() -> void:
+	var track: AdventureStageTrack = AdventureStageTrack.new()
+	track.name = "Storyline"
+	track.stages = ["Unmet", "Met"] as Array[String]
+	var eleanor: AdventureEncounter = AdventureEncounter.new()
+	eleanor.title = "Eleanor"
+	eleanor.tracks = [track] as Array[AdventureStageTrack]
+	var met: AdventureStageConsequence = AdventureStageConsequence.new()
+	met.track = "Storyline"
+	met.stage = "Met"
+	var greet: AdventureDecision = AdventureDecision.new()
+	greet.description = "Greet her."
+	greet.consequences = [met] as Array[AdventureConsequence]
+	var meeting: AdventureEvent = AdventureEvent.new()
+	meeting.title = "Meeting"
+	meeting.decisions = [greet] as Array[AdventureDecision]
+	var needs_met: AdventureStageCondition = AdventureStageCondition.new()
+	needs_met.track = "Storyline"
+	needs_met.stages = ["Met"] as Array[String]
+	var later: AdventureEvent = AdventureEvent.new()
+	later.title = "Later"
+	later.conditions = [needs_met] as Array[AdventureCondition]
+	eleanor.events = [meeting, later] as Array[AdventureEvent]
+	var adventure: Adventure = Adventure.new()
+	adventure.starting_page = _shore
+	adventure.encounters = [eleanor] as Array[AdventureEncounter]
+	var tooltips: AdventureTooltips = AdventureTooltips.new(AdventureGraph.new(adventure))
+	var text: String = tooltips.describe(needs_met)
+	assert_str(text).contains("Storyline is [b]Met[/b]")
+	assert_str(text).contains("• \"Greet her.\" ")
+	assert_str(text).contains("[url=%d]" % meeting.get_instance_id())
+	assert_str(text).contains("[b]Needed by:[/b] [url=%d]" % later.get_instance_id())
+	# The same from the effect, and for the track's start nothing needs to set it
+	assert_str(tooltips.describe(met)).contains("[b]Needed by:[/b] [url=%d]" % later.get_instance_id())
+	assert_str(tooltips.describe(AdventureTooltips.get_stage(eleanor, "Storyline", "Unmet"))).contains("(its start)")
 
 func _tooltips() -> AdventureTooltips:
 	var adventure: Adventure = Adventure.new()

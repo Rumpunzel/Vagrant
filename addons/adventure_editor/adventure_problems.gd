@@ -21,8 +21,7 @@ class Problem:
 var problems: Array[Problem] = [ ]
 
 var _checked: Array[AdventureDecision] = [ ]
-## { subject -> { track -> Array[String] } }: the stages something in the adventure sets
-var _set_stages: Dictionary[Resource, Dictionary] = {}
+var _stages: AdventureStageIndex
 ## Encounters whose monster something fights, kills
 var _fought: Array[AdventureEncounter] = [ ]
 var _killed: Array[AdventureEncounter] = [ ]
@@ -47,26 +46,19 @@ func _init(graph: AdventureGraph, event_files: Array[AdventureEvent]) -> void:
 			if not reached.has(page): reached.append(page)
 	for event: AdventureEvent in event_files:
 		if not reached.has(event): _add("%s is listed on no location" % AdventureGraph.get_title(event), event, event)
+	_stages = AdventureStageIndex.new(graph, events)
 	_find_what_happens(events)
 	for event: AdventureEvent in events: _check_conditions(event)
 
-## What the decisions of locations and events do to stages and monsters
+## Which monsters the decisions of locations and events fight and kill (what they do to stages: [AdventureStageIndex])
 func _find_what_happens(events: Array[AdventureEvent]) -> void:
 	for page: AdventurePage in _graph.pages:
-		if page is AdventureLocation: _note_decisions(page, [page] as Array[Resource], null)
+		if page is AdventureLocation: _note_decisions(page, null)
 	for event: AdventureEvent in events:
 		var encounter: AdventureEncounter = _graph.get_encounter_of(event)
-		for page: AdventurePage in AdventureEventGraph.new(event).pages: _note_decisions(page, _get_own_subjects(event), encounter)
+		for page: AdventurePage in AdventureEventGraph.new(event).pages: _note_decisions(page, encounter)
 
-## What an empty subject means in [param event]: its encounter, else the locations it is on
-func _get_own_subjects(event: AdventureEvent) -> Array[Resource]:
-	var subjects: Array[Resource] = [ ]
-	var encounter: AdventureEncounter = _graph.get_encounter_of(event)
-	if encounter != null: subjects.append(encounter)
-	else: subjects.append_array(_graph.get_location_hosts(event))
-	return subjects
-
-func _note_decisions(page: AdventurePage, own: Array[Resource], encounter: AdventureEncounter) -> void:
+func _note_decisions(page: AdventurePage, encounter: AdventureEncounter) -> void:
 	for decision: AdventureDecision in page.decisions:
 		if decision == null: continue
 		var fight: AdventureFightDecision = decision as AdventureFightDecision
@@ -74,23 +66,10 @@ func _note_decisions(page: AdventurePage, own: Array[Resource], encounter: Adven
 		for outcome: AdventureDecision.Outcome in decision.get_outcomes():
 			for consequence: AdventureConsequence in decision.get_consequences_of(outcome):
 				if consequence is AdventureKillConsequence: _note_encounter(_killed, (consequence as AdventureKillConsequence).encounter, encounter)
-				var stage: AdventureStageConsequence = consequence as AdventureStageConsequence
-				if stage == null: continue
-				for subject: Resource in _resolve(stage.subject, own):
-					var tracks: Dictionary = _set_stages.get_or_add(subject, {})
-					var stages: Array = tracks.get_or_add(stage.track, [ ])
-					if not stages.has(stage.stage): stages.append(stage.stage)
 
 func _note_encounter(into: Array[AdventureEncounter], path: String, own: AdventureEncounter) -> void:
 	var encounter: AdventureEncounter = Files.load_existing(path) as AdventureEncounter if not path.is_empty() else own
 	if encounter != null and not into.has(encounter): into.append(encounter)
-
-static func _resolve(path: String, own: Array[Resource]) -> Array[Resource]:
-	if path.is_empty(): return own
-	var subjects: Array[Resource] = [ ]
-	var subject: Resource = Files.load_existing(path)
-	if subject != null: subjects.append(subject)
-	return subjects
 
 ## Stage conditions nothing can make true (none of the stages is a track's first or set anywhere), body conditions nothing brings about
 func _check_conditions(event: AdventureEvent) -> void:
@@ -99,7 +78,7 @@ func _check_conditions(event: AdventureEvent) -> void:
 		var stage: AdventureStageCondition = condition as AdventureStageCondition
 		var body: AdventureMonsterCondition = condition as AdventureMonsterCondition
 		if stage != null:
-			var subjects: Array[Resource] = _resolve(stage.subject, _get_own_subjects(event))
+			var subjects: Array[Resource] = _stages.get_subjects(stage)
 			if not subjects.is_empty() and not subjects.any(_can_reach.bind(stage)):
 				_add("%s never shows: it needs %s %s, which is no track's start and nothing sets" % [title, stage.track, " or ".join(stage.stages)], event, event)
 		elif body != null:
@@ -112,10 +91,7 @@ func _check_conditions(event: AdventureEvent) -> void:
 
 ## Whether [param subject] can be in one of the stages [param condition] needs: one is its track's first, or something sets it
 func _can_reach(subject: Resource, condition: AdventureStageCondition) -> bool:
-	var track: AdventureStageTrack = AdventureStageTrack.find(AdventureStageTrack.get_tracks_of(subject), condition.track)
-	if track != null and not track.stages.is_empty() and condition.stages.has(track.stages[0]): return true
-	var set_stages: Array = (_set_stages.get(subject, {}) as Dictionary).get(condition.track, [ ])
-	return condition.stages.any(func(stage: String) -> bool: return set_stages.has(stage))
+	return condition.stages.any(func(stage: String) -> bool: return _stages.can_reach(subject, condition.track, stage))
 
 func _check_decisions(page: AdventurePage, event: AdventureEvent) -> void:
 	var texts: Array[String] = [ ]
