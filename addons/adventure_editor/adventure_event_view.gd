@@ -98,48 +98,48 @@ func _add_pages(origin: Vector2) -> int:
 			if not target_key.is_empty(): connect_node(_nodes[_key(page)].name, port, _nodes[target_key].name, 0)
 	return column_count + 1
 
-## How the page reads with this event, on one line: its text and its decisions each add to the page, replace the location's or are the only
-## ones (click: the next), and whether one may rest there (click: switch); each tooltip lists what is shown and hidden (one undo step a click)
-func _make_page_preview() -> HFlowContainer:
-	var line: HFlowContainer = HFlowContainer.new()
-	line.add_child(_make_info("On the page:"))
-	var place: String = AdventureGraph.get_title(_host) if _host is AdventureLocation else "The location"
-	line.add_child(_make_layering_chip(&"text_layering", "Text", ["The area's text", "%s's text" % place, "Other events' text"], place))
-	line.add_child(_make_layering_chip(&"decisions_layering", "Decisions", ["", "%s's decisions" % place, "Other events' decisions"], place))
-	var rest: Button = _make_rest_row(_event)
-	rest.text = "Rest: %s" % ("no" if _event.no_rest else "yes")
-	line.add_child(rest)
-	return line
+## The event's own settings, shown above its graph (they belong to the event, not to its first page): when it shows, how its text and
+## decisions change the page it is on, and whether one may rest there; each change is one undo step
+func make_settings() -> VBoxContainer:
+	var settings: VBoxContainer = VBoxContainer.new()
+	var when: HBoxContainer = HBoxContainer.new()
+	when.add_child(AdventureUi.info("When:"))
+	var tags: HFlowContainer = _make_condition_tags(_event, _file_for(null, _event))
+	tags.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	when.add_child(tags)
+	settings.add_child(when)
+	var page: HFlowContainer = HFlowContainer.new()
+	var place: String = AdventureGraph.get_title(_host) if _host is AdventureLocation else "the location"
+	page.add_child(_make_layering_choice(&"text_layering", "Text", ["The area's text", "%s's text" % place.capitalize(), "Other events' text"], place))
+	page.add_child(AdventureUi.spacer(16))
+	page.add_child(_make_layering_choice(&"decisions_layering", "Decisions", ["", "%s's decisions" % place.capitalize(), "Other events' decisions"], place))
+	page.add_child(AdventureUi.spacer(16))
+	page.add_child(_make_rest_check(_event))
+	settings.add_child(page)
+	return settings
 
-## [param parts]: the area's (none for decisions), the location's and the other events' part, which the layering keeps or hides
-func _make_layering_chip(property: StringName, what: String, parts: Array[String], place: String) -> Button:
-	var layering: AdventureEvent.Layering = _event.get(property)
-	var names: Array[String] = ["adds", "replaces %s's" % place, "only its own"]
-	var chip: Button = Button.new()
-	chip.flat = true
-	chip.text = "%s: %s" % [what, names[layering]]
-	chip.modulate = Color.WHITE if layering == AdventureEvent.Layering.ADDS else PICKED_COLOR
-	var shown: Array[bool] = [layering != AdventureEvent.Layering.ONLY_THIS, layering == AdventureEvent.Layering.ADDS, layering != AdventureEvent.Layering.ONLY_THIS]
-	var rows: Array[String] = [ ]
-	for index: int in parts.size(): if not parts[index].is_empty(): rows.append(("✓ " if shown[index] else "✕ ") + parts[index])
-	rows.append("▶ Its %s" % what.to_lower())
-	var next: AdventureEvent.Layering = ((layering + 1) % names.size()) as AdventureEvent.Layering
-	rows.append("Click: %s" % names[next])
-	chip.tooltip_text = "\n".join(rows)
-	chip.pressed.connect(_request.bind(_event, property, next, "%s: %s %s" % [AdventureGraph.get_title(_event), what.to_lower(), names[next]], _file_for(null, _event)))
-	return chip
+## Adds to the page, replaces the location's part or is the only one; [param parts]: the area's (none for decisions), the location's and the
+## other events' part, which each option keeps or hides (its tooltip)
+func _make_layering_choice(property: StringName, what: String, parts: Array[String], place: String) -> HBoxContainer:
+	var names: Array[String] = ["Adds", "Replaces %s's" % place, "Only its own"]
+	var tooltips: Array[String] = [ ]
+	for option: int in names.size():
+		var shown: Array[bool] = [option != AdventureEvent.Layering.ONLY_THIS, option == AdventureEvent.Layering.ADDS, option != AdventureEvent.Layering.ONLY_THIS]
+		var rows: Array[String] = [ ]
+		for index: int in parts.size(): if not parts[index].is_empty(): rows.append(("✓ " if shown[index] else "✕ ") + parts[index])
+		rows.append("▶ Its %s" % what.to_lower())
+		tooltips.append("\n".join(rows))
+	var action: String = "%s: %s" % [AdventureGraph.get_title(_event), what.to_lower()]
+	return AdventureUi.choice(what + ":", names, _event.get(property), tooltips, func(option: int) -> void:
+		_request(_event, property, option, "%s %s" % [action, names[option].to_lower()], _file_for(null, _event))
+	)
 
-## Whether the party may catch its breath and make camp while [param page] shows; clicking toggles it (one undo step)
-func _make_rest_row(page: AdventurePage) -> Button:
-	var row: Button = Button.new()
-	row.flat = true
-	row.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	row.text = ("✕ " if page.no_rest else "✓ ") + "Resting (catch breath, make camp)"
-	row.modulate = FADED if page.no_rest else Color.WHITE
-	row.tooltip_text = "No rest here; click to allow it" if page.no_rest else "Resting is allowed; click to forbid it"
+## Whether the party may catch its breath and make camp while [param page] shows
+func _make_rest_check(page: AdventurePage) -> CheckBox:
 	var action: String = "%s: %s" % [AdventureGraph.get_title(page), "rest allowed" if page.no_rest else "no rest here"]
-	row.pressed.connect(_request.bind(page, &"no_rest", not page.no_rest, action, _file_for(null, page)))
-	return row
+	return AdventureUi.check("No rest here", page.no_rest, "No catching breath or making camp while it shows", func(on: bool) -> void:
+		_request(page, &"no_rest", on, action, _file_for(null, page))
+	)
 
 ## Its height and view on the event screen go too, so it fits its nodes again
 func _tidy() -> void:
@@ -170,15 +170,12 @@ func _stack() -> void:
 			y += node.size.y + NODE_GAP
 	_unstacked.clear()
 
-## The page with its whole text and its decisions as cards; the event's node also says when it shows and how its page reads
+## The page with its whole text and its decisions as cards
 func _add_page(page: AdventurePage, at: Vector2) -> GraphNode:
 	var content: VBoxContainer = _make_page_content(page)
 	if not page.description.is_empty(): content.add_child(_make_text(page.description))
-	if page == _event:
-		content.add_child(_make_info("When:"))
-		content.add_child(_make_condition_tags(_event, _file_for(null, page)))
-		content.add_child(_make_page_preview())
-	elif page.no_rest: content.add_child(_make_rest_row(page))
+	# The event's own settings are above the graph (make_settings); an inner page says it only when it forbids resting
+	if page != _event and page.no_rest: content.add_child(_make_rest_check(page))
 	var node: GraphNode = _add_node(_key(page), page, AdventureGraph.get_title(page), content, at)
 	node.set_slot(0, page != _event, 0, Color.WHITE, false, 0, Color.WHITE)
 	var outlets: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outlets(page)

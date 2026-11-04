@@ -28,6 +28,9 @@ const COLUMN_WIDTH: float = 260.0
 ## The bar under a graph to drag its height with
 const HANDLE_HEIGHT: float = 8.0
 
+## By [enum AdventureEventScenario.Pick]
+const PICK_TEXTS: Array[String] = ["The first that fits", "Every one that fits"]
+
 ## Makes an event graph wired up like the editor's others ([AdventureEventView]); set by [AdventureEditor]
 var make_graph: Callable
 ## Rich tooltips for the stages; none: plain ones
@@ -43,7 +46,8 @@ var _picked: Array = [ ]
 ## Unfolded options, kept while it is shown
 var _open: Array[AdventureEvent] = [ ]
 var _title: Label
-var _pick: OptionButton
+## Where the scenario's "shows the first / every option that fits" goes
+var _pick: HBoxContainer
 var _add_track: Button
 var _add_option: Button
 var _add_existing: Button
@@ -64,16 +68,13 @@ func setup() -> void:
 	_title.theme_type_variation = &"HeaderMedium"
 	_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bar.add_child(_title)
-	_pick = OptionButton.new()
-	_pick.add_item("Shows the first option that fits", AdventureEventScenario.Pick.FIRST)
-	_pick.add_item("Shows every option that fits", AdventureEventScenario.Pick.ALL)
-	_pick.item_selected.connect(_on_pick_selected)
+	_pick = HBoxContainer.new()
 	bar.add_child(_pick)
-	_add_option = _make_button("Option", "A new event as the last option", func() -> void: option_requested.emit(_scenario))
+	_add_option = AdventureUi.text_button("Option", "Add", "A new event as the last option", func() -> void: option_requested.emit(_scenario))
 	bar.add_child(_add_option)
-	_add_existing = _make_button("Add event…", "An event made already as the last option", func() -> void: existing_option_requested.emit(_scenario, _menu.show_actions))
+	_add_existing = AdventureUi.text_button("Add event…", "Add", "An event made already as the last option", func() -> void: existing_option_requested.emit(_scenario, _menu.show_actions))
 	bar.add_child(_add_existing)
-	_add_track = _make_button("Track", "A new stage track: a line of the story, one stage at a time", _ask_for_track)
+	_add_track = AdventureUi.text_button("Track", "Add", "A new stage track: a line of the story, one stage at a time", _ask_for_track)
 	bar.add_child(_add_track)
 	_info = Label.new()
 	_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -129,7 +130,11 @@ func show_event(event: AdventureEvent, host: AdventurePage, focus: AdventureEven
 	var encounter: AdventureEncounter = scenario as AdventureEncounter
 	_storyline = AdventureStoryline.new(encounter) if encounter != null else null
 	_title.text = AdventureGraph.get_title(scenario) + (" (encounter)" if encounter != null else " (scenario)")
-	_pick.select(_pick.get_item_index(scenario.pick))
+	for child: Node in _pick.get_children(): child.queue_free()
+	_pick.add_child(AdventureUi.choice("Shows", PICK_TEXTS, scenario.pick, [
+		"The first option (top to bottom) whose conditions are met",
+		"Every option whose conditions are met, top to bottom",
+	] as Array[String], _on_pick_selected))
 	_show_info()
 	if _storyline != null:
 		for track_name: String in _storyline.get_track_names(): _add_track_bar(track_name)
@@ -177,12 +182,12 @@ func _add_track_bar(track_name: String) -> void:
 		chip.button_pressed = _picked == [track_name, stage]
 		chip.tooltip_text = "What can happen while it is %s, and what leads here" % stage
 		chip.toggled.connect(_on_stage_picked.bind(track_name, stage))
-		if tooltips != null and track != null: tooltips.attach(chip, AdventureTooltips.get_stage(_storyline.encounter, track_name, stage))
+		if tooltips != null and track != null: tooltips.attach(chip, AdventureTooltips.get_stage(_storyline.encounter, track_name, stage), "dim what can't happen while it is %s" % stage)
 		bar.add_child(chip)
 	if track == null:
 		_tracks.add_child(bar)
 		return
-	var add: Button = _make_button("", "A new stage on %s" % track_name, _ask_for_stage.bind(track))
+	var add: Button = AdventureUi.text_button("", "Add", "A new stage on %s" % track_name, _ask_for_stage.bind(track))
 	add.flat = true
 	bar.add_child(add)
 	if stages.is_empty():
@@ -209,18 +214,18 @@ func _add_section(option: AdventureEvent, index: int) -> Control:
 	if _storyline != null: _add_story_controls(section, option)
 	elif index >= 0:
 		var needs: String = AdventureEventGraph.describe_conditions(option.conditions)
-		section.add_title_bar_control(_make_label("when %s" % needs if not needs.is_empty() else "always fits"))
+		section.add_title_bar_control(AdventureUi.label("when %s" % needs if not needs.is_empty() else "always fits"))
 	section.folding_changed.connect(_on_folding_changed.bind(section, option))
 	if not section.folded: _fill_section(section, option)
 	if not option is AdventureEventScenario:
-		section.add_title_bar_control(_make_icon_button("Play", "Play from here: the game starts at its location with it shown, whatever its conditions", play_requested.emit.bind(option, option)))
+		section.add_title_bar_control(AdventureUi.icon_button("Play", "", "Play from here: the game starts at its location with it shown, whatever its conditions", play_requested.emit.bind(option, option)))
 	if index < 0: return section
-	if index > 0: section.add_title_bar_control(_make_icon_button("MoveUp", "Earlier: checked first", _move.bind(index, -1)))
-	if index < _scenario.events.size() - 1: section.add_title_bar_control(_make_icon_button("MoveDown", "Later", _move.bind(index, 1)))
-	var remove: Button = _make_icon_button("Remove", "Not an option any more (its file stays)", _remove.bind(index))
+	if index > 0: section.add_title_bar_control(AdventureUi.icon_button("MoveUp", "", "Earlier: checked first", _move.bind(index, -1)))
+	if index < _scenario.events.size() - 1: section.add_title_bar_control(AdventureUi.icon_button("MoveDown", "", "Later", _move.bind(index, 1)))
+	var remove: Button = AdventureUi.icon_button("Remove", "", "Not an option any more (its file stays)", _remove.bind(index))
 	remove.disabled = AdventureEventEditing.is_inside_file(option)
 	section.add_title_bar_control(remove)
-	section.add_title_bar_control(_make_icon_button("Object", "Show it in the Inspector", EditorInterface.edit_resource.bind(option)))
+	section.add_title_bar_control(AdventureUi.icon_button("Object", "", "Show it in the Inspector", EditorInterface.edit_resource.bind(option)))
 	return section
 
 func _on_folding_changed(is_folded: bool, section: FoldableContainer, option: AdventureEvent) -> void:
@@ -233,7 +238,7 @@ func _on_folding_changed(is_folded: bool, section: FoldableContainer, option: Ad
 ## Its pages as a graph, about as high as they need; a scenario option opens on its own
 func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
 	if option is AdventureEventScenario:
-		var open: Button = _make_button("Open its options", "A scenario inside: its own options", event_opened.emit.bind(option, _host))
+		var open: Button = AdventureUi.text_button("Open its options", "GraphEdit", "A scenario inside: its own options", event_opened.emit.bind(option, _host))
 		open.icon = AdventureActionMenu.get_event_icon(option)
 		section.add_child(open)
 		return
@@ -249,6 +254,9 @@ func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
 	column.add_child(_make_handle(graph, AdventureLayout.get_key(option)))
 	graph.setup()
 	graph.show_event(option, _host)
+	var settings: Control = graph.make_settings()
+	column.add_child(settings)
+	column.move_child(settings, 0)
 	_graphs.append(graph)
 	var key: String = AdventureLayout.get_key(option)
 	var height: float = graph.layout.graph_heights.get(key, 0.0) if graph.layout != null else 0.0
@@ -321,14 +329,14 @@ func _add_story_controls(section: FoldableContainer, option: AdventureEvent) -> 
 	var leads: Array[String] = [ ]
 	for lead: AdventureStoryline.Lead in _storyline.get_leads(option):
 		leads.append("%s%s → %s" % [lead.decision.description.get_slice("\n", 0), " · " + lead.outcome.name if not lead.outcome.name.is_empty() else "", lead.stage])
-	var label: Label = _make_label("  ·  ".join(leads) if not leads.is_empty() else "leads to no stage")
+	var label: Label = AdventureUi.label("  ·  ".join(leads) if not leads.is_empty() else "leads to no stage")
 	label.custom_minimum_size.x = COLUMN_WIDTH
 	label.tooltip_text = "Where its decisions lead; change them on its pages"
 	if not _picked.is_empty() and _storyline.leads_into(option, _picked[0], _picked[1]): label.add_theme_color_override(&"font_color", LEADS_IN_COLOR)
 	section.add_title_bar_control(label)
 	var unknown: Array[String] = _storyline.get_unknown_stages(option)
 	if not unknown.is_empty():
-		var warning: Label = _make_label("⚠ %s" % ", ".join(unknown))
+		var warning: Label = AdventureUi.label("⚠ %s" % ", ".join(unknown))
 		warning.add_theme_color_override(&"font_color", UNKNOWN_COLOR)
 		warning.tooltip_text = "Not stages of their tracks"
 		section.add_title_bar_control(warning)
@@ -383,10 +391,8 @@ func _ask_for_stage(track: AdventureStageTrack) -> void:
 func _add_stage(stage: String, track: AdventureStageTrack) -> void:
 	_request(_storyline.get_changes_adding_stage(track, stage), "New stage %s: %s" % [track.name, stage])
 
-func _on_pick_selected(index: int) -> void:
-	var pick: int = _pick.get_item_id(index)
-	if pick == _scenario.pick: return
-	_request([[_scenario, &"pick", pick, AdventureEventEditing.get_file(_scenario)]] as Array[Array], "%s: %s" % [AdventureGraph.get_title(_scenario), _pick.get_item_text(index)])
+func _on_pick_selected(pick: int) -> void:
+	_request([[_scenario, &"pick", pick, AdventureEventEditing.get_file(_scenario)]] as Array[Array], "%s: shows %s" % [AdventureGraph.get_title(_scenario), PICK_TEXTS[pick].to_lower()])
 
 func _move(index: int, step: int) -> void:
 	var options: Array[AdventureEvent] = _scenario.events.duplicate()
@@ -401,25 +407,3 @@ func _remove(index: int) -> void:
 
 func _request(changes: Array[Array], action: String) -> void:
 	if not changes.is_empty(): changes_requested.emit(changes, action, null)
-
-static func _make_label(text: String) -> Label:
-	var label: Label = Label.new()
-	label.text = text
-	label.mouse_filter = Control.MOUSE_FILTER_PASS
-	return label
-
-static func _make_icon_button(icon_name: String, tooltip: String, on_pressed: Callable) -> Button:
-	var button: Button = Button.new()
-	button.icon = AdventureActionMenu.get_editor_icon(icon_name)
-	button.tooltip_text = tooltip
-	button.flat = true
-	button.pressed.connect(on_pressed)
-	return button
-
-static func _make_button(text: String, tooltip: String, on_pressed: Callable) -> Button:
-	var button: Button = Button.new()
-	button.text = text
-	button.tooltip_text = tooltip
-	button.icon = AdventureActionMenu.get_editor_icon("Add")
-	button.pressed.connect(on_pressed)
-	return button

@@ -89,7 +89,7 @@ func show_graph(graph: AdventureGraph) -> void:
 		if graph.unreachable.has(page):
 			node.modulate = FADED
 			if tooltips == null: node.tooltip_text = "Not reached from the starting page"
-		if tooltips != null: tooltips.attach(node.get_titlebar_hbox(), page)
+		if tooltips != null: tooltips.attach(node.get_titlebar_hbox(), page, "show it in the panel; drag to move it")
 		if area != null: attach_graph_element_to_frame(node.name, frames[area].name)
 	# One line per pair: GraphEdit's curves leave right and enter left, which loops for links going back or both ways
 	var drawn: Array[AdventureGraph.Link] = [ ]
@@ -232,10 +232,10 @@ func _make_exits(graph: AdventureGraph, page: AdventurePage) -> HFlowContainer:
 		if not decision.first_description.is_empty(): exit.tooltip_text += "\nThe first time: %s" % decision.first_description
 		exit.tooltip_text += "\nClick to change"
 		exit.pressed.connect(_ask_exit_texts.bind(page, decision, to))
-		if tooltips != null: tooltips.attach(exit, decision)
+		if tooltips != null: tooltips.attach(exit, decision, "change its texts")
 		exits.add_child(exit)
 		if graph.get_link(to, page) == null:
-			exits.add_child(_make_tool_button("Back", "+ back", "No way back from %s; click to add one" % AdventureGraph.get_title(to), _ask_link.bind(to, page)))
+			exits.add_child(AdventureUi.icon_button("Back", "+ back", "No way back from %s; click to add one" % AdventureGraph.get_title(to), _ask_link.bind(to, page)))
 	return exits
 
 func _get_exit_fields(decision: AdventureDecision, to: AdventurePage) -> Array[AdventureTextsDialog.Field]:

@@ -41,10 +41,13 @@ static func get_stage(subject: Resource, track: String, stage: String) -> StageO
 	about.stage = stage
 	return about
 
-## A rich tooltip about [param about] on [param control], instead of its plain one
-func attach(control: Control, about: Resource) -> AdventureTooltipTrigger:
+## A rich tooltip about [param about] on [param control], instead of its plain one; [param click]: what clicking [param control] does, said
+## last
+func attach(control: Control, about: Resource, click: String = "") -> AdventureTooltipTrigger:
 	control.tooltip_text = ""
-	return _attach(control, about)
+	var trigger: AdventureTooltipTrigger = _attach(control, about)
+	trigger.click = click
+	return trigger
 
 ## A tooltip for each link of [param label]
 func attach_links(label: RichTextLabel) -> AdventureTooltipTrigger: return _attach(label, null)
@@ -71,6 +74,11 @@ func _describe_stages(resource: Resource) -> String:
 	if resource is AdventureStageConsequence: return _describe_stage_effect(resource as AdventureStageConsequence)
 	var about: StageOf = resource as StageOf
 	return "\n".join(_describe_stage(about.subject, about.track, about.stage)) if about != null else ""
+
+## [method describe], ending with what a click does
+func describe_with_click(resource: Resource, click: String) -> String:
+	var text: String = describe(resource)
+	return text if click.is_empty() or text.is_empty() else "%s\n%s" % [text, _dim("Click: " + click)]
 
 ## A link's meta is the instance ID of what it names
 func describe_link(meta: Variant) -> String: return describe(_find(meta))

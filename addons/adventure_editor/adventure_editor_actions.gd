@@ -7,7 +7,7 @@ extends Node
 
 var editor: AdventureEditor
 var _new_location_dialog: AdventureNewLocationDialog
-var _name_dialog: AdventureNameDialog
+var _texts_dialog: AdventureTextsDialog
 var _file_dialog: EditorFileDialog
 var _delete_dialog: ConfirmationDialog
 var _profile_dialog: EditorFileDialog
@@ -17,18 +17,23 @@ func setup(of: AdventureEditor) -> void:
 	_make_dialogs()
 
 ## Asks for a name, then calls [param then] with it
-func ask_name(title: String, label: String, then: Callable) -> void: _name_dialog.ask(title, label, then)
+func ask_name(title: String, label: String, then: Callable) -> void:
+	_texts_dialog.ask(title, [AdventureTextsDialog.Field.new(label, "")] as Array[AdventureTextsDialog.Field], _on_named.bind(then))
+
+## A name left empty asks for nothing
+func _on_named(texts: Array[String], then: Callable) -> void:
+	if not texts[0].is_empty(): then.call(texts[0])
 
 ## A new event as the last option of [param scenario]
 func ask_for_option(scenario: AdventureEventScenario) -> void:
-	_name_dialog.ask("New option", "Title", _create_event.bind(scenario, false))
+	ask_name("New option", "Title", _create_event.bind(scenario, false))
 
 func _make_dialogs() -> void:
 	_new_location_dialog = AdventureNewLocationDialog.new()
 	_new_location_dialog.location_confirmed.connect(_create_location)
 	add_child(_new_location_dialog)
-	_name_dialog = AdventureNameDialog.new()
-	add_child(_name_dialog)
+	_texts_dialog = AdventureTextsDialog.new()
+	add_child(_texts_dialog)
 	_file_dialog = EditorFileDialog.new()
 	_file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
 	_file_dialog.add_filter("*.tres", "Events")
@@ -75,7 +80,7 @@ func _create_location(title: String, area: AdventureArea, new_area_name: String,
 	editor.rebuild()
 
 func ask_for_event(location: AdventureLocation, scenario: bool) -> void:
-	_name_dialog.ask("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
+	ask_name("New scenario" if scenario else "New event", "Title", _create_event.bind(location, scenario))
 
 ## The adventure's events (those met and every file in an events folder) not on [param location] yet, and any other file;
 ## [param show_actions] shows the menu
@@ -109,7 +114,7 @@ func _create_event(title: String, host: AdventurePage, scenario: bool) -> void:
 ## An NPC is named in a dialog; a monster is named after its profile (asked for if not given)
 func ask_for_encounter(location: AdventureLocation, monster: bool, profile: MonsterProfile) -> void:
 	if not monster:
-		_name_dialog.ask("New encounter", "Name", func(title: String) -> void: _create_encounter(title, location, null))
+		ask_name("New encounter", "Name", func(title: String) -> void: _create_encounter(title, location, null))
 		return
 	if profile != null:
 		_create_encounter(profile.name, location, profile)

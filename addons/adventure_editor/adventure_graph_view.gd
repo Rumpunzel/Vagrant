@@ -26,7 +26,7 @@ const SCROLL_MARGIN: Vector2 = Vector2(80, 160)
 const FRAME_MARGIN: int = 64
 const FRAME_BACKGROUND_ALPHA: float = 0.35
 const DASHED_COLOR: Color = Color(1, 1, 1, 0.6)
-const FADED: Color = Color(1, 1, 1, 0.5)
+const FADED: Color = AdventureUi.FADED
 const LINE_COLOR: Color = Color(1, 1, 1, 0.8)
 const PROBLEM_COLOR: Color = Color(1, 0.55, 0.5)
 const IMAGE_EXTENSIONS: Array[String] = ["png", "jpg", "jpeg", "webp", "svg"]
@@ -255,7 +255,7 @@ func _make_event_card(event: AdventureEvent, page: AdventurePage) -> Button:
 		card.text += " 🎲"
 		card.tooltip_text += "\nHappens only by chance"
 	card.pressed.connect(_on_event_card_pressed.bind(event, page))
-	if tooltips != null: tooltips.attach(card, event)
+	if tooltips != null: tooltips.attach(card, event, "open it")
 	card.gui_input.connect(func(input: InputEvent) -> void:
 		var click: InputEventMouseButton = input as InputEventMouseButton
 		if click == null or not click.pressed or click.button_index != MOUSE_BUTTON_RIGHT: return
@@ -304,16 +304,6 @@ func _make_icon(texture: Texture2D, color: Color) -> TextureRect:
 	icon.custom_minimum_size = Vector2.ONE * ICON_SIZE
 	icon.modulate = color
 	return icon
-
-## An editor icon, or [param fallback] text where there is no editor (previews)
-func _make_tool_button(icon_name: String, fallback: String, tooltip: String, on_pressed: Callable) -> Button:
-	var button: Button = Button.new()
-	button.flat = true
-	button.icon = _get_editor_icon(icon_name)
-	if button.icon == null: button.text = fallback
-	button.tooltip_text = tooltip
-	button.pressed.connect(on_pressed)
-	return button
 
 static func _get_editor_icon(icon_name: String) -> Texture2D: return AdventureActionMenu.get_editor_icon(icon_name)
 

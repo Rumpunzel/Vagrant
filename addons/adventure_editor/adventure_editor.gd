@@ -161,6 +161,7 @@ func rebuild() -> void:
 	_tooltips.opened.connect(_open_resource)
 	_map.tooltips = _tooltips
 	_event_screen.tooltips = _tooltips
+	_location_view.tooltips = _tooltips
 	_map.show_graph(_graph)
 	var listed: Array[AdventureEvent] = _list_events()
 	_fill_event_shelf()

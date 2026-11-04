@@ -97,7 +97,7 @@ func _make_card(page: AdventurePage, index: int, text: String, color: Color, ico
 	_card_styles[decision] = style
 	if decision == _selected: _style_card(style, true)
 	card.tooltip_text = "Click: edit in the Inspector"
-	if tooltips != null: tooltips.attach(card, decision)
+	if tooltips != null: tooltips.attach(card, decision, "edit it in the Inspector")
 	card.gui_input.connect(func(input: InputEvent) -> void:
 		var click: InputEventMouseButton = input as InputEventMouseButton
 		if click != null and click.pressed and click.button_index == MOUSE_BUTTON_LEFT:
@@ -116,9 +116,9 @@ func _make_card(page: AdventurePage, index: int, text: String, color: Color, ico
 	if faded: label.modulate = FADED
 	row.add_child(label)
 	var count: int = page.decisions.size()
-	if index > 0: row.add_child(_make_tool_button("MoveUp", "▲", "Move up", _move_decision.bind(page, index, -1)))
-	if index < count - 1: row.add_child(_make_tool_button("MoveDown", "▼", "Move down", _move_decision.bind(page, index, 1)))
-	row.add_child(_make_tool_button("Remove", "✕", "Remove", _remove_decision.bind(page, index)))
+	if index > 0: row.add_child(AdventureUi.icon_button("MoveUp", "▲", "Move up", _move_decision.bind(page, index, -1)))
+	if index < count - 1: row.add_child(AdventureUi.icon_button("MoveDown", "▼", "Move down", _move_decision.bind(page, index, 1)))
+	row.add_child(AdventureUi.icon_button("Remove", "✕", "Remove", _remove_decision.bind(page, index)))
 	lines.add_child(row)
 	card.add_child(lines)
 	return card
@@ -145,13 +145,13 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 		tag.text = _describe(item)
 		tag.tooltip_text = "Edit in the Inspector"
 		tag.pressed.connect(func() -> void: EditorInterface.edit_resource(item))
-		if tooltips != null and (item is AdventureStageCondition or item is AdventureStageConsequence): tooltips.attach(tag, item)
+		if tooltips != null and (item is AdventureStageCondition or item is AdventureStageConsequence): tooltips.attach(tag, item, "edit it in the Inspector")
 		tags.add_child(tag)
 		_tags[item] = tag
 		var without: Array = items.duplicate()
 		without.remove_at(index)
-		tags.add_child(_make_tool_button("Remove", "✕", "Remove", _request.bind(resource, property, without, "Remove %s" % tag.text, file)))
-	var add: Button = _make_tool_button("Add", "+", "Add a %s" % add_text, func() -> void:
+		tags.add_child(AdventureUi.icon_button("Remove", "✕", "Remove", _request.bind(resource, property, without, "Remove %s" % tag.text, file)))
+	var add: Button = AdventureUi.icon_button("Add", "+", "Add a %s" % add_text, func() -> void:
 		var actions: Dictionary[String, Callable] = {}
 		var additions: Dictionary[String, Resource] = get_additions.call()
 		for text: String in additions:

@@ -18,6 +18,10 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
 - **Edits** go through `EditorUndoRedoManager` and the editor's own saving, so UIDs survive (scripted `ResourceSaver.save()` outside the editor
   drops them); new files and deleting are part of their undo step (deleted files go to the system trash).
 - **Icons wherever possible** (user): menu items get one by the words in them (`AdventureActionMenu`), buttons by what they do.
+- **One kind of control per kind of setting** (`AdventureUi`): a checkbox for on and off, a button group for a few options (all visible),
+  a dropdown or menu for more; icon buttons for actions. Rich tooltips (`AdventureTooltips`) for things, ending with what a click does;
+  plain tooltips for buttons that only act.
+- **Settings sit with what they belong to:** an event's (when, layering, rest) above its graph on the event screen, not in its first page's node.
 - **Reconsider critically** (user): after each step an honest check whether it is still the right way; doubts go to "Open".
 
 ## Design
@@ -44,7 +48,7 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
   of a frame, drop events, encounters, monster profiles and images; delete; Tidy; play from here; Find; ★ starting page (set from the menu);
   exits on each node (click: text and first-time text; new links ask for them; + way back where there is none); ▶ ambience on locations and
   areas (one at a time); area texts from the frame's menu; 🎲 on events that happen by chance.
-- **Location panel** (left of the map, follows the selected location): small banner (background, Play, + encounter, close), its text and
+- **Location panel** (left of the map, follows the selected location, 300 px, plain controls with rich tooltips): small banner (background, Play, + encounter, close), its text and
   first-visit text to edit, sections in the location's order with ▲ ▼, + event, ✕, can come here.
 - **Event screen:** one per event; scenarios and encounters as foldable sections with their page graphs (height handle, scroll and zoom kept),
   pick first / every, + Option, Add event…; encounters with track bars (+ stage, + track), the Body bar, "In" (click to change) and "Leads to";
@@ -142,3 +146,4 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
 - 2026-11-04: rich tooltips through tooltips_pro (made `@tool`): `AdventureTooltips` (what they say, links by instance ID), `AdventureTooltipTrigger`, `AdventureTooltip` (editor look, links once locked); tried on event cards (events, scenarios, encounters, with links to their owners, locations and decisions' targets; a click opens them); tests: texts (3), hovering (1)
 - 2026-11-04: rich tooltips everywhere on the map and in page graphs: location titles (thumbnail, problems, unreachable), exits and decision cards (first-time text, outcomes with links and effects); conditions without "its own:"; tests: decisions (1), page problems (1)
 - 2026-11-04: stage tooltips (condition and effect chips, track bar stages): who sets the stage (decisions, linked to their event or location) and who needs it; `AdventureStageIndex` (shared with the problem check); a location's tooltip shows how its page reads in order (area text, its text, each section's events with when and layering, exits); the event node's 7 preview rows became one line ("Text: adds · Decisions: only its own · Rest: yes", click: next); map exits are just "→ Castle" side by side, their texts in the tooltip; tests: stages (1), reading (1)
+- 2026-11-04: UI reconsidered with the user: `AdventureUi` (one set of controls instead of four helper families); an event's settings moved out of its node to a strip above its graph (condition chips, text and decisions layering as button groups, "No rest here" checkbox); the scenario's "first / every" a button group; the location panel built from controls (rows open their event, rich tooltips with conditions; 300 px instead of 400); rich tooltips end with "Click: …"; `AdventureNameDialog` merged into `AdventureTextsDialog`; tests: panel, choice, settings (3)

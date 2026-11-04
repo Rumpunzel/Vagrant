@@ -13,6 +13,8 @@ const SETTINGS_SCRIPT: Script = preload("uid://lcf8uedn57am")  # tooltip_setting
 var tooltips: AdventureTooltips
 ## None: a tooltip per link of the label
 var subject: Resource
+## What clicking the control does, said last
+var click: String
 
 func _init() -> void:
 	super()
@@ -40,7 +42,7 @@ func init_signals() -> void:
 	control_node.mouse_exited.connect(_on_mouse_exited)
 
 func _on_subject_hovered() -> void:
-	tooltip_strings = [tooltips.describe(subject)] as Array[String]
+	tooltip_strings = [tooltips.describe_with_click(subject, click)] as Array[String]
 	_on_mouse_entered()
 
 func _describe_link(meta: Variant) -> Array[String]:
