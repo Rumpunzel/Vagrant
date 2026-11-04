@@ -127,6 +127,7 @@ there. − Two mechanisms, but each simple.
 - **Loading UI**: a list of runs (slots) on the title / main scene: continue one, or start a new run.
 
 ## Open
+- Sometimes the game hangs right at start with "ERROR: BUG: Unreferenced static string to 0: …" (Godot's own message; seen in about 1 of 3 runs on 2026-11-04, also on older commits of this branch): looks like a race in Godot while scripts compile on two threads (`Files.load_async` loads scenes on a background thread). Not looked into yet.
 - Runtime-made resources in saved places have an empty id and come back as null; fine for real content (all files), checked by step 6's test.
 - Where the run list lives (main scene has no title screen yet).
 - The debug restart (Escape) starts a new run (a new slot).
@@ -169,4 +170,4 @@ there. − Two mechanisms, but each simple.
 - 2026-11-03: rebuilt book entries turn past with `PageEntry.become_past(true)` (no fade) instead of overwriting the fade exports.
 - 2026-11-04: background saving taken out again: the game hung while recording frames, with an engine error about threads; the cause turned out to be Godot's movie mode (it hung on older commits too), but a big save (≈600 pages, 1.4 MB) takes ~45 ms written normally, so saving stays synchronous and simple.
 - 2026-11-04: debug panel Runs tab: save now (also makes "Play from here" a run), restart with a seed (`GameRandom.next_seed`, `Main.restart_story`; Escape uses it too), bug report (`user://bug_reports/<time>/`: save as it is now, also mid-fight, and the log; opened, path copied), saves folder, runs newest first with their page, continue / delete (not the running one). Journal: a monster's death (`Monster.died`) and resting (exhaustion gone); items don't change in stories yet.
-- 2026-11-04: Runs tab rows also show the saved protagonist: portrait, name, breath dice (spent, exhausted), injuries (`_breath_icons` shared with the State tab).
+- 2026-11-04: Runs tab rows name the saved protagonist; hovering the name shows it in a tooltip (portrait, name and title, origins, rolled scores, breath dice, injuries, items; `_breath_icons` shared with the State tab).

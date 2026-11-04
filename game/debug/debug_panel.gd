@@ -11,6 +11,7 @@ const STATE_REFRESH_SECONDS: float = 0.5
 const FONT_SIZE: int = 14
 const ICON_SIZE: int = 18
 const TOOLTIP_PICTURE_WIDTH: int = 280
+const TOOLTIP_PORTRAIT_HEIGHT: int = 140
 ## The tooltip's label doesn't wrap: longer first lines are cut
 const TOOLTIP_TEXT_LENGTH: int = 60
 const DIM: Color = Color(0.55, 0.58, 0.62)
@@ -36,6 +37,8 @@ const DELETE_ICON: Texture2D = preload("uid://7foj2ni8yr6v")  # trash.svg
 const BUG_ICON: Texture2D = preload("uid://buehwfr6g2myk")  # bug-ant.svg
 const FOLDER_ICON: Texture2D = preload("uid://dbg5e7ualqfgs")  # folder-open.svg
 const BUG_REPORTS: String = "user://bug_reports"
+## Links in the run list to a run's protagonist, for its tooltip
+const RUN_META: String = "run:"
 const BREATH_ICON: Texture2D = preload("uid://bhp2ma6kjfmk")  # information-circle.svg
 const INFO_ICON: Texture2D = preload("uid://c8itegtg34bpi")  # chat-bubble-left.svg
 const WARNING_ICON: Texture2D = preload("uid://drwku5rg0je33")  # exclamation-triangle.svg
@@ -55,6 +58,8 @@ var _runs: VBoxContainer
 var _save_button: Button
 var _restart_button: Button
 var _seed_field: LineEdit
+## Each listed run's protagonist ([method Character.get_save]), for its tooltip
+var _saved_protagonists: Dictionary[String, Dictionary] = {}
 
 func _ready() -> void:
 	if not OS.is_debug_build():
@@ -352,12 +357,27 @@ static func _breath_icons(breath_dice: Dictionary[DieType, int], exhaustion: Arr
 		for _index: int in Rules.BREATH_DICE[die_type] - have: icons += _icon(die_type.icon_blank, Color(1.0, 1.0, 1.0, 0.35)) + " "
 	return icons
 
-## A saved run's protagonist ([method Character.get_save]): portrait, name, breath dice, injuries
+## A saved run's protagonist ([method Character.get_save]), for its tooltip: portrait, name and title, origins, rolled scores, breath dice,
+## injuries, items
 static func _describe_saved_protagonist(saved: Dictionary) -> String:
 	var profile: Dictionary = saved.get("profile", {})
+	var lines: Array[String] = []
 	var portrait: Texture2D = ResourceId.find_at(profile, "portrait") as Texture2D
-	var text: String = "[img height=%d]%s[/img] " % [ICON_SIZE * 2, portrait.resource_path] if portrait != null else ""
-	text += _bold(_escaped(_text(profile, "name")))
+	if portrait != null: lines.append("[img height=%d]%s[/img]" % [TOOLTIP_PORTRAIT_HEIGHT, portrait.resource_path])
+	lines.append("%s %s" % [_bold(_escaped(_text(profile, "name"))), _dim(_escaped(_text(profile, "title")))])
+	var origins: Array[String] = []
+	for origin: Resource in ResourceId.find_each_at(profile, "origins"): if origin != null: origins.append(_escaped(_label(origin)))
+	if not origins.is_empty(): lines.append(_dim(", ".join(origins)))
+	var scores: Array[String] = []
+	var saved_scores: Dictionary = profile.get("attribute_scores", {})
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
+		var dice: Array = saved_scores.get(ResourceId.of(attribute), [])
+		var score: int = 0
+		for die: Array in dice:
+			var result: int = die[1]
+			score += result
+		scores.append("%s %s" % [_icon(attribute.icon, attribute.color), _bold(str(score))])
+	lines.append("   ".join(scores) + _dim("  rolled"))
 	var breath: Dictionary[DieType, int] = {}
 	var saved_breath: Dictionary = saved.get("breath_dice", {})
 	for id: String in saved_breath:
@@ -365,10 +385,14 @@ static func _describe_saved_protagonist(saved: Dictionary) -> String:
 		if die_type != null: breath[die_type] = _number(saved_breath, id)
 	var exhaustion: Array[DieType] = []
 	exhaustion.assign(ResourceId.find_each_at(saved, "exhaustion").filter(func(die_type: Resource) -> bool: return die_type != null))
-	text += "   " + _breath_icons(breath, exhaustion)
-	var injuries: Array = _list(saved, "injuries")
-	if not injuries.is_empty(): text += "  " + _injuries(injuries)
-	return text
+	lines.append(_breath_icons(breath, exhaustion) + "  " + _injuries(_list(saved, "injuries")))
+	var items: Array[String] = []
+	var saved_items: Dictionary = saved.get("items", {})
+	for id: String in saved_items:
+		var item: ItemProfile = ResourceId.find(id) as ItemProfile
+		if item != null: items.append("%s%s ×%d" % [_icon(item.icon), _escaped(item.name), _number(saved_items, id)])
+	if not items.is_empty(): lines.append(", ".join(items))
+	return "\n".join(lines)
 
 static func _injuries(magnitudes: Array) -> String:
 	if magnitudes.is_empty(): return _dim("unhurt")
@@ -463,6 +487,7 @@ func _refresh_runs() -> void:
 	for child: Node in _runs.get_children():
 		_runs.remove_child(child)
 		child.queue_free()
+	_saved_protagonists.clear()
 	var story: Story = get_tree().current_scene as Story
 	var running: String = story.run if story != null else ""
 	_save_button.disabled = story == null or not story.can_save()
@@ -480,19 +505,18 @@ func _refresh_runs() -> void:
 		if save_game != null:
 			var saved_at: String = save_game.saved_at.get_slice("T", 1)
 			var protagonist: Dictionary = save_game.story.get("protagonist", {})
-			text = "%s%s  %s  %s\n%s" % [
-				marker, _escaped(run), _dim("saved " + saved_at), _link(_text(save_game.story, "page")), _describe_saved_protagonist(protagonist)
-			]
+			_saved_protagonists[run] = protagonist
+			var profile: Dictionary = protagonist.get("profile", {})
+			var name: String = "[url=%s%s][color=#%s]%s[/color][/url]" % [RUN_META, run, HEADING.to_html(false), _escaped(_text(profile, "name"))]
+			text = "%s%s  %s  %s  %s" % [marker, _escaped(run), _dim("saved " + saved_at), _link(_text(save_game.story, "page")), name]
 		var label: RichTextLabel = _create_label(text)
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(label)
 		var continue_button: Button = _create_button("Continue", START_ICON, "Goes on with this run")
-		continue_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		continue_button.pressed.connect(func() -> void: Main.continue_run(run))
 		row.add_child(continue_button)
 		var delete_button: Button = _create_button("", DELETE_ICON, "Deletes this run's save" if run != running else "The running story's save")
 		delete_button.disabled = run == running
-		delete_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		delete_button.pressed.connect(func() -> void:
 			SaveGame.delete_run(run)
 			_refresh_runs()
@@ -595,8 +619,25 @@ func _create_label(bbcode: String) -> RichTextLabel:
 	label.text = bbcode
 	label.add_theme_font_size_override("normal_font_size", FONT_SIZE)
 	label.add_theme_font_size_override("bold_font_size", FONT_SIZE)
-	label.meta_clicked.connect(func(meta: Variant) -> void: GameDebuggerLinks.open(str(meta)))
+	label.meta_clicked.connect(func(meta: Variant) -> void:
+		if not str(meta).begins_with(RUN_META): GameDebuggerLinks.open(str(meta))
+	)
+	var tooltips: MetaTooltipTrigger = MetaTooltipTrigger.new()
+	tooltips.trigger_node = label
+	tooltips.origin = TooltipEnums.TooltipOrigin.MOUSE_POSITION_START
+	tooltips.offset = Vector2(16.0, 16.0)
+	tooltips.overflow_mode = TooltipEnums.OverflowMode.CLAMP
+	tooltips.tooltip_for = _runs_tooltip_for
+	label.add_child(tooltips)
 	return label
+
+## A run's protagonist ([constant RUN_META] links), or what a content link names
+func _runs_tooltip_for(meta: Variant) -> Array[String]:
+	var link: String = str(meta)
+	if not link.begins_with(RUN_META): return _tooltip_for(meta)
+	var saved: Dictionary = _saved_protagonists.get(link.trim_prefix(RUN_META), {})
+	if saved.is_empty(): return [] as Array[String]
+	return [_describe_saved_protagonist(saved)] as Array[String]
 
 #endregion
 
