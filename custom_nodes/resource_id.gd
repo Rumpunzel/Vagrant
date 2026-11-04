@@ -35,9 +35,9 @@ static func _find_indexed(root: Resource, inner_id: String, rebuild: bool) -> Re
 		var index: Dictionary[String, WeakRef] = {}
 		_index_inside(root, root.resource_path, index, {})
 		_indexes[key] = index
-	var reference: WeakRef = _indexes[key].get(inner_id)
-	if reference == null: return null
-	var found: Resource = reference.get_ref()
+	var resource_reference: WeakRef = _indexes[key].get(inner_id)
+	if resource_reference == null: return null
+	var found: Resource = resource_reference.get_ref()
 	return found
 
 ## Godot can't load a resource stored inside a file by itself: walks what the file stores once (not into other files)

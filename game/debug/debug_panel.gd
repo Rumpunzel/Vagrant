@@ -276,14 +276,7 @@ func _describe_protagonist(protagonist: Character) -> String:
 		var base: int = profile.get_attribute_score(attribute)
 		scores.append("%s [b]%d[/b]%s" % [_icon(attribute.icon, attribute.color), score, _dim("/%d" % base) if base != score else ""])
 	rows.append(["Scores", "   ".join(scores)])
-	var breath: String = ""
-	for die_type: DieType in Rules.BREATH_DICE:
-		if protagonist.exhaustion.has(die_type):
-			breath += _icon(die_type.icon_blank, Color(0.6, 0.25, 0.25)) + " "
-			continue
-		var have: int = protagonist.breath_dice.get(die_type, 0)
-		for _index: int in have: breath += _icon(die_type.icon_filled) + " "
-		for _index: int in Rules.BREATH_DICE[die_type] - have: breath += _icon(die_type.icon_blank, Color(1.0, 1.0, 1.0, 0.35)) + " "
+	var breath: String = _breath_icons(protagonist.breath_dice, protagonist.exhaustion)
 	var injuries: Array[int] = []
 	for injury: Injury in protagonist.get_injuries(): injuries.append(injury.magnitude)
 	rows.append(["Breath", breath + _dim("(%d)" % protagonist.get_breath_dice_count()) + ("   " + _injuries(injuries) if not injuries.is_empty() else "")])
@@ -346,6 +339,36 @@ func _gear(actor: Actor) -> String:
 		if equipment.dropped: notes.append("dropped")
 		pieces.append(_escaped(equipment.get_equipment_name()) + (" " + _dim("(%s)" % ", ".join(notes)) if not notes.is_empty() else ""))
 	return ", ".join(pieces)
+
+## Each breath die: filled while there, blank once spent, red-grey when exhausted
+static func _breath_icons(breath_dice: Dictionary[DieType, int], exhaustion: Array[DieType]) -> String:
+	var icons: String = ""
+	for die_type: DieType in Rules.BREATH_DICE:
+		if exhaustion.has(die_type):
+			icons += _icon(die_type.icon_blank, Color(0.6, 0.25, 0.25)) + " "
+			continue
+		var have: int = breath_dice.get(die_type, 0)
+		for _index: int in have: icons += _icon(die_type.icon_filled) + " "
+		for _index: int in Rules.BREATH_DICE[die_type] - have: icons += _icon(die_type.icon_blank, Color(1.0, 1.0, 1.0, 0.35)) + " "
+	return icons
+
+## A saved run's protagonist ([method Character.get_save]): portrait, name, breath dice, injuries
+static func _describe_saved_protagonist(saved: Dictionary) -> String:
+	var profile: Dictionary = saved.get("profile", {})
+	var portrait: Texture2D = ResourceId.find_at(profile, "portrait") as Texture2D
+	var text: String = "[img height=%d]%s[/img] " % [ICON_SIZE * 2, portrait.resource_path] if portrait != null else ""
+	text += _bold(_escaped(_text(profile, "name")))
+	var breath: Dictionary[DieType, int] = {}
+	var saved_breath: Dictionary = saved.get("breath_dice", {})
+	for id: String in saved_breath:
+		var die_type: DieType = ResourceId.find(id) as DieType
+		if die_type != null: breath[die_type] = _number(saved_breath, id)
+	var exhaustion: Array[DieType] = []
+	exhaustion.assign(ResourceId.find_each_at(saved, "exhaustion").filter(func(die_type: Resource) -> bool: return die_type != null))
+	text += "   " + _breath_icons(breath, exhaustion)
+	var injuries: Array = _list(saved, "injuries")
+	if not injuries.is_empty(): text += "  " + _injuries(injuries)
+	return text
 
 static func _injuries(magnitudes: Array) -> String:
 	if magnitudes.is_empty(): return _dim("unhurt")
@@ -452,17 +475,24 @@ func _refresh_runs() -> void:
 	for run: String in runs:
 		var row: HBoxContainer = HBoxContainer.new()
 		var save_game: SaveGame = SaveGame.read(run)
-		var page: String = _link(_text(save_game.story, "page")) if save_game != null else _dim("unreadable")
-		var saved_at: String = save_game.saved_at.get_slice("T", 1) if save_game != null else ""
 		var marker: String = _bold("▶ ") if run == running else ""
-		var label: RichTextLabel = _create_label("%s%s  %s  %s" % [marker, _escaped(run), _dim("saved " + saved_at), page])
+		var text: String = "%s%s  %s" % [marker, _escaped(run), _dim("unreadable")]
+		if save_game != null:
+			var saved_at: String = save_game.saved_at.get_slice("T", 1)
+			var protagonist: Dictionary = save_game.story.get("protagonist", {})
+			text = "%s%s  %s  %s\n%s" % [
+				marker, _escaped(run), _dim("saved " + saved_at), _link(_text(save_game.story, "page")), _describe_saved_protagonist(protagonist)
+			]
+		var label: RichTextLabel = _create_label(text)
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(label)
 		var continue_button: Button = _create_button("Continue", START_ICON, "Goes on with this run")
+		continue_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		continue_button.pressed.connect(func() -> void: Main.continue_run(run))
 		row.add_child(continue_button)
 		var delete_button: Button = _create_button("", DELETE_ICON, "Deletes this run's save" if run != running else "The running story's save")
 		delete_button.disabled = run == running
+		delete_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		delete_button.pressed.connect(func() -> void:
 			SaveGame.delete_run(run)
 			_refresh_runs()
