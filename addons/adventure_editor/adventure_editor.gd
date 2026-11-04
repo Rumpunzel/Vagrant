@@ -154,6 +154,8 @@ func rebuild() -> void:
 	_problems = [ ]
 	if adventure != null: _problems = AdventureProblems.new(_graph, _all_events).problems
 	_map.problems = _problems
+	_map.tooltips = AdventureTooltips.new(_graph)
+	_map.tooltips.opened.connect(_open_resource)
 	_map.show_graph(_graph)
 	var listed: Array[AdventureEvent] = _list_events()
 	_fill_event_shelf()
@@ -204,6 +206,11 @@ func _show_event(event: AdventureEvent, host: AdventurePage) -> void:
 		_host_picker.add_item("At %s" % AdventureGraph.get_title(location))
 		_host_picker.set_item_metadata(_host_picker.item_count - 1, location)
 		if location == host: _host_picker.select(_host_picker.item_count - 1)
+
+## What a tooltip's link names: an event on its screen, a page on the map
+func _open_resource(resource: Resource) -> void:
+	if resource is AdventureEvent: open_event(resource as AdventureEvent, null)
+	elif resource is AdventurePage: _open_location(resource as AdventurePage)
 
 func _open_location(location: AdventurePage) -> void:
 	_tabs.current_tab = _tabs.get_tab_idx_from_control(_map_tab)

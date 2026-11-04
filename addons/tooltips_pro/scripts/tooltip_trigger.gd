@@ -1,3 +1,4 @@
+@tool
 class_name TooltipTrigger
 extends Node
 
@@ -63,6 +64,8 @@ func _init() -> void:
 
 
 func _ready() -> void:
+	# Vagrant: in the editor only triggers made by editor tools (the adventure editor's), not those of scenes opened there
+	if Engine.is_editor_hint() and (owner != null or not scene_file_path.is_empty()): return
 	init_signals()
 
 

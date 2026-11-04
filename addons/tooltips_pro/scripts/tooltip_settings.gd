@@ -1,3 +1,4 @@
+@tool
 extends Resource
 
 @export_group("Templates")

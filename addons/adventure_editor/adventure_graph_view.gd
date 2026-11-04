@@ -40,6 +40,8 @@ const WHEEL_STEP: int = 80
 var layout: AdventureLayout
 ## Shown on the nodes of their pages
 var problems: Array[AdventureProblems.Problem] = [ ]
+## Rich tooltips for event cards; none: their plain ones
+var tooltips: AdventureTooltips
 
 ## Set when it sits in a scrolling page: the plain mouse wheel scrolls the page; Ctrl + wheel still zooms it, Shift + wheel and middle-drag move it
 var outer_scroll: ScrollContainer
@@ -252,6 +254,7 @@ func _make_event_card(event: AdventureEvent, page: AdventurePage) -> Button:
 		card.text += " 🎲"
 		card.tooltip_text += "\nHappens only by chance"
 	card.pressed.connect(_on_event_card_pressed.bind(event, page))
+	if tooltips != null: tooltips.attach(card, event)
 	card.gui_input.connect(func(input: InputEvent) -> void:
 		var click: InputEventMouseButton = input as InputEventMouseButton
 		if click == null or not click.pressed or click.button_index != MOUSE_BUTTON_RIGHT: return

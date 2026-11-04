@@ -1,3 +1,4 @@
+@tool
 class_name TooltipStackCoroutineManager
 
 static var _force_close_stack_coroutine: Coroutine

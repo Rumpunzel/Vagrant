@@ -1,3 +1,4 @@
+@tool
 extends Node
 
 ## The TooltipManager controls the instantiation and positioning of tooltips.
@@ -82,6 +83,9 @@ func init_tooltip(tooltip_trigger: TooltipTrigger, screen_pos: Vector2) -> Toolt
 	# Instantiate tooltip and add to Tooltip Stack
 	var template := tooltip_templates.values()[0] as PackedScene
 	if tooltip_trigger.tooltip_template_path:
+		# Vagrant: templates outside the template directory too (the adventure editor's), loaded when first used
+		if not tooltip_templates.has(tooltip_trigger.tooltip_template_path) and ResourceLoader.exists(tooltip_trigger.tooltip_template_path):
+			tooltip_templates[tooltip_trigger.tooltip_template_path] = load(tooltip_trigger.tooltip_template_path)
 		if tooltip_templates.has(tooltip_trigger.tooltip_template_path):
 			template = tooltip_templates[tooltip_trigger.tooltip_template_path]
 		else:

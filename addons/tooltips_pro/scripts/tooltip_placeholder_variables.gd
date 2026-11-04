@@ -1,3 +1,4 @@
+@tool
 extends Node
 
 # The variables "num" and "time" are used in an example scene 
