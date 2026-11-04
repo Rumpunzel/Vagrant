@@ -28,7 +28,8 @@ func before_test() -> void:
 	var adventure: Adventure = Adventure.new()
 	adventure.title = "Test"
 	adventure.starting_page = _fight_page
-	_story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
+	var scene: PackedScene = load("uid://db6oui711vqep")  # story.tscn
+	_story = auto_free(scene.instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
 	var profile: CharacterProfile = TestCharacters.adventurer()
@@ -68,7 +69,7 @@ func test_fighting_ends_on_an_outcome_page() -> void:
 		assert_int(_outcome_pages[page.adventure_page]).is_equal(fight.outcome)
 		break
 	# Exchange pages are not logged as visits
-	assert_int(_story._page_log[_fight_page].size()).is_equal(1)
+	assert_int(_story.get_how_often_page_has_been_entered(_fight_page)).is_equal(1)
 	assert_int(_story._page_stack.size()).is_equal(1)
 
 func test_fleeing_leaves_after_one_exchange() -> void:

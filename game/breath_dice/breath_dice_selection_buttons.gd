@@ -20,3 +20,25 @@ func update_colors(dice_result: DiceRequestResult) -> void:
 
 func deactivate_buttons() -> void:
 	_die_types.for_each_element(func(button_group: BreathDiceSelectionButtonGroup) -> void: button_group.deactivate())
+
+## What it shows, as data ([PageRecord]), a die type each
+func get_record() -> Array[Dictionary]:
+	var groups: Array[Dictionary] = []
+	for button_group: BreathDiceSelectionButtonGroup in _die_types.get_elements(): groups.append(button_group.get_record())
+	return groups
+
+func show_record(groups: Array) -> void:
+	var counts: Dictionary[DieType, int] = {}
+	var exhausted: Array[DieType] = []
+	for group: Dictionary in groups:
+		var die_type: DieType = ResourceId.find_at(group, "die") as DieType
+		# Gone from the game since: not shown
+		if die_type == null: continue
+		var count: int = group.count
+		counts[die_type] = count
+		if group.exhausted: exhausted.append(die_type)
+	setup_breath_dice(counts)
+	set_exhaustion(exhausted)
+	for group: Dictionary in groups:
+		var button_group: BreathDiceSelectionButtonGroup = button_groups.get(ResourceId.find_at(group, "die"))
+		if button_group != null: button_group.show_record_buttons(group)

@@ -1,6 +1,8 @@
 class_name Monster
 extends Actor
 
+signal died
+
 const UNARMED_ATTACK: MonsterAttack = preload("uid://c4a0yss3o6pxw")  # guts_attack.tres
 
 @export var monster_profile: MonsterProfile :
@@ -16,7 +18,11 @@ const UNARMED_ATTACK: MonsterAttack = preload("uid://c4a0yss3o6pxw")  # guts_att
 
 ## Lost a fight or failed the Guts save after an injury that left a score at 0 or below; stays out of every fight from then on
 var incapacitated: bool = false
-var dead: bool = false
+var dead: bool = false:
+	set(new_dead):
+		var dies: bool = new_dead and not dead
+		dead = new_dead
+		if dies: died.emit()
 
 func recover_breath() -> void:
 	breath_dice = monster_profile.get_breath_dice()
@@ -49,3 +55,14 @@ func get_fight_plan() -> FightPlan:
 	plan.shield_tactic = monster_profile.shield_tactic
 	plan.armor_tactic = monster_profile.armor_tactic
 	return plan
+
+func get_save() -> Dictionary:
+	var data: Dictionary = super()
+	data.incapacitated = incapacitated
+	data.dead = dead
+	return data
+
+func restore(data: Dictionary) -> void:
+	super(data)
+	incapacitated = data.incapacitated
+	dead = data.dead

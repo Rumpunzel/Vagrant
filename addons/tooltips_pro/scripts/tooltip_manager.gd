@@ -21,6 +21,8 @@ var follow_mouse: bool
 var is_collapsing_stack: bool
 
 var mouse_tooltips_parent: Node
+## Vagrant: the parent for mouse tooltips in each window (popped-out windows too), made when first needed
+var _mouse_tooltips_parents: Dictionary[Viewport, Control] = {}
 
 signal action_lock_input
 
@@ -28,11 +30,21 @@ func _ready() -> void:
 	action_lock_input.connect(on_action_lock_input)
 	load_tooltip_templates()
 	
-	var canvas_layer = CanvasLayer.new()
-	add_child(canvas_layer)
+	mouse_tooltips_parent = get_mouse_tooltips_parent(get_viewport())
+
+## Vagrant: a tooltip shows in the window its trigger is in, not always in the main window
+func get_mouse_tooltips_parent(viewport: Viewport) -> Control:
+	var parent: Control = _mouse_tooltips_parents.get(viewport)
+	if is_instance_valid(parent): return parent
+	var canvas_layer := CanvasLayer.new()
 	canvas_layer.layer = 128
-	mouse_tooltips_parent = Control.new()
-	canvas_layer.add_child(mouse_tooltips_parent)
+	parent = Control.new()
+	parent.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas_layer.add_child(parent)
+	if viewport == get_viewport(): add_child(canvas_layer)
+	else: viewport.add_child(canvas_layer)
+	_mouse_tooltips_parents[viewport] = parent
+	return parent
 
 
 func load_tooltip_templates() -> void:
@@ -41,18 +53,16 @@ func load_tooltip_templates() -> void:
 		tooltip_templates.set(tooltip_settings.tooltip_template_dir_path + resource, load(tooltip_settings.tooltip_template_dir_path + resource))
 	
 
-func _input(event):
-	if not mouse_tooltip_stack:
+# Vagrant: every frame instead of on mouse motion in _input, which only gets the main window's input
+func _process(_delta: float) -> void:
+	if not mouse_tooltip_stack or not follow_mouse:
 		return
 	if (
 		mouse_tooltip_stack[0].state == TooltipEnums.TooltipState.LOCKED
 		or mouse_tooltip_stack[0].state == TooltipEnums.TooltipState.UNLOCKING
 	):
 		return
-		
-	# Mouse in viewport coordinates.
-	if follow_mouse and event is InputEventMouseMotion:
-		position_tooltip(mouse_tooltip_stack[0])
+	position_tooltip(mouse_tooltip_stack[0])
 
 
 func on_action_lock_input() -> void:
@@ -85,7 +95,7 @@ func init_tooltip(tooltip_trigger: TooltipTrigger, screen_pos: Vector2) -> Toolt
 	else:
 		mouse_tooltip_stack.push_front(new_tooltip)
 	
-	var parent: Node = mouse_tooltips_parent
+	var parent: Node = get_mouse_tooltips_parent(tooltip_trigger.get_viewport())
 	if tooltip_trigger.origin == TooltipEnums.TooltipOrigin.TRIGGER_ELEMENT:
 		if screen_pos == Vector2.ZERO:
 			parent = tooltip_trigger
@@ -134,7 +144,7 @@ func position_tooltip(tooltip: Tooltip, screen_pos = Vector2.ZERO) -> void:
 			tooltip.trigger.state == TooltipEnums.TriggerState.INIT_MOUSE_ENTERED or
 			tooltip.trigger.state == TooltipEnums.TriggerState.ACTIVE_MOUSE_ENTERED
 		):
-			mouse_position = get_viewport().get_mouse_position()
+			mouse_position = tooltip.get_viewport().get_mouse_position()
 			if origin == TooltipEnums.TooltipOrigin.MOUSE_POSITION_FOLLOW:
 				follow_mouse = true
 	
@@ -146,7 +156,7 @@ func position_tooltip(tooltip: Tooltip, screen_pos = Vector2.ZERO) -> void:
 
 	# Reposition tooltip if necessary based on selected OverflowMode
 	if tooltip.trigger.overflow_mode != TooltipEnums.OverflowMode.OVERFLOW:
-		var bounds_rect := get_viewport().get_visible_rect()
+		var bounds_rect := tooltip.get_viewport().get_visible_rect()
 		var tooltip_global_rect := tooltip.get_global_rect()
 		var tooltip_global_rect_points := PackedVector2Array([
 				Vector2(

@@ -199,6 +199,20 @@ func test_chance_is_rolled_once_per_arrival() -> void:
 	assert_array(_castle.get_events(_story)).contains_exactly([_meeting])
 	assert_str(chance.describe()).is_equal("1 in 3 chance")
 
+## A chance is only rolled where its event could show: not on the way there
+func test_chance_is_not_rolled_where_the_event_cant_show() -> void:
+	var chance: AdventureChanceCondition = AdventureChanceCondition.new()
+	_meeting.conditions = [chance] as Array[AdventureCondition]
+	_hearing.where = AdventureEvent.Where.ENCOUNTER
+	var rolled: Array[int] = [0]
+	_story.chance_roller = func(_condition: AdventureChanceCondition) -> bool:
+		rolled[0] += 1
+		return true
+	assert_array(_shore.get_events(_story)).is_empty()
+	assert_int(rolled[0]).is_equal(0)
+	assert_array(_castle.get_events(_story)).contains([_meeting])
+	assert_int(rolled[0]).is_equal(1)
+
 func test_the_event_played_from_shows_whatever_its_conditions() -> void:
 	var met: AdventureStageCondition = AdventureStageCondition.new()
 	met.track = "Storyline"

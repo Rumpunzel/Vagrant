@@ -51,8 +51,13 @@ func are_all_prerequisites_fullfilled(story: Story) -> bool:
 ## it picks); [param encounter]: the encounter it belongs to, none for a location's own events
 func resolve_events(story: Story, location: AdventureLocation, encounter: AdventureEncounter) -> Array[AdventureEvent]:
 	var shown: Array[AdventureEvent] = [ ]
-	if encounter == null or story.is_forced(self) or can_show_at(story, location, encounter): shown.append(self)
+	if could_show_at(story, location, encounter): shown.append(self)
 	return shown
+
+## Whether it could show at [param location] at all, asked before its conditions: a chance is only rolled where what it decides could happen.
+## A location's own events (no [param encounter]) always could.
+func could_show_at(story: Story, location: AdventureLocation, encounter: AdventureEncounter) -> bool:
+	return encounter == null or story.is_forced(self) or can_show_at(story, location, encounter)
 
 func can_show_at(story: Story, location: AdventureLocation, encounter: AdventureEncounter) -> bool:
 	if not only_at.is_empty() and not is_allowed_at(location): return false

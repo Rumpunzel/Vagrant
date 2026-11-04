@@ -3,6 +3,9 @@ extends RefCounted
 
 ## Where the story stands: each encounter's and location's stage per track, and where each encounter could be
 
+signal stage_set(subject: Resource, track_name: String, stage: String)
+signal moved(encounter: AdventureEncounter, places: Array[AdventureLocation])
+
 var _encounters: Array[AdventureEncounter] = [ ]
 ## { subject -> { track name -> stage } }; unset tracks are at their first stage
 var _stages: Dictionary[Resource, Dictionary] = {}
@@ -34,6 +37,7 @@ func get_stage(subject: Resource, track_name: String) -> String:
 func set_stage(subject: Resource, track_name: String, stage: String) -> void:
 	var set_stages: Dictionary = _stages.get_or_add(subject, {})
 	set_stages[track_name] = stage
+	stage_set.emit(subject, track_name, stage)
 
 func get_places(encounter: AdventureEncounter) -> Array[AdventureLocation]:
 	var places: Array[AdventureLocation] = [ ]
@@ -43,6 +47,7 @@ func get_places(encounter: AdventureEncounter) -> Array[AdventureLocation]:
 
 func move(encounter: AdventureEncounter, places: Array[AdventureLocation]) -> void:
 	_places[encounter] = places.duplicate()
+	moved.emit(encounter, places)
 
 ## Whether [param location] is within [param reach] links of where [param encounter] could be (0: anywhere in the same area),
 ## but not one of those places itself
@@ -54,6 +59,27 @@ func is_near(encounter: AdventureEncounter, location: AdventureLocation, reach: 
 		var distances: Dictionary = _distances[place]
 		if not distances.has(location): continue
 		if (reach == 0 or stays_in_area) and location.area != place.area: continue
-		if reach > 0 and int(distances[location]) > reach: continue
+		var distance: int = distances[location]
+		if reach > 0 and distance > reach: continue
 		return true
 	return false
+
+## Stages and moved encounters, by [ResourceId]
+func get_save() -> Dictionary:
+	var stages: Dictionary[String, Dictionary] = {}
+	for subject: Resource in _stages: stages[ResourceId.of(subject)] = _stages[subject].duplicate()
+	var places: Dictionary[String, Array] = {}
+	for encounter: AdventureEncounter in _places: places[ResourceId.of(encounter)] = ResourceId.of_each(_places[encounter])
+	return {stages = stages, places = places}
+
+## Into a new world (no signals: the journal holds what already happened)
+func restore(data: Dictionary) -> void:
+	var stages: Dictionary = data.stages
+	for id: String in stages:
+		var tracks: Dictionary = stages[id]
+		_stages[ResourceId.find(id)] = tracks.duplicate()
+	var places: Dictionary = data.places
+	for id: String in places:
+		var locations: Array[AdventureLocation] = []
+		locations.assign(ResourceId.find_each_at(places, id))
+		_places[ResourceId.find(id) as AdventureEncounter] = locations

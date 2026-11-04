@@ -54,6 +54,45 @@ func show_outcome(outcome: String) -> void:
 func is_outcome_typed() -> bool: return _outcome.visible_ratio >= 1.0
 func get_outcome_typed() -> Signal: return _outcome.finished_typing
 
+## Shows what was picked in the middle of an exchange, above the outcome (in place of the panel it was picked on)
+func show_pick(pick: String) -> void:
+	# Looks like the outcome, without typing
+	var label: TypingLabel = _outcome.duplicate(DUPLICATE_SCRIPTS) as TypingLabel
+	_outcome.add_sibling(label)
+	_outcome.get_parent().move_child(label, _outcome.get_index())
+	label.visible = true
+	label.set_text_normally(pick)
+
+## Built again from what it showed, as a past page: no typing, no fading, nothing to click
+func show_record(record: PageRecord) -> void:
+	_page_background = record.get_background()
+	_area_background = record.get_area_background()
+	if record.title.is_empty(): _title.visible = false
+	else: _title.set_text_normally(record.title)
+	_description.set_text_normally(record.description)
+	_choices.clear()
+	for choice: Dictionary in record.choices:
+		var dialog_button: DialogButton = _dialog_button.instantiate()
+		_choices.add(dialog_button)
+		dialog_button.show_record(choice)
+	if not record.dice.is_empty():
+		_breath_dice_selection.show_record(record.dice)
+		# Its _ready closes it deferred, unless it starts opened
+		_breath_dice_collapsible_container.starts_opened = true
+		_breath_dice_collapsible_container.open()
+	for injury: Dictionary in record.injuries:
+		var target: String = injury.target
+		var magnitude: int = injury.magnitude
+		show_injury(target, magnitude)
+	for pick: String in record.picks: show_pick(pick)
+	if not record.outcome.is_empty():
+		_outcome.visible = true
+		_outcome.set_text_normally(record.outcome)
+	become_past(true)
+
+## What the dice showed once rolled ([PageRecord]); empty if nothing was rolled here
+func get_dice_record() -> Dictionary: return _breath_dice_selection.get_record()
+
 func display_dice_result(dice_result: DiceRequestResult) -> void:
 	_breath_dice_selection.display_dice_result(dice_result)
 
@@ -112,6 +151,11 @@ func _on_description_finished_typing() -> void:
 
 func _on_choice_made(story_decision: StoryChoice) -> void:
 	chosen_decision = story_decision
+	_lock_choices()
+
+## Taken: e.g. while a fight exchange plays out on this page, Fight and Flee can't be clicked again
+func _lock_choices() -> void:
+	for dialog_button: DialogButton in _choices.get_elements(): dialog_button.lock()
 
 func _on_dice_requested(dice_request: DiceRequest, story_dice_decision: StoryDiceDecision) -> void:
 	chosen_decision = story_dice_decision
@@ -119,4 +163,5 @@ func _on_dice_requested(dice_request: DiceRequest, story_dice_decision: StoryDic
 
 func _on_breath_dice_selection_confirmed() -> void:
 	chosen_decision.roll()
+	_lock_choices()
 	_breath_dice_collapsible_container.auto_update_size = CollapsibleContainer.AutoUpdateSizeOptions.DISABLED

@@ -18,7 +18,7 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 corner_detail = 5
 
-[node name="StoryBook" type="PanelContainer" unique_id=844200959 node_paths=PackedStringArray("_page_content_slider", "_pages")]
+[node name="StoryBook" type="PanelContainer" unique_id=844200959 node_paths=PackedStringArray("_page_content_slider", "_pages", "_scroll_container")]
 clip_contents = true
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,6 +30,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_evqjp")
 script = ExtResource("1_cts4e")
 _page_content_slider = NodePath("MarginContainer/HBoxContainer/PageContentSlider")
 _pages = NodePath("MarginContainer/HBoxContainer/ScrollContainer/Pages")
+_scroll_container = NodePath("MarginContainer/HBoxContainer/ScrollContainer")
 metadata/_custom_type_script = "uid://bob1fhstr1o06"
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1884468286]

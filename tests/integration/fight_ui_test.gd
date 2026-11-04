@@ -20,7 +20,8 @@ func _start(weapon_dice: Array[DieType]) -> void:
 	page.decisions = [decision] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = page
-	_story = auto_free(load(STORY).instantiate())
+	var scene: PackedScene = load(STORY)
+	_story = auto_free(scene.instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
 	var profile: CharacterProfile = TestCharacters.adventurer()
@@ -163,7 +164,8 @@ func test_dice_log_shows_save_result() -> void:
 	page.decisions = [decision] as Array[AdventureDecision]
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = page
-	_story = auto_free(load(STORY).instantiate())
+	var scene: PackedScene = load(STORY)
+	_story = auto_free(scene.instantiate())
 	_story._reveal_delay = 0.01
 	add_child(_story)
 	_story.start_adventure(adventure, TestCharacters.adventurer())
@@ -201,11 +203,30 @@ func test_weapon_selection_shows_marks_and_ruin() -> void:
 	_story._protagonist.weapons[1].ruined = true
 	await _choose(0)
 	var weapons: WeaponSelection = _selection()._weapon_selection
-	weapons.setup(_story._current_story_page.choices[0].get_dice_request())
+	weapons.setup(_story._current_story_page.choices[0].get_dice_request() as FightRequest)
 	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]2[/s]")
 	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]5[/s]")
 	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[1])).contains("ruined")
 	assert_bool(weapons._buttons[2].disabled).is_true()
+
+## Once rolled, Fight and Flee no longer react while the exchange plays out on their page (clicking Fight again failed an assertion)
+func test_choices_are_locked_once_rolled() -> void:
+	_start([Rules.d6] as Array[DieType])
+	await _choose(0)
+	var entry: StoryEntry = _story._story_book._current_page_entry
+	var buttons: Array[Control] = entry._choices.get_elements()
+	assert_object((buttons[0] as DialogButton).shortcut).is_not_null()
+	# As the Roll button does
+	entry._on_breath_dice_selection_confirmed()
+	for button: DialogButton in buttons:
+		assert_object(button.shortcut).is_null()
+		assert_bool(button.active).is_false()
+	assert_bool((buttons[0] as DialogButton).disabled).is_false()
+	assert_bool((buttons[1] as DialogButton).disabled).is_true()
+	# Losing breath dice in the roll doesn't enable Flee again
+	(buttons[1] as DialogButton)._update_availability()
+	assert_bool((buttons[1] as DialogButton).disabled).is_true()
+	_strike_if_asked()
 
 ## Strikes as the commit panel starts out, if the exchange asks the player to commit
 func _strike_if_asked() -> void:

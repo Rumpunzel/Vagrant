@@ -140,3 +140,60 @@ func _recover_breath_dice() -> Dictionary[DieType, int]:
 			recovered_breath_dice[die_type] = recovered
 	breath_dice = new_breath_dice
 	return recovered_breath_dice
+
+## Also what character creation chose (by value: the profile may exist only in memory), exhaustion and items
+func get_save() -> Dictionary:
+	var data: Dictionary = super()
+	var scores: Dictionary[String, Array] = {}
+	for attribute: CharacterAttribute in character_profile.attribute_scores:
+		var score: RolledAttributeScore = character_profile.attribute_scores[attribute]
+		var dice: Array[Array] = []
+		if score != null: for die: Die in score.dice: dice.append([ResourceId.of(die.die_type), die.result])
+		scores[ResourceId.of(attribute)] = dice
+	data.profile = {
+		name = character_profile.name,
+		title = character_profile.title,
+		portrait = ResourceId.of(character_profile.portrait),
+		attribute_scores = scores,
+		origins = ResourceId.of_each(character_profile.origins),
+	}
+	data.exhaustion = ResourceId.of_each(exhaustion)
+	var carried: Dictionary[String, int] = {}
+	for item: ItemProfile in items: carried[ResourceId.of(item)] = items[item]
+	data.items = carried
+	data.most_recently_chosen_attribute = ResourceId.of(most_recently_chosen_attribute)
+	return data
+
+## Puts what character creation chose ([method get_save]'s "profile") into [param profile], a copy of the adventure's protagonist
+static func restore_profile(profile: CharacterProfile, data: Dictionary) -> void:
+	profile.name = data.name
+	profile.title = data.title
+	profile.portrait = ResourceId.find_at(data, "portrait") as Texture2D
+	var scores: Dictionary[CharacterAttribute, RolledAttributeScore] = {}
+	var saved_scores: Dictionary = data.attribute_scores
+	for id: String in saved_scores:
+		var dice: Array[Die] = []
+		var saved_dice: Array = saved_scores[id]
+		for die: Array in saved_dice:
+			var die_type: String = die[0]
+			var result: int = die[1]
+			dice.append(Die.new(ResourceId.find(die_type) as DieType, result))
+		scores[ResourceId.find(id) as CharacterAttribute] = RolledAttributeScore.new(dice) if not dice.is_empty() else null
+	profile.attribute_scores = scores
+	var origins: Array[Origin] = []
+	origins.assign(ResourceId.find_each_at(data, "origins"))
+	profile.origins = origins
+
+## After [member character_profile] is set
+func restore(data: Dictionary) -> void:
+	super(data)
+	var exhausted: Array[DieType] = []
+	exhausted.assign(ResourceId.find_each_at(data, "exhaustion"))
+	exhaustion = exhausted
+	var carried: Dictionary[ItemProfile, int] = {}
+	var saved_items: Dictionary = data.items
+	for id: String in saved_items:
+		var count: int = saved_items[id]
+		carried[ResourceId.find(id) as ItemProfile] = count
+	items = carried
+	most_recently_chosen_attribute = ResourceId.find_at(data, "most_recently_chosen_attribute") as CharacterAttribute

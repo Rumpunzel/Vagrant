@@ -37,3 +37,31 @@ func _spawn_monster(spawning_page: AdventurePage, monster_profile: MonsterProfil
 	_monsters_by_profile[monster_profile] = monsters_by_profile
 	add_child(monster, true)
 	return monster
+
+## Each monster met so far: where it belongs (its owner, the location of a one-off fight), its profile, its index there and its state
+func get_save() -> Array[Dictionary]:
+	var saved: Array[Dictionary] = []
+	for key: Array in monsters:
+		var holder: Resource = key[0]
+		var location: Resource = key[1]
+		var counts: Dictionary[MonsterProfile, int] = {}
+		for monster: Monster in monsters[key]:
+			var index: int = counts.get(monster.monster_profile, 0)
+			counts[monster.monster_profile] = index + 1
+			saved.append({
+				owner = ResourceId.of(holder),
+				location = ResourceId.of(location),
+				profile = ResourceId.of(monster.monster_profile),
+				index = index,
+				state = monster.get_save(),
+			})
+	return saved
+
+func restore(saved: Array) -> void:
+	for data: Dictionary in saved:
+		var holder: AdventurePage = ResourceId.find_at(data, "owner") as AdventurePage
+		var location: AdventurePage = ResourceId.find_at(data, "location") as AdventurePage
+		var index: int = data.index
+		var state: Dictionary = data.state
+		var monster: Monster = get_monster(holder, ResourceId.find_at(data, "profile") as MonsterProfile, index, location)
+		monster.restore(state)

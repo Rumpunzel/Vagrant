@@ -71,5 +71,5 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 - **First time:** a choice can read differently until the player has been where it leads ("Climb the narrow path up the cliff." before "Go to Castle."). Choices leading back have no first time.
 
 ## Encounters
-- **Chance:** an event can happen only by chance ("1 in 2"), rolled once each time the player arrives at a location and kept while there; the player sees no roll (the Lurker's ambush is 1 in 2).
+- **Chance:** an event can happen only by chance ("1 in 2"), rolled once each time the player arrives at a location where the event could show (not on the way elsewhere) and kept while there; the player sees no roll (the Lurker's ambush is 1 in 2).
 - **A monster's body:** winning a fight beats (incapacitates) the encounter's monster, and it stays beaten; only the story kills it. Its events go by that (can fight / beaten / dead), its story by stages.

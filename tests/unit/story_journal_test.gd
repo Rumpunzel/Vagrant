@@ -1,0 +1,92 @@
+extends GdUnitTestSuite
+
+## The journal keeps what happened in order, as plain values and resource IDs, and counts visits and decisions.
+
+const CHARACTER: PackedScene = preload("uid://bl0pdxri24fnh")  # character.tscn
+
+var _journal: StoryJournal
+
+func before_test() -> void:
+	_journal = StoryJournal.new()
+
+func test_counts_visits_and_decisions() -> void:
+	var page: AdventurePage = AdventurePage.new()
+	var decision: AdventureDecision = AdventureDecision.new()
+	assert_int(_journal.get_times_entered(page)).is_equal(0)
+	_journal.enter(page)
+	_journal.enter(page)
+	_journal.choose(decision)
+	assert_int(_journal.get_times_entered(page)).is_equal(2)
+	assert_int(_journal.get_times_made(decision)).is_equal(1)
+	assert_array(_journal.entries.map(func(entry: Dictionary) -> String: return entry.type)).contains_exactly(["enter", "enter", "choose"])
+
+func test_entries_are_plain_values() -> void:
+	_journal.start(Adventure.new(), 42)
+	_journal.enter(AdventurePage.new())
+	var json: String = JSON.stringify(_journal.entries)
+	assert_array(JSON.parse_string(json)).has_size(2)
+	assert_dict(_journal.entries[0]).is_equal({type = "start", adventure = "", seed = 42})
+
+func test_watches_the_world() -> void:
+	var world: StoryWorld = StoryWorld.new()
+	_journal.watch(world)
+	var encounter: AdventureEncounter = AdventureEncounter.new()
+	world.set_stage(encounter, "Mood", "angry")
+	world.move(encounter, [AdventureLocation.new()] as Array[AdventureLocation])
+	assert_dict(_journal.entries[0]).is_equal({type = "stage", subject = "", track = "Mood", stage = "angry"})
+	assert_dict(_journal.entries[1]).is_equal({type = "move", encounter = "", places = [""]})
+
+func test_story_writes_chance_once_per_arrival() -> void:
+	var story: Story = auto_free(Story.new())
+	story.chance_roller = func(_condition: AdventureChanceCondition) -> bool: return true
+	var condition: AdventureChanceCondition = AdventureChanceCondition.new()
+	story.roll_chance(condition)
+	story.roll_chance(condition)
+	assert_array(story.journal.entries).has_size(1)
+	assert_dict(story.journal.entries[0]).contains_key_value("came_up", true)
+
+func test_watches_actors_once() -> void:
+	var scene: PackedScene = CHARACTER
+	var character: Character = auto_free(scene.instantiate())
+	add_child(character)
+	character.character_profile = TestCharacters.adventurer()
+	_journal.watch_actor(character)
+	_journal.watch_actor(character)
+	character.suffer_injury(Injury.new(2))
+	character.lose_breath_dice([Die.new(Rules.d6, 6)] as Array[Die])
+	assert_array(_journal.entries).has_size(2)
+	assert_dict(_journal.entries[0]).is_equal({type = "injury", actor = "Tester", magnitude = 2, total = 2})
+	assert_dict(_journal.entries[1]).contains_key_value("dice", ["d6"])
+
+## A monster's death and making camp (exhaustion gone) are written; catching breath is told once, by its own entry
+func test_death_and_rest() -> void:
+	var monsters: Monsters = auto_free(Monsters.new())
+	add_child(monsters)
+	var monster: Monster = monsters.get_monster(AdventurePage.new(), TestMonsters.cutthroat())
+	_journal.watch_actor(monster)
+	monster.dead = true
+	monster.dead = true
+	var scene: PackedScene = CHARACTER
+	var character: Character = auto_free(scene.instantiate())
+	add_child(character)
+	character.character_profile = TestCharacters.adventurer()
+	_journal.watch_actor(character)
+	character.exhaustion = [Rules.d8] as Array[DieType]
+	character.exhaustion = [] as Array[DieType]
+	assert_array(_journal.entries.map(func(entry: Dictionary) -> String: return entry.type)).contains_exactly(["died", "rested"])
+
+func test_plain_text() -> void:
+	assert_str(StoryJournal.to_plain_text("[color=#fff]You[/color] take [img=20]res://wound.png[/img]2.")).is_equal("You take 2.")
+
+func test_labels() -> void:
+	var chance: AdventureChanceCondition = AdventureChanceCondition.new()
+	chance.times = 1
+	chance.out_of = 3
+	assert_str(StoryJournal.label(chance)).is_equal("chance 1 in 3")
+	var page: AdventurePage = AdventurePage.new()
+	page.description = "A long text."
+	assert_str(StoryJournal.label(page)).is_empty()
+	var decision: AdventureDecision = AdventureDecision.new()
+	decision.description = "Go on."
+	assert_str(StoryJournal.label(decision)).is_equal("Go on.")
+	assert_str(StoryJournal.label(Rules.STRENGTH)).is_equal(Rules.STRENGTH.descriptor)

@@ -25,10 +25,14 @@ func resolve_events(story: Story, location: AdventureLocation, encounter: Advent
 	if pick == Pick.FIRST:
 		for event: AdventureEvent in events: if event != null and story.is_forced(event): return event.resolve_events(story, location, encounter)
 	for event: AdventureEvent in events:
-		if event == null or not event.are_all_prerequisites_fullfilled(story): continue
+		if event == null or not event.could_show_at(story, location, encounter) or not event.are_all_prerequisites_fullfilled(story): continue
 		shown.append_array(event.resolve_events(story, location, encounter))
 		if pick == Pick.FIRST and not shown.is_empty(): break
 	return shown
+
+## If one of its events could
+func could_show_at(story: Story, location: AdventureLocation, encounter: AdventureEncounter) -> bool:
+	return events.any(func(event: AdventureEvent) -> bool: return event != null and event.could_show_at(story, location, encounter))
 
 ## Its events, nested scenarios' options included
 func get_listed_events() -> Array[AdventureEvent]:

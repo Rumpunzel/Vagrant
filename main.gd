@@ -24,11 +24,23 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		var main_scene: PackedScene = Files.load_async(_main_scene_path)
 		scene_tree.change_scene_to_packed(main_scene)
 	elif event.is_action_released("debug_restart_story"):
-		if not scene_tree.current_scene is Story: printerr("Cannot restart Story!")
-		else:
-			viewport.set_input_as_handled()
-			var current_story: Story = scene_tree.current_scene
-			_enter_story(current_story._adventure, current_story._protagonist.character_profile)
+		viewport.set_input_as_handled()
+		restart_story()
+	elif event.is_action_released("debug_continue_run"):
+		viewport.set_input_as_handled()
+		var runs: Array[String] = SaveGame.get_runs()
+		if runs.is_empty(): printerr("No saved run to continue!")
+		else: continue_run(runs[-1])
+
+## The running story's adventure from the start, with the same protagonist (a new run); [param random_seed]: its random numbers
+## (e.g. a logged run's seed), 0: new ones
+func restart_story(random_seed: int = 0) -> void:
+	var current_story: Story = get_tree().current_scene as Story
+	if current_story == null:
+		printerr("Cannot restart Story!")
+		return
+	GameRandom.next_seed = random_seed
+	_enter_story(current_story._adventure, current_story.get_protagonist().character_profile)
 
 func enter_character_creation(protagonist: CharacterProfile) -> CharacterCreation:
 	var scene_tree: SceneTree = get_tree()
@@ -55,5 +67,24 @@ func _enter_story(adventure: Adventure, protagonist: CharacterProfile, page: Adv
 	await scene_tree.scene_changed
 	assert(scene_tree.current_scene is Story)
 	var story: Story = scene_tree.current_scene
+	# Only runs from the start are saved, not "Play from here" (which starts on a page)
+	if page == null: story.run = SaveGame.start_run()
 	story.start_adventure(adventure, protagonist, page, host, forced)
+	return story
+
+## Goes on with a saved run; null if it can't be loaded (the reasons are logged)
+func continue_run(run: String) -> Story:
+	var save_game: SaveGame = SaveGame.read(run)
+	var problems: Array[String] = save_game.get_problems() if save_game != null else ["No such save."] as Array[String]
+	if not problems.is_empty():
+		push_warning("Run %s can't be loaded:\n%s" % [run, "\n".join(problems)])
+		return null
+	var adventure: Adventure = ResourceId.find_at(save_game.story, "adventure") as Adventure
+	var scene_tree: SceneTree = get_tree()
+	ResourceLoader.load_threaded_request(_story_scene_path)
+	var story_scene: PackedScene = Files.load_async(_story_scene_path)
+	scene_tree.change_scene_to_packed(story_scene)
+	await scene_tree.scene_changed
+	var story: Story = scene_tree.current_scene
+	story.restore(adventure, run, save_game.story)
 	return story
