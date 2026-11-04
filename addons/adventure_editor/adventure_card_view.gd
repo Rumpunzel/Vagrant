@@ -97,6 +97,7 @@ func _make_card(page: AdventurePage, index: int, text: String, color: Color, ico
 	_card_styles[decision] = style
 	if decision == _selected: _style_card(style, true)
 	card.tooltip_text = "Click: edit in the Inspector"
+	if tooltips != null: tooltips.attach(card, decision)
 	card.gui_input.connect(func(input: InputEvent) -> void:
 		var click: InputEventMouseButton = input as InputEventMouseButton
 		if click != null and click.pressed and click.button_index == MOUSE_BUTTON_LEFT:

@@ -29,6 +29,7 @@ var adventure: Adventure : set = set_adventure
 
 var _graph: AdventureGraph
 var _problems: Array[AdventureProblems.Problem] = [ ]
+var _tooltips: AdventureTooltips
 var _layout: AdventureLayout
 var _edits: AdventureEdits
 ## Every event of the adventure, found once per rebuild ([method _find_all_events])
@@ -76,6 +77,7 @@ func _make_event_graph() -> AdventureEventView:
 	graph.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	graph.layout = _layout
 	graph.problems = _problems
+	graph.tooltips = _tooltips
 	graph.encounters = _get_encounters()
 	graph.changes_requested.connect(_edits.apply)
 	graph.event_opened.connect(open_event)
@@ -154,8 +156,10 @@ func rebuild() -> void:
 	_problems = [ ]
 	if adventure != null: _problems = AdventureProblems.new(_graph, _all_events).problems
 	_map.problems = _problems
-	_map.tooltips = AdventureTooltips.new(_graph)
-	_map.tooltips.opened.connect(_open_resource)
+	_tooltips = AdventureTooltips.new(_graph)
+	_tooltips.problems = _problems
+	_tooltips.opened.connect(_open_resource)
+	_map.tooltips = _tooltips
 	_map.show_graph(_graph)
 	var listed: Array[AdventureEvent] = _list_events()
 	_fill_event_shelf()

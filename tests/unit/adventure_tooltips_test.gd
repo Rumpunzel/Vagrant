@@ -58,6 +58,31 @@ func test_an_encounter() -> void:
 	assert_str(text).contains("[b]Storyline:[/b] Unmet → Met")
 	assert_str(text).contains("• [url=%d]" % _ambush.get_instance_id())
 
+func test_a_decision_and_its_outcomes() -> void:
+	var go_on: AdventureDecision = _ambush.decisions[0]
+	go_on.first_description = "Wade in."
+	var text: String = _tooltips().describe(go_on)
+	assert_str(text).contains("[b]Continue.[/b]")
+	assert_str(text).contains("[b]The first time:[/b] Wade in.")
+	assert_str(text).contains("• → [url=%d]" % _strikes.get_instance_id())
+	var save: AdventureSaveDecision = AdventureSaveDecision.new()
+	save.description = "Jump"
+	save.attribute = Rules.AGILITY
+	save.difficulty = 5
+	save.failure_transition = _strikes
+	text = _tooltips().describe(save)
+	assert_str(text).contains("Save: ")
+	assert_str(text).contains("[b]Failure:[/b] → [url=%d]" % _strikes.get_instance_id())
+	assert_str(text).contains("[b]Success:[/b] → ")
+
+func test_a_page_says_its_problems() -> void:
+	var tooltips: AdventureTooltips = _tooltips()
+	tooltips.problems = [AdventureProblems.Problem.new("Shore is lonely", _shore, null)] as Array[AdventureProblems.Problem]
+	var text: String = tooltips.describe(_shore)
+	assert_str(text).contains("⚠ Shore is lonely")
+	assert_str(text).contains("[url=%d]" % _ambush.get_instance_id())
+	assert_str(text).contains("[i]Waves.[/i]")
+
 func _tooltips() -> AdventureTooltips:
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = _shore

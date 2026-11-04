@@ -215,7 +215,8 @@ func _mark_problems(node: GraphNode, resource: Resource) -> void:
 	for problem: AdventureProblems.Problem in problems: if problem.page == resource and not texts.has(problem.text): texts.append(problem.text)
 	if texts.is_empty(): return
 	node.self_modulate = PROBLEM_COLOR
-	node.tooltip_text = "\n".join(texts)
+	# The rich tooltip on its title says them
+	if tooltips == null: node.tooltip_text = "\n".join(texts)
 	var icon: TextureRect = _make_texture_rect(_get_editor_icon("StatusWarning"))
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.custom_minimum_size = Vector2.ONE * ICON_SIZE
