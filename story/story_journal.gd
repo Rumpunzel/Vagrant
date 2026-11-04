@@ -66,7 +66,11 @@ func watch_actor(actor: Actor) -> void:
 	_watched[actor.get_instance_id()] = true
 	actor.suffered_injury.connect(_on_suffered_injury.bind(actor))
 	actor.lost_breath.connect(_on_lost_breath.bind(actor))
-	if actor is Character: (actor as Character).caught_breath.connect(_on_caught_breath.bind(actor))
+	if actor is Character:
+		var character: Character = actor
+		character.caught_breath.connect(_on_caught_breath.bind(character))
+		character.exhaustion_changed.connect(_on_exhaustion_changed.bind(character))
+	if actor is Monster: (actor as Monster).died.connect(_on_died.bind(actor))
 
 ## Writes the stage changes and moves of [param world]
 func watch(world: StoryWorld) -> void:
@@ -106,6 +110,14 @@ func _on_caught_breath(recovered: Dictionary, character: Character) -> void:
 		{type = "breath_caught", actor = character.get_actor_name(), recovered = dice, exhaustion = exhausted},
 		"%s caught breath: recovered %s, exhausted %s" % [character.get_actor_name(), dice, " ".join(exhausted)],
 	)
+
+## Exhaustion gone: rested (making camp); growing is told by catching breath
+func _on_exhaustion_changed(exhaustion: Array[DieType], character: Character) -> void:
+	if not exhaustion.is_empty(): return
+	_write({type = "rested", actor = character.get_actor_name()}, "%s rested: no more exhaustion" % character.get_actor_name())
+
+func _on_died(monster: Monster) -> void:
+	_write({type = "died", actor = monster.get_actor_name()}, "%s died" % monster.get_actor_name())
 
 func _write(entry: Dictionary, line: String) -> void:
 	entries.append(entry)

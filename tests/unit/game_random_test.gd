@@ -43,6 +43,13 @@ func test_shuffle_keeps_items() -> void:
 	GameRandom.shuffle(again)
 	assert_array(again).is_equal(items)
 
+## A logged run's seed starts the next run once
+func test_next_seed_is_taken_once() -> void:
+	GameRandom.next_seed = 4321
+	GameRandom.start(GameRandom.take_next_seed())
+	assert_int(GameRandom.get_seed()).is_equal(4321)
+	assert_int(GameRandom.take_next_seed()).is_equal(0)
+
 func _roll(count: int) -> Array[int]:
 	var results: Array[int] = []
 	for _index: int in count: results.append(GameRandom.range_int(1, 12))

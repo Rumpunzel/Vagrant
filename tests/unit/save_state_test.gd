@@ -116,16 +116,23 @@ func test_save_game_written_and_read() -> void:
 	assert_array(SaveGame.get_runs()).contains(["save_state_test"])
 	assert_object(SaveGame.read("save_state_test_none")).is_null()
 
-## Written next to the slot first, then put in its place; in the background too, and reading waits for that
+## Written next to the slot first, then put in its place
 func test_save_game_replaces_its_slot() -> void:
 	var save_game: SaveGame = SaveGame.new()
 	save_game.run = "save_state_test"
 	save_game.story = {page = "first"}
 	assert_int(save_game.write()).is_equal(OK)
 	save_game.story = {page = "second"}
-	save_game.write_in_background()
+	assert_int(save_game.write()).is_equal(OK)
 	assert_dict(SaveGame.read("save_state_test").story).is_equal({page = "second"})
 	assert_bool(FileAccess.file_exists(SaveGame.get_path_of("save_state_test") + ".tmp")).is_false()
+
+func test_deleting_a_run() -> void:
+	var save_game: SaveGame = SaveGame.new()
+	save_game.run = "save_state_test"
+	assert_int(save_game.write()).is_equal(OK)
+	SaveGame.delete_run("save_state_test")
+	assert_array(SaveGame.get_runs()).not_contains(["save_state_test"])
 
 func test_refuses_what_is_gone() -> void:
 	var save_game: SaveGame = SaveGame.new()

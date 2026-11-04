@@ -2,6 +2,8 @@ extends GdUnitTestSuite
 
 ## The journal keeps what happened in order, as plain values and resource IDs, and counts visits and decisions.
 
+const CHARACTER: PackedScene = preload("uid://bl0pdxri24fnh")  # character.tscn
+
 var _journal: StoryJournal
 
 func before_test() -> void:
@@ -44,7 +46,7 @@ func test_story_writes_chance_once_per_arrival() -> void:
 	assert_dict(story.journal.entries[0]).contains_key_value("came_up", true)
 
 func test_watches_actors_once() -> void:
-	var scene: PackedScene = load("uid://bl0pdxri24fnh")  # character.tscn
+	var scene: PackedScene = CHARACTER
 	var character: Character = auto_free(scene.instantiate())
 	add_child(character)
 	character.character_profile = TestCharacters.adventurer()
@@ -55,6 +57,23 @@ func test_watches_actors_once() -> void:
 	assert_array(_journal.entries).has_size(2)
 	assert_dict(_journal.entries[0]).is_equal({type = "injury", actor = "Tester", magnitude = 2, total = 2})
 	assert_dict(_journal.entries[1]).contains_key_value("dice", ["d6"])
+
+## A monster's death and making camp (exhaustion gone) are written; catching breath is told once, by its own entry
+func test_death_and_rest() -> void:
+	var monsters: Monsters = auto_free(Monsters.new())
+	add_child(monsters)
+	var monster: Monster = monsters.get_monster(AdventurePage.new(), TestMonsters.cutthroat())
+	_journal.watch_actor(monster)
+	monster.dead = true
+	monster.dead = true
+	var scene: PackedScene = CHARACTER
+	var character: Character = auto_free(scene.instantiate())
+	add_child(character)
+	character.character_profile = TestCharacters.adventurer()
+	_journal.watch_actor(character)
+	character.exhaustion = [Rules.d8] as Array[DieType]
+	character.exhaustion = [] as Array[DieType]
+	assert_array(_journal.entries.map(func(entry: Dictionary) -> String: return entry.type)).contains_exactly(["died", "rested"])
 
 func test_plain_text() -> void:
 	assert_str(StoryJournal.to_plain_text("[color=#fff]You[/color] take [img=20]res://wound.png[/img]2.")).is_equal("You take 2.")

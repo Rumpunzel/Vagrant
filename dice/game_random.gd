@@ -6,11 +6,19 @@ extends RefCounted
 ## No dependencies: [DieType] (preloaded by [code]Rules[/code]) uses it.
 
 static var _rng: RandomNumberGenerator = _create()
+## The seed the next run starts with ([method take_next_seed]), e.g. to repeat a logged run; 0: a random one
+static var next_seed: int = 0
 
 ## Starts a new sequence; [param new_seed] 0: a random one
 static func start(new_seed: int = 0) -> void:
 	_rng = _create()
 	if new_seed != 0: _rng.seed = new_seed
+
+## [member next_seed], once
+static func take_next_seed() -> int:
+	var taken: int = next_seed
+	next_seed = 0
+	return taken
 
 static func get_seed() -> int: return _rng.seed
 static func get_state() -> int: return _rng.state

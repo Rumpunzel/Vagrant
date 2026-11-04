@@ -30,6 +30,12 @@ const STAGE_ICON: Texture2D = preload("uid://dwkyq7qlsoqtp")  # flag.svg
 const MOVE_ICON: Texture2D = preload("uid://cva2ujh4tfewg")  # arrows-right-left.svg
 const FIGHT_ICON: Texture2D = preload("uid://5vyvb0dueieq")  # crossed-swords.svg
 const CAMP_ICON: Texture2D = preload("uid://qbxnlgxl1qta")  # campfire.svg
+const DEATH_ICON: Texture2D = preload("uid://bjnuqyclma3kc")  # cross-mark.svg
+const SAVE_ICON: Texture2D = preload("uid://dialjvdmxg20f")  # arrow-down-tray.svg
+const DELETE_ICON: Texture2D = preload("uid://7foj2ni8yr6v")  # trash.svg
+const BUG_ICON: Texture2D = preload("uid://buehwfr6g2myk")  # bug-ant.svg
+const FOLDER_ICON: Texture2D = preload("uid://dbg5e7ualqfgs")  # folder-open.svg
+const BUG_REPORTS: String = "user://bug_reports"
 const BREATH_ICON: Texture2D = preload("uid://bhp2ma6kjfmk")  # information-circle.svg
 const INFO_ICON: Texture2D = preload("uid://c8itegtg34bpi")  # chat-bubble-left.svg
 const WARNING_ICON: Texture2D = preload("uid://drwku5rg0je33")  # exclamation-triangle.svg
@@ -45,6 +51,10 @@ var _filter: LineEdit
 var _log: RichTextLabel
 var _state: RichTextLabel
 var _since_state_refresh: float = 0.0
+var _runs: VBoxContainer
+var _save_button: Button
+var _restart_button: Button
+var _seed_field: LineEdit
 
 func _ready() -> void:
 	if not OS.is_debug_build():
@@ -163,6 +173,8 @@ static func format_entry(entry: Dictionary) -> String:
 			for die: String in _list(entry, "exhaustion"): exhausted += _die_icon(die, Color(0.4, 0.4, 0.4))
 			return "%s %s catches breath: %s, exhausted %s" % [_icon(CAMP_ICON), _actor(entry), recovered, exhausted]
 		"exchange": return _format_exchange(entry)
+		"rested": return "%s %s rests: no more exhaustion" % [_icon(CAMP_ICON), _actor(entry)]
+		"died": return "%s %s %s" % [_icon(DEATH_ICON, KIND_COLORS[LogBuffer.Kind.ERROR]), _actor(entry), _outcome("died", false)]
 	return _escaped(str(entry))
 
 static func _format_roll(entry: Dictionary) -> String:
@@ -421,6 +433,143 @@ static func _list(data: Dictionary, key: Variant) -> Array:
 
 #endregion
 
+#region Runs
+
+## Lists the saved runs: when each began and was last saved, the page it is on; the running one marked, the others to continue or delete
+func _refresh_runs() -> void:
+	for child: Node in _runs.get_children():
+		_runs.remove_child(child)
+		child.queue_free()
+	var story: Story = get_tree().current_scene as Story
+	var running: String = story.run if story != null else ""
+	_save_button.disabled = story == null or not story.can_save()
+	_save_button.tooltip_text = "Saves the running story now" if not _save_button.disabled else "Only on a page with nothing going on"
+	_restart_button.disabled = story == null or story.get_protagonist() == null
+	if story != null and _seed_field.text.is_empty(): _seed_field.text = str(GameRandom.get_seed())
+	var runs: Array[String] = SaveGame.get_runs()
+	runs.reverse()
+	if runs.is_empty(): _runs.add_child(_create_label(_dim("No saved runs.")))
+	for run: String in runs:
+		var row: HBoxContainer = HBoxContainer.new()
+		var save_game: SaveGame = SaveGame.read(run)
+		var page: String = _link(_text(save_game.story, "page")) if save_game != null else _dim("unreadable")
+		var saved_at: String = save_game.saved_at.get_slice("T", 1) if save_game != null else ""
+		var marker: String = _bold("▶ ") if run == running else ""
+		var label: RichTextLabel = _create_label("%s%s  %s  %s" % [marker, _escaped(run), _dim("saved " + saved_at), page])
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(label)
+		var continue_button: Button = _create_button("Continue", START_ICON, "Goes on with this run")
+		continue_button.pressed.connect(func() -> void: Main.continue_run(run))
+		row.add_child(continue_button)
+		var delete_button: Button = _create_button("", DELETE_ICON, "Deletes this run's save" if run != running else "The running story's save")
+		delete_button.disabled = run == running
+		delete_button.pressed.connect(func() -> void:
+			SaveGame.delete_run(run)
+			_refresh_runs()
+		)
+		row.add_child(delete_button)
+		_runs.add_child(row)
+
+func _save_now() -> void:
+	var story: Story = get_tree().current_scene as Story
+	if story == null or not story.can_save(): return
+	# "Play from here" isn't saved by itself; saving it on purpose makes it a run
+	if story.run.is_empty(): story.run = SaveGame.start_run()
+	var error: Error = SaveGame.capture(story.run, story).write()
+	GameLog.write("debug", "saved run %s" % story.run if error == OK else "saving failed: %s" % error_string(error))
+	_refresh_runs()
+
+func _restart_with_seed() -> void:
+	var seed_text: String = _seed_field.text.strip_edges()
+	if not seed_text.is_valid_int():
+		push_warning("Not a seed: %s" % seed_text)
+		return
+	Main.restart_story(seed_text.to_int())
+
+## A folder with the story's save as it is now (also in the middle of a fight) and the log, for a bug report; opened, its path copied
+func _write_bug_report() -> void:
+	var directory: String = BUG_REPORTS.path_join(Time.get_datetime_string_from_system().replace(":", "-"))
+	DirAccess.make_dir_recursive_absolute(directory)
+	var story: Story = get_tree().current_scene as Story
+	if story != null and story.get_protagonist() != null:
+		var save: FileAccess = FileAccess.open(directory.path_join("save.json"), FileAccess.WRITE)
+		save.store_string(JSON.stringify({run = story.run, can_save = story.can_save(), story = story.get_save()}, "\t"))
+		save.close()
+	var log_file: FileAccess = FileAccess.open(directory.path_join("log.txt"), FileAccess.WRITE)
+	for line: Dictionary in _lines: log_file.store_line(_text(line, "search"))
+	log_file.close()
+	var path: String = ProjectSettings.globalize_path(directory)
+	DisplayServer.clipboard_set(path)
+	GameLog.write("debug", "bug report written to %s (path copied)" % path)
+	OS.shell_open(path)
+
+func _open_saves_folder() -> void:
+	DirAccess.make_dir_recursive_absolute(SaveGame.DIRECTORY)
+	OS.shell_open(ProjectSettings.globalize_path(SaveGame.DIRECTORY))
+
+func _build_runs_tab() -> void:
+	var tab: VBoxContainer = VBoxContainer.new()
+	tab.name = "Runs"
+	_tabs.add_child(tab)
+	var bar: HBoxContainer = HBoxContainer.new()
+	tab.add_child(bar)
+	_save_button = _create_button("Save now", SAVE_ICON, "")
+	_save_button.pressed.connect(_save_now)
+	bar.add_child(_save_button)
+	_seed_field = LineEdit.new()
+	_seed_field.placeholder_text = "Seed"
+	_seed_field.tooltip_text = "A run's seed (the log's \"Started\" line); the same choices then give the same rolls"
+	_seed_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_seed_field.add_theme_font_size_override("font_size", FONT_SIZE)
+	bar.add_child(_seed_field)
+	_restart_button = _create_button("Restart", LOAD_ICON, "Starts the adventure again with this seed and the same protagonist")
+	_restart_button.pressed.connect(_restart_with_seed)
+	bar.add_child(_restart_button)
+	var tools: HBoxContainer = HBoxContainer.new()
+	tab.add_child(tools)
+	var report_button: Button = _create_button("Bug report", BUG_ICON, "Writes the save as it is now and the log into a folder, opens it and copies its path")
+	report_button.pressed.connect(_write_bug_report)
+	tools.add_child(report_button)
+	var folder_button: Button = _create_button("Saves folder", FOLDER_ICON, "Opens the folder the runs are saved in")
+	folder_button.pressed.connect(_open_saves_folder)
+	tools.add_child(folder_button)
+	var refresh_button: Button = _create_button("", LOAD_ICON, "Reads the saved runs again")
+	refresh_button.pressed.connect(_refresh_runs)
+	tools.add_child(refresh_button)
+	var scroll: ScrollContainer = ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	tab.add_child(scroll)
+	_runs = VBoxContainer.new()
+	_runs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(_runs)
+	_tabs.tab_changed.connect(func(index: int) -> void:
+		if index == tab.get_index(): _refresh_runs()
+	)
+
+func _create_button(text: String, icon: Texture2D, tooltip: String) -> Button:
+	var button: Button = Button.new()
+	button.text = text
+	button.icon = icon
+	button.tooltip_text = tooltip
+	button.expand_icon = false
+	button.add_theme_constant_override("icon_max_width", ICON_SIZE)
+	button.add_theme_font_size_override("font_size", FONT_SIZE)
+	return button
+
+func _create_label(bbcode: String) -> RichTextLabel:
+	var label: RichTextLabel = RichTextLabel.new()
+	label.bbcode_enabled = true
+	label.fit_content = true
+	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	label.text = bbcode
+	label.add_theme_font_size_override("normal_font_size", FONT_SIZE)
+	label.add_theme_font_size_override("bold_font_size", FONT_SIZE)
+	label.meta_clicked.connect(func(meta: Variant) -> void: GameDebuggerLinks.open(str(meta)))
+	return label
+
+#endregion
+
 func _build() -> void:
 	_window = POPOUT_WINDOW.instantiate()
 	_window.unresizable = false
@@ -467,6 +616,7 @@ func _build() -> void:
 	_state.name = "State"
 	_state.scroll_following = false
 	_tabs.add_child(_state)
+	_build_runs_tab()
 	_window.add(panel)
 	add_child(_window)
 

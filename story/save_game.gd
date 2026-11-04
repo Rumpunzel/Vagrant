@@ -9,9 +9,6 @@ const DIRECTORY: String = "user://saves"
 ## What a save keeps of the past rather than where the run stands ([method get_problems])
 const HISTORY: Array[String] = ["journal", "book"]
 
-## The [WorkerThreadPool] task writing a save, or -1
-static var _writing: int = -1
-
 ## The run's slot: its file name without extension
 var run: String
 ## [method Story.get_save]
@@ -28,6 +25,10 @@ static func get_runs() -> Array[String]:
 	for file: String in DirAccess.get_files_at(DIRECTORY): if file.get_extension() == "json": runs.append(file.get_basename())
 	runs.sort()
 	return runs
+
+## Its save goes (and a leftover of a write that never finished)
+static func delete_run(of_run: String) -> void:
+	for path: String in [get_path_of(of_run), get_path_of(of_run) + ".tmp"]: if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
 
 static func capture(of_run: String, from_story: Story) -> SaveGame:
 	assert(from_story.can_save())
@@ -48,23 +49,8 @@ func write() -> Error:
 	file.close()
 	return DirAccess.rename_absolute(written, path)
 
-## [method write] on a worker thread, so a long run's save doesn't hold up the game; one write at a time
-func write_in_background() -> void:
-	wait_for_writes()
-	_writing = WorkerThreadPool.add_task(func() -> void:
-		var error: Error = write()
-		if error != OK: push_error("Saving %s failed: %s" % [run, error_string(error)])
-	)
-
-## Until the last [method write_in_background] is done (e.g. before reading the save)
-static func wait_for_writes() -> void:
-	if _writing < 0: return
-	WorkerThreadPool.wait_for_task_completion(_writing)
-	_writing = -1
-
 ## Null if there is no such save, or it can't be read
 static func read(of_run: String) -> SaveGame:
-	wait_for_writes()
 	var text: String = FileAccess.get_file_as_string(get_path_of(of_run))
 	var parsed: Variant = JSON.parse_string(text) if not text.is_empty() else null
 	if not parsed is Dictionary: return null

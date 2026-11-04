@@ -105,9 +105,6 @@ var _arrivals_while_forced: int = 0
 
 func _init() -> void: world = StoryWorld.new()
 
-## A background autosave must be done before the story goes (Godot also needs every worker task waited for)
-func _exit_tree() -> void: SaveGame.wait_for_writes()
-
 ## Goes on with a saved run ([method get_save]) of [param new_adventure], on the page it was saved on; the adventure must have
 ## everything the save names ([method SaveGame.get_problems])
 func restore(new_adventure: Adventure, of_run: String, data: Dictionary) -> void:
@@ -152,7 +149,8 @@ func restore(new_adventure: Adventure, of_run: String, data: Dictionary) -> void
 
 func _autosave() -> void:
 	if run.is_empty() or not can_save(): return
-	SaveGame.capture(run, self).write_in_background()
+	var error: Error = SaveGame.capture(run, self).write()
+	if error != OK: push_error("Autosave of %s failed: %s" % [run, error_string(error)])
 
 ## [param page]: start there instead of the starting page; [param host]: the page its event is on, entered first so going back and host links work
 ## [param forced]: an event played from in the adventure editor, shown on the first arrival whatever its conditions
@@ -161,7 +159,7 @@ func start_adventure(new_adventure: Adventure, protagonist_profile: CharacterPro
 	assert(protagonist_profile)
 	assert(protagonist_profile.is_valid())
 	# Before the protagonist: handing out gear may roll (marked faces)
-	GameRandom.start()
+	GameRandom.start(GameRandom.take_next_seed())
 	_begin(new_adventure, protagonist_profile)
 	journal.start(new_adventure, GameRandom.get_seed())
 	_forced = forced

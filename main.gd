@@ -24,16 +24,23 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		var main_scene: PackedScene = Files.load_async(_main_scene_path)
 		scene_tree.change_scene_to_packed(main_scene)
 	elif event.is_action_released("debug_restart_story"):
-		if not scene_tree.current_scene is Story: printerr("Cannot restart Story!")
-		else:
-			viewport.set_input_as_handled()
-			var current_story: Story = scene_tree.current_scene
-			_enter_story(current_story._adventure, current_story._protagonist.character_profile)
+		viewport.set_input_as_handled()
+		restart_story()
 	elif event.is_action_released("debug_continue_run"):
 		viewport.set_input_as_handled()
 		var runs: Array[String] = SaveGame.get_runs()
 		if runs.is_empty(): printerr("No saved run to continue!")
 		else: continue_run(runs[-1])
+
+## The running story's adventure from the start, with the same protagonist (a new run); [param random_seed]: its random numbers
+## (e.g. a logged run's seed), 0: new ones
+func restart_story(random_seed: int = 0) -> void:
+	var current_story: Story = get_tree().current_scene as Story
+	if current_story == null:
+		printerr("Cannot restart Story!")
+		return
+	GameRandom.next_seed = random_seed
+	_enter_story(current_story._adventure, current_story.get_protagonist().character_profile)
 
 func enter_character_creation(protagonist: CharacterProfile) -> CharacterCreation:
 	var scene_tree: SceneTree = get_tree()
