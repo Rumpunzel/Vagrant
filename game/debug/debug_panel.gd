@@ -507,8 +507,8 @@ func _refresh_runs() -> void:
 			var protagonist: Dictionary = save_game.story.get("protagonist", {})
 			_saved_protagonists[run] = protagonist
 			var profile: Dictionary = protagonist.get("profile", {})
-			var name: String = "[url=%s%s][color=#%s]%s[/color][/url]" % [RUN_META, run, HEADING.to_html(false), _escaped(_text(profile, "name"))]
-			text = "%s%s  %s  %s  %s" % [marker, _escaped(run), _dim("saved " + saved_at), _link(_text(save_game.story, "page")), name]
+			var character_name: String = "[url=%s%s][color=#%s]%s[/color][/url]" % [RUN_META, run, HEADING.to_html(false), _escaped(_text(profile, "name"))]
+			text = "%s%s  %s  %s  %s" % [marker, _escaped(run), _dim("saved " + saved_at), _link(_text(save_game.story, "page")), character_name]
 		var label: RichTextLabel = _create_label(text)
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(label)
