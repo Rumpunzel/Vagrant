@@ -12,13 +12,15 @@ func _init(with_settings: FightLabRunSettings) -> void:
 	settings = with_settings
 
 ## Many fights: { side_a, side_b, skipped, sweep: label or "", sweep_values, cells: [{a, b, value, stats}] },
-## a and b being indices into the sides' name lists; see [method FightLabStats.summarize].
+## a and b being indices into the sides' name lists (side A's: its rows, a profile with a strategy); see [method FightLabStats.summarize].
 ## One fight: { side_a, side_b, fight: {a, b, record} } with the record's exchange log.
 func execute(parent: Node) -> Dictionary[String, Variant]:
 	if settings.random_seed != 0: seed(settings.random_seed)
 	var scenario: FightLabScenario = settings.scenario
 	var simulator: FightLabSimulator = FightLabSimulator.new(parent)
-	var result: Dictionary[String, Variant] = {"side_a": _names(scenario.side_a), "side_b": _names(scenario.side_b)}
+	var rows: Array[String] = []
+	for row: int in scenario.get_row_count(): rows.append(scenario.get_row_name(row))
+	var result: Dictionary[String, Variant] = {"side_a": rows, "side_b": _names(scenario.side_b)}
 	if settings.mode == FightLabRunSettings.Mode.ONE_FIGHT:
 		var matchup: FightLabMatchup = scenario.get_matchup(settings.a, settings.b)
 		result["fight"] = {"a": settings.a, "b": settings.b, "record": simulator.simulate(matchup, settings.max_exchanges, true)}

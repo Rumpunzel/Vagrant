@@ -64,3 +64,24 @@ static func _histograms(records: Array[Dictionary], keys: Array[String]) -> Dict
 			histogram[value] = histogram.get(value, 0) + 1
 		histograms[key] = histogram
 	return histograms
+
+## The 10th, 25th, 50th, 75th and 90th percentile of a {value: fights} histogram; [] when it is empty
+static func percentiles(histogram: Dictionary) -> Array[float]:
+	var values: Array[int] = []
+	var total: int = 0
+	for value: String in histogram:
+		values.append(value.to_int())
+		var count: int = histogram[value]
+		total += count
+	if total == 0: return []
+	values.sort()
+	var percentiles: Array[float] = []
+	for share: float in [0.1, 0.25, 0.5, 0.75, 0.9]:
+		var counted: int = 0
+		for value: int in values:
+			var count: int = histogram[str(value)]
+			counted += count
+			if counted >= share * total:
+				percentiles.append(float(value))
+				break
+	return percentiles

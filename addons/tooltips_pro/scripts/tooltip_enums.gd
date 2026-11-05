@@ -2,14 +2,14 @@ class_name TooltipEnums
 
 
 enum TriggerMode{
-	## [TooltipTrigger] will connect to and create a tooltip on 
+	## [TooltipTrigger] will connect to and create a tooltip on
 	## [code]mouse_entered[/code] and [code]focus_entered[/code]
 	MOUSE_AND_FOCUS,
 	## [code]mouse_entered[/code] only
 	MOUSE_ONLY,
 	## [code]focus_entered[/code] only if [TooltipTrigger] inherits from [Control].
 	## [code]FOCUS_ONLY[/code] should be used on 2D or 3D nodes when you have a
-	## custom script determining when these nodes are "selected." See the prism 
+	## custom script determining when these nodes are "selected." See the prism
 	## example and [code]/examples/scripts/example_collision_object_3d.gd[/code]
 	FOCUS_ONLY,
 }
@@ -40,7 +40,7 @@ enum OverflowBounds {
 }
 
 
-# Used with TooltipTrigger.overflow_bounds to determine how a Tooltip should be 
+# Used with TooltipTrigger.overflow_bounds to determine how a Tooltip should be
 # positioned when overflowing the designated OverflowBounds.
 enum OverflowMode {
 	## [code]TooltipAlignment[/code] is flipped horizontally or vertically or both.
@@ -67,18 +67,18 @@ enum TooltipLockMode {
 }
 
 
-# Used by TooltipTrigger.origin to set the origin, or pivot, around which the 
+# Used by TooltipTrigger.origin to set the origin, or pivot, around which the
 # Tooltip is aligned and positioned.
 enum TooltipOrigin {
 	## Position the [Tooltip] relative to the [TooltipTrigger] [Control].
 	TRIGGER_ELEMENT,
-	## Position the [Tooltip] relative to the [Control] assigned on 
+	## Position the [Tooltip] relative to the [Control] assigned on
 	## [code]TooltipTrigger.remote_element_node[/code].
 	REMOTE_ELEMENT,
-	## Position the [Tooltip] relative to the [b]mouse position[b] at the time 
+	## Position the [Tooltip] relative to the [b]mouse position[b] at the time
 	## of trigger.
 	MOUSE_POSITION_START,
-	## Position the [Tooltip] relative to the [b]mouse position[b] and follow 
+	## Position the [Tooltip] relative to the [b]mouse position[b] and follow
 	## its position unless the [Tooltip] is locked.
 	MOUSE_POSITION_FOLLOW,
 }

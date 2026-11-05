@@ -1,21 +1,19 @@
 @tool
 extends EditorPlugin
 
-const MANAGER = "TooltipManager"
-const PLACEHOLDER_VARIABLES = "TooltipPlaceholderVariables"
+const MANAGER: String = "TooltipManager"
 
 
 func _enable_plugin() -> void:
 	add_autoload_singleton(MANAGER, "res://addons/tooltips_pro/scripts/tooltip_manager.gd")
-	add_autoload_singleton(PLACEHOLDER_VARIABLES, "res://addons/tooltips_pro/scripts/tooltip_placeholder_variables.gd")
-	
-	var primary_key = InputEventKey.new()
+
+	var primary_key: InputEventKey = InputEventKey.new()
 	primary_key.physical_keycode = KEY_T
-	var secondary_key = InputEventMouseButton.new()
+	var secondary_key: InputEventMouseButton = InputEventMouseButton.new()
 	secondary_key.device = -1
 	secondary_key.button_index = MOUSE_BUTTON_MIDDLE
 
-	var input = {
+	var input: Dictionary = {
 		"deadzone": 0.2,
 		"events": [
 			primary_key,
@@ -28,7 +26,6 @@ func _enable_plugin() -> void:
 
 func _disable_plugin() -> void:
 	remove_autoload_singleton(MANAGER)
-	remove_autoload_singleton(PLACEHOLDER_VARIABLES)
-	
+
 	ProjectSettings.set_setting("input/lock_tooltip", null)
 	ProjectSettings.save()

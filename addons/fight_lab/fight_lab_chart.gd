@@ -1,7 +1,11 @@
 @tool
 extends Control
 
-## A bar or box chart: one slot per category, its series side by side or stacked. Hover a bar or box for its values.
+## A bar or box chart: one slot per category, its series side by side or stacked. Hovering a category tells all its values
+## ([method describe_hovered], for a rich tooltip that [signal hovered_changed] refreshes).
+
+## The mouse moved onto another category, or off them
+signal hovered_changed
 
 const MARGIN: Vector4 = Vector4(44, 44, 8, 20)  # left, top (title and legend), right, bottom
 const GRID_LINES: int = 4
@@ -14,10 +18,17 @@ var series: Array[Dictionary] = []
 var stacked: bool = false
 var percent: bool = false
 var boxed: bool = false
+## Said first when a category is hovered: what the chart shows
+var explanation: String = ""
+## Said last for each category, e.g. how many fights it counts ("" for none)
+var notes: Array[String] = []
+
+var _hovered: int = -1
 
 func _init() -> void:
 	custom_minimum_size = Vector2(340, 210)
 	mouse_filter = Control.MOUSE_FILTER_PASS
+	mouse_exited.connect(func() -> void: _set_hovered(-1))
 
 func show_data(new_title: String, new_categories: Array[String], new_series: Array[Dictionary], is_stacked: bool = false, is_percent: bool = false) -> void:
 	title = new_title
@@ -57,16 +68,35 @@ func _draw() -> void:
 		if index % label_step == 0:
 			draw_string(font, Vector2(plot.position.x + slot * index, plot.end.y + font_size + 2), categories[index], HORIZONTAL_ALIGNMENT_CENTER, slot * label_step, font_size - 2, text_color)
 
-func _get_tooltip(at_position: Vector2) -> String:
-	for index: int in categories.size():
-		var bars: Array[Rect2] = _get_bars(index)
-		for series_index: int in bars.size():
-			if not bars[series_index].grow(1).has_point(at_position): continue
-			if not boxed: return "%s — %s: %s" % [categories[index], series[series_index]["name"], _format(series[series_index]["values"][index])]
-			var box: Array = series[series_index]["boxes"][index]
-			if box.is_empty(): return "%s — %s: no fights" % [categories[index], series[series_index]["name"]]
-			return "%s — %s: median %s, middle half %s–%s, 10–90%%: %s–%s" % [categories[index], series[series_index]["name"], _format(box[2]), _format(box[1]), _format(box[3]), _format(box[0]), _format(box[4])]
-	return ""
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion: _set_hovered(_get_category_at((event as InputEventMouseMotion).position))
+
+func _set_hovered(index: int) -> void:
+	if index == _hovered: return
+	_hovered = index
+	hovered_changed.emit()
+
+## The category under [param at_position], -1 outside the plot
+func _get_category_at(at_position: Vector2) -> int:
+	var plot: Rect2 = _get_plot_rect()
+	if categories.is_empty() or not plot.grow_individual(0, MARGIN.y, 0, MARGIN.w).has_point(at_position): return -1
+	return clampi(floori((at_position.x - plot.position.x) / (plot.size.x / categories.size())), 0, categories.size() - 1)
+
+## Everything about the hovered category: each series' value (its percentiles as boxes), then its note; "" when none is hovered
+func describe_hovered() -> String:
+	if _hovered < 0 or _hovered >= categories.size(): return ""
+	var lines: Array[String] = ["[b]%s[/b] — %s" % [title, categories[_hovered]]]
+	if not explanation.is_empty(): lines.append("[color=#ffffff99]%s[/color]" % explanation)
+	for entry: Dictionary in series:
+		var swatch: String = "[color=%s]■[/color] %s" % [(entry["color"] as Color).to_html(), entry["name"]]
+		if not boxed:
+			lines.append("%s: %s" % [swatch, _format(entry["values"][_hovered])])
+			continue
+		var box: Array = entry["boxes"][_hovered]
+		if box.is_empty(): lines.append("%s: no fights" % swatch)
+		else: lines.append("%s: median %s, middle half %s–%s, 10–90%%: %s–%s" % [swatch, _format(box[2]), _format(box[1]), _format(box[3]), _format(box[0]), _format(box[4])])
+	if _hovered < notes.size() and not notes[_hovered].is_empty(): lines.append("[color=#ffffff99]%s[/color]" % notes[_hovered])
+	return "\n".join(lines)
 
 ## [param area] spans the whiskers; the box is the middle half, the line the median
 func _draw_box(area: Rect2, box: Array, color: Color) -> void:

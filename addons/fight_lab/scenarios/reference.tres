@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="FightLabScenario" format=3 uid="uid://dr3ikpueok78u"]
+
+[ext_resource type="Script" uid="uid://cjby5flxyttfj" path="res://addons/fight_lab/fight_lab_scenario.gd" id="1_scenario"]
+[ext_resource type="Script" uid="uid://ccqy6fcxk75ur" path="res://characters/actor_profile.gd" id="2_actor_profile"]
+[ext_resource type="Resource" uid="uid://by1enqcgfgk1a" path="res://addons/fight_lab/fighters/weak.tres" id="3_weak"]
+[ext_resource type="Resource" uid="uid://t0k7mhd0chyp" path="res://addons/fight_lab/fighters/average.tres" id="4_average"]
+[ext_resource type="Resource" uid="uid://bkae7auwm10ds" path="res://addons/fight_lab/fighters/strong.tres" id="5_strong"]
+
+[resource]
+script = ExtResource("1_scenario")
+side_a = Array[ExtResource("2_actor_profile")]([ExtResource("3_weak"), ExtResource("4_average"), ExtResource("5_strong")])

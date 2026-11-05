@@ -26,7 +26,28 @@ const WEAPON: Color = Color("ffb74d")
 const SHIELD: Color = Color("9575cd")
 const ARMOR: Color = Color("4db6ac")
 
+## What explains a chart when one of its categories is hovered, by chart title
+const CHART_EXPLANATIONS: Dictionary[String, String] = {
+	"Outcome (share of fights)": "How the fights ended, as shares of all fights.",
+	"Injury taken in won fights": "The box is the middle half of the won fights, the white line their median, the whiskers the 10th to 90th percentile.",
+	"Breath dice spent in won fights": "Breath dice side A had fewer at the end of each won fight. Box: middle half, line: median, whiskers: 10th–90th percentile.",
+	"Fights won": "Share of all fights side A won.",
+	"Damage per fight": "Injury dealt to and taken from the foe over a whole fight. Box: middle half, line: median, whiskers: 10th–90th percentile.",
+	"Breath dice per fight": "Side A's breath dice spent and kept, and the foe's kept, at the end of a fight. Box: middle half, line: median, whiskers: 10th–90th percentile.",
+	"Exchanges per fight": "How long the fights lasted. As a box: middle half, line: median, whiskers: 10th–90th percentile.",
+	"Marks per fight": "Marks side A's gear gained in a fight, on average.",
+	"Gear lost (share of fights)": "Share of fights in which a piece of side A's gear was ruined or dropped.",
+	"Outcome by injury taken": "How the fights that cost side A this much injury ended, as shares of all fights.",
+	"Outcome by breath dice spent": "How the fights in which side A spent this many breath dice ended, as shares of all fights.",
+	"Outcome by fight length": "How the fights that lasted this many exchanges ended, as shares of all fights.",
+	"Damage dealt per fight": "How often side A dealt this much injury in a fight.",
+	"Damage taken per fight": "How often side A took this much injury in a fight.",
+	"Breath dice left at the end": "How often side A ended a fight with this many breath dice.",
+}
+
 var shown_sections: Array[String] = []
+## What the tooltips say; the dock hands it the scenario
+var tooltips: FightLabTooltips = FightLabTooltips.new()
 
 var _result: Dictionary = {}
 var _matrix: GridContainer
@@ -68,6 +89,7 @@ func _init() -> void:
 
 func show_result(result: Dictionary) -> void:
 	_result = result
+	tooltips.result = result
 	_sweep_value.clear()
 	for value: Variant in _result.get("sweep_values", []): _sweep_value.add_item("%s = %d" % [_result["sweep"], int(value)])
 	_sweep_value.visible = false
@@ -86,14 +108,14 @@ func _build_matrix() -> void:
 	var monsters: Array[String] = _get_monsters()
 	_matrix.columns = monsters.size() + 1
 	_matrix.add_child(Label.new())
-	for monster: int in monsters.size(): _matrix.add_child(_header_button(monsters[monster], "All of side A against %s" % monsters[monster], _select_column.bind(monster)))
+	for monster: int in monsters.size(): _matrix.add_child(_header_button("b", monster, monsters[monster], "Click: all of side A against %s" % monsters[monster], _select_column.bind(monster)))
 	for character: int in characters.size():
-		_matrix.add_child(_header_button(characters[character], "%s against all of side B" % characters[character], _select_row.bind(character)))
+		_matrix.add_child(_header_button("a", character, characters[character], "Click: %s against all of side B" % characters[character], _select_row.bind(character)))
 		for monster: int in monsters.size():
 			var button: Button = Button.new()
 			button.set_meta("cell", Vector2i(character, monster))
-			button.tooltip_text = "Click: this pairing in detail. Ctrl+click: add it to a side-by-side comparison."
 			button.pressed.connect(_on_cell_pressed.bind(Vector2i(character, monster)))
+			tooltips.attach(button, func() -> String: return tooltips.describe_cell(character, monster, _get_cells(character, monster)))
 			_matrix.add_child(button)
 	_update_matrix()
 
@@ -191,21 +213,21 @@ func _show_comparison(categories: Array[String], stats: Array[Dictionary]) -> vo
 	if _shows("outcome"):
 		var outcomes: Array[Dictionary] = []
 		for outcome: String in OUTCOME_COLORS: outcomes.append(_series(stats, outcome, OUTCOME_COLORS[outcome], ["outcomes", outcome]))
-		_add_section("outcome", [_chart("Outcome (share of fights)", categories, outcomes, true, true)])
+		_add_section("outcome", [_chart("Outcome (share of fights)", categories, outcomes, true, true, _fight_notes(stats))])
 	if _shows("cost"): _add_section("cost", [
-		_box_chart("Injury taken in won fights", categories, [_boxes(stats, "Injury", FOE, ["won", "histograms", "taken"])]),
-		_box_chart("Breath dice spent in won fights", categories, [_boxes(stats, "Breath dice", YOU, ["won", "histograms", "breath_spent"])]),
-		_chart("Fights won", categories, [_series(stats, "Won", OUTCOME_COLORS["won"], ["outcomes", "won"])], false, true),
+		_box_chart("Injury taken in won fights", categories, [_boxes(stats, "Injury", FOE, ["won", "histograms", "taken"])], _fight_notes(stats, true)),
+		_box_chart("Breath dice spent in won fights", categories, [_boxes(stats, "Breath dice", YOU, ["won", "histograms", "breath_spent"])], _fight_notes(stats, true)),
+		_chart("Fights won", categories, [_series(stats, "Won", OUTCOME_COLORS["won"], ["outcomes", "won"])], false, true, _fight_notes(stats)),
 	])
 	if _shows("damage"): _add_section("damage", [
-		_box_chart("Damage per fight", categories, [_boxes(stats, "Dealt", YOU, ["histograms", "dealt"]), _boxes(stats, "Taken", FOE, ["histograms", "taken"])]),
+		_box_chart("Damage per fight", categories, [_boxes(stats, "Dealt", YOU, ["histograms", "dealt"]), _boxes(stats, "Taken", FOE, ["histograms", "taken"])], _fight_notes(stats)),
 		_box_chart("Breath dice per fight", categories, [
 			_boxes(stats, "Spent", YOU, ["histograms", "breath_spent"]),
 			_boxes(stats, "Kept", YOU.darkened(0.4), ["histograms", "breath_left"]),
 			_boxes(stats, "Foe keeps", FOE, ["histograms", "foe_breath_left"]),
-		]),
+		], _fight_notes(stats)),
 	])
-	if _shows("length"): _add_section("length", [_box_chart("Exchanges per fight", categories, [_boxes(stats, "Exchanges", YOU, ["histograms", "exchanges"])])])
+	if _shows("length"): _add_section("length", [_box_chart("Exchanges per fight", categories, [_boxes(stats, "Exchanges", YOU, ["histograms", "exchanges"])], _fight_notes(stats))])
 	if _shows("gear"): _add_gear_section(categories, stats)
 
 ## The spread of one pairing's fights: how often each value came up
@@ -246,12 +268,14 @@ func _add_gear_section(categories: Array[String], stats: Array[Dictionary]) -> v
 	if (marks + lost).all(func(entry: Dictionary) -> bool: return entry["values"].all(func(value: float) -> bool: return value == 0.0)):
 		_add_section("gear", [_note("No gear was marked, ruined or dropped.")])
 		return
-	_add_section("gear", [_chart("Marks per fight", categories, marks), _chart("Gear lost (share of fights)", categories, lost, false, true)])
+	_add_section("gear", [_chart("Marks per fight", categories, marks, false, false, _fight_notes(stats)), _chart("Gear lost (share of fights)", categories, lost, false, true, _fight_notes(stats))])
 
 func _add_section(key: String, contents: Array[Control]) -> void:
 	var title: Label = Label.new()
 	title.text = SECTIONS[key]
 	title.add_theme_font_size_override("font_size", get_theme_default_font_size() + 3)
+	title.mouse_filter = Control.MOUSE_FILTER_PASS
+	tooltips.attach(title, func() -> String: return "[b]%s[/b]\n%s" % [SECTIONS[key], FightLabTooltips.SECTIONS[key]])
 	_sections.add_child(title)
 	var flow: HFlowContainer = HFlowContainer.new()
 	flow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -259,10 +283,10 @@ func _add_section(key: String, contents: Array[Control]) -> void:
 	for content: Control in contents: flow.add_child(content)
 	_sections.add_child(HSeparator.new())
 
-func _chart(title: String, categories: Array[String], series: Array[Dictionary], stacked: bool = false, percent: bool = false) -> Control:
+func _chart(title: String, categories: Array[String], series: Array[Dictionary], stacked: bool = false, percent: bool = false, notes: Array[String] = []) -> Control:
 	var chart: Control = FightLabChart.new()
 	chart.show_data(title, categories, series, stacked, percent)
-	return chart
+	return _explain(chart, title, notes)
 
 ## Share of fights per value of [param key] in [param stats]' histograms
 func _histogram(title: String, stats: Dictionary, key: String, color: Color) -> Control:
@@ -271,16 +295,35 @@ func _histogram(title: String, stats: Dictionary, key: String, color: Color) -> 
 	for value: String in histogram: values.append(value.to_int())
 	var categories: Array[String] = []
 	var shares: Array[float] = []
+	var notes: Array[String] = []
 	if not values.is_empty():
 		for value: int in range(values.min(), values.max() + 1):
+			var fights: int = histogram.get(str(value), 0)
 			categories.append(str(value))
-			shares.append(float(histogram.get(str(value), 0)) / float(stats["runs"]))
-	return _chart(title, categories, [{"name": "Fights", "color": color, "values": shares}], false, true)
+			shares.append(float(fights) / float(stats["runs"]))
+			notes.append("%d of %d fights" % [fights, int(stats["runs"])])
+	return _chart(title, categories, [{"name": "Fights", "color": color, "values": shares}], false, true, notes)
 
-func _box_chart(title: String, categories: Array[String], series: Array[Dictionary]) -> Control:
+func _box_chart(title: String, categories: Array[String], series: Array[Dictionary], notes: Array[String] = []) -> Control:
 	var chart: Control = FightLabChart.new()
 	chart.show_boxes(title, categories, series)
+	return _explain(chart, title, notes)
+
+## Hovering a category tells all its values, what the chart shows and [param notes] (one per category)
+func _explain(chart: Control, title: String, notes: Array[String]) -> Control:
+	chart.set(&"explanation", CHART_EXPLANATIONS.get(title, ""))
+	chart.set(&"notes", notes)
+	var trigger: RichTooltipTrigger = tooltips.attach(chart, Callable(chart, &"describe_hovered"))
+	chart.connect(&"hovered_changed", trigger.refresh)
 	return chart
+
+## "200 fights" per stats; [param won]: "37 won fights"
+static func _fight_notes(stats: Array[Dictionary], won: bool = false) -> Array[String]:
+	var notes: Array[String] = []
+	for entry: Dictionary in stats:
+		var runs: int = entry["won"]["runs"] if won else entry["runs"]
+		notes.append("%d %s" % [runs, "won fights" if won else "fights"])
+	return notes
 
 ## How the fights with each value of [param key] ended, stacked, as shares of all fights
 func _outcome_histogram(title: String, stats: Dictionary, key: String) -> Control:
@@ -304,29 +347,8 @@ static func _boxes(stats: Array[Dictionary], label: String, color: Color, path: 
 	for entry: Dictionary in stats:
 		var histogram: Variant = entry
 		for key: String in path: histogram = histogram[key]
-		boxes.append(_percentiles(histogram))
+		boxes.append(FightLabStats.percentiles(histogram))
 	return {"name": label, "color": color, "boxes": boxes}
-
-## The 10th, 25th, 50th, 75th and 90th percentile of a {value: fights} histogram; [] when it is empty
-static func _percentiles(histogram: Dictionary) -> Array[float]:
-	var values: Array[int] = []
-	var total: int = 0
-	for value: String in histogram:
-		values.append(value.to_int())
-		var count: int = histogram[value]
-		total += count
-	if total == 0: return []
-	values.sort()
-	var percentiles: Array[float] = []
-	for share: float in [0.1, 0.25, 0.5, 0.75, 0.9]:
-		var counted: int = 0
-		for value: int in values:
-			var count: int = histogram[str(value)]
-			counted += count
-			if counted >= share * total:
-				percentiles.append(float(value))
-				break
-	return percentiles
 
 static func _note(text: String) -> Control:
 	var label: Label = Label.new()
@@ -368,10 +390,11 @@ func _get_cell(character: int, monster: int) -> Dictionary:
 	if cells.is_empty(): return {}
 	return cells[clampi(_sweep_value.selected, 0, cells.size() - 1)]
 
-static func _header_button(text: String, tooltip: String, on_pressed: Callable) -> Button:
+## A fighter's name: its card as tooltip, then what clicking it does
+func _header_button(side: String, index: int, text: String, click: String, on_pressed: Callable) -> Button:
 	var button: Button = Button.new()
 	button.text = text
 	button.flat = true
-	button.tooltip_text = tooltip
 	button.pressed.connect(on_pressed)
+	tooltips.attach(button, func() -> String: return "%s\n[color=%s]%s[/color]" % [tooltips.describe_fighter(side, index), FightLabTooltips.DIM.to_html(), click])
 	return button

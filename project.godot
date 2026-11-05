@@ -28,7 +28,6 @@ Rules="*res://rules.gd"
 DiceRoller="*res://dice/dice_roller.gd"
 DiceRollSounds="*res://dice/dice_roll_sounds.gd"
 TooltipManager="*res://addons/tooltips_pro/scripts/tooltip_manager.gd"
-TooltipPlaceholderVariables="*res://addons/tooltips_pro/scripts/tooltip_placeholder_variables.gd"
 Stage="*res://game/stage/stage.tscn"
 BlurLayer="*res://game/blur_layer.tscn"
 DebugPanel="*res://game/debug/debug_panel.gd"
@@ -54,7 +53,7 @@ version_control/autoload_on_startup=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/adventure_editor/plugin.cfg", "res://addons/collapsible_container/plugin.cfg", "res://addons/fight_lab/plugin.cfg", "res://addons/gdUnit4/plugin.cfg", "res://addons/game_debugger/plugin.cfg", "res://addons/godot-plugin-refresher/plugin.cfg", "res://addons/tooltips_pro/plugin.cfg")
+enabled=PackedStringArray("res://addons/adventure_editor/plugin.cfg", "res://addons/collapsible_container/plugin.cfg", "res://addons/fight_lab/plugin.cfg", "res://addons/game_debugger/plugin.cfg", "res://addons/gdUnit4/plugin.cfg", "res://addons/godot-plugin-refresher/plugin.cfg", "res://addons/tooltips_pro/plugin.cfg")
 
 [file_customization]
 

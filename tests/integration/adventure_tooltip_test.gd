@@ -25,12 +25,12 @@ func test_hovering_opens_it_with_working_links() -> void:
 		await await_millis(20)
 		waited += 20
 	assert_array(TooltipManager.mouse_tooltip_stack).has_size(1)
-	var tooltip: AdventureTooltip = TooltipManager.mouse_tooltip_stack[0] as AdventureTooltip
+	var tooltip: RichTooltip = TooltipManager.mouse_tooltip_stack[0] as RichTooltip
 	assert_object(tooltip).is_not_null()
 	var label: RichTextLabel = tooltip.content_labels[0]
 	assert_str(label.text).contains("[b]Ambush[/b]")
 	assert_str(label.text).contains("[url=%d]" % shore.get_instance_id())
-	assert_int(label.find_children("*", "", false, false).filter(func(node: Node) -> bool: return node is AdventureTooltipTrigger).size()).is_equal(1)
+	assert_int(label.find_children("*", "", false, false).filter(func(node: Node) -> bool: return node is RichTooltipTrigger).size()).is_equal(1)
 	# Locked after a moment: its links can be reached
 	while tooltip.state != TooltipEnums.TooltipState.LOCKED and waited < 4000:
 		await await_millis(20)

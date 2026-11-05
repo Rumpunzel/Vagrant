@@ -8,6 +8,48 @@ content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tooltip_lock_border"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4862745, 0.44313726, 0.63529414, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tooltip_lock_background"]
+content_margin_top = 1.0
+content_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tooltip_lock_fill"]
+content_margin_top = 1.0
+content_margin_bottom = 1.0
+bg_color = Color(0.4862745, 0.44313726, 0.63529414, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tooltip_panel"]
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+bg_color = Color(0.08, 0.08, 0.08, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.78, 0.65, 0.35)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8hd5q"]
 content_margin_left = 0.0
 content_margin_top = 0.0
@@ -69,5 +111,12 @@ MarginContainer/constants/margin_right = 8
 MarginContainer/constants/margin_top = 8
 RichTextLabel/colors/font_shadow_color = Color(0, 0, 0, 1)
 RichTextLabel/constants/shadow_outline_size = 2
+TooltipLabel/colors/font_shadow_color = Color(0, 0, 0, 1)
+TooltipLockBorder/base_type = &"Panel"
+TooltipLockBorder/styles/panel = SubResource("StyleBoxFlat_tooltip_lock_border")
+TooltipLockProgress/base_type = &"ProgressBar"
+TooltipLockProgress/styles/background = SubResource("StyleBoxEmpty_tooltip_lock_background")
+TooltipLockProgress/styles/fill = SubResource("StyleBoxFlat_tooltip_lock_fill")
+TooltipPanel/styles/panel = SubResource("StyleBoxFlat_tooltip_panel")
 Window/fonts/title_font = ExtResource("1_8hd5q")
 Window/styles/embedded_border = SubResource("StyleBoxFlat_8hd5q")

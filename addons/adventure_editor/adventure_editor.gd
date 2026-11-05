@@ -7,6 +7,8 @@ extends VBoxContainer
 ## unsaved until [method save]. Content is edited in the Inspector: selecting opens the resource there. Moving nodes saves the [AdventureLayout] at once.
 
 const INDENT: String = "    "
+const SIMULATE_TOOLTIP: String = ("Fights the Fight Lab's reference fighters (weak, average, strong) %d times each against every monster this adventure fights,"
+	+ "\nwith full breath dice and a fresh monster. The fight cards then show how often each wins.") % AdventureFightOdds.FIGHTS
 
 @export_group("Configuration")
 @export var _picker: EditorResourcePicker
@@ -37,6 +39,9 @@ var _all_events: Array[AdventureEvent] = [ ]
 var _location_view: AdventureLocationView
 var _event_screen: AdventureEventScreen
 var _actions: AdventureEditorActions
+var _fight_odds: AdventureFightOdds
+var _simulate_button: Button
+var _odds_status: Label
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
@@ -48,6 +53,7 @@ func setup(undo_redo: EditorUndoRedoManager) -> void:
 	_actions.setup(self)
 	_make_location_panel()
 	_make_event_screen()
+	_make_fight_odds()
 	_connect_views()
 	_connect_lists()
 	EditorInterface.get_inspector().property_edited.connect(_on_property_edited)
@@ -70,6 +76,35 @@ func _make_event_screen() -> void:
 	_event_body.move_child(_event_screen, 0)
 	_event_screen.setup()
 	_event_screen.make_graph = _make_event_graph
+
+## Built here: the toolbar's "Simulate fights", whose odds the fight cards and their tooltips show
+func _make_fight_odds() -> void:
+	_fight_odds = AdventureFightOdds.new()
+	add_child(_fight_odds)
+	_simulate_button = AdventureUi.text_button("Simulate fights", "", SIMULATE_TOOLTIP, _simulate_fights)
+	_simulate_button.icon = AdventureCardView.FIGHT_ICON
+	_simulate_button.expand_icon = false
+	_simulate_button.add_theme_constant_override(&"icon_max_width", 16)
+	_odds_status = AdventureUi.info("")
+	var bar: Node = _picker.get_parent()
+	bar.add_child(_simulate_button)
+	bar.move_child(_simulate_button, _picker.get_index() + 1)
+	bar.add_child(_odds_status)
+	bar.move_child(_odds_status, _simulate_button.get_index() + 1)
+	_fight_odds.progressed.connect(func(done: int, total: int) -> void: _odds_status.text = "Simulating %d/%d…" % [done, total])
+	_fight_odds.changed.connect(func() -> void:
+		_update_odds_status()
+		if not _fight_odds.is_running(): rebuild()
+	)
+
+func _simulate_fights() -> void:
+	if not _fight_odds.simulate() and not _fight_odds.failed: _odds_status.text = "No fight with a monster to simulate."
+
+func _update_odds_status() -> void:
+	_simulate_button.disabled = _fight_odds.is_running()
+	if _fight_odds.is_running(): _odds_status.text = "Simulating…"
+	elif _fight_odds.failed: _odds_status.text = "The simulation failed."
+	else: _odds_status.text = ""
 
 ## A page graph for a section of the event screen, wired up like the map
 func _make_event_graph() -> AdventureEventView:
@@ -158,6 +193,9 @@ func rebuild() -> void:
 	_map.problems = _problems
 	_tooltips = AdventureTooltips.new(_graph)
 	_tooltips.problems = _problems
+	if _fight_odds != null:
+		_fight_odds.index(adventure, _graph)
+		_tooltips.fight_odds = _fight_odds
 	_tooltips.opened.connect(_open_resource)
 	_map.tooltips = _tooltips
 	_event_screen.tooltips = _tooltips

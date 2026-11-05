@@ -4,4 +4,5 @@
 
 [resource]
 script = ExtResource("1_x70rx")
+tooltip_template_dir_path = "res://game/tooltips/templates/"
 step_limit_color = Color(0, 0, 0, 0.156863)

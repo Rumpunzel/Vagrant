@@ -59,8 +59,14 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
   stage / place / monster / chance conditions (chance: rolled once per arrival at a location), one-off fights, the problem check;
   area texts on entering an area; events' text and decisions layering (adds / replaces the location's / only this); "no rest here" on pages
   and events (toggled on the event node).
+- **Fight odds** (`AdventureFightOdds`): "Simulate fights" in the toolbar runs the Fight Lab's reference fighters (`scenarios/reference.tres`:
+  Weak, Average, Strong) 200 times each against every monster the adventure fights (as the story picks it), in the lab's own process
+  (`FightLabProcess`); kept per adventure in `user://fight_lab/adventures/`. Fight cards show each one's share of won fights, faded and
+  marked when the monster's or the fighters' files changed since; their tooltip tells outcomes and what winning cost; ⇱ opens the fight in
+  the Fight Lab. Full breath dice and a fresh monster.
 
 ## Open
+- [ ] Fight odds: odds per outcome on the fight's exits (level 3 of the idea); whether the reference fighters fit (user)
 - [ ] Effects: if chips at the start of a transition aren't clear enough, try a node in the path for an outcome with effects (user to judge)
 - [ ] Monster template stage names and the template idea in general (user, later)
 - [ ] Map placement is a plain grid per area until nodes are moved; judge once there are more locations (user)
@@ -147,3 +153,6 @@ Goal: a visual editor for one `Adventure` as a main-screen editor tab (next to 2
 - 2026-11-04: rich tooltips everywhere on the map and in page graphs: location titles (thumbnail, problems, unreachable), exits and decision cards (first-time text, outcomes with links and effects); conditions without "its own:"; tests: decisions (1), page problems (1)
 - 2026-11-04: stage tooltips (condition and effect chips, track bar stages): who sets the stage (decisions, linked to their event or location) and who needs it; `AdventureStageIndex` (shared with the problem check); a location's tooltip shows how its page reads in order (area text, its text, each section's events with when and layering, exits); the event node's 7 preview rows became one line ("Text: adds · Decisions: only its own · Rest: yes", click: next); map exits are just "→ Castle" side by side, their texts in the tooltip; tests: stages (1), reading (1)
 - 2026-11-04: UI reconsidered with the user: `AdventureUi` (one set of controls instead of four helper families); an event's settings moved out of its node to a strip above its graph (condition chips, text and decisions layering as button groups, "No rest here" checkbox); the scenario's "first / every" a button group; the location panel built from controls (rows open their event, rich tooltips with conditions; 300 px instead of 400); rich tooltips end with "Click: …"; `AdventureNameDialog` merged into `AdventureTextsDialog`; tests: panel, choice, settings (3)
+- 2026-11-05: the rich tooltips' trigger and template moved to a shared layer (`RichTooltipTrigger`, `RichTooltip` in `custom_nodes/control/`), used by the Fight Lab too; `AdventureTooltips.attach` builds on it, `AdventureTooltipTrigger` / `AdventureTooltip` are gone.
+- 2026-11-05: fight odds: three reference fighters (weak, average, strong) instead of Dorian; "Simulate fights" in the toolbar, shares of won fights on fight cards, details in their tooltip, "Open in the Fight Lab" per fight (the lab plugin puts itself in `Engine`'s meta). First numbers (300 fights): Weak wins 3% vs Goblin / 30% vs Lurker, Average 33% / 72%, Strong 99% / 100%. Tests: odds (5), the lab's process (1)
+- 2026-11-05: fight tooltips cleaned up: the heading and the card name the monster ("Fight against Lurker"), the odds as a table (a column per outcome that happened, colored as the ports, and what a won fight costs), assumptions as a footnote. Fixed: a card's tooltip trigger was its first child, so tags and odds added to its lines went into the trigger (choice cards had lost their effect tags); test: tooltip (1)

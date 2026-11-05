@@ -7,7 +7,7 @@ var profile_a: ActorProfile
 var profile_b: ActorProfile
 var strategy_a: FightLabStrategy
 var strategy_b: FightLabStrategy
-## Where the profiles sit on their sides in the scenario
+## Where the profiles sit on their sides in the scenario; side A by row (see [FightLabScenario])
 var a_index: int = -1
 var b_index: int = -1
 var sweep_value: int = 0

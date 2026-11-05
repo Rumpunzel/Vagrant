@@ -2,7 +2,7 @@
 class_name AdventureTooltips
 extends RefCounted
 
-## What the adventure editor's rich tooltips ([AdventureTooltipTrigger]) say about events, scenarios, encounters, pages and decisions of [member graph]:
+## What the adventure editor's rich tooltips ([RichTooltipTrigger]) say about events, scenarios, encounters, pages and decisions of [member graph]:
 ## at a glance what they are, when and where they show, and links to what they name ([method describe_link] shows those, [method open_link]
 ## opens them)
 
@@ -26,6 +26,8 @@ var graph: AdventureGraph
 var problems: Array[AdventureProblems.Problem] = [ ]
 ## Who sets and needs each stage
 var stages: AdventureStageIndex
+## How the Fight Lab's reference fighters fare in each fight, if simulated
+var fight_odds: AdventureFightOdds
 
 func _init(of: AdventureGraph) -> void:
 	graph = of
@@ -43,20 +45,14 @@ static func get_stage(subject: Resource, track: String, stage: String) -> StageO
 
 ## A rich tooltip about [param about] on [param control], instead of its plain one; [param click]: what clicking [param control] does, said
 ## last
-func attach(control: Control, about: Resource, click: String = "") -> AdventureTooltipTrigger:
+func attach(control: Control, about: Resource, click: String = "") -> RichTooltipTrigger:
 	control.tooltip_text = ""
-	var trigger: AdventureTooltipTrigger = _attach(control, about)
-	trigger.click = click
-	return trigger
-
-## A tooltip for each link of [param label]
-func attach_links(label: RichTextLabel) -> AdventureTooltipTrigger: return _attach(label, null)
-
-func _attach(control: Control, about: Resource) -> AdventureTooltipTrigger:
-	var trigger: AdventureTooltipTrigger = AdventureTooltipTrigger.new()
+	var trigger: RichTooltipTrigger = RichTooltipTrigger.new()
 	trigger.trigger_node = control
-	trigger.subject = about
-	trigger.tooltips = self
+	trigger.content = describe_with_click.bind(about, click)
+	trigger.describe_link = describe_link
+	trigger.open_link = open_link
+	trigger.describer = self
 	control.add_child(trigger)
 	return trigger
 
@@ -202,6 +198,8 @@ func _describe_decisions(page: AdventurePage) -> Array[String]:
 
 func _describe_decision(decision: AdventureDecision) -> String:
 	var kind: String = AdventureEventGraph.describe_check(decision) if decision is AdventureDiceDecision else "decision"
+	var monster: MonsterProfile = fight_odds.get_monster_of(decision as AdventureFightDecision) if fight_odds != null and decision is AdventureFightDecision else null
+	if monster != null: kind = "Fight against %s" % monster.name
 	var lines: Array[String] = ["[b]%s[/b]  %s" % [_escape(decision.description.get_slice("\n", 0)), _dim(_escape(kind))]]
 	if not decision.first_description.is_empty(): lines.append("[b]The first time:[/b] " + _escape(decision.first_description))
 	for outcome: AdventureEventGraph.Outlet in AdventureEventGraph.get_outcomes(decision):
@@ -212,7 +210,41 @@ func _describe_decision(decision: AdventureDecision) -> String:
 		var effects: String = AdventureEventGraph.describe_consequences(outcome.consequences)
 		var label: String = "[b]%s:[/b] " % outcome.label if not outcome.label.is_empty() else ""
 		lines.append("• %s→ %s%s" % [label, target, "  " + _dim(_escape(effects)) if not effects.is_empty() else ""])
+	if decision is AdventureFightDecision: lines.append_array(describe_odds(decision as AdventureFightDecision))
 	return "\n".join(lines)
+
+## The Fight Lab's reference fighters against the fight's monster, as a table: a row per fighter, a column per outcome that happened (colored
+## as the card's ports) and what a won fight cost (medians); below it what the lab assumes
+func describe_odds(fight: AdventureFightDecision) -> Array[String]:
+	var lines: Array[String] = []
+	if fight_odds == null or fight_odds.get_monster_of(fight) == null: return lines
+	var odds: Array[Dictionary] = fight_odds.get_odds(fight)
+	if odds.is_empty():
+		lines.append(_dim("Fight Lab: not simulated yet (Simulate fights, in the toolbar)"))
+		return lines
+	var outcomes: Array[String] = []
+	for outcome: String in FightLabStats.OUTCOMES:
+		if odds.any(func(entry: Dictionary) -> bool: return float(entry["stats"]["outcomes"][outcome]) > 0.0): outcomes.append(outcome)
+	var cells: Array[String] = [_cell("")]
+	for outcome: String in outcomes: cells.append(_cell(_colored(outcome.capitalize(), AdventureCardView.OUTCOME_COLORS.get(outcome.capitalize(), DIM)), true))
+	cells.append(_cell(_dim("A won fight costs")))
+	for entry: Dictionary in odds:
+		var stats: Dictionary = entry["stats"]
+		cells.append(_cell("[b]%s[/b]" % _escape(str(entry["name"]))))
+		for outcome: String in outcomes: cells.append(_cell("%d%%" % roundi(float(stats["outcomes"][outcome]) * 100.0), true))
+		var won: Dictionary = stats["won"]
+		var cost: String = "–"
+		if int(won["runs"]) > 0: cost = "%s injury, %s breath" % [FightLabTooltips.median(won["histograms"]["taken"]), FightLabTooltips.median(won["histograms"]["breath_spent"])]
+		cells.append(_cell(cost))
+	lines.append("")
+	lines.append("[b]Fight Lab[/b]")
+	# The footnote right after the table: a line break there would leave an empty line
+	lines.append("[table=%d]%s[/table]%s" % [outcomes.size() + 2, "".join(cells), _dim("%d fights each, full breath, a fresh monster" % AdventureFightOdds.FIGHTS)])
+	if fight_odds.is_out_of_date(fight): lines.append(_colored("Out of date: the monster or the reference fighters changed since. Simulate fights again.", WARNING))
+	return lines
+
+static func _cell(text: String, right: bool = false) -> String:
+	return "[cell padding=0,0,12,0]%s[/cell]" % ("[right]%s[/right]" % text if right else text)
 
 func _describe_stage_condition(condition: AdventureStageCondition) -> String:
 	var lines: Array[String] = ["[b]%s[/b]  %s" % [_escape(_describe_conditions([condition] as Array[AdventureCondition])), _dim("condition")]]

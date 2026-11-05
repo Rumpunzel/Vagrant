@@ -55,8 +55,13 @@ func _add_decision_cards(node: GraphNode, page: AdventurePage, index: int, outle
 	if attribute != null:
 		color = attribute.color
 		if attribute.icon != null: icon = attribute.icon
-	var check_card: PanelContainer = _make_card(page, index, "%s\n%s" % [AdventureEventGraph.describe_check(decision), decision.description.get_slice("\n", 0)], color, icon, false)
-	if is_fight: _fight_cards[decision] = check_card
+	var check: String = AdventureEventGraph.describe_check(decision)
+	var monster: MonsterProfile = tooltips.fight_odds.get_monster_of(decision as AdventureFightDecision) if is_fight and tooltips != null and tooltips.fight_odds != null else null
+	if monster != null: check = "Fight: %s" % monster.name
+	var check_card: PanelContainer = _make_card(page, index, "%s\n%s" % [check, decision.description.get_slice("\n", 0)], color, icon, false)
+	if is_fight:
+		_fight_cards[decision] = check_card
+		_add_odds(check_card, decision as AdventureFightDecision)
 	node.add_child(check_card)
 	for outcome: AdventureEventGraph.Outlet in AdventureEventGraph.get_outcomes(decision):
 		var row: HBoxContainer = HBoxContainer.new()
@@ -69,6 +74,27 @@ func _add_decision_cards(node: GraphNode, page: AdventurePage, index: int, outle
 		node.add_child(row)
 		if is_fight and outcome.label == "Won": _add_beaten_chip(row, decision as AdventureFightDecision)
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, OUTCOME_COLORS.get(outcome.label, color))
+
+## How often the Fight Lab's reference fighters win against the fight's monster ("Weak 12% · Average 48% · Strong 91%", faded and marked when
+## out of date; the card's tooltip tells more), and a button running them in the lab
+func _add_odds(card: PanelContainer, fight: AdventureFightDecision) -> void:
+	var fight_odds: AdventureFightOdds = tooltips.fight_odds if tooltips != null else null
+	var monster: MonsterProfile = fight_odds.get_monster_of(fight) if fight_odds != null else null
+	if monster == null: return
+	var parts: Array[String] = []
+	for entry: Dictionary in fight_odds.get_odds(fight):
+		var won: float = entry["stats"]["outcomes"]["won"]
+		parts.append("%s %d%%" % [entry["name"], roundi(won * 100.0)])
+	var row: HBoxContainer = HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var label: Label = _make_info(" · ".join(parts) if not parts.is_empty() else "Fight odds: not simulated")
+	if fight_odds.is_out_of_date(fight): label.text += " (out of date)"
+	elif not parts.is_empty(): label.modulate = Color.WHITE
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	if AdventureFightOdds.has_lab():
+		row.add_child(AdventureUi.icon_button("ExternalLink", "⚔", "Open in the Fight Lab: the reference fighters against %s" % monster.name, AdventureFightOdds.open_in_lab.bind(monster)))
+	card.get_child(0).add_child(row)
 
 ## Winning a fight against the encounter's own monster beats it: no effect does that, the fight does, so the chip can't be removed
 func _add_beaten_chip(row: HBoxContainer, fight: AdventureFightDecision) -> void:
@@ -97,7 +123,6 @@ func _make_card(page: AdventurePage, index: int, text: String, color: Color, ico
 	_card_styles[decision] = style
 	if decision == _selected: _style_card(style, true)
 	card.tooltip_text = "Click: edit in the Inspector"
-	if tooltips != null: tooltips.attach(card, decision, "edit it in the Inspector")
 	card.gui_input.connect(func(input: InputEvent) -> void:
 		var click: InputEventMouseButton = input as InputEventMouseButton
 		if click != null and click.pressed and click.button_index == MOUSE_BUTTON_LEFT:
@@ -121,6 +146,8 @@ func _make_card(page: AdventurePage, index: int, text: String, color: Color, ico
 	row.add_child(AdventureUi.icon_button("Remove", "✕", "Remove", _remove_decision.bind(page, index)))
 	lines.add_child(row)
 	card.add_child(lines)
+	# After its lines, which stay the card's first child for the tags and odds added to them
+	if tooltips != null: tooltips.attach(card, decision, "edit it in the Inspector")
 	return card
 
 ## Shows which decision's card was clicked last (none: no card)

@@ -58,10 +58,9 @@ func test_summary_counts_values_per_outcome() -> void:
 	assert_dict(by_outcome["exchanges"]["draw"]).is_empty()
 
 func test_percentiles_of_a_histogram() -> void:
-	var results: GDScript = load("uid://cuh3q2c6v1lmb")  # fight_lab_results.gd
 	# Ten fights: 1 ×1, 2 ×4, 3 ×4, 9 ×1
-	assert_array(results._percentiles({"1": 1, "2": 4, "3": 4, "9": 1})).is_equal([1.0, 2.0, 2.0, 3.0, 3.0])
-	assert_array(results._percentiles({})).is_empty()
+	assert_array(FightLabStats.percentiles({"1": 1, "2": 4, "3": 4, "9": 1})).is_equal([1.0, 2.0, 2.0, 3.0, 3.0])
+	assert_array(FightLabStats.percentiles({})).is_empty()
 
 func test_scenario_has_a_matchup_per_pairing_and_sweep_value() -> void:
 	var scenario: FightLabScenario = FightLabScenario.new()
@@ -75,6 +74,36 @@ func test_scenario_has_a_matchup_per_pairing_and_sweep_value() -> void:
 	assert_int(matchups.size()).is_equal(8)
 	assert_array(matchups.map(func(matchup: FightLabMatchup) -> int: return matchup.sweep_value)).is_equal([0, 1, 2, 3, 0, 1, 2, 3])
 	assert_array(matchups.map(func(matchup: FightLabMatchup) -> int: return matchup.a_index)).is_equal([0, 0, 0, 0, 1, 1, 1, 1])
+
+func test_side_a_fights_once_per_strategy() -> void:
+	var scenario: FightLabScenario = FightLabScenario.new()
+	scenario.side_a = [TestCharacters.adventurer(), TestCharacters.adventurer()] as Array[ActorProfile]
+	scenario.side_b = [TestMonsters.cutthroat()] as Array[ActorProfile]
+	assert_str(scenario.get_row_name(0)).is_equal("Tester")
+	var all_in: FightLabStrategy = FightLabStrategy.new()
+	all_in.breath_dice = FightLabStrategy.BreathDiceChoice.ALL_IN
+	scenario.strategies_a = [FightLabStrategy.new(), all_in] as Array[FightLabStrategy]
+	var matchups: Array[FightLabMatchup] = scenario.get_matchups()
+	assert_array(matchups.map(func(matchup: FightLabMatchup) -> int: return matchup.a_index)).is_equal([0, 1, 2, 3])
+	assert_object(matchups[1].strategy_a).is_same(all_in)
+	assert_object(matchups[2].profile_a).is_same(scenario.side_a[1])
+	assert_str(scenario.get_row_name(1)).is_equal("Tester · All in")
+
+func test_breath_dice_choices() -> void:
+	var profile: CharacterProfile = TestCharacters.adventurer()
+	var character: Character = profile.get_actor_scene().instantiate()
+	add_child(character)
+	character.set_profile(profile)
+	var strategy: FightLabStrategy = FightLabStrategy.new()
+	# Unarmed with Guts 7: d4 and d6 can't come up above it
+	assert_array(strategy.plan(character, false).breath_dice.keys()).contains_exactly_in_any_order([Rules.d4, Rules.d6])
+	strategy.breath_dice = FightLabStrategy.BreathDiceChoice.SAFE_PLUS_RISKY
+	strategy.risky_dice = 2
+	assert_array(strategy.plan(character, false).breath_dice.keys()).contains_exactly_in_any_order([Rules.d4, Rules.d6, Rules.d8, Rules.d10])
+	assert_str(strategy.get_label()).is_equal("Safe + 2 risky")
+	strategy.breath_dice = FightLabStrategy.BreathDiceChoice.ALL_IN
+	assert_int(strategy.plan(character, false).breath_dice.size()).is_equal(Rules.BREATH_DICE.size())
+	character.free()
 
 func test_characters_without_rolled_attributes_are_skipped() -> void:
 	var unrolled: CharacterProfile = TestCharacters.adventurer()

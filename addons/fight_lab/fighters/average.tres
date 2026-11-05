@@ -1,0 +1,72 @@
+[gd_resource type="Resource" script_class="CharacterProfile" format=3 uid="uid://t0k7mhd0chyp"]
+
+[ext_resource type="Script" uid="uid://dv67s18uf5thf" path="res://characters/character_profile.gd" id="profile"]
+[ext_resource type="Script" uid="uid://fmgfgy2n35sf" path="res://characters/attributes/character_attribute.gd" id="attribute"]
+[ext_resource type="Script" uid="uid://dl1dakg5uysj3" path="res://characters/rolled_attribute_score.gd" id="rolled"]
+[ext_resource type="Script" uid="uid://cjmf7olgdwlrk" path="res://dice/die.gd" id="die"]
+[ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="d6"]
+[ext_resource type="Script" uid="uid://cwac8vwsmbyu5" path="res://characters/origins/origin.gd" id="origin"]
+[ext_resource type="Resource" uid="uid://7uemslxbeu5b" path="res://characters/origins/artisan.tres" id="artisan"]
+[ext_resource type="Resource" uid="uid://cskgqp6fm3x52" path="res://characters/origins/hunter.tres" id="hunter"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="strength"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="agility"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="intelligence"]
+[ext_resource type="Resource" uid="uid://bect44b53knlo" path="res://characters/weapons/sword.tres" id="sword"]
+[ext_resource type="Resource" uid="uid://cgbwu4wq14rtm" path="res://characters/armor/gambeson.tres" id="gambeson"]
+[ext_resource type="Script" uid="uid://ctyfdlvouya4j" path="res://characters/weapons/weapon_profile.gd" id="weapons_script"]
+[ext_resource type="Script" uid="uid://cswsthfyt60l6" path="res://characters/armor/armor_profile.gd" id="armor_script"]
+
+[sub_resource type="Resource" id="Die_0_0"]
+script = ExtResource("die")
+die_type = ExtResource("d6")
+result = 3
+
+[sub_resource type="Resource" id="Die_0_1"]
+script = ExtResource("die")
+die_type = ExtResource("d6")
+result = 4
+
+[sub_resource type="Resource" id="Score_0"]
+script = ExtResource("rolled")
+dice = Array[ExtResource("die")]([SubResource("Die_0_0"), SubResource("Die_0_1")])
+
+[sub_resource type="Resource" id="Die_1_0"]
+script = ExtResource("die")
+die_type = ExtResource("d6")
+result = 2
+
+[sub_resource type="Resource" id="Die_1_1"]
+script = ExtResource("die")
+die_type = ExtResource("d6")
+result = 5
+
+[sub_resource type="Resource" id="Score_1"]
+script = ExtResource("rolled")
+dice = Array[ExtResource("die")]([SubResource("Die_1_0"), SubResource("Die_1_1")])
+
+[sub_resource type="Resource" id="Die_2_0"]
+script = ExtResource("die")
+die_type = ExtResource("d6")
+result = 1
+
+[sub_resource type="Resource" id="Die_2_1"]
+script = ExtResource("die")
+die_type = ExtResource("d6")
+result = 6
+
+[sub_resource type="Resource" id="Score_2"]
+script = ExtResource("rolled")
+dice = Array[ExtResource("die")]([SubResource("Die_2_0"), SubResource("Die_2_1")])
+
+[resource]
+script = ExtResource("profile")
+title = "Fight Lab reference: average"
+attribute_scores = Dictionary[ExtResource("attribute"), ExtResource("rolled")]({
+ExtResource("strength"): SubResource("Score_0"),
+ExtResource("agility"): SubResource("Score_1"),
+ExtResource("intelligence"): SubResource("Score_2")
+})
+origins = Array[ExtResource("origin")]([ExtResource("artisan"), ExtResource("hunter")])
+name = "Average"
+weapons = Array[ExtResource("weapons_script")]([ExtResource("sword")])
+armor = Array[ExtResource("armor_script")]([ExtResource("gambeson")])
