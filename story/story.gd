@@ -53,11 +53,13 @@ var _summary_start: int = 0
 
 var _current_story_page: StoryPage:
 	set(story_page):
-		if story_page == null:
+		# Going back: the page left isn't pushed, or the next "back" would return to it
+		var going_back: bool = story_page == null
+		if going_back:
 			var last_adventure_page: AdventurePage = _page_stack.pop_back()
 			story_page = _create_story_page(last_adventure_page)
 		if _current_story_page:
-			if not _current_story_page.is_fight_exchange(): _page_stack.push_back(_current_story_page.adventure_page)
+			if not going_back and not _current_story_page.is_fight_exchange(): _page_stack.push_back(_current_story_page.adventure_page)
 			for choice: StoryChoice in _current_story_page.choices:
 				choice.chosen.disconnect(_on_choice_made)
 				choice.dice_requested.disconnect(_on_dice_requested)
@@ -307,11 +309,12 @@ func _create_story_choices(adventure_page: AdventurePage, decisions: Array[Adven
 func _create_fight(adventure_page: AdventurePage, decision: AdventureFightDecision) -> Fight:
 	var holder: AdventurePage = _find_decision_owner(adventure_page, decision)
 	if holder == null: holder = adventure_page
-	var encounter: AdventureEncounter = get_subject(decision.encounter, holder) as AdventureEncounter
-	if encounter != null and encounter.profile is MonsterProfile:
-		return Fight.new(decision, _protagonist, get_monster(encounter, encounter.profile as MonsterProfile), _protagonist)
-	assert(not decision.enemies.is_empty(), "Fight decision \"%s\" has no monster encounter and no enemies" % decision.description)
-	return Fight.new(decision, _protagonist, get_monster(holder, decision.enemies[0]), _protagonist)
+	var own: AdventureEncounter = get_subject("", holder) as AdventureEncounter
+	var encounter: AdventureEncounter = decision.get_monster_encounter(own)
+	if encounter != null: return Fight.new(decision, _protagonist, get_monster(encounter, encounter.profile as MonsterProfile), _protagonist)
+	var profile: MonsterProfile = decision.get_monster_profile(own)
+	assert(profile != null, "Fight decision \"%s\" has no monster encounter and no enemies" % decision.description)
+	return Fight.new(decision, _protagonist, get_monster(holder, profile), _protagonist)
 
 ## The page (it, or one of the events shown on it) that defines [param decision]
 func _find_decision_owner(page: AdventurePage, decision: AdventureDecision) -> AdventurePage:

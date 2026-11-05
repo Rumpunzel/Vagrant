@@ -69,6 +69,19 @@ func test_dead_end_offers_turn_back() -> void:
 	# Turning back is not logged as a decision
 	assert_int(_story.get_how_often_decision_has_been_made(AdventureDecision.get_turn_back())).is_equal(0)
 
+func test_going_back_twice_goes_back_further() -> void:
+	# Start → Next → Detail, back to Next, back again: to Start, not to Detail
+	var detail: AdventurePage = AdventurePage.new()
+	detail.title = "Detail"
+	_next.decisions = [_decision("Look", detail), _back] as Array[AdventureDecision]
+	await _choose(0)
+	await _choose(0)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(_next)
+	await _choose(1)
+	assert_object(_story._current_story_page.adventure_page).is_same(_start)
+	assert_array(_story._page_stack).is_empty()
+
 func test_consequences_resolve() -> void:
 	var injury: AdventureInjuryConsequence = AdventureInjuryConsequence.new()
 	_to_next.consequences = [injury] as Array[AdventureConsequence]
