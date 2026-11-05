@@ -36,8 +36,8 @@ func test_each_fight_fights_the_monster_the_story_picks() -> void:
 	assert_object(found[one_off]).is_same(brute)
 	# The encounter's monster comes before enemies, as in the story
 	_ambush.enemies = [brute] as Array[MonsterProfile]
-	assert_object(AdventureFightOdds.get_monster(_ambush, _lurker)).is_same(_lurker.profile)
-	assert_object(AdventureFightOdds.get_monster(AdventureFightDecision.new(), null)).is_null()
+	assert_object(_ambush.get_monster_profile(_lurker)).is_same(_lurker.profile)
+	assert_object(AdventureFightDecision.new().get_monster_profile(null)).is_null()
 
 func test_the_reference_fighters_fight_the_monsters_in_a_scenario_of_their_own() -> void:
 	var scenario: FightLabScenario = AdventureFightOdds.make_scenario([TestMonsters.cutthroat()] as Array[MonsterProfile])

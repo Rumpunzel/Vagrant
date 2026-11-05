@@ -39,6 +39,21 @@ func test_empty_fights_and_saves_inside_events() -> void:
 	])
 	assert_object(problems[0].event).is_same(ambush)
 
+func test_a_fight_leading_to_a_dead_end() -> void:
+	var ambush: AdventureEvent = _event("Ambush")
+	var fight: AdventureFightDecision = AdventureFightDecision.new()
+	fight.description = "Fight!"
+	fight.enemies = [TestMonsters.cutthroat()] as Array[MonsterProfile]
+	var lost: AdventurePage = AdventurePage.new()
+	lost.title = "Lost"
+	fight.failure_transition = lost
+	ambush.decisions = [fight] as Array[AdventureDecision]
+	TestAdventures.add(_ruin, ambush)
+	assert_array(_texts([ ])).contains_exactly(["Ambush, \"Fight!\": Lost leads to a dead end, whose \"Turn back.\" goes back into the fight"])
+	# Leading on (or anywhere but back) is fine
+	_link(lost, _shore)
+	assert_array(_texts([ ])).is_empty()
+
 func test_missing_files_and_host_links_outside_events() -> void:
 	var gone: AdventureDecision = AdventureDecision.new()
 	gone.description = "Go on"

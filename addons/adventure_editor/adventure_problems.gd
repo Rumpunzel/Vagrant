@@ -104,6 +104,7 @@ func _check_decisions(page: AdventurePage, event: AdventureEvent) -> void:
 		var where: String = "%s, \"%s\"" % [AdventureGraph.get_title(page), decision.description.get_slice("\n", 0)]
 		if seen: _add("%s is offered twice" % where, page, event)
 		if decision is AdventureFightDecision and not _has_monster(decision as AdventureFightDecision, event): _add("%s: the fight has no monster encounter and no enemies" % where, page, event)
+		if decision is AdventureFightDecision: _check_fight_outcomes(decision as AdventureFightDecision, where, page, event)
 		if decision is AdventureSaveDecision and (decision as AdventureSaveDecision).attribute == null: _add("%s: the save has no attribute" % where, page, event)
 		for link: AdventurePageReference in decision.get_page_references():
 			if link is AdventureTransition and (link as AdventureTransition).leads_nowhere(): _add("%s leads to a missing file" % where, page, event)
@@ -122,9 +123,16 @@ func _check_options(scenario: AdventureEventScenario) -> void:
 
 ## A named encounter, enemies, or an event of an encounter with a monster
 func _has_monster(fight: AdventureFightDecision, event: AdventureEvent) -> bool:
-	if not fight.encounter.is_empty() or not fight.enemies.is_empty(): return true
-	var encounter: AdventureEncounter = _graph.get_encounter_of(event) if event != null else null
-	return encounter != null and encounter.profile is MonsterProfile
+	return fight.get_monster_profile(_graph.get_encounter_of(event) if event != null else null) != null
+
+## A fight's outcome leading to a page with nothing to choose: its automatic "Turn back." goes back into the fight, which, lost at once
+## without breath dice, never lets go
+func _check_fight_outcomes(fight: AdventureFightDecision, where: String, page: AdventurePage, event: AdventureEvent) -> void:
+	for outcome: AdventureDecision.Outcome in fight.get_outcomes():
+		var reference: AdventurePageReference = fight.get_reference(outcome)
+		var target: AdventurePage = reference.get_adventure_page() if reference != null else null
+		if target == null or target is AdventureLocation or not target.decisions.is_empty(): continue
+		_add("%s: %s leads to a dead end, whose \"Turn back.\" goes back into the fight" % [where, outcome.name], page, event)
 
 func _add(text: String, page: AdventurePage, event: AdventureEvent) -> void:
 	problems.append(Problem.new(text, page, event))

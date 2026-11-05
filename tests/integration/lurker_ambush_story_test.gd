@@ -2,6 +2,7 @@ extends GdUnitTestSuite
 
 ## Plays the Lurker ambush through the real Story scene.
 
+const STORY_SCENE: PackedScene = preload("uid://db6oui711vqep")  # story.tscn
 const TEMPLE_RUIN: String = "uid://cs40ge42lw0ry"  # temple_ruin.tres
 const LURKER_AMBUSH: String = "uid://bxwqtk0p80o4g"  # lurker_ambush.tres
 const LURKER_ENCOUNTER: String = "uid://c16ehct0w6n48"  # encounters/lurker/lurker.tres
@@ -15,12 +16,43 @@ const OUTCOME_PAGES: Dictionary[Fight.Outcome, String] = {
 func after_test() -> void:
 	await await_millis(500)
 
+func test_losing_the_ambush_leads_away_from_it() -> void:
+	# Arriving from a path; without breath dice the fight is lost at once
+	var path: AdventureLocation = AdventureLocation.new()
+	path.title = "Path"
+	var to_ruin: AdventureDecision = AdventureDecision.new()
+	to_ruin.description = "To the ruin"
+	to_ruin.transition = load(TEMPLE_RUIN)
+	path.decisions = [to_ruin] as Array[AdventureDecision]
+	var adventure: Adventure = Adventure.new()
+	adventure.starting_page = path
+	adventure.encounters = [load(LURKER_ENCOUNTER)] as Array[AdventureEncounter]
+	var story: Story = auto_free(STORY_SCENE.instantiate())
+	story._reveal_delay = 0.01
+	add_child(story)
+	story.chance_roller = func(_condition: AdventureChanceCondition) -> bool: return true
+	story.start_adventure(adventure, TestCharacters.adventurer())
+	for die_type: DieType in story.get_protagonist().breath_dice.keys(): story.get_protagonist().breath_dice[die_type] = 0
+	var visited: Array[AdventurePage] = []
+	for _step: int in 4:
+		var page: StoryPage = story._current_story_page
+		page.choices[0].chose()
+		await _until_left(story, page)
+		visited.append(story._current_story_page.adventure_page)
+	assert_array(visited).is_equal([load(TEMPLE_RUIN), (load(LURKER_AMBUSH) as AdventureEvent).decisions[0].transition, load(OUTCOME_PAGES[Fight.Outcome.LOST]), path])
+
+func _until_left(story: Story, page: StoryPage) -> void:
+	var waited: int = 0
+	while story._current_story_page == page and waited < 5000:
+		await await_millis(10)
+		waited += 10
+
 func test_flee_from_ambush_in_story() -> void:
 	# Ends on the ambush's flee page
 	var adventure: Adventure = Adventure.new()
 	adventure.starting_page = load(TEMPLE_RUIN)
 	adventure.encounters = [load(LURKER_ENCOUNTER)] as Array[AdventureEncounter]
-	var story: Story = auto_free(load("uid://db6oui711vqep").instantiate())  # story.tscn
+	var story: Story = auto_free(STORY_SCENE.instantiate())
 	story._reveal_delay = 0.01
 	add_child(story)
 	story.chance_roller = func(_condition: AdventureChanceCondition) -> bool: return true

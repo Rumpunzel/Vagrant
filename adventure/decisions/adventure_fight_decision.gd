@@ -11,6 +11,18 @@ extends AdventureDiceDecision
 @export var flee_transition: AdventurePageReference
 @export var draw_transition: AdventurePageReference
 
+## The encounter whose monster fights: the named one, else [param own] (the encounter of the event it is in); none if that has no monster
+func get_monster_encounter(own: AdventureEncounter) -> AdventureEncounter:
+	var fought: AdventureEncounter = Files.load_existing(encounter) as AdventureEncounter if not encounter.is_empty() else own
+	return fought if fought != null and fought.profile is MonsterProfile else null
+
+## Who fights: the monster of [method get_monster_encounter], else the first of [member enemies] (a one-off fight); the story and the
+## adventure editor both go by this
+func get_monster_profile(own: AdventureEncounter) -> MonsterProfile:
+	var fought: AdventureEncounter = get_monster_encounter(own)
+	if fought != null: return fought.profile as MonsterProfile
+	return enemies[0] if not enemies.is_empty() else null
+
 ## Won, Lost, Fled, Draw; fleeing and a draw do nothing but lead on
 func get_outcomes() -> Array[Outcome]:
 	return [

@@ -61,15 +61,8 @@ static func _note_fights(page: AdventurePage, encounter: AdventureEncounter, fou
 	for decision: AdventureDecision in page.decisions:
 		var fight: AdventureFightDecision = decision as AdventureFightDecision
 		if fight == null or found.has(fight): continue
-		var monster: MonsterProfile = get_monster(fight, encounter)
+		var monster: MonsterProfile = fight.get_monster_profile(encounter)
 		if monster != null: found[fight] = monster
-
-## As the story picks it ([code]Story._create_fight[/code]): the monster of the named encounter or of [param own], else the first enemy
-static func get_monster(fight: AdventureFightDecision, own: AdventureEncounter) -> MonsterProfile:
-	var encounter: AdventureEncounter = own
-	if not fight.encounter.is_empty(): encounter = Files.load_existing(fight.encounter) as AdventureEncounter
-	if encounter != null and encounter.profile is MonsterProfile: return encounter.profile as MonsterProfile
-	return fight.enemies[0] if not fight.enemies.is_empty() else null
 
 func get_monster_of(fight: AdventureFightDecision) -> MonsterProfile: return _monster_of.get(fight)
 
