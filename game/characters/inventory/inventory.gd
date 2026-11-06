@@ -13,6 +13,7 @@ extends PanelContainer
 @export var _list: ItemList
 
 var _character: Character
+var _watched: Array[Equipment] = []
 
 func setup(character_profile: CharacterProfile) -> void:
 	_character_profile = character_profile
@@ -41,13 +42,23 @@ func _refresh() -> void:
 	for shield: Shield in _character.shields: _add_equipment(shield, "%s (%s)" % [shield.get_equipment_name(), shield.get_die_type()])
 	_add_items(_character.items)
 
-## Marks made in a fight show up right away
+## Marks made in a fight, and what is gained or lost, show up right away
 func _set_character(character: Character) -> void:
-	if _character:
-		for equipment: Equipment in _get_equipment(_character): if equipment.changed.is_connected(_refresh): equipment.changed.disconnect(_refresh)
+	if _character != null and _character.carried_changed.is_connected(_on_carried_changed): _character.carried_changed.disconnect(_on_carried_changed)
 	_character = character
-	if not _character: return
-	for equipment: Equipment in _get_equipment(_character): equipment.changed.connect(_refresh)
+	_watch_gear()
+	if _character != null: _character.carried_changed.connect(_on_carried_changed)
+
+## The pieces carried now, whose marks show up right away
+func _watch_gear() -> void:
+	for equipment: Equipment in _watched: if equipment.changed.is_connected(_refresh): equipment.changed.disconnect(_refresh)
+	_watched = []
+	if _character != null: _watched = _character.get_gear()
+	for equipment: Equipment in _watched: equipment.changed.connect(_refresh)
+
+func _on_carried_changed() -> void:
+	_watch_gear()
+	_refresh()
 
 func _add_equipment(equipment: Equipment, text: String) -> void:
 	if equipment.ruined: text += " — ruined"
@@ -64,10 +75,3 @@ static func _describe_armor(piece: Armor) -> String:
 	if not piece.armor_profile.blocked_results.is_empty(): details.append("blocks %s" % ", ".join(piece.armor_profile.blocked_results.map(func(result: int) -> String: return "%d" % result)))
 	if piece.armor_profile.damage_reduction > 0: details.append("−%d damage" % piece.armor_profile.damage_reduction)
 	return "%s (%s)" % [piece.get_equipment_name(), "; ".join(details)] if not details.is_empty() else piece.get_equipment_name()
-
-static func _get_equipment(character: Character) -> Array[Equipment]:
-	var equipment: Array[Equipment] = []
-	equipment.append_array(character.weapons)
-	equipment.append_array(character.armor)
-	equipment.append_array(character.shields)
-	return equipment

@@ -8,3 +8,5 @@ func resolve(story: Story, margin: int) -> void:
 	story.get_protagonist().suffer_injury(Injury.new(margin))
 
 func describe() -> String: return "Injury (margin as damage)"
+
+func is_shown() -> bool: return true

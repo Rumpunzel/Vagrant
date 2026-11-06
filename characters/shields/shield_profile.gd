@@ -1,10 +1,13 @@
 class_name ShieldProfile
-extends Resource
+extends ItemProfile
 
-@export_placeholder("Name") var name: String
+## A shield as an item: carried, gained and lost like any other, used in fights by its own rules
+
 @export var die: DieType
 ## Rolling above this attribute's score means the shield cannot be raised in that exchange
 @export var wield_attribute: CharacterAttribute = Rules.STRENGTH
+
+func is_gear() -> bool: return true
 
 static func create(new_name: String, new_die: DieType, new_wield_attribute: CharacterAttribute = Rules.STRENGTH) -> ShieldProfile:
 	var shield_profile: ShieldProfile = ShieldProfile.new()

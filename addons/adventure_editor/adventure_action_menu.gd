@@ -2,19 +2,24 @@
 class_name AdventureActionMenu
 extends PopupMenu
 
-## A context menu at the mouse: item text -> what it does; each item gets an editor icon by the words in its text
+## A context menu at the mouse: item text -> what it does (an empty Callable: shown, but disabled); each item gets an editor icon by the words in
+## its text
 
 const ICON_SIZE: int = 16
 ## [words, icon name]: the first entry with a word in an item's text gives its icon
 const ICONS: Array[Array] = [
-	[["starting page"], "Favorites"], [["texts"], "Edit"], [["play"], "Play"], [["unlink"], "Unlinked"], [["remove", "delete", "not nearby", "not here"], "Remove"], [["other file"], "Load"],
-	[["(scenario)"], "GraphEdit"], [["monster"], "Skeleton2D"], [["encounter", "place "], "CharacterBody2D"], [["new ", "add "], "Add"],
+	[["starting page"], "Favorites"], [["texts", "rename"], "Edit"], [["inspector"], "Object"], [["can't"], "NodeWarning"], [["play"], "Play"],
+	[["unlink"], "Unlinked"], [["remove", "delete", "not nearby", "not here"], "Remove"], [["other file"], "Load"], [["(scenario)"], "GraphEdit"],
+	[["monster"], "Skeleton2D"], [["encounter", "place "], "CharacterBody2D"], [["new ", "add "], "Add"],
 ]
 
 var _actions: Dictionary[String, Callable] = {}
 
 func _init() -> void:
-	index_pressed.connect(func(index: int) -> void: _actions[get_item_text(index)].call())
+	index_pressed.connect(func(index: int) -> void:
+		var action: Callable = _actions[get_item_text(index)]
+		if action.is_valid(): action.call()
+	)
 
 ## [param pick_icon]: text -> icon, for menus with icons of their own
 func show_actions(actions: Dictionary[String, Callable], pick_icon: Callable = AdventureActionMenu.get_icon) -> void:
@@ -25,6 +30,7 @@ func show_actions(actions: Dictionary[String, Callable], pick_icon: Callable = A
 		if icon != null: add_icon_item(icon, text)
 		else: add_item(text)
 		set_item_icon_max_width(item_count - 1, ICON_SIZE)
+		set_item_disabled(item_count - 1, not actions[text].is_valid())
 	position = DisplayServer.mouse_get_position()
 	reset_size()
 	popup()

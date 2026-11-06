@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://elib8bc2fnvu" path="res://adventure/adventure_event.gd" id="3_event"]
 [ext_resource type="Resource" uid="uid://d3cv8d5e65vwh" path="res://adventure/adventures/encounters/eleanor/meeting_eleanor.tres" id="4_meeting"]
 [ext_resource type="Resource" uid="uid://dffxphat87a8a" path="res://adventure/adventures/encounters/eleanor/hearing_eleanor.tres" id="5_hearing"]
+[ext_resource type="Script" uid="uid://b48qg7emmfqry" path="res://characters/items/item_profile.gd" id="6_024qw"]
 
 [sub_resource type="Resource" id="Resource_storyline"]
 script = ExtResource("2_track")

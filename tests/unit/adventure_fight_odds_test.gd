@@ -42,6 +42,9 @@ func test_each_fight_fights_the_monster_the_story_picks() -> void:
 func test_the_reference_fighters_fight_the_monsters_in_a_scenario_of_their_own() -> void:
 	var scenario: FightLabScenario = AdventureFightOdds.make_scenario([TestMonsters.cutthroat()] as Array[MonsterProfile])
 	assert_array(scenario.side_a.map(func(profile: ActorProfile) -> String: return profile.name)).is_equal(["Weak", "Average", "Strong"])
+	# Each fights with Guts, Blood and Nerves
+	assert_int(scenario.get_row_count()).is_equal(9)
+	assert_str(scenario.get_row_name(1)).is_equal("Weak · Blood")
 	assert_int(scenario.side_b.size()).is_equal(1)
 	assert_str(scenario.resource_path).is_empty()
 	assert_array((load(AdventureFightOdds.REFERENCE) as FightLabScenario).side_b).is_empty()
@@ -60,8 +63,10 @@ func test_odds_are_read_back_per_fight() -> void:
 	var adventure: Adventure = _adventure()
 	_odds.index(adventure, AdventureGraph.new(adventure))
 	var odds: Array[Dictionary] = _odds.get_odds(_ambush)
-	assert_array(odds.map(func(entry: Dictionary) -> String: return entry["name"])).is_equal(["Weak", "Strong"])
-	assert_float(odds[1]["stats"]["outcomes"]["won"]).is_equal(0.9)
+	assert_array(odds.map(func(entry: Dictionary) -> String: return "%s · %s" % [entry["name"], entry["approach"]])).is_equal(["Weak · Guts", "Weak · Blood", "Strong · Guts", "Strong · Blood"])
+	# Each fighter's best approach, in their order
+	assert_array(AdventureFightOdds.get_best(odds).map(func(entry: Dictionary) -> String: return "%s · %s" % [entry["name"], entry["approach"]])).is_equal(["Weak · Blood", "Strong · Guts"])
+	assert_float(AdventureFightOdds.get_won(odds[2])).is_equal(0.9)
 	assert_bool(_odds.is_out_of_date(_ambush)).is_false()
 	var unknown: AdventureFightDecision = AdventureFightDecision.new()
 	unknown.enemies = [TestMonsters.brute()] as Array[MonsterProfile]
@@ -76,14 +81,14 @@ func test_the_fight_tooltip_names_the_monster_and_tabulates_the_odds() -> void:
 	tooltips.fight_odds = _odds
 	var text: String = tooltips.describe(_ambush)
 	assert_str(text).contains("Fight against %s" % _lurker.profile.name)
-	# Won and lost happened, so they are columns; the rest isn't
-	assert_str(text).contains("[table=4]").contains("Won").contains("Lost").not_contains("]Fled[/color]")
-	assert_str(text).contains("[b]Strong[/b]").contains("90%")
+	# A heading row per fighter, a row per approach in its attribute's colour; won and lost happened, the medians follow; each fighter's best in bold
+	assert_str(text).contains("[table=6]").contains("[b]3[/b] / 1").contains("[b]Strong[/b]").contains("color=#%s]%s[/img]" % [Rules.AGILITY.color.to_html(), Rules.AGILITY.icon.resource_path])
+	assert_str(text).contains("[b]90%[/b]").contains("[b]40%[/b]").contains("30%").not_contains("]Fled[/color]")
 	tooltips.fight_odds = null
 	assert_str(tooltips.describe(_ambush)).not_contains("Fight Lab")
 
 func test_changed_reference_fighters_make_odds_out_of_date() -> void:
-	_save_result({"reference:res://addons/fight_lab/fighters/weak.tres": 1})
+	_save_result({"reference:res://addons/fight_lab/fighters/weak.tres": "an older weak.tres"})
 	var adventure: Adventure = _adventure()
 	_odds.index(adventure, AdventureGraph.new(adventure))
 	assert_bool(_odds.is_out_of_date(_ambush)).is_true()
@@ -95,16 +100,21 @@ func _adventure() -> Adventure:
 	adventure.resource_path = ADVENTURE_PATH
 	return adventure
 
-## As a run of the reference fighters (two of them here) against the Lurker's monster would leave it; the monster is in no file (stamp 0)
+## As a run of the reference fighters (two of them here, with two approaches) against the Lurker's monster would leave it; the monster is in no
+## file (no stamp)
 func _save_result(stamps: Dictionary) -> void:
 	var cells: Array[Dictionary] = []
-	for a: int in 2:
-		var won: float = 0.2 if a == 0 else 0.9
-		var outcomes: Dictionary = {"won": won, "lost": 1.0 - won, "draw": 0.0, "fled": 0.0, "unfinished": 0.0}
-		cells.append({"a": a, "b": 0, "value": 0, "stats": {"outcomes": outcomes, "won": {"runs": 0}}})
-	var all_stamps: Dictionary = {"": 0}
+	var shares: Array[float] = [0.2, 0.4, 0.9, 0.3]
+	for a: int in shares.size():
+		var outcomes: Dictionary = {"won": shares[a], "lost": 1.0 - shares[a], "draw": 0.0, "fled": 0.0, "unfinished": 0.0}
+		var histograms: Dictionary = {"dealt": {str(2 + a): 1}, "taken": {"1": 1}, "breath_spent": {"2": 1}, "exchanges": {"3": 1}}
+		cells.append({"a": a, "b": 0, "value": 0, "stats": {"outcomes": outcomes, "won": {"runs": 0}, "histograms": histograms}})
+	var all_stamps: Dictionary = {"": ""}
 	all_stamps.merge(stamps)
-	var result: Dictionary = {"side_a": ["Weak", "Strong"], "side_b": [_lurker.profile.name], "cells": cells, "monsters": [_lurker.profile.name], "stamps": all_stamps}
+	var result: Dictionary = {
+		"side_a": ["Weak · Guts", "Weak · Blood", "Strong · Guts", "Strong · Blood"], "side_b": [_lurker.profile.name], "cells": cells,
+		"monsters": [_lurker.profile.name], "stamps": all_stamps, "fighters": ["Weak", "Weak", "Strong", "Strong"], "approaches": ["Guts", "Blood", "Guts", "Blood"],
+	}
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(AdventureFightOdds.DIRECTORY))
 	var file: FileAccess = FileAccess.open(AdventureFightOdds.DIRECTORY + str(ADVENTURE_PATH.hash()) + ".json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(result))

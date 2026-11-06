@@ -32,6 +32,24 @@ static func make_fight() -> AdventureFightDecision:
 	fight.description = "Fight!"
 	return fight
 
+## Searches its event's encounter; another one is named in the Inspector
+static func make_loot() -> AdventureLootDecision:
+	var loot: AdventureLootDecision = _in_file(AdventureLootDecision.new()) as AdventureLootDecision
+	loot.description = "Search it."
+	return loot
+
+## The template for searching [param encounter]'s monster once it is dead: an option adding its text and a search (back to the page it shows on)
+## to the location's
+static func make_loot_event(encounter: AdventureEncounter) -> AdventureEvent:
+	var event: AdventureEvent = make_event("Searching the %s" % encounter.title, false)
+	event.description = "The %s lies dead." % encounter.title
+	event.conditions = [make_monster_condition(AdventureMonsterCondition.State.DEAD)] as Array[AdventureCondition]
+	var search: AdventureLootDecision = make_loot()
+	search.description = "Search the %s." % encounter.title
+	search.transition = _in_file(AdventureHostReference.new()) as AdventureHostReference
+	event.decisions = [search] as Array[AdventureDecision]
+	return event
+
 ## Attribute and difficulty are set in the Inspector
 static func make_save() -> AdventureSaveDecision:
 	var save: AdventureSaveDecision = _in_file(AdventureSaveDecision.new()) as AdventureSaveDecision

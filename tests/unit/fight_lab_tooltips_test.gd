@@ -53,6 +53,28 @@ func test_a_character_row_tells_its_strategy() -> void:
 	assert_str(_tooltips.describe_fighter("a", 1)).contains("[b]Strategy Safe + 1 risky[/b]").contains("the 1 smallest that can be lost")
 	assert_str(_tooltips.describe_fighter("a", 0)).contains("only those that can't be lost")
 
+func test_the_attribute_a_fighter_fights_with() -> void:
+	# The default strategy leaves it to the character; a monster attacks with its stance
+	assert_object(_tooltips.get_attribute("a", 0)).is_null()
+	assert_object(_tooltips.get_attribute("b", 0)).is_same(TestMonsters.cutthroat().attack.get_stance())
+	var blood: FightLabStrategy = FightLabStrategy.new()
+	blood.stance = Rules.AGILITY
+	_tooltips.scenario.strategies_a = [blood] as Array[FightLabStrategy]
+	assert_object(_tooltips.get_attribute("a", 0)).is_same(Rules.AGILITY)
+
+func test_a_row_that_is_just_a_stance_goes_by_its_fighter() -> void:
+	var blood: FightLabStrategy = FightLabStrategy.new()
+	blood.label = "Blood"
+	blood.stance = Rules.AGILITY
+	var all_in: FightLabStrategy = FightLabStrategy.new()
+	all_in.breath_dice = FightLabStrategy.BreathDiceChoice.ALL_IN
+	_tooltips.scenario.strategies_a = [blood, all_in] as Array[FightLabStrategy]
+	_tooltips.result = {"side_a": ["Tester · Blood", "Tester · All in"], "side_b": [TestMonsters.cutthroat().name]}
+	# The icon tells "Blood"; "All in" is no attribute
+	assert_str(_tooltips.get_short_name("a", 0)).is_equal("Tester")
+	assert_str(_tooltips.get_short_name("a", 1)).is_equal("Tester · All in")
+	assert_str(_tooltips.get_short_name("b", 0)).is_equal(TestMonsters.cutthroat().name)
+
 func test_a_fighter_no_longer_in_the_scenario_says_so() -> void:
 	_tooltips.result = {"side_a": ["Someone else"], "side_b": []}
 	assert_str(_tooltips.describe_fighter("a", 0)).contains("Not in the scenario any more")

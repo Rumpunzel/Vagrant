@@ -62,16 +62,16 @@ func test_fights_and_saves_have_fixed_outcomes() -> void:
 	assert_bool(outlets[1].goes_back()).is_true()
 	var graph: AdventureEventGraph = AdventureEventGraph.new(ambush)
 	# The page's ports: the fight's outcomes, then the choice
-	assert_array(AdventureEventGraph.get_ports(ambush).map(func(port: AdventureEventGraph.Outlet) -> String: return port.label)).contains_exactly(["Won", "Lost", "Fled", "Draw", "Sneak away"])
+	assert_array(AdventureEventGraph.get_ports(ambush).map(func(port: AdventureEventGraph.Outlet) -> String: return port.label)).contains_exactly(["Won", "Draw", "Lost", "Fled", "Sneak away"])
 	assert_array(graph.pages).contains_exactly([ambush, won, lost])
 	assert_int(graph.depths[won]).is_equal(1)
 	assert_str(AdventureEventGraph.describe_check(fight)).is_equal("Fight: Cutthroat")
 	var outcomes: Array[AdventureEventGraph.Outlet] = AdventureEventGraph.get_outcomes(fight)
-	assert_array(outcomes.map(func(outcome: AdventureEventGraph.Outlet) -> String: return outcome.label)).contains_exactly(["Won", "Lost", "Fled", "Draw"])
+	assert_array(outcomes.map(func(outcome: AdventureEventGraph.Outlet) -> String: return outcome.label)).contains_exactly(["Won", "Draw", "Lost", "Fled"])
 	assert_object(outcomes[0].target).is_same(won)
 	assert_str(AdventureEventGraph.describe_consequences(outcomes[0].consequences)).is_equal("its own → Beaten")
 	# No flee transition: going back
-	assert_bool(outcomes[2].goes_back()).is_true()
+	assert_bool(outcomes[3].goes_back()).is_true()
 
 func test_save_outcomes() -> void:
 	var save: AdventureSaveDecision = AdventureSaveDecision.new()

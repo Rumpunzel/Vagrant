@@ -192,7 +192,7 @@ func test_outlets_name_their_property() -> void:
 	assert_array(effects).contains_exactly([&"consequences", &"failure_consequences"])
 	var fight: AdventureFightDecision = AdventureFightDecision.new()
 	fight.back_steps = 2
-	var fled: AdventureEventGraph.Outlet = AdventureEventGraph.get_outcomes(fight)[2]
+	var fled: AdventureEventGraph.Outlet = AdventureEventGraph.get_outcomes(fight)[3]
 	assert_str(fled.consequences_property).is_empty()
 	assert_int(fled.get_back_steps()).is_equal(2)
 

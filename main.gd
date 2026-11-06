@@ -53,10 +53,12 @@ func enter_character_creation(protagonist: CharacterProfile) -> CharacterCreatio
 	return character_creation
 
 func enter_story(adventure: Adventure, page: AdventurePage = null, host: AdventurePage = null, forced: AdventureEvent = null) -> Story:
-	ResourceLoader.load_threaded_request(_story_scene_path)
 	var protagonist: CharacterProfile = adventure.protagonist.duplicate(true) # Duplicate to be able to be reset on restart
 	if not protagonist or not protagonist.is_valid():
 		var character_creation: CharacterCreation = await enter_character_creation(protagonist)
+		# Only once character creation is loaded: loading the story on a thread while the main thread loads character creation (they share scripts
+		# and resources) can deadlock Godot's loader, and the game hangs
+		ResourceLoader.load_threaded_request(_story_scene_path)
 		await character_creation.character_created
 	return await _enter_story(adventure, protagonist, page, host, forced)
 

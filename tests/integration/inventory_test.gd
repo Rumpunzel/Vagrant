@@ -15,7 +15,7 @@ func before_test() -> void:
 	_profile.weapons = [WeaponProfile.create("Sword", Rules.d10)] as Array[WeaponProfile]
 	_profile.armor = [ArmorProfile.create("Gambeson", [] as Array[int], 1), ArmorProfile.create("Helmet", [5, 10] as Array[int])] as Array[ArmorProfile]
 	_profile.shields = [ShieldProfile.create("Buckler", Rules.d6)] as Array[ShieldProfile]
-	_profile.items = {ItemProfile.create("Rations"): 3, ItemProfile.create("Waterskin"): 1} as Dictionary[ItemProfile, int]
+	_profile.items = {ItemProfile.create_item("Rations"): 3, ItemProfile.create_item("Waterskin"): 1} as Dictionary[ItemProfile, int]
 
 func test_lists_a_profile() -> void:
 	_inventory.setup(_profile)

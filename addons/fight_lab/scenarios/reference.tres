@@ -5,7 +5,27 @@
 [ext_resource type="Resource" uid="uid://by1enqcgfgk1a" path="res://addons/fight_lab/fighters/weak.tres" id="3_weak"]
 [ext_resource type="Resource" uid="uid://t0k7mhd0chyp" path="res://addons/fight_lab/fighters/average.tres" id="4_average"]
 [ext_resource type="Resource" uid="uid://bkae7auwm10ds" path="res://addons/fight_lab/fighters/strong.tres" id="5_strong"]
+[ext_resource type="Script" uid="uid://d2w654t0o8253" path="res://addons/fight_lab/fight_lab_strategy.gd" id="6_strategy"]
+[ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="7_guts"]
+[ext_resource type="Resource" uid="uid://bu20awm3swywv" path="res://characters/attributes/agility.tres" id="8_blood"]
+[ext_resource type="Resource" uid="uid://2vf8mdpla1u2" path="res://characters/attributes/intelligence.tres" id="9_nerves"]
+
+[sub_resource type="Resource" id="Resource_guts"]
+script = ExtResource("6_strategy")
+label = "Guts"
+stance = ExtResource("7_guts")
+
+[sub_resource type="Resource" id="Resource_blood"]
+script = ExtResource("6_strategy")
+label = "Blood"
+stance = ExtResource("8_blood")
+
+[sub_resource type="Resource" id="Resource_nerves"]
+script = ExtResource("6_strategy")
+label = "Nerves"
+stance = ExtResource("9_nerves")
 
 [resource]
 script = ExtResource("1_scenario")
 side_a = Array[ExtResource("2_actor_profile")]([ExtResource("3_weak"), ExtResource("4_average"), ExtResource("5_strong")])
+strategies_a = Array[ExtResource("6_strategy")]([SubResource("Resource_guts"), SubResource("Resource_blood"), SubResource("Resource_nerves")])

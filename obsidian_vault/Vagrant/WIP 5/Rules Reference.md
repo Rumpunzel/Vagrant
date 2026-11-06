@@ -67,6 +67,11 @@ Quick reference of the rules as implemented. Source of truth for intent: WIP 5.
 ## Modifiers
 - Profiles list equipment plus modifiers applied when handed out, e.g. **battered** = 2 random faces marked (never ruins). Characters: one list per kind; monsters: one list for all their equipment.
 
+## Items
+- Weapons, armour and shields are items carried as pieces, each with its own marks; other items are carried in a number. No carrying limit; every carried piece of armour protects (they stack).
+- The story gives and takes items ("You gain the Sword and 2 Rations.", told on the next page); losing gear gives up the most worn pieces first. A choice can need an item ("carries the Key").
+- **Loot:** searching a monster lists its usable gear (marks and all) and what its encounter has besides; the player takes one thing at a time, everything, or leaves the rest for later. Once nothing is left, searching isn't offered.
+
 ## Choices
 - **First time:** a choice can read differently until the player has been where it leads ("Climb the narrow path up the cliff." before "Go to Castle."). Choices leading back have no first time.
 

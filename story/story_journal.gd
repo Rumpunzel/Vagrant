@@ -119,6 +119,13 @@ func _on_exhaustion_changed(exhaustion: Array[DieType], character: Character) ->
 func _on_died(monster: Monster) -> void:
 	_write({type = "died", actor = monster.get_actor_name()}, "%s died" % monster.get_actor_name())
 
+## [param count] of [param item] gained, or lost if below 0
+func carry(actor: Actor, item: ItemProfile, count: int) -> void:
+	_write(
+		{type = "gained" if count > 0 else "lost", actor = actor.get_actor_name(), item = ResourceId.of(item), count = absi(count)},
+		"%s %s %d × %s (%d now)" % [actor.get_actor_name(), "gained" if count > 0 else "lost", absi(count), describe(item), actor.count_of(item)],
+	)
+
 func _write(entry: Dictionary, line: String) -> void:
 	entries.append(entry)
 	GameLog.write(LOG_CATEGORY, line)

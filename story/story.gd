@@ -59,14 +59,14 @@ var _current_story_page: StoryPage:
 			var last_adventure_page: AdventurePage = _page_stack.pop_back()
 			story_page = _create_story_page(last_adventure_page)
 		if _current_story_page:
-			if not going_back and not _current_story_page.is_fight_exchange(): _page_stack.push_back(_current_story_page.adventure_page)
+			if not going_back and not _current_story_page.is_in_between(): _page_stack.push_back(_current_story_page.adventure_page)
 			for choice: StoryChoice in _current_story_page.choices:
 				choice.chosen.disconnect(_on_choice_made)
 				choice.dice_requested.disconnect(_on_dice_requested)
 				choice.roll_requested.disconnect(_on_roll_requested)
 		_current_story_page = story_page
 		assert(_current_story_page)
-		if not _current_story_page.is_fight_exchange():
+		if not _current_story_page.is_in_between():
 			journal.enter(_current_story_page.adventure_page)
 		for choice: StoryChoice in _current_story_page.choices:
 			choice.chosen.connect(_on_choice_made.bind(choice))
@@ -89,6 +89,9 @@ var _current_dice_request: DiceRequest :
 		dice_requested.emit(_current_dice_request)
 
 var _page_stack: Array[AdventurePage] = []
+## What the protagonist gained and lost since the last page, told at the top of the next one ("You gain the Sword and 2 Rations.")
+var _gained: Array[String] = []
+var _lost: Array[String] = []
 ## The page on which an event's decision was last chosen; the pages behind the event keep it
 var _host: AdventurePage
 ## The last location entered: "here"
@@ -220,6 +223,20 @@ func get_subject(path: String, event: AdventurePage = null) -> Resource:
 	return _location
 
 func get_protagonist() -> Character: return _protagonist
+
+## The protagonist gains [param count] of [param item]; the next page tells it
+func give(item: ItemProfile, count: int = 1) -> void:
+	_protagonist.gain(item, count)
+	_gained.append(_name_amount(item, count))
+	journal.carry(_protagonist, item, count)
+
+## The protagonist loses up to [param count] of [param item]; returns how many, which the next page tells
+func take(item: ItemProfile, count: int = 1) -> int:
+	var lost: int = _protagonist.lose(item, count)
+	if lost > 0:
+		_lost.append(_name_amount(item, lost))
+		journal.carry(_protagonist, item, -lost)
+	return lost
 func get_monsters() -> Monsters: return _monsters
 
 ## The monster of [param holder]: an encounter's, the same for the whole story; a one-off fight's (owned by its page), one per location
@@ -236,7 +253,7 @@ func get_how_often_page_has_been_entered(adventure_page: AdventurePage) -> int: 
 
 ## On a page with nothing going on: no fight under way, nothing queued, no decision in the middle of an exchange
 func can_save() -> bool:
-	if _current_story_page == null or _current_story_page.is_fight_exchange(): return false
+	if _current_story_page == null or _current_story_page.is_in_between(): return false
 	return _event_queue.is_idle() and _pending_choices.is_empty() and _incapacitation_save == null
 
 ## Everything a run needs to go on, as plain values and [ResourceId]s ([SaveGame]): [method get_state] and what the journal, world,
@@ -284,7 +301,7 @@ func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	var story_page: StoryPage = StoryPage.new(
 		adventure_page,
 		adventure_page.get_page_title(self),
-		adventure_page.get_description(self),
+		_tell_carried() + adventure_page.get_description(self),
 		adventure_page.get_background(self),
 		adventure_page.get_ambience(self),
 		choices,
@@ -294,16 +311,43 @@ func _create_story_page(adventure_page: AdventurePage) -> StoryPage:
 	story_page.forbids_rest = adventure_page.forbids_rest(self)
 	return story_page
 
+## What was gained and lost since the last page, as a paragraph in italics before the page's text; empty if nothing was
+func _tell_carried() -> String:
+	var sentences: Array[String] = []
+	if not _gained.is_empty(): sentences.append("You gain %s." % _list_names(_gained))
+	if not _lost.is_empty(): sentences.append("You lose %s." % _list_names(_lost))
+	_gained.clear()
+	_lost.clear()
+	return "[p][i]%s[/i][/p]" % " ".join(sentences) if not sentences.is_empty() else ""
+
+## "the Sword", "2 Rations"
+static func _name_amount(item: ItemProfile, count: int) -> String: return "the %s" % item.name if count == 1 else "%d %s" % [count, item.name]
+
+## "a", "a and b", "a, b and c"
+static func _list_names(names: Array[String]) -> String:
+	if names.size() == 1: return names[0]
+	return "%s and %s" % [", ".join(names.slice(0, -1)), names[-1]]
+
 func _create_story_choices(adventure_page: AdventurePage, decisions: Array[AdventureDecision]) -> Array[StoryChoice]:
-	if decisions.is_empty(): decisions.append(AdventureDecision.get_turn_back())
+	# Searching what has nothing left isn't offered
+	var offered: Array[AdventureDecision] = []
+	offered.assign(decisions.filter(func(decision: AdventureDecision) -> bool:
+		return not decision is AdventureLootDecision or _has_loot(_get_looted_encounter(adventure_page, decision as AdventureLootDecision))
+	))
+	if offered.is_empty(): offered.append(AdventureDecision.get_turn_back())
 	var story_choices: Array[StoryChoice] = []
-	for decision: AdventureDecision in decisions:
+	for decision: AdventureDecision in offered:
 		if decision is AdventureFightDecision: story_choices.append_array(_create_fight_choices(_create_fight(adventure_page, decision as AdventureFightDecision)))
 		else:
 			var choice: StoryChoice = StoryChoice.from_adventure_decision(decision, _protagonist)
 			choice.description = decision.get_description(self)
 			story_choices.append(choice)
 	return story_choices
+
+## The encounter [param decision] searches: named, or the one of the event it is in
+func _get_looted_encounter(adventure_page: AdventurePage, decision: AdventureLootDecision) -> AdventureEncounter:
+	var holder: AdventurePage = _find_decision_owner(adventure_page, decision)
+	return decision.get_looted(get_subject("", holder if holder != null else adventure_page) as AdventureEncounter)
 
 ## Against the monster of its encounter (named, or the one of the event it is in), else a one-off fight against its first enemy
 func _create_fight(adventure_page: AdventurePage, decision: AdventureFightDecision) -> Fight:
@@ -368,11 +412,84 @@ func _on_choice_made(story_choice: StoryChoice) -> void:
 	for consequence: StoryConsequence in consequences:
 		# A lambda keeps the RefCounted consequence alive until the queue reaches it; a bound Callable does not
 		_event_queue.queue_callable(func() -> void: consequence.resolve(self, 0))
-	if not consequences.is_empty(): _event_queue.queue_delay(_reveal_delay)
+	_pause_for(consequences)
 	_event_queue.queue_callable(func() -> void: _follow(story_choice))
 
+## A pause to see what [param consequences] did, if any shows right away (an injury); killing, stages, moves and items change what comes later
+func _pause_for(consequences: Array[StoryConsequence]) -> void:
+	if consequences.any(func(consequence: StoryConsequence) -> bool: return consequence.is_shown()): _event_queue.queue_delay(_reveal_delay)
+
 func _follow(story_choice: StoryChoice) -> void:
+	var loot: AdventureLootDecision = story_choice.get_adventure_decision() as AdventureLootDecision
+	if loot != null:
+		_show_loot(loot, loot.get_looted(_encounter))
+		return
 	_go(story_choice.get_transition_reference(), story_choice.get_adventure_decision().back_steps)
+
+## A page listing what there is to take from [param encounter]: its monster's usable gear (marks and all), then its loot; one choice each,
+## "Take everything." and "Leave the rest."; once all is taken, on as [param decision] leads
+func _show_loot(decision: AdventureLootDecision, encounter: AdventureEncounter) -> void:
+	var choices: Array[StoryChoice] = []
+	var monster: Monster = _get_looted_monster(encounter)
+	if monster != null:
+		for piece: Equipment in monster.get_gear():
+			if piece.ruined: continue
+			var wear: String = " (marked %s)" % ", ".join(piece.marked_faces.map(func(face: int) -> String: return str(face))) if not piece.marked_faces.is_empty() else ""
+			choices.append(_create_pending_choice("Take the %s%s." % [piece.get_equipment_name(), wear], func() -> void:
+				_take_piece(monster, piece)
+				_show_loot(decision, encounter)
+			))
+	var left: Dictionary[ItemProfile, int] = {}
+	if encounter != null: left = world.get_loot_left(encounter)
+	for item: ItemProfile in left:
+		choices.append(_create_pending_choice("Take %s." % _name_amount(item, left[item]), func() -> void:
+			_take_loot(encounter, item)
+			_show_loot(decision, encounter)
+		))
+	if choices.is_empty():
+		_pending_choices.clear()
+		_go(decision.transition, decision.back_steps)
+		return
+	if choices.size() > 1:
+		choices.append(_create_pending_choice("Take everything.", func() -> void:
+			if monster != null:
+				for piece: Equipment in monster.get_gear(): if not piece.ruined: _take_piece(monster, piece)
+			for item: ItemProfile in left: _take_loot(encounter, item)
+			_show_loot(decision, encounter)
+		))
+	choices.append(_create_pending_choice("Leave the rest.", func() -> void: _go(decision.transition, decision.back_steps)))
+	var page: StoryPage = StoryPage.new(
+		_current_story_page.adventure_page,
+		_current_story_page.page_title,
+		_tell_carried() + "[p]%s[/p]" % decision.description,
+		_current_story_page.background,
+		_current_story_page.ambience,
+		choices,
+		[],
+	)
+	page.in_between = true
+	_current_story_page = page
+
+func _take_piece(monster: Monster, piece: Equipment) -> void:
+	monster.hand_over(piece, _protagonist)
+	_gained.append(_name_amount(piece.get_item_profile(), 1))
+	journal.carry(_protagonist, piece.get_item_profile(), 1)
+
+func _take_loot(encounter: AdventureEncounter, item: ItemProfile) -> void:
+	give(item, world.get_loot_left(encounter)[item])
+	world.take_loot(encounter, item)
+
+## The monster of [param encounter] to search, if it has one
+func _get_looted_monster(encounter: AdventureEncounter) -> Monster:
+	if encounter == null or not encounter.profile is MonsterProfile: return null
+	return get_monster(encounter, encounter.profile as MonsterProfile)
+
+## Whether there is anything left to take from [param encounter]
+func _has_loot(encounter: AdventureEncounter) -> bool:
+	if encounter == null: return false
+	if not world.get_loot_left(encounter).is_empty(): return true
+	var monster: Monster = _get_looted_monster(encounter)
+	return monster != null and monster.get_gear().any(func(piece: Equipment) -> bool: return not piece.ruined)
 
 ## Enters the page [param reference] leads to; none: goes back [param back_steps] pages; [AdventurePreviousLocationReference]: back to before the host
 func _go(reference: AdventurePageReference, back_steps: int) -> void:
@@ -419,7 +536,7 @@ func _on_roll_requested(dice_request: DiceRequest, story_choice: StoryChoice) ->
 	var consequences: Array[StoryConsequence] = story_choice.get_consequences()
 	for consequence: StoryConsequence in consequences:
 		_event_queue.queue_callable(func() -> void: consequence.resolve(self, dice_result.get_margin()))
-	if not consequences.is_empty(): _event_queue.queue_delay(_reveal_delay)
+	_pause_for(consequences)
 	_event_queue.queue_callable(func() -> void: _follow(story_choice))
 
 func _resolve_fight(fight_result: FightResult, story_choice: StoryFightDecision) -> void:

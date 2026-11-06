@@ -105,6 +105,7 @@ func _check_decisions(page: AdventurePage, event: AdventureEvent) -> void:
 		if seen: _add("%s is offered twice" % where, page, event)
 		if decision is AdventureFightDecision and not _has_monster(decision as AdventureFightDecision, event): _add("%s: the fight has no monster encounter and no enemies" % where, page, event)
 		if decision is AdventureFightDecision: _check_fight_outcomes(decision as AdventureFightDecision, where, page, event)
+		if decision is AdventureLootDecision and not _has_loot(decision as AdventureLootDecision, event): _add("%s: searching finds nothing (no monster gear, no loot)" % where, page, event)
 		if decision is AdventureSaveDecision and (decision as AdventureSaveDecision).attribute == null: _add("%s: the save has no attribute" % where, page, event)
 		for link: AdventurePageReference in decision.get_page_references():
 			if link is AdventureTransition and (link as AdventureTransition).leads_nowhere(): _add("%s leads to a missing file" % where, page, event)
@@ -124,6 +125,14 @@ func _check_options(scenario: AdventureEventScenario) -> void:
 ## A named encounter, enemies, or an event of an encounter with a monster
 func _has_monster(fight: AdventureFightDecision, event: AdventureEvent) -> bool:
 	return fight.get_monster_profile(_graph.get_encounter_of(event) if event != null else null) != null
+
+## The searched encounter's monster has gear, or the encounter loot
+func _has_loot(loot: AdventureLootDecision, event: AdventureEvent) -> bool:
+	var looted: AdventureEncounter = loot.get_looted(_graph.get_encounter_of(event) if event != null else null)
+	if looted == null: return false
+	if not looted.loot.is_empty(): return true
+	var profile: ActorProfile = looted.profile
+	return profile != null and not (profile.weapons.is_empty() and profile.armor.is_empty() and profile.shields.is_empty())
 
 ## A fight's outcome leading to a page with nothing to choose: its automatic "Turn back." goes back into the fight, which, lost at once
 ## without breath dice, never lets go

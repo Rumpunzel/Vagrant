@@ -234,6 +234,24 @@ func _get_profile(side: String, index: int) -> ActorProfile:
 	if index < 0 or index >= scenario.side_b.size() or scenario.side_b[index] == null: return null
 	return scenario.side_b[index] if scenario.side_b[index].name == _get_name(side, index) else null
 
+## The name to show beside the icon of the attribute it fights with ([method get_attribute]): a row whose strategy is just a stance ("Weak · Guts")
+## by its fighter alone ("Weak"), the icon telling the rest; any other as it is
+func get_short_name(side: String, index: int) -> String:
+	var attribute: CharacterAttribute = get_attribute(side, index)
+	var profile: ActorProfile = _get_profile(side, index)
+	if side == "a" and attribute != null and profile != null and _get_strategy(side, index).get_label() == attribute.descriptor: return profile.name
+	return _get_name(side, index)
+
+## The attribute the fighter behind a name fights with, for its colour and icon: a character's row the stance its strategy sets, a monster its
+## attack's; none if a character's strategy leaves it to the character (its favoured attribute)
+func get_attribute(side: String, index: int) -> CharacterAttribute:
+	var profile: ActorProfile = _get_profile(side, index)
+	if profile is MonsterProfile:
+		var monster: MonsterProfile = profile as MonsterProfile
+		return monster.attack.get_stance() if monster.attack != null else null
+	if profile == null: return null
+	return _get_strategy(side, index).stance
+
 ## How the profile behind a name fights, if it is a character
 func _get_strategy(side: String, index: int) -> FightLabStrategy:
 	if side == "a": return scenario.get_row_strategy(index)

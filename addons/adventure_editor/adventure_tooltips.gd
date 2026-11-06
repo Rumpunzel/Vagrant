@@ -20,6 +20,8 @@ const DIM: Color = Color(1, 1, 1, 0.6)
 const LINK: Color = Color(0.55, 0.75, 1.0)
 const WARNING: Color = Color(1.0, 0.7, 0.35)
 const THUMBNAIL_WIDTH: int = 200
+## The attribute icons standing for Guts, Blood and Nerves in the fight odds
+const APPROACH_ICON_SIZE: int = 14
 
 var graph: AdventureGraph
 ## Shown on the tooltips of what they are about
@@ -211,10 +213,32 @@ func _describe_decision(decision: AdventureDecision) -> String:
 		var label: String = "[b]%s:[/b] " % outcome.label if not outcome.label.is_empty() else ""
 		lines.append("• %s→ %s%s" % [label, target, "  " + _dim(_escape(effects)) if not effects.is_empty() else ""])
 	if decision is AdventureFightDecision: lines.append_array(describe_odds(decision as AdventureFightDecision))
+	if decision is AdventureLootDecision: lines.append(_describe_loot(decision as AdventureLootDecision))
 	return "\n".join(lines)
 
-## The Fight Lab's reference fighters against the fight's monster, as a table: a row per fighter, a column per outcome that happened (colored
-## as the card's ports) and what a won fight cost (medians); below it what the lab assumes
+## What searching finds: the monster's gear and the encounter's loot (as authored; in the game, what is still left), then that it isn't offered once empty
+func _describe_loot(loot: AdventureLootDecision) -> String:
+	var looted: AdventureEncounter = loot.get_looted(_get_own_encounter(loot))
+	if looted == null: return _colored("Searches its event's encounter (none here)", WARNING) if loot.encounter.is_empty() else _colored("Searches a missing encounter", WARNING)
+	var things: Array[String] = []
+	var profile: ActorProfile = looted.profile
+	if profile != null:
+		for gear: Array in [profile.weapons, profile.armor, profile.shields]:
+			for item: ItemProfile in gear: if item != null: things.append(item.name)
+	for item: ItemProfile in looted.loot: if item != null: things.append(ItemProfile.describe_amount(item, looted.loot[item]))
+	var found: String = ", ".join(things) if not things.is_empty() else _dim("nothing")
+	return "[b]Finds on %s:[/b] %s\n%s" % [_escape(looted.title), _escape(found), _dim("One choice per thing; not offered once nothing is left")]
+
+## The encounter of the event [param decision] is in, if any
+func _get_own_encounter(decision: AdventureDecision) -> AdventureEncounter:
+	for event: AdventureEvent in graph.event_hosts:
+		for page: AdventurePage in AdventureEventGraph.new(event).pages: if page.decisions.has(decision): return graph.get_encounter_of(event)
+	return null
+
+## The Fight Lab's reference fighters against the fight's monster, as a table: per fighter a heading row, then a row per approach (Guts,
+## Blood, Nerves: in their attribute's colour) with how the fights ended (the outcomes that happened) and medians of the injury dealt and taken,
+## the breath dice spent and the fight's length. In bold, per fighter: the best share won, the highest damage dealt and taken and the most breath
+## dice spent (where its approaches differ). Below it what the lab assumes.
 func describe_odds(fight: AdventureFightDecision) -> Array[String]:
 	var lines: Array[String] = []
 	if fight_odds == null or fight_odds.get_monster_of(fight) == null: return lines
@@ -225,26 +249,57 @@ func describe_odds(fight: AdventureFightDecision) -> Array[String]:
 	var outcomes: Array[String] = []
 	for outcome: String in FightLabStats.OUTCOMES:
 		if odds.any(func(entry: Dictionary) -> bool: return float(entry["stats"]["outcomes"][outcome]) > 0.0): outcomes.append(outcome)
+	var columns: int = outcomes.size() + 4
 	var cells: Array[String] = [_cell("")]
 	for outcome: String in outcomes: cells.append(_cell(_colored(outcome.capitalize(), AdventureCardView.OUTCOME_COLORS.get(outcome.capitalize(), DIM)), true))
-	cells.append(_cell(_dim("A won fight costs")))
-	for entry: Dictionary in odds:
-		var stats: Dictionary = entry["stats"]
-		cells.append(_cell("[b]%s[/b]" % _escape(str(entry["name"]))))
-		for outcome: String in outcomes: cells.append(_cell("%d%%" % roundi(float(stats["outcomes"][outcome]) * 100.0), true))
-		var won: Dictionary = stats["won"]
-		var cost: String = "–"
-		if int(won["runs"]) > 0: cost = "%s injury, %s breath" % [FightLabTooltips.median(won["histograms"]["taken"]), FightLabTooltips.median(won["histograms"]["breath_spent"])]
-		cells.append(_cell(cost))
+	for heading: String in ["Injury", "Breath", "Length"]: cells.append(_cell(_dim(heading), true))
+	var best: Array[Dictionary] = AdventureFightOdds.get_best(odds)
+	for fighter: Dictionary in best:
+		var name: String = fighter["name"]
+		var rows: Array[Dictionary] = []
+		rows.assign(odds.filter(func(entry: Dictionary) -> bool: return entry["name"] == name))
+		cells.append(_cell("[b]%s[/b]" % _escape(name)))
+		for _column: int in columns - 1: cells.append(_cell(""))
+		# The highest damage dealt and taken and the most breath dice spent among the approaches, only where they differ
+		var highest: Dictionary[String, int] = {}
+		for key: String in ["dealt", "taken", "breath_spent"]:
+			var values: Array[int] = []
+			for row: Dictionary in rows: values.append(FightLabTooltips.median(row["stats"]["histograms"][key]).to_int())
+			if values.max() > values.min(): highest[key] = values.max()
+		for row: Dictionary in rows:
+			var stats: Dictionary = row["stats"]
+			cells.append(_cell("  " + _describe_approach(str(row["approach"]))))
+			for outcome: String in outcomes:
+				var share: String = "%d%%" % roundi(float(stats["outcomes"][outcome]) * 100.0)
+				cells.append(_cell(_bold_if(share, row == fighter and outcome == "won"), true))
+			var values: Dictionary[String, String] = {}
+			for key: String in ["dealt", "taken", "breath_spent", "exchanges"]:
+				var median: String = FightLabTooltips.median(stats["histograms"][key])
+				values[key] = _bold_if(median, highest.has(key) and median.to_int() == highest[key])
+			cells.append(_cell("%s / %s" % [values["dealt"], values["taken"]], true))
+			cells.append(_cell(values["breath_spent"], true))
+			cells.append(_cell(values["exchanges"], true))
 	lines.append("")
 	lines.append("[b]Fight Lab[/b]")
-	# The footnote right after the table: a line break there would leave an empty line
-	lines.append("[table=%d]%s[/table]%s" % [outcomes.size() + 2, "".join(cells), _dim("%d fights each, full breath, a fresh monster" % AdventureFightOdds.FIGHTS)])
+	# On a line of its own: text right after a table narrower than the tooltip flows into the space beside its last row
+	lines.append("[table=%d]%s[/table]" % [columns, "".join(cells)])
+	lines.append(_dim("%d fights each, full breath, a fresh monster. Medians: injury dealt / taken, breath dice spent, length in exchanges" % AdventureFightOdds.FIGHTS))
 	if fight_odds.is_out_of_date(fight): lines.append(_colored("Out of date: the monster or the reference fighters changed since. Simulate fights again.", WARNING))
 	return lines
 
+## An approach named after an attribute ("Guts") as that attribute's icon in its colour (its name in that colour if it has no icon); any other
+## as it is
+static func _describe_approach(approach: String) -> String:
+	for attribute: CharacterAttribute in Rules.ATTRIBUTES:
+		if attribute.descriptor != approach: continue
+		if attribute.icon == null: return _colored(_escape(approach), attribute.color)
+		return "[img=%dx%d color=#%s]%s[/img]" % [APPROACH_ICON_SIZE, APPROACH_ICON_SIZE, attribute.color.to_html(), attribute.icon.resource_path]
+	return _escape(approach)
+
+static func _bold_if(text: String, bold: bool) -> String: return "[b]%s[/b]" % text if bold else text
+
 static func _cell(text: String, right: bool = false) -> String:
-	return "[cell padding=0,0,12,0]%s[/cell]" % ("[right]%s[/right]" % text if right else text)
+	return "[cell padding=0,0,8,0]%s[/cell]" % ("[right]%s[/right]" % text if right else text)
 
 func _describe_stage_condition(condition: AdventureStageCondition) -> String:
 	var lines: Array[String] = ["[b]%s[/b]  %s" % [_escape(_describe_conditions([condition] as Array[AdventureCondition])), _dim("condition")]]

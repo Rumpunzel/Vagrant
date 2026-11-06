@@ -2,12 +2,15 @@
 class_name Actor
 extends Node
 
-## What characters and monsters share: breath dice, injuries and gear.
+## What characters and monsters share: breath dice, injuries and what they carry: gear as pieces (each with its own marks), plain items
+## in a number ([method gain], [method lose], [method count_of]).
 
 signal lost_breath(lost_breath_dice: Array[Die])
 signal suffered_injury(injury: Injury)
 signal injuries_changed(injuries: Array[Injury])
 signal breath_dice_changed(breath_dice: Dictionary[Die, int])
+## Something was gained or lost
+signal carried_changed
 
 var breath_dice: Dictionary[DieType, int] :
 	set(new_breath_dice):
@@ -18,6 +21,8 @@ var breath_dice: Dictionary[DieType, int] :
 var weapons: Array[Weapon] = []
 var armor: Array[Armor] = []
 var shields: Array[Shield] = []
+## Plain items carried -> how many; gear is carried as pieces in [member weapons], [member armor] and [member shields]
+var items: Dictionary[ItemProfile, int] = {}
 
 # TODO: if you roll under an injury, increase magnitude by 1
 var _injuries: Array[Injury] :
@@ -75,10 +80,69 @@ func is_overwhelmed_by_injuries() -> bool:
 	for attribute: CharacterAttribute in Rules.ATTRIBUTES: if get_score(attribute) <= 0: return true
 	return false
 
-## Picks up what the foe's Nerves made this actor drop
-func pick_up_dropped_gear() -> void:
-	for weapon: Weapon in weapons: weapon.dropped = false
-	for shield: Shield in shields: shield.dropped = false
+## Carries [param count] more of [param item]: gear as fresh pieces, anything else in its number
+func gain(item: ItemProfile, count: int = 1) -> void:
+	if count <= 0: return
+	if item.is_gear():
+		for _piece: int in count: _add_piece(_make_piece(item))
+	else: items[item] = items.get(item, 0) + count
+	carried_changed.emit()
+
+## Gives up to [param count] of [param item]; returns how many it gave. Of gear, the most worn usable pieces go first; ruined ones don't count.
+func lose(item: ItemProfile, count: int = 1) -> int:
+	var lost: int = 0
+	if item.is_gear():
+		var pieces: Array[Equipment] = _get_pieces(item)
+		pieces.sort_custom(func(a: Equipment, b: Equipment) -> bool: return a.marked_faces.size() > b.marked_faces.size())
+		for piece: Equipment in pieces.slice(0, count): _remove_piece(piece)
+		lost = mini(count, pieces.size())
+	else:
+		var item_count: int = items.get(item, 0)
+		lost = mini(count, item_count)
+		if lost == items.get(item, 0): items.erase(item)
+		elif lost > 0: items[item] -= lost
+	if lost > 0: carried_changed.emit()
+	return lost
+
+## Gives [param piece] to [param to] as it is, marks and all (taken off a beaten foe)
+func hand_over(piece: Equipment, to: Actor) -> void:
+	_remove_piece(piece)
+	carried_changed.emit()
+	to._add_piece(piece)
+	to.carried_changed.emit()
+
+## How many of [param item] are carried: plain items by their number, gear by its usable (not ruined) pieces
+func count_of(item: ItemProfile) -> int:
+	return _get_pieces(item).size() if item.is_gear() else items.get(item, 0)
+
+## The usable (not ruined) pieces of gear made from [param item]
+func _get_pieces(item: ItemProfile) -> Array[Equipment]:
+	var pieces: Array[Equipment] = []
+	for piece: Equipment in get_gear(): if piece.get_item_profile() == item and not piece.ruined: pieces.append(piece)
+	return pieces
+
+## Every piece of gear carried: weapons, armour, shields
+func get_gear() -> Array[Equipment]:
+	var gear: Array[Equipment] = []
+	gear.append_array(weapons)
+	gear.append_array(armor)
+	gear.append_array(shields)
+	return gear
+
+static func _make_piece(item: ItemProfile) -> Equipment:
+	if item is WeaponProfile: return Weapon.create(item as WeaponProfile)
+	if item is ArmorProfile: return Armor.create(item as ArmorProfile)
+	return Shield.create(item as ShieldProfile)
+
+func _add_piece(piece: Equipment) -> void:
+	if piece is Weapon: weapons.append(piece as Weapon)
+	elif piece is Armor: armor.append(piece as Armor)
+	elif piece is Shield: shields.append(piece as Shield)
+
+func _remove_piece(piece: Equipment) -> void:
+	if piece is Weapon: weapons.erase(piece)
+	elif piece is Armor: armor.erase(piece)
+	elif piece is Shield: shields.erase(piece)
 
 func get_breath_dice_count() -> int:
 	var count: int = 0
@@ -90,7 +154,7 @@ func is_out_of_breath() -> bool: return get_breath_dice_count() == 0
 func get_breath_dice_pool() -> Array[Die]:
 	return DiceRoller.generate_dice_pool(breath_dice)
 
-## Breath dice, injuries and the state of carried gear, as plain values ([SaveGame]); gear by its place in the profile's lists
+## Breath dice, injuries and the carried gear, as plain values ([SaveGame]): each piece by its profile, with its marks
 func get_save() -> Dictionary:
 	var breath: Dictionary[String, int] = {}
 	for die_type: DieType in breath_dice: breath[ResourceId.of(die_type)] = breath_dice[die_type]
@@ -115,23 +179,32 @@ func restore(data: Dictionary) -> void:
 	var saved_weapons: Array = data.weapons
 	var saved_armor: Array = data.armor
 	var saved_shields: Array = data.shields
-	_restore_gear(weapons, saved_weapons)
-	_restore_gear(armor, saved_armor)
-	_restore_gear(shields, saved_shields)
+	weapons.assign(_restore_gear(weapons, saved_weapons))
+	armor.assign(_restore_gear(armor, saved_armor))
+	shields.assign(_restore_gear(shields, saved_shields))
+	carried_changed.emit()
 
 static func _save_gear(gear: Array) -> Array[Dictionary]:
 	var saved: Array[Dictionary] = []
-	for equipment: Equipment in gear: saved.append({marked_faces = equipment.marked_faces.duplicate(), ruined = equipment.ruined})
+	for equipment: Equipment in gear: saved.append({profile = ResourceId.of(equipment.get_item_profile()), marked_faces = equipment.marked_faces.duplicate(), ruined = equipment.ruined})
 	return saved
 
-static func _restore_gear(gear: Array, saved: Array) -> void:
-	assert(gear.size() == saved.size(), "The saved gear doesn't match the profile's")
-	for index: int in gear.size():
-		var equipment: Equipment = gear[index]
+## The pieces [param saved] lists, in its order. Each by its profile; one made at runtime (no ID), or a save from before gear could change
+## during a run (no profiles), takes the piece at its place among those handed out ([param handed_out])
+static func _restore_gear(handed_out: Array, saved: Array) -> Array[Equipment]:
+	var pieces: Array[Equipment] = []
+	for index: int in saved.size():
 		var state: Dictionary = saved[index]
+		var id: String = state.get("profile", "")
+		var profile: ItemProfile = ResourceId.find(id) as ItemProfile if not id.is_empty() else null
+		var piece: Equipment = _make_piece(profile) if profile != null and profile.is_gear() else null
+		if piece == null and index < handed_out.size(): piece = handed_out[index]
+		if piece == null: continue
 		var faces: Array = state.marked_faces
-		equipment.marked_faces.clear()
+		piece.marked_faces.clear()
 		for saved_face: Variant in faces:
 			var face: int = saved_face
-			equipment.marked_faces.append(face)
-		equipment.ruined = state.ruined
+			piece.marked_faces.append(face)
+		piece.ruined = state.ruined
+		pieces.append(piece)
+	return pieces
