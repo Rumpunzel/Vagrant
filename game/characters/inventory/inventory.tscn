@@ -5,13 +5,12 @@
 [ext_resource type="Texture2D" uid="uid://ds47ublr148rv" path="res://assets/icons/knapsack.svg" id="3_8swrj"]
 [ext_resource type="Texture2D" uid="uid://c8sel5eeu6bo3" path="res://assets/icons/backpack.svg" id="4_0mc4m"]
 [ext_resource type="Texture2D" uid="uid://c4nfw1eoy5wcn" path="res://assets/icons/chest.svg" id="5_0cqav"]
-[ext_resource type="Texture2D" uid="uid://dlbqtdfwdtmiu" path="res://assets/icons/donkey.svg" id="6_0cqav"]
 
-[node name="Inventory" type="PanelContainer" unique_id=156054154 node_paths=PackedStringArray("_list")]
+[node name="Inventory" type="PanelContainer" unique_id=156054154 node_paths=PackedStringArray("_rows")]
 offset_right = 268.0
 offset_bottom = 678.0
 script = ExtResource("1_swy6m")
-_list = NodePath("MarginContainer/VBoxContainer/Miscellaneous")
+_rows = NodePath("MarginContainer/VBoxContainer/Scroll/Rows")
 metadata/_custom_type_script = "uid://e2idwn4erjnm"
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=786351589]
@@ -202,10 +201,11 @@ visible = false
 layout_mode = 2
 label = "Another Backpack"
 
-[node name="Miscellaneous" type="ItemList" parent="MarginContainer/VBoxContainer" unique_id=1984624624]
+[node name="Scroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=1984624625]
 layout_mode = 2
 size_flags_vertical = 3
-item_count = 1
-fixed_icon_size = Vector2i(32, 32)
-item_0/text = "Donkey"
-item_0/icon = ExtResource("6_0cqav")
+horizontal_scroll_mode = 0
+
+[node name="Rows" type="HFlowContainer" parent="MarginContainer/VBoxContainer/Scroll" unique_id=1984624624]
+layout_mode = 2
+size_flags_horizontal = 3

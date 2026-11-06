@@ -19,7 +19,7 @@ func before_test() -> void:
 
 func test_lists_a_profile() -> void:
 	_inventory.setup(_profile)
-	assert_array(_inventory.get_entries()).is_equal(["Sword (d10)", "Gambeson (−1 damage)", "Helmet (blocks 5, 10)", "Buckler (d6)", "Rations ×3", "Waterskin"])
+	assert_array(_inventory.get_entries()).is_equal(["Sword (d10)", "Buckler (d6)", "Gambeson (−1 damage)", "Helmet (blocks 5, 10)", "Rations ×3", "Waterskin"])
 
 func test_shows_marks_as_they_happen() -> void:
 	var character: Character = auto_free(load(CHARACTER).instantiate())

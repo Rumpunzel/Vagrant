@@ -1,10 +1,12 @@
 [gd_resource type="Resource" script_class="ArmorProfile" format=3 uid="uid://cgbwu4wq14rtm"]
 
 [ext_resource type="Script" uid="uid://cswsthfyt60l6" path="res://characters/armor/armor_profile.gd" id="1_armor"]
+[ext_resource type="Texture2D" uid="uid://ccbnrcl8pu3cg" path="res://assets/game_icons/lorc/leather-vest.svg" id="icon_texture"]
 
 [resource]
 script = ExtResource("1_armor")
 name = "Gambeson"
+icon = ExtResource("icon_texture")
 blocked_results = Array[int]([])
 damage_reduction = 1
 metadata/_custom_type_script = "uid://cswsthfyt60l6"

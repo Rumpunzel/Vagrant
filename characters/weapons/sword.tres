@@ -3,9 +3,11 @@
 [ext_resource type="Resource" uid="uid://c3ciobci54n6u" path="res://dice/die_types/d8.tres" id="1_v4x32"]
 [ext_resource type="Script" uid="uid://ctyfdlvouya4j" path="res://characters/weapons/weapon_profile.gd" id="1_weapon"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="3_guts"]
+[ext_resource type="Texture2D" uid="uid://boyixi5guyonr" path="res://assets/game_icons/lorc/broadsword.svg" id="icon_texture"]
 
 [resource]
 script = ExtResource("1_weapon")
 name = "Sword"
+icon = ExtResource("icon_texture")
 die = ExtResource("1_v4x32")
 metadata/_custom_type_script = "uid://ctyfdlvouya4j"

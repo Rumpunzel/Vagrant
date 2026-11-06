@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="ItemProfile" format=3 uid="uid://b2g8kvymsuwvd"]
 
 [ext_resource type="Script" uid="uid://b48qg7emmfqry" path="res://characters/items/item_profile.gd" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://d0kgqucmkxs34" path="res://assets/game_icons/delapouite/bread.svg" id="icon_texture"]
 
 [resource]
 script = ExtResource("1_item")
 name = "Rations"
+icon = ExtResource("icon_texture")
 description = "A day's worth of food."
 metadata/_custom_type_script = "uid://b48qg7emmfqry"
