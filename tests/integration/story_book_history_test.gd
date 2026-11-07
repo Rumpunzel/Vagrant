@@ -65,6 +65,22 @@ func test_a_loaded_run_shows_its_pages() -> void:
 	assert_str((entries[0] as StoryEntry)._title.text).is_equal("Start")
 	assert_str((entries[1] as StoryEntry)._title.text).is_equal("Next")
 
+## A past page still takes the mouse (its tooltips work, hovering shows it fully), but none of its controls a click, focus or key
+func test_past_pages_are_inert_but_hoverable() -> void:
+	await _choose(_story, 0)
+	var past: StoryEntry = _story._story_book._pages.get_elements()[0]
+	assert_int(past.state).is_equal(PageEntry.State.PAST)
+	assert_bool(past.is_processing()).is_true()
+	for node: Node in past.find_children("*", "Control", true, false):
+		var control: Control = node
+		assert_int(control.mouse_behavior_recursive).is_not_equal(Control.MOUSE_BEHAVIOR_DISABLED)
+		assert_int(control.focus_mode).is_equal(Control.FOCUS_NONE)
+		if control is BaseButton:
+			assert_int((control as BaseButton).button_mask).is_equal(0)
+			assert_object((control as BaseButton).shortcut).is_null()
+	var present: StoryEntry = _story._story_book._current_page_entry
+	assert_bool(present.is_processing()).is_false()
+
 func test_dice_are_built_again_as_they_were() -> void:
 	var decision: AdventureSaveDecision = AdventureSaveDecision.new()
 	decision.description = "Jump"
