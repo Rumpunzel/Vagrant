@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://mev68l26dpuw" path="res://addons/adventure_editor/adventure_editor.gd" id="1_editor"]
 [ext_resource type="Script" uid="uid://btr84b5ffvx7o" path="res://addons/adventure_editor/adventure_map_view.gd" id="2_map"]
 
-[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_find", "_tabs", "_map_tab", "_map", "_event_shelf", "_problem_list", "_events_tab", "_event_list", "_host_picker", "_event_body")]
+[node name="AdventureEditor" type="VBoxContainer" unique_id=100756214 node_paths=PackedStringArray("_picker", "_find", "_tabs", "_map_tab", "_map", "_event_shelf", "_events_tab", "_event_list", "_host_picker", "_event_body")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,7 +17,6 @@ _tabs = NodePath("Tabs")
 _map_tab = NodePath("Tabs/Map")
 _map = NodePath("Tabs/Map/Graph")
 _event_shelf = NodePath("Tabs/Map/Shelf/Scroll/Events")
-_problem_list = NodePath("Tabs/Problems")
 _events_tab = NodePath("Tabs/Events")
 _event_list = NodePath("Tabs/Events/List")
 _host_picker = NodePath("Tabs/Events/Event/HostPicker")
@@ -91,7 +90,3 @@ size_flags_horizontal = 0
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Problems" type="ItemList" parent="Tabs"]
-visible = false
-layout_mode = 2
-metadata/_tab_index = 2

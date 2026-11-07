@@ -204,9 +204,9 @@ func test_weapon_selection_shows_marks_and_ruin() -> void:
 	await _choose(0)
 	var weapons: WeaponSelection = _selection()._weapon_selection
 	weapons.setup(_story._current_story_page.choices[0].get_dice_request() as FightRequest)
-	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]2[/s]")
-	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[0])).contains("[s]5[/s]")
-	assert_str(WeaponSelection._describe_faces(_story._protagonist.weapons[1])).contains("ruined")
+	assert_str(Inventory.describe_faces(_story._protagonist.weapons[0])).contains("[s]2[/s]")
+	assert_str(Inventory.describe_faces(_story._protagonist.weapons[0])).contains("[s]5[/s]")
+	assert_str(Inventory.describe_faces(_story._protagonist.weapons[1])).contains("ruined")
 	assert_bool(weapons._buttons[2].disabled).is_true()
 
 ## Once rolled, Fight and Flee no longer react while the exchange plays out on their page (clicking Fight again failed an assertion)

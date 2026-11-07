@@ -23,6 +23,9 @@ const NODE_SPACING: Vector2 = Vector2(280, 240)
 const THUMBNAIL_SIZE: Vector2 = Vector2(220, 124)
 ## Room for a frame's title and the menu when scrolling to the nodes
 const SCROLL_MARGIN: Vector2 = Vector2(80, 160)
+const VIEW_MARGIN: float = 24.0
+## Framing all nodes zooms out no further, so texts stay readable; a graph larger than that scrolls
+const VIEW_MIN_ZOOM: float = 0.6
 const FRAME_MARGIN: int = 64
 const FRAME_BACKGROUND_ALPHA: float = 0.35
 const DASHED_COLOR: Color = Color(1, 1, 1, 0.6)
@@ -93,6 +96,21 @@ func scroll_to_nodes() -> void:
 	var top_left: Vector2 = Vector2.INF
 	for node: GraphNode in _nodes.values(): top_left = top_left.min(node.position_offset)
 	scroll_offset = (top_left - SCROLL_MARGIN) * zoom
+
+## Zoomed out (down to [constant VIEW_MIN_ZOOM], never in past 1) and scrolled so every node is in view, with a margin
+func frame_nodes() -> void:
+	var box: Rect2 = Rect2()
+	var found: bool = false
+	for child: Node in get_children():
+		var element: GraphElement = child as GraphElement
+		if element == null or not element.visible: continue
+		var rect: Rect2 = Rect2(element.position_offset, element.size)
+		box = box.merge(rect) if found else rect
+		found = true
+	if not found or size.x <= 0.0 or size.y <= 0.0: return
+	box = box.grow(VIEW_MARGIN)
+	zoom = clampf(minf(size.x / box.size.x, size.y / box.size.y), VIEW_MIN_ZOOM, 1.0)
+	scroll_offset = box.position * zoom
 
 ## Shows the node in the middle and selects it
 func focus_node(node: GraphNode) -> void:

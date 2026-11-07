@@ -87,6 +87,38 @@ func test_a_monster_s_body_shows_like_a_track() -> void:
 	assert_array(story.get_changes_toggling(ambush, "Body", "beaten")).is_equal([[condition, &"state", AdventureMonsterCondition.State.BEATEN, _eleanor]])
 	assert_array(story.get_changes_toggling(ambush, "Body", "can fight")).is_equal([[ambush, &"conditions", [ ], _eleanor]])
 
+func test_renaming_a_track_or_stage_renames_what_names_it() -> void:
+	var story: AdventureStoryline = AdventureStoryline.new(_eleanor)
+	var stages: AdventureStageIndex = _stage_index()
+	var condition: AdventureStageCondition = _meeting.conditions[0]
+	var effect: AdventureStageConsequence = _greet.consequences[0]
+	var changes: Array[Array] = story.get_changes_renaming_track(_storyline_track, "Friendship", stages)
+	assert_array(changes.map(func(change: Array) -> Array: return [change[0], change[1], change[2]])).contains_exactly_in_any_order([
+		[_storyline_track, &"name", "Friendship"], [condition, &"track", "Friendship"], [effect, &"track", "Friendship"],
+	])
+	changes = story.get_changes_renaming_stage(_storyline_track, "Met", "Friends", stages)
+	assert_array(changes.map(func(change: Array) -> Array: return [change[0], change[1], change[2]])).contains_exactly_in_any_order([
+		[_storyline_track, &"stages", ["Unmet", "Friends"]], [effect, &"stage", "Friends"],
+	])
+
+func test_only_what_nothing_uses_can_be_removed() -> void:
+	var story: AdventureStoryline = AdventureStoryline.new(_eleanor)
+	var stages: AdventureStageIndex = _stage_index()
+	# The meeting needs Unmet, greeting her sets Met
+	assert_int(story.count_uses(_storyline_track, stages)).is_equal(2)
+	assert_int(story.count_uses(_storyline_track, stages, "Met")).is_equal(1)
+	_greet.consequences = [] as Array[AdventureConsequence]
+	assert_int(story.count_uses(_storyline_track, _stage_index(), "Met")).is_equal(0)
+	assert_array(story.get_changes_removing_stage(_storyline_track, "Met")[0][2]).is_equal(["Unmet"])
+
+func _stage_index() -> AdventureStageIndex:
+	var shore: AdventureLocation = AdventureLocation.new()
+	shore.area = AdventureArea.new()
+	var adventure: Adventure = Adventure.new()
+	adventure.starting_page = shore
+	adventure.encounters = [_eleanor] as Array[AdventureEncounter]
+	return AdventureStageIndex.new(AdventureGraph.new(adventure), [_meeting, _hearing] as Array[AdventureEvent])
+
 func _event(title: String, needs: Array[String]) -> AdventureEvent:
 	var event: AdventureEvent = AdventureEvent.new()
 	event.title = title

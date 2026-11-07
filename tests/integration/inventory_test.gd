@@ -15,11 +15,11 @@ func before_test() -> void:
 	_profile.weapons = [WeaponProfile.create("Sword", Rules.d10)] as Array[WeaponProfile]
 	_profile.armor = [ArmorProfile.create("Gambeson", [] as Array[int], 1), ArmorProfile.create("Helmet", [5, 10] as Array[int])] as Array[ArmorProfile]
 	_profile.shields = [ShieldProfile.create("Buckler", Rules.d6)] as Array[ShieldProfile]
-	_profile.items = {ItemProfile.create("Rations"): 3, ItemProfile.create("Waterskin"): 1} as Dictionary[ItemProfile, int]
+	_profile.items = {ItemProfile.create_item("Rations"): 3, ItemProfile.create_item("Waterskin"): 1} as Dictionary[ItemProfile, int]
 
 func test_lists_a_profile() -> void:
 	_inventory.setup(_profile)
-	assert_array(_inventory.get_entries()).is_equal(["Sword (d10)", "Gambeson (−1 damage)", "Helmet (blocks 5, 10)", "Buckler (d6)", "Rations ×3", "Waterskin"])
+	assert_array(_inventory.get_entries()).is_equal(["Sword (d10)", "Buckler (d6)", "Gambeson (−1 damage)", "Helmet (blocks 5, 10)", "Rations ×3", "Waterskin"])
 
 func test_shows_marks_as_they_happen() -> void:
 	var character: Character = auto_free(load(CHARACTER).instantiate())

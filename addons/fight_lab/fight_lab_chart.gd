@@ -8,10 +8,26 @@ extends Control
 signal hovered_changed
 
 const MARGIN: Vector4 = Vector4(44, 44, 8, 20)  # left, top (title and legend), right, bottom
+## The chart's size at least; it grows with its row and is wider with more categories ([constant CATEGORY_WIDTH_MIN] each)
+const SIZE_MIN: Vector2 = Vector2(340, 210)
+const CATEGORY_WIDTH_MIN: float = 36.0
+## A tilted name needs this many times the text's height beside the next; with less, only every few are named
+const TILTED_ROOM_FACTOR: float = 1.5
 const GRID_LINES: int = 4
 
 var title: String
 var categories: Array[String] = []
+## The colour of each category's name, e.g. of the attribute a fighter fights with; none (or transparent): the theme's
+var category_colors: Array[Color] = []
+## An icon before each category's name (none: no icon), and the names shown under the bars (none: [member categories], which hovering names)
+var category_icons: Array[Texture2D] = []:
+	set(icons):
+		category_icons = icons
+		_fit_labels()
+var category_labels: Array[String] = []:
+	set(labels):
+		category_labels = labels
+		_fit_labels()
 ## {name: String, color: Color, values: Array[float]}, one value per category;
 ## as boxes {name, color, boxes: Array}, per category the 10th, 25th, 50th, 75th and 90th percentile ([] without data)
 var series: Array[Dictionary] = []
@@ -24,9 +40,12 @@ var explanation: String = ""
 var notes: Array[String] = []
 
 var _hovered: int = -1
+## Room below the plot beyond [constant MARGIN] for names tilted by 45° because they don't fit level; 0: level
+var _tilted_room: float = 0.0
 
 func _init() -> void:
-	custom_minimum_size = Vector2(340, 210)
+	custom_minimum_size = SIZE_MIN
+	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mouse_filter = Control.MOUSE_FILTER_PASS
 	mouse_exited.connect(func() -> void: _set_hovered(-1))
 
@@ -37,7 +56,37 @@ func show_data(new_title: String, new_categories: Array[String], new_series: Arr
 	stacked = is_stacked
 	percent = is_percent
 	boxed = false
+	custom_minimum_size.x = maxf(SIZE_MIN.x, MARGIN.x + MARGIN.z + categories.size() * CATEGORY_WIDTH_MIN)
+	_fit_labels()
 	queue_redraw()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED: _fit_labels()
+
+## Level names if each fits its room, else tilted by 45°, with the chart that much higher so the plot keeps its height
+func _fit_labels() -> void:
+	if categories.is_empty() or size.x <= 0.0: return
+	var font: Font = get_theme_default_font()
+	var text_size: int = get_theme_default_font_size() - 2
+	var room: float = _get_label_step() * (size.x - MARGIN.x - MARGIN.z) / categories.size()
+	var widest: float = 0.0
+	for index: int in categories.size(): widest = maxf(widest, _get_label_width(index, font, text_size))
+	var tilted_room: float = 0.0 if widest <= room - 4.0 else ceilf((widest + text_size) * 0.71)
+	if is_equal_approx(tilted_room, _tilted_room): return
+	_tilted_room = tilted_room
+	custom_minimum_size.y = SIZE_MIN.y + tilted_room
+	queue_redraw()
+
+## Every how many categories one is named: each, unless even tilted names would run into each other
+func _get_label_step() -> int:
+	var slot: float = maxf(size.x - MARGIN.x - MARGIN.z, 1.0) / maxf(categories.size(), 1.0)
+	return maxi(1, ceili((get_theme_default_font_size() - 2) * TILTED_ROOM_FACTOR / slot))
+
+func _get_label(index: int) -> String: return category_labels[index] if index < category_labels.size() else categories[index]
+
+func _get_label_width(index: int, font: Font, text_size: int) -> float:
+	var icon_width: float = text_size + 2.0 if index < category_icons.size() and category_icons[index] != null else 0.0
+	return font.get_string_size(_get_label(index), HORIZONTAL_ALIGNMENT_LEFT, -1, text_size).x + icon_width
 
 ## Box plots: per category and series, the middle half as a box with the median, whiskers to the 10th and 90th percentile
 func show_boxes(new_title: String, new_categories: Array[String], new_series: Array[Dictionary]) -> void:
@@ -59,14 +108,35 @@ func _draw() -> void:
 		draw_string(font, Vector2(2, y + font_size * 0.35), _format(value), HORIZONTAL_ALIGNMENT_RIGHT, MARGIN.x - 6, font_size - 2, Color(text_color, 0.6))
 	if categories.is_empty(): return
 	var slot: float = plot.size.x / categories.size()
-	var label_step: int = ceili(categories.size() * 40.0 / plot.size.x)
+	var label_step: int = _get_label_step()
 	for index: int in categories.size():
 		var bars: Array[Rect2] = _get_bars(index)
 		for series_index: int in bars.size():
 			if boxed: _draw_box(bars[series_index], series[series_index]["boxes"][index], series[series_index]["color"])
 			else: draw_rect(bars[series_index], series[series_index]["color"])
 		if index % label_step == 0:
-			draw_string(font, Vector2(plot.position.x + slot * index, plot.end.y + font_size + 2), categories[index], HORIZONTAL_ALIGNMENT_CENTER, slot * label_step, font_size - 2, text_color)
+			_draw_category(index, Rect2(plot.position.x + slot * index, plot.end.y, slot * label_step, font_size + 2), font, font_size - 2, text_color)
+
+## Its name in [param area] under its bars, after its icon if it has one, in its colour if it has one: level and centred, or tilted by 45° and
+## ending under the middle of its bars when the names don't fit level
+func _draw_category(index: int, area: Rect2, font: Font, text_size: int, text_color: Color) -> void:
+	var color: Color = category_colors[index] if index < category_colors.size() and category_colors[index].a > 0.0 else text_color
+	var label: String = _get_label(index)
+	var icon: Texture2D = category_icons[index] if index < category_icons.size() else null
+	var icon_size: float = text_size if icon != null else 0.0
+	var gap: float = 2.0 if icon != null else 0.0
+	var width: float = _get_label_width(index, font, text_size)
+	if _tilted_room > 0.0:
+		var slot_middle: float = area.position.x + (area.size.x / _get_label_step()) / 2.0
+		draw_set_transform(Vector2(slot_middle, area.position.y + 6.0), -PI / 4.0)
+		if icon != null: draw_texture_rect(icon, Rect2(-width, -icon_size * 0.5, icon_size, icon_size), false, color)
+		draw_string(font, Vector2(-width + icon_size + gap, text_size * 0.35), label, HORIZONTAL_ALIGNMENT_LEFT, -1, text_size, color)
+		draw_set_transform(Vector2.ZERO)
+		return
+	var start: float = area.position.x + maxf(0.0, (area.size.x - width) / 2.0)
+	var baseline: float = area.end.y
+	if icon != null: draw_texture_rect(icon, Rect2(start, baseline - icon_size + 1, icon_size, icon_size), false, color)
+	draw_string(font, Vector2(start + icon_size + gap, baseline), label, HORIZONTAL_ALIGNMENT_LEFT, maxf(area.size.x - icon_size - gap, 1.0), text_size, color)
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion: _set_hovered(_get_category_at((event as InputEventMouseMotion).position))
@@ -79,7 +149,7 @@ func _set_hovered(index: int) -> void:
 ## The category under [param at_position], -1 outside the plot
 func _get_category_at(at_position: Vector2) -> int:
 	var plot: Rect2 = _get_plot_rect()
-	if categories.is_empty() or not plot.grow_individual(0, MARGIN.y, 0, MARGIN.w).has_point(at_position): return -1
+	if categories.is_empty() or not plot.grow_individual(0, MARGIN.y, 0, MARGIN.w + _tilted_room).has_point(at_position): return -1
 	return clampi(floori((at_position.x - plot.position.x) / (plot.size.x / categories.size())), 0, categories.size() - 1)
 
 ## Everything about the hovered category: each series' value (its percentiles as boxes), then its note; "" when none is hovered
@@ -149,7 +219,7 @@ func _get_bars(index: int) -> Array[Rect2]:
 	return bars
 
 func _get_plot_rect() -> Rect2:
-	return Rect2(MARGIN.x, MARGIN.y, size.x - MARGIN.x - MARGIN.z, size.y - MARGIN.y - MARGIN.w)
+	return Rect2(MARGIN.x, MARGIN.y, size.x - MARGIN.x - MARGIN.z, size.y - MARGIN.y - MARGIN.w - _tilted_room)
 
 ## The value at the top of the chart: 100% for shares, else a round number above the highest bar
 func _get_top() -> float:

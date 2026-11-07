@@ -100,7 +100,7 @@ mouse_behavior_recursive = 2
 [node name="AbilityLabels" parent="MarginContainer/VBoxContainer/VBoxContainer" unique_id=1324638432 instance=ExtResource("5_davb4")]
 layout_mode = 2
 
-[node name="Inventory" parent="MarginContainer/VBoxContainer" instance=ExtResource("9_inventory")]
+[node name="Inventory" parent="MarginContainer/VBoxContainer" unique_id=1298286645 instance=ExtResource("9_inventory")]
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1667062991]

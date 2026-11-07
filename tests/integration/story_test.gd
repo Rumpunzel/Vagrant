@@ -69,6 +69,19 @@ func test_dead_end_offers_turn_back() -> void:
 	# Turning back is not logged as a decision
 	assert_int(_story.get_how_often_decision_has_been_made(AdventureDecision.get_turn_back())).is_equal(0)
 
+func test_going_back_twice_goes_back_further() -> void:
+	# Start → Next → Detail, back to Next, back again: to Start, not to Detail
+	var detail: AdventurePage = AdventurePage.new()
+	detail.title = "Detail"
+	_next.decisions = [_decision("Look", detail), _back] as Array[AdventureDecision]
+	await _choose(0)
+	await _choose(0)
+	await _choose(0)
+	assert_object(_story._current_story_page.adventure_page).is_same(_next)
+	await _choose(1)
+	assert_object(_story._current_story_page.adventure_page).is_same(_start)
+	assert_array(_story._page_stack).is_empty()
+
 func test_consequences_resolve() -> void:
 	var injury: AdventureInjuryConsequence = AdventureInjuryConsequence.new()
 	_to_next.consequences = [injury] as Array[AdventureConsequence]
@@ -78,6 +91,36 @@ func test_consequences_resolve() -> void:
 	# Plain decisions resolve consequences with no margin, so the injury consequence does nothing
 	assert_array(injuries).is_empty()
 	assert_object(_story._current_story_page.adventure_page).is_same(_next)
+
+func test_what_is_gained_and_lost_is_told_on_the_next_page() -> void:
+	var rations: ItemProfile = ItemProfile.create_item("Rations")
+	var gain_sword: AdventureGainConsequence = AdventureGainConsequence.new()
+	gain_sword.item = WeaponProfile.create("Sword", Rules.d10)
+	var gain_rations: AdventureGainConsequence = AdventureGainConsequence.new()
+	gain_rations.item = rations
+	gain_rations.count = 2
+	_to_next.consequences = [gain_sword, gain_rations] as Array[AdventureConsequence]
+	_next.description = "The road goes on."
+	await _choose(0)
+	assert_str(_story._current_story_page.description).is_equal("[p][i]You gain the Sword and 2 Rations.[/i][/p][p]The road goes on.[/p]")
+	# Told once
+	var lose: AdventureLoseConsequence = AdventureLoseConsequence.new()
+	lose.item = rations
+	_back.consequences = [lose] as Array[AdventureConsequence]
+	await _choose(0)
+	assert_str(_story._current_story_page.description).starts_with("[p][i]You lose the Rations.[/i][/p]")
+
+func test_only_effects_that_show_right_away_are_paused_for() -> void:
+	_story._reveal_delay = 3.0
+	var gain: AdventureGainConsequence = AdventureGainConsequence.new()
+	gain.item = ItemProfile.create_item("Rations")
+	_to_next.consequences = [gain] as Array[AdventureConsequence]
+	var started: int = Time.get_ticks_msec()
+	await _choose(0)
+	# Gaining is told on the next page: no pause
+	assert_object(_story._current_story_page.adventure_page).is_same(_next)
+	assert_int(Time.get_ticks_msec() - started).is_less(1500)
+	assert_bool(AdventureInjuryConsequence.new().is_shown()).is_true()
 
 func test_host_reference_returns_to_the_page_the_event_was_on() -> void:
 	var event: AdventureEvent = _page("")

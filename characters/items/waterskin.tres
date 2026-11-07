@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="ItemProfile" format=3 uid="uid://mawuoxnjayca"]
 
 [ext_resource type="Script" uid="uid://b48qg7emmfqry" path="res://characters/items/item_profile.gd" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://d0avhh3bebs03" path="res://assets/game_icons/delapouite/waterskin.svg" id="icon_texture"]
 
 [resource]
 script = ExtResource("1_item")
 name = "Waterskin"
+icon = ExtResource("icon_texture")
 description = "Holds a day's worth of water."
 metadata/_custom_type_script = "uid://b48qg7emmfqry"

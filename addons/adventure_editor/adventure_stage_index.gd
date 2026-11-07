@@ -23,6 +23,8 @@ var _setters: Dictionary[String, Array] = {}
 var _needers: Dictionary[String, Array] = {}
 ## A stage condition or effect -> what it is about
 var _subjects: Dictionary[Resource, Array] = {}
+## A stage condition or effect -> the file it is stored in
+var _files: Dictionary[Resource, Resource] = {}
 
 ## [param events]: the events to look through (the map's: [member AdventureGraph.event_hosts])
 func _init(graph: AdventureGraph, events: Array[AdventureEvent]) -> void:
@@ -35,6 +37,7 @@ func _init(graph: AdventureGraph, events: Array[AdventureEvent]) -> void:
 			var needs: AdventureStageCondition = condition as AdventureStageCondition
 			if needs == null: continue
 			var subjects: Array[Resource] = _note_subjects(needs, needs.subject, own)
+			_files[needs] = _find_file([needs, event])
 			for subject: Resource in subjects:
 				for stage: String in needs.stages: _add(_needers, _key(subject, needs.track, stage), event)
 		if event is AdventureEventScenario: continue
@@ -76,6 +79,20 @@ static func is_start(subject: Resource, track: String, stage: String) -> bool:
 func can_reach(subject: Resource, track: String, stage: String) -> bool:
 	return is_start(subject, track, stage) or _setters.has(_key(subject, track, stage))
 
+## The stage conditions and effects about [param subject]'s [param track], with [method get_file_of] where each is stored
+func get_mentions(subject: Resource, track: String) -> Array[Resource]:
+	var mentions: Array[Resource] = [ ]
+	for mention: Resource in _subjects: if _subjects[mention].has(subject) and mention.get(&"track") == track: mentions.append(mention)
+	return mentions
+
+func get_file_of(mention: Resource) -> Resource: return _files.get(mention)
+
+## The file of the first of [param holders] (innermost first) that is stored in one
+static func _find_file(holders: Array) -> Resource:
+	for holder: Resource in holders:
+		if holder != null and not holder.resource_path.is_empty(): return load(AdventureEventEditing.get_file_path(holder))
+	return null
+
 static func resolve(path: String, own: Array[Resource]) -> Array[Resource]:
 	if path.is_empty(): return own
 	var subjects: Array[Resource] = [ ]
@@ -90,6 +107,7 @@ func _note_decisions(page: AdventurePage, event: AdventureEvent, own: Array[Reso
 			for consequence: AdventureConsequence in decision.get_consequences_of(outcome):
 				var sets: AdventureStageConsequence = consequence as AdventureStageConsequence
 				if sets == null: continue
+				_files[sets] = _find_file([sets, decision, page, event])
 				for subject: Resource in _note_subjects(sets, sets.subject, own):
 					_add(_setters, _key(subject, sets.track, sets.stage), Setter.new(decision, page, event))
 

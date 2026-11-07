@@ -4,7 +4,8 @@ extends Node
 
 ## How the Fight Lab's reference fighters ([constant REFERENCE]: weak, average, strong) fare against the monster of each fight of an adventure.
 ## Simulated on demand ([method simulate]) in the lab's own process ([FightLabProcess]) and kept per adventure in [constant DIRECTORY] for
-## next time. A monster whose file changed since, or changed reference fighters, make the odds out of date until simulated again.
+## next time. A monster whose file changed since, or changed reference fighters, make the odds out of date until simulated again (by content,
+## so saving a file unchanged doesn't).
 ## The lab assumes full breath dice and a fresh monster, and the reference scenario's strategies.
 
 ## Odds arrived, or a run started or failed
@@ -21,6 +22,8 @@ const REFERENCE_MARK: String = "reference:"
 const LAB_META: StringName = &"fight_lab"
 
 var failed: bool = false
+## Why the last run failed: the errors its process logged
+var failure: String = ""
 
 var _runner: FightLabProcess
 ## The adventure's UID text, naming its files
@@ -61,15 +64,8 @@ static func _note_fights(page: AdventurePage, encounter: AdventureEncounter, fou
 	for decision: AdventureDecision in page.decisions:
 		var fight: AdventureFightDecision = decision as AdventureFightDecision
 		if fight == null or found.has(fight): continue
-		var monster: MonsterProfile = get_monster(fight, encounter)
+		var monster: MonsterProfile = fight.get_monster_profile(encounter)
 		if monster != null: found[fight] = monster
-
-## As the story picks it ([code]Story._create_fight[/code]): the monster of the named encounter or of [param own], else the first enemy
-static func get_monster(fight: AdventureFightDecision, own: AdventureEncounter) -> MonsterProfile:
-	var encounter: AdventureEncounter = own
-	if not fight.encounter.is_empty(): encounter = Files.load_existing(fight.encounter) as AdventureEncounter
-	if encounter != null and encounter.profile is MonsterProfile: return encounter.profile as MonsterProfile
-	return fight.enemies[0] if not fight.enemies.is_empty() else null
 
 func get_monster_of(fight: AdventureFightDecision) -> MonsterProfile: return _monster_of.get(fight)
 
@@ -93,7 +89,14 @@ func simulate() -> bool:
 	settings.max_exchanges = MAX_EXCHANGES
 	var keys: Array[String] = []
 	for monster: MonsterProfile in monsters: keys.append(_monster_key(monster))
-	_pending = {"monsters": keys, "stamps": _get_stamps(settings.scenario)}
+	# Per row of side A: which fighter, and how it fights (the reference scenario's strategies: Guts, Blood, Nerves)
+	var fighters: Array[String] = []
+	var approaches: Array[String] = []
+	for row: int in settings.scenario.get_row_count():
+		var fighter: ActorProfile = settings.scenario.get_row_profile(row)
+		fighters.append(fighter.name if fighter != null else "?")
+		approaches.append(settings.scenario.get_row_strategy(row).get_label())
+	_pending = {"monsters": keys, "stamps": _get_stamps(settings.scenario), "fighters": fighters, "approaches": approaches}
 	failed = not _runner.start(settings, _file(".settings.tres"), _file(".json"))
 	changed.emit()
 	return not failed
@@ -106,7 +109,8 @@ static func make_scenario(monsters: Array[MonsterProfile]) -> FightLabScenario:
 	scenario.side_b = side_b
 	return scenario
 
-## Each reference fighter's numbers against [param fight]'s monster: [{name, stats}] ([method FightLabStats.summarize]); empty: not simulated
+## Each reference fighter's numbers against [param fight]'s monster, once per approach: [{name, approach, stats}]
+## ([method FightLabStats.summarize]); empty: not simulated
 func get_odds(fight: AdventureFightDecision) -> Array[Dictionary]:
 	var odds: Array[Dictionary] = []
 	var monster: MonsterProfile = get_monster_of(fight)
@@ -114,13 +118,30 @@ func get_odds(fight: AdventureFightDecision) -> Array[Dictionary]:
 	var monsters: Array = _result["monsters"]
 	var column: int = monsters.find(_monster_key(monster))
 	if column < 0: return odds
-	var names: Array = _result["side_a"]
+	# Results from before approaches: the row's name, one approach
+	var names: Array = _result.get("fighters", _result["side_a"])
+	var approaches: Array = _result.get("approaches", [])
 	var cells: Array = _result["cells"]
 	for cell: Dictionary in cells:
 		var a: int = cell["a"]
 		var b: int = cell["b"]
-		if b == column: odds.append({"name": str(names[a]), "stats": cell["stats"]})
+		if b == column: odds.append({"name": str(names[a]), "approach": str(approaches[a]) if a < approaches.size() else "", "stats": cell["stats"]})
 	return odds
+
+## Of [param odds] ([method get_odds]), each fighter's best approach (most fights won), in the fighters' order
+static func get_best(odds: Array[Dictionary]) -> Array[Dictionary]:
+	var best: Dictionary[String, Dictionary] = {}
+	for entry: Dictionary in odds:
+		var name: String = entry["name"]
+		if not best.has(name) or get_won(entry) > get_won(best[name]): best[name] = entry
+	var ordered: Array[Dictionary] = []
+	ordered.assign(best.values())
+	return ordered
+
+## The share of fights [param entry] ([method get_odds]) won
+static func get_won(entry: Dictionary) -> float:
+	var won: float = entry["stats"]["outcomes"]["won"]
+	return won
 
 ## Whether [param fight]'s monster or the reference fighters changed since they were simulated
 func is_out_of_date(fight: AdventureFightDecision) -> bool:
@@ -129,12 +150,13 @@ func is_out_of_date(fight: AdventureFightDecision) -> bool:
 	var stamps: Dictionary = _result["stamps"]
 	for file: String in stamps:
 		if not (file == _file_of(monster) or file.begins_with(REFERENCE_MARK)): continue
-		var stamp: int = stamps[file]
+		var stamp: String = str(stamps[file])
 		if stamp != _stamp(file): return true
 	return false
 
 func _on_finished(result: Dictionary) -> void:
 	failed = result.is_empty()
+	failure = _runner.get_errors() if failed else ""
 	if not failed:
 		result.merge(_pending)
 		_result = result
@@ -147,18 +169,18 @@ func _get_monsters() -> Array[MonsterProfile]:
 	for monster: MonsterProfile in _monster_of.values(): if not monsters.has(monster): monsters.append(monster)
 	return monsters
 
-## Modified times of the monsters' files, and of the reference scenario and fighters
-static func _get_stamps(scenario: FightLabScenario) -> Dictionary[String, int]:
-	var stamps: Dictionary[String, int] = {}
+## What the monsters' files, and the reference scenario's and fighters', hold (as MD5 hashes)
+static func _get_stamps(scenario: FightLabScenario) -> Dictionary[String, String]:
+	var stamps: Dictionary[String, String] = {}
 	for monster: ActorProfile in scenario.side_b: stamps[_file_of(monster)] = _stamp(_file_of(monster))
 	var references: Array[String] = [ResourceUID.uid_to_path(REFERENCE)]
 	for fighter: ActorProfile in scenario.side_a: if fighter != null: references.append(_file_of(fighter))
 	for reference: String in references: stamps[REFERENCE_MARK + reference] = _stamp(reference)
 	return stamps
 
-static func _stamp(file: String) -> int:
+static func _stamp(file: String) -> String:
 	var path: String = file.trim_prefix(REFERENCE_MARK)
-	return FileAccess.get_modified_time(path) if not path.is_empty() and FileAccess.file_exists(path) else 0
+	return FileAccess.get_md5(path) if not path.is_empty() and FileAccess.file_exists(path) else ""
 
 ## The file a profile is saved in (a monster inside an encounter's file: that file)
 static func _file_of(profile: ActorProfile) -> String: return profile.resource_path.get_slice("::", 0)

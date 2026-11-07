@@ -12,11 +12,16 @@ signal changes_requested(changes: Array[Array], action: String, file: Resource)
 ## A new event as the last option of [param scenario]
 signal option_requested(scenario: AdventureEventScenario)
 ## Pick an event made already as the last option; [param show_actions] shows the choices
+## A ready option searching [param encounter]'s dead monster ([method AdventureMakers.make_loot_event])
+signal loot_event_requested(encounter: AdventureEncounter)
 signal existing_option_requested(scenario: AdventureEventScenario, show_actions: Callable)
 ## Ask for a name, then call [param then] with it
-signal text_requested(title: String, label: String, then: Callable)
+## [param value]: the name it has now, when renaming
+signal text_requested(title: String, label: String, then: Callable, value: String)
 ## Play from [param page], [param event] shown whatever its conditions
 signal play_requested(page: AdventurePage, event: AdventureEvent)
+## Delete [param event]'s file, and what lists or points to it (asked first)
+signal deletion_requested(event: AdventureEvent)
 
 const DIMMED: Color = Color(1, 1, 1, 0.35)
 const LEADS_IN_COLOR: Color = Color(0.6, 1.0, 0.6)
@@ -24,7 +29,6 @@ const UNKNOWN_COLOR: Color = Color(1, 0.55, 0.5)
 const GRAPH_HEIGHT_MIN: float = 220.0
 const GRAPH_HEIGHT_MAX: float = 640.0
 const GRAPH_MARGIN: float = 90.0
-const COLUMN_WIDTH: float = 260.0
 ## The bar under a graph to drag its height with
 const HANDLE_HEIGHT: float = 8.0
 
@@ -51,6 +55,7 @@ var _pick: HBoxContainer
 var _add_track: Button
 var _add_option: Button
 var _add_existing: Button
+var _add_loot_event: Button
 ## The graphs of the unfolded sections
 var _graphs: Array[AdventureEventView] = [ ]
 var _info: Label
@@ -62,26 +67,28 @@ var _stage_menu: PopupMenu
 var _stage_menu_event: AdventureEvent
 
 func setup() -> void:
-	var bar: HBoxContainer = HBoxContainer.new()
-	add_child(bar)
 	_title = Label.new()
 	_title.theme_type_variation = &"HeaderMedium"
-	_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bar.add_child(_title)
-	_pick = HBoxContainer.new()
-	bar.add_child(_pick)
-	_add_option = AdventureUi.text_button("Option", "Add", "A new event as the last option", func() -> void: option_requested.emit(_scenario))
-	bar.add_child(_add_option)
-	_add_existing = AdventureUi.text_button("Add event…", "Add", "An event made already as the last option", func() -> void: existing_option_requested.emit(_scenario, _menu.show_actions))
-	bar.add_child(_add_existing)
-	_add_track = AdventureUi.text_button("Track", "Add", "A new stage track: a line of the story, one stage at a time", _ask_for_track)
-	bar.add_child(_add_track)
+	add_child(_title)
 	_info = Label.new()
 	_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_info.modulate = Color(1, 1, 1, 0.8)
 	add_child(_info)
 	_tracks = VBoxContainer.new()
 	add_child(_tracks)
+	var bar: HBoxContainer = HBoxContainer.new()
+	add_child(bar)
+	_pick = HBoxContainer.new()
+	bar.add_child(_pick)
+	_add_option = AdventureUi.text_button("Option", "Add", "A new event as the last option", func() -> void: option_requested.emit(_scenario))
+	bar.add_child(_add_option)
+	_add_existing = AdventureUi.text_button("Add event…", "Add", "An event made already as the last option", func() -> void: existing_option_requested.emit(_scenario, _menu.show_actions))
+	bar.add_child(_add_existing)
+	var loot_tip: String = "An option to search its monster once it is dead (change its condition for, say, a sleeping one)"
+	_add_loot_event = AdventureUi.text_button("Loot event", "Search", loot_tip, func() -> void: loot_event_requested.emit(_scenario as AdventureEncounter))
+	bar.add_child(_add_loot_event)
+	_add_track = AdventureUi.text_button("Track", "Add", "A new stage track: a line of the story, one stage at a time", _ask_for_track)
+	bar.add_child(_add_track)
 	_scroll = ScrollContainer.new()
 	_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -117,6 +124,7 @@ func show_event(event: AdventureEvent, host: AdventurePage, focus: AdventureEven
 	for child: Node in _tracks.get_children() + _sections.get_children(): child.queue_free()
 	for control: Control in [_pick, _add_option, _add_existing]: control.visible = scenario != null
 	_add_track.visible = event is AdventureEncounter
+	_add_loot_event.visible = event is AdventureEncounter and (event as AdventureEncounter).profile is MonsterProfile
 	_storyline = null
 	if event == null:
 		_title.text = "Pick an event"
@@ -162,19 +170,21 @@ func _show_info() -> void:
 	_info.text = "\n".join(lines)
 	_info.visible = not lines.is_empty()
 
-## "Storyline:" and a toggle per stage (picking one dims what can't happen then), and + for a new stage; the body's states can't be added to
+## "Storyline:" (click: rename, remove, Inspector) and a toggle per stage (picking one dims what can't happen then; right-click: rename,
+## remove), and + for a new stage; the body's states can't be changed
 func _add_track_bar(track_name: String) -> void:
 	var track: AdventureStageTrack = AdventureStageTrack.find(_storyline.encounter.tracks, track_name)
 	var stages: Array[String] = _storyline.get_stages_of(track_name)
 	var bar: HBoxContainer = HBoxContainer.new()
-	var label: Label = Label.new()
-	label.text = "%s:" % track_name
-	label.mouse_filter = Control.MOUSE_FILTER_PASS
 	if track != null:
-		label.tooltip_text = "One stage at a time; rename or remove stages in the Inspector (click)"
-		label.gui_input.connect(func(input: InputEvent) -> void: _inspect_on_click(input, track))
-	else: label.tooltip_text = "Its monster's body, as the fights leave it (won: beaten) and kills end it"
-	bar.add_child(label)
+		var name_button: Button = AdventureUi.text_button("%s:" % track_name, "", "One stage at a time. Click: rename, remove", _show_track_menu.bind(track))
+		name_button.flat = true
+		bar.add_child(name_button)
+	else:
+		var label: Label = AdventureUi.label("%s:" % track_name)
+		label.mouse_filter = Control.MOUSE_FILTER_PASS
+		label.tooltip_text = "Its monster's body, as the fights leave it (won: beaten) and kills end it"
+		bar.add_child(label)
 	for stage: String in stages:
 		var chip: Button = Button.new()
 		chip.text = stage
@@ -182,7 +192,13 @@ func _add_track_bar(track_name: String) -> void:
 		chip.button_pressed = _picked == [track_name, stage]
 		chip.tooltip_text = "What can happen while it is %s, and what leads here" % stage
 		chip.toggled.connect(_on_stage_picked.bind(track_name, stage))
-		if tooltips != null and track != null: tooltips.attach(chip, AdventureTooltips.get_stage(_storyline.encounter, track_name, stage), "dim what can't happen while it is %s" % stage)
+		if track != null:
+			chip.gui_input.connect(func(input: InputEvent) -> void:
+				var click: InputEventMouseButton = input as InputEventMouseButton
+				if click != null and click.pressed and click.button_index == MOUSE_BUTTON_RIGHT: _show_stage_menu(track, stage)
+			)
+		if tooltips != null and track != null:
+			tooltips.attach(chip, AdventureTooltips.get_stage(_storyline.encounter, track_name, stage), "dim what can't happen while it is %s. Right-click: rename, remove" % stage)
 		bar.add_child(chip)
 	if track == null:
 		_tracks.add_child(bar)
@@ -197,9 +213,38 @@ func _add_track_bar(track_name: String) -> void:
 		bar.add_child(hint)
 	_tracks.add_child(bar)
 
-func _inspect_on_click(input: InputEvent, resource: Resource) -> void:
-	var click: InputEventMouseButton = input as InputEventMouseButton
-	if click != null and click.pressed and click.button_index == MOUSE_BUTTON_LEFT: EditorInterface.edit_resource(resource)
+## Rename (with every stage condition and effect about it), remove (only while nothing uses it), Inspector
+func _show_track_menu(track: AdventureStageTrack) -> void:
+	var uses: int = _storyline.count_uses(track, tooltips.stages) if tooltips != null else 0
+	var actions: Dictionary[String, Callable] = {
+		"Rename track…": func() -> void: text_requested.emit("Rename track %s" % track.name, "Name", _rename_track.bind(track), track.name),
+	}
+	if uses == 0: actions["Remove track"] = func() -> void: _request(_storyline.get_changes_removing_track(track), "Remove track %s" % track.name)
+	else: actions["Can't remove: %s use it" % _count_uses(uses)] = Callable()
+	actions["Show in the Inspector"] = EditorInterface.edit_resource.bind(track)
+	_menu.show_actions(actions)
+
+func _show_stage_menu(track: AdventureStageTrack, stage: String) -> void:
+	var uses: int = _storyline.count_uses(track, tooltips.stages, stage) if tooltips != null else 0
+	var actions: Dictionary[String, Callable] = {
+		"Rename stage…": func() -> void: text_requested.emit("Rename %s: %s" % [track.name, stage], "Name", _rename_stage.bind(track, stage), stage),
+	}
+	if uses == 0: actions["Remove stage"] = func() -> void: _request(_storyline.get_changes_removing_stage(track, stage), "Remove stage %s: %s" % [track.name, stage])
+	else: actions["Can't remove: %s use it" % _count_uses(uses)] = Callable()
+	_menu.show_actions(actions)
+
+static func _count_uses(uses: int) -> String: return "1 condition or effect" if uses == 1 else "%d conditions and effects" % uses
+
+func _rename_track(new_name: String, track: AdventureStageTrack) -> void:
+	if new_name == track.name or AdventureStageTrack.find(_storyline.encounter.tracks, new_name) != null: return
+	_request(_storyline.get_changes_renaming_track(track, new_name, tooltips.stages), "Rename track %s to %s" % [track.name, new_name])
+
+func _rename_stage(new_name: String, track: AdventureStageTrack, stage: String) -> void:
+	if track.stages.has(new_name): return
+	_request(_storyline.get_changes_renaming_stage(track, stage, new_name, tooltips.stages), "Rename %s: %s to %s" % [track.name, stage, new_name])
+
+func _rename_option(title: String, option: AdventureEvent) -> void:
+	_request([[option, &"title", title, AdventureEventEditing.get_file(option)]] as Array[Array], "Rename %s to %s" % [_describe(option), title])
 
 ## A foldable section: its title, where it can happen and leads, ▲ ▼ ✕ in the title bar; unfolded, its pages (a scenario: a way to open it).
 ## [param index]: its place among the options; -1: the event shown on its own
@@ -219,10 +264,13 @@ func _add_section(option: AdventureEvent, index: int) -> Control:
 	if not section.folded: _fill_section(section, option)
 	if not option is AdventureEventScenario:
 		section.add_title_bar_control(AdventureUi.icon_button("Play", "", "Play from here: the game starts at its location with it shown, whatever its conditions", play_requested.emit.bind(option, option)))
+	section.add_title_bar_control(AdventureUi.icon_button("Edit", "", "Rename it", func() -> void: text_requested.emit("Rename %s" % _describe(option), "Title", _rename_option.bind(option), option.title)))
+	if not AdventureEventEditing.is_inside_file(option):
+		section.add_title_bar_control(AdventureUi.icon_button("Remove", "", "Delete it: its file goes to the system trash, and it is no option anywhere any more", deletion_requested.emit.bind(option)))
 	if index < 0: return section
 	if index > 0: section.add_title_bar_control(AdventureUi.icon_button("MoveUp", "", "Earlier: checked first", _move.bind(index, -1)))
 	if index < _scenario.events.size() - 1: section.add_title_bar_control(AdventureUi.icon_button("MoveDown", "", "Later", _move.bind(index, 1)))
-	var remove: Button = AdventureUi.icon_button("Remove", "", "Not an option any more (its file stays)", _remove.bind(index))
+	var remove: Button = AdventureUi.icon_button("Unlinked", "", "Not an option here any more (its file stays)", _remove.bind(index))
 	remove.disabled = AdventureEventEditing.is_inside_file(option)
 	section.add_title_bar_control(remove)
 	section.add_title_bar_control(AdventureUi.icon_button("Object", "", "Show it in the Inspector", EditorInterface.edit_resource.bind(option)))
@@ -257,31 +305,25 @@ func _fill_section(section: FoldableContainer, option: AdventureEvent) -> void:
 	var settings: Control = graph.make_settings()
 	column.add_child(settings)
 	column.move_child(settings, 0)
+	# The graph's own tools (zoom, grid, Tidy, Host / Previous to drag in) in a strip above it, not over its nodes
+	var tools: HBoxContainer = graph.get_menu_hbox()
+	tools.get_parent().remove_child(tools)
+	column.add_child(tools)
+	column.move_child(tools, 1)
 	_graphs.append(graph)
 	var key: String = AdventureLayout.get_key(option)
 	var height: float = graph.layout.graph_heights.get(key, 0.0) if graph.layout != null else 0.0
 	if height > 0.0: graph.custom_minimum_size.y = height
-	else: get_tree().process_frame.connect(_fit.bind(graph), CONNECT_ONE_SHOT)
-	if graph.layout != null and graph.layout.graph_views.has(key): get_tree().process_frame.connect(_restore_view.bind(graph, key), CONNECT_ONE_SHOT)
-	graph.scroll_offset_changed.connect(_on_view_changed.bind(graph, key))
-	graph.tree_exiting.connect(_save_view.bind(graph))
+	get_tree().process_frame.connect(_fit_and_frame.bind(graph, height <= 0.0), CONNECT_ONE_SHOT)
 
-## Where it was scrolled to and how far zoomed, once its nodes are laid out
-func _restore_view(graph: AdventureEventView, key: String) -> void:
+## Once its nodes are laid out: as high as they need (unless a height is kept), then every node in view (the frame after, at that height)
+func _fit_and_frame(graph: AdventureEventView, fit: bool) -> void:
 	if not is_instance_valid(graph): return
-	var view: Vector3 = graph.layout.graph_views[key]
-	graph.zoom = view.z
-	graph.scroll_offset = Vector2(view.x, view.y)
-	graph.set_meta(&"view_changed", false)
+	if fit: _fit(graph)
+	get_tree().process_frame.connect(_frame.bind(graph), CONNECT_ONE_SHOT)
 
-## Kept in the layout as it changes; written when the graph goes (the layout is saved then, not on every scroll)
-func _on_view_changed(_offset: Vector2, graph: AdventureEventView, key: String) -> void:
-	if graph.layout == null: return
-	graph.layout.graph_views[key] = Vector3(graph.scroll_offset.x, graph.scroll_offset.y, graph.zoom)
-	graph.set_meta(&"view_changed", true)
-
-func _save_view(graph: AdventureEventView) -> void:
-	if graph.get_meta(&"view_changed", false): graph.layout_changed.emit()
+func _frame(graph: AdventureEventView) -> void:
+	if is_instance_valid(graph): graph.frame_nodes()
 
 ## A bar to drag [param graph]'s height with; let go, the height is kept in the layout under [param key]
 func _make_handle(graph: AdventureEventView, key: String) -> Control:
@@ -317,23 +359,16 @@ func _add_story_controls(section: FoldableContainer, option: AdventureEvent) -> 
 	for track_name: String in _storyline.get_track_names():
 		var in_track: Array[String] = _storyline.get_stages_in(option, track_name)
 		stages.append("%s: %s" % [track_name, " or ".join(in_track)] if not in_track.is_empty() else "%s: any" % track_name)
-	var others: String = _storyline.describe_other_conditions(option)
-	var happens: Button = Button.new()
-	happens.text = "In " + "  ·  ".join(stages) + ("  ·  when %s" % others if not others.is_empty() else "")
-	happens.tooltip_text = "The stages it can happen in; click to change them"
+	# Its other conditions show as its When chips
+	var happens: Button = AdventureUi.text_button("Stages", "", "Can happen in %s. Click: change" % "  ·  ".join(stages), _offer_stages.bind(option))
 	happens.flat = true
-	happens.icon = AdventureActionMenu.get_editor_icon("Edit")
-	happens.custom_minimum_size.x = COLUMN_WIDTH
-	happens.pressed.connect(_offer_stages.bind(option))
 	section.add_title_bar_control(happens)
+	# Where its decisions lead, right after its title
 	var leads: Array[String] = [ ]
 	for lead: AdventureStoryline.Lead in _storyline.get_leads(option):
 		leads.append("%s%s → %s" % [lead.decision.description.get_slice("\n", 0), " · " + lead.outcome.name if not lead.outcome.name.is_empty() else "", lead.stage])
-	var label: Label = AdventureUi.label("  ·  ".join(leads) if not leads.is_empty() else "leads to no stage")
-	label.custom_minimum_size.x = COLUMN_WIDTH
-	label.tooltip_text = "Where its decisions lead; change them on its pages"
-	if not _picked.is_empty() and _storyline.leads_into(option, _picked[0], _picked[1]): label.add_theme_color_override(&"font_color", LEADS_IN_COLOR)
-	section.add_title_bar_control(label)
+	if not leads.is_empty(): section.title += "      " + "  ·  ".join(leads)
+	if not _picked.is_empty() and _storyline.leads_into(option, _picked[0], _picked[1]): section.add_theme_color_override(&"font_color", LEADS_IN_COLOR)
 	var unknown: Array[String] = _storyline.get_unknown_stages(option)
 	if not unknown.is_empty():
 		var warning: Label = AdventureUi.label("⚠ %s" % ", ".join(unknown))
@@ -380,13 +415,13 @@ func _on_stage_toggled(index: int) -> void:
 	changes_requested.emit(_storyline.get_changes_toggling(_stage_menu_event, pair[0], pair[1]), "%s %s in %s: %s" % [title, "happens" if on else "no longer happens", pair[0], pair[1]], null)
 
 func _ask_for_track() -> void:
-	if _storyline != null: text_requested.emit("New track", "Name", _add_named_track)
+	if _storyline != null: text_requested.emit("New track", "Name", _add_named_track, "")
 
 func _add_named_track(track_name: String) -> void:
 	_request(_storyline.get_changes_adding_track(track_name), "New track %s" % track_name)
 
 func _ask_for_stage(track: AdventureStageTrack) -> void:
-	text_requested.emit("New stage on %s" % track.name, "Name", _add_stage.bind(track))
+	text_requested.emit("New stage on %s" % track.name, "Name", _add_stage.bind(track), "")
 
 func _add_stage(stage: String, track: AdventureStageTrack) -> void:
 	_request(_storyline.get_changes_adding_stage(track, stage), "New stage %s: %s" % [track.name, stage])

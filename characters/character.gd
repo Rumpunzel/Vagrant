@@ -12,7 +12,9 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 		weapons = Weapon.carry(character_profile.weapons, character_profile.get_weapon_modifiers())
 		armor = Armor.carry(character_profile.armor, character_profile.get_armor_modifiers())
 		shields = Shield.carry(character_profile.shields, character_profile.get_shield_modifiers())
-		items = character_profile.items.duplicate()
+		# Gear listed among the items is carried as pieces like the rest
+		items = {}
+		for item: ItemProfile in character_profile.items: gain(item, character_profile.items[item])
 		_recover_breath_dice()
 		character_profile_changed.emit(character_profile)
 
@@ -24,8 +26,6 @@ signal exhaustion_changed(exhaustion: Array[DieType])
 		exhaustion_changed.emit(exhaustion)
 
 var most_recently_chosen_attribute: CharacterAttribute
-## Item -> how many are carried
-var items: Dictionary[ItemProfile, int] = {}
 
 func parse_dice_result(dice_result: DiceRequestResult) -> void:
 	lose_breath_dice(dice_result.get_lost_breath_dice())

@@ -6,6 +6,9 @@ extends RefCounted
 ## files go. Resources to be stored inside a file get their ID there right away ([method _in_file]), so the layout can key them before saving.
 ## The changes that put them somewhere: [AdventureEventEditing], [AdventureMapEditing].
 
+## How [method find_items] orders them, like the inventory
+const ITEM_KINDS: Array[String] = ["WeaponProfile", "ShieldProfile", "ArmorProfile", "ItemProfile"]
+
 ## A scenario picking all that fit, to be stored inside a location's file as its own events
 static func make_scenario() -> AdventureEventScenario:
 	var scenario: AdventureEventScenario = _in_file(AdventureEventScenario.new()) as AdventureEventScenario
@@ -32,6 +35,24 @@ static func make_fight() -> AdventureFightDecision:
 	fight.description = "Fight!"
 	return fight
 
+## Searches its event's encounter; another one is named in the Inspector
+static func make_loot() -> AdventureLootDecision:
+	var loot: AdventureLootDecision = _in_file(AdventureLootDecision.new()) as AdventureLootDecision
+	loot.description = "Search it."
+	return loot
+
+## The template for searching [param encounter]'s monster once it is dead: an option adding its text and a search (back to the page it shows on)
+## to the location's
+static func make_loot_event(encounter: AdventureEncounter) -> AdventureEvent:
+	var event: AdventureEvent = make_event("Searching the %s" % encounter.title, false)
+	event.description = "The %s lies dead." % encounter.title
+	event.conditions = [make_monster_condition(AdventureMonsterCondition.State.DEAD)] as Array[AdventureCondition]
+	var search: AdventureLootDecision = make_loot()
+	search.description = "Search the %s." % encounter.title
+	search.transition = _in_file(AdventureHostReference.new()) as AdventureHostReference
+	event.decisions = [search] as Array[AdventureDecision]
+	return event
+
 ## Attribute and difficulty are set in the Inspector
 static func make_save() -> AdventureSaveDecision:
 	var save: AdventureSaveDecision = _in_file(AdventureSaveDecision.new()) as AdventureSaveDecision
@@ -54,6 +75,53 @@ static func get_consequence_types() -> Dictionary[String, Script]: return _get_t
 
 ## Every kind of condition there is, by class name
 static func get_condition_types() -> Dictionary[String, Script]: return _get_types("AdventureCondition")
+
+## Every item and piece of gear in [param directory] and below (not in addons), as the inventory groups them (weapons, shields, armour, items),
+## then by name. Told by their files' headers, so only items get loaded.
+static func find_items(directory: String = "res://") -> Array[ItemProfile]:
+	var classes: Array[String] = ["ItemProfile"]
+	for type_name: String in _get_types("ItemProfile"): classes.append(type_name)
+	var items: Array[ItemProfile] = []
+	_find_items(directory, classes, items)
+	var order: Callable = func(item: ItemProfile) -> int:
+		var kind: int = ITEM_KINDS.find(item.get_script().get_global_name())
+		return kind if kind >= 0 else ITEM_KINDS.size()
+	items.sort_custom(func(a: ItemProfile, b: ItemProfile) -> bool:
+		if order.call(a) != order.call(b): return order.call(a) < order.call(b)
+		return a.name.naturalnocasecmp_to(b.name) < 0
+	)
+	return items
+
+static func _find_items(directory: String, classes: Array[String], items: Array[ItemProfile]) -> void:
+	var access: DirAccess = DirAccess.open(directory)
+	if access == null or access.file_exists(".gdignore"): return
+	for file_name: String in access.get_files():
+		if not file_name.ends_with(".tres"): continue
+		var path: String = directory.path_join(file_name)
+		var header: String = FileAccess.open(path, FileAccess.READ).get_line()
+		if not header.contains('script_class="'): continue
+		if header.get_slice('script_class="', 1).get_slice('"', 0) in classes: items.append(load(path) as ItemProfile)
+	for subdirectory: String in access.get_directories():
+		if not subdirectory.begins_with(".") and subdirectory != "addons": _find_items(directory.path_join(subdirectory), classes, items)
+
+## "Gain [param item]"
+static func make_gain(item: ItemProfile) -> AdventureGainConsequence:
+	var gain: AdventureGainConsequence = _in_file(AdventureGainConsequence.new()) as AdventureGainConsequence
+	gain.item = item
+	return gain
+
+## "Lose [param item]"
+static func make_lose(item: ItemProfile) -> AdventureLoseConsequence:
+	var lose: AdventureLoseConsequence = _in_file(AdventureLoseConsequence.new()) as AdventureLoseConsequence
+	lose.item = item
+	return lose
+
+## "Carries [param item]", or with [param negated] "Doesn't carry"
+static func make_carries(item: ItemProfile, negated: bool) -> AdventureCarriesCondition:
+	var carries: AdventureCarriesCondition = _in_file(AdventureCarriesCondition.new()) as AdventureCarriesCondition
+	carries.item = item
+	carries.negated = negated
+	return carries
 
 static func _get_types(base_name: String) -> Dictionary[String, Script]:
 	var bases: Dictionary[String, String] = {}

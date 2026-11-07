@@ -6,6 +6,9 @@ extends VBoxContainer
 ## The graphs request edits to structure (links, new locations, areas, events, pages and decisions); [AdventureEdits] makes them, with undo,
 ## unsaved until [method save]. Content is edited in the Inspector: selecting opens the resource there. Moving nodes saves the [AdventureLayout] at once.
 
+## The problems found in it changed: [param count] of them
+signal problems_listed(count: int)
+
 const INDENT: String = "    "
 const SIMULATE_TOOLTIP: String = ("Fights the Fight Lab's reference fighters (weak, average, strong) %d times each against every monster this adventure fights,"
 	+ "\nwith full breath dice and a fresh monster. The fight cards then show how often each wins.") % AdventureFightOdds.FIGHTS
@@ -19,8 +22,6 @@ const SIMULATE_TOOLTIP: String = ("Fights the Fight Lab's reference fighters (we
 @export var _map: AdventureMapView
 ## The map's sidebar of events to drag onto locations
 @export var _event_shelf: VBoxContainer
-## The "Problems" tab ([AdventureProblems])
-@export var _problem_list: ItemList
 @export var _events_tab: Control
 @export var _event_list: ItemList
 @export var _host_picker: OptionButton
@@ -40,11 +41,17 @@ var _location_view: AdventureLocationView
 var _event_screen: AdventureEventScreen
 var _actions: AdventureEditorActions
 var _fight_odds: AdventureFightOdds
+## [AdventureProblems] as a list for the editor's bottom panel (the plugin puts it there: [method get_problem_list])
+var _problem_list: ItemList
 var _simulate_button: Button
 var _odds_status: Label
 
 ## Called by the plugin, not in [method Node._ready], so opening this scene in the editor doesn't run it
 func setup(undo_redo: EditorUndoRedoManager) -> void:
+	_problem_list = ItemList.new()
+	_problem_list.name = "Adventure problems"
+	_problem_list.custom_minimum_size.y = 120
+	_problem_list.tooltip_text = "Click: show where it is"
 	_edits = AdventureEdits.new(undo_redo)
 	_edits.changed.connect(rebuild)
 	_map.setup()
@@ -103,8 +110,10 @@ func _simulate_fights() -> void:
 func _update_odds_status() -> void:
 	_simulate_button.disabled = _fight_odds.is_running()
 	if _fight_odds.is_running(): _odds_status.text = "Simulating…"
-	elif _fight_odds.failed: _odds_status.text = "The simulation failed."
+	elif _fight_odds.failed: _odds_status.text = "The simulation failed (hover for why)."
 	else: _odds_status.text = ""
+	_odds_status.tooltip_text = _fight_odds.failure if _fight_odds.failed and not _fight_odds.failure.is_empty() else ""
+	_odds_status.mouse_filter = Control.MOUSE_FILTER_PASS
 
 ## A page graph for a section of the event screen, wired up like the map
 func _make_event_graph() -> AdventureEventView:
@@ -156,6 +165,8 @@ func _connect_views() -> void:
 	_location_view.existing_event_requested.connect(_actions.offer_events)
 	_location_view.encounter_requested.connect(_actions.ask_for_encounter)
 	_event_screen.option_requested.connect(_actions.ask_for_option)
+	_event_screen.loot_event_requested.connect(_actions.add_loot_event)
+	_event_screen.deletion_requested.connect(_actions.ask_to_delete)
 	_event_screen.existing_option_requested.connect(_actions.offer_options)
 	_event_screen.event_opened.connect(open_event)
 	_event_screen.changes_requested.connect(_edits.apply)
@@ -357,12 +368,14 @@ func _list_problems() -> void:
 	var problems: Array[AdventureProblems.Problem] = _problems
 	for problem: AdventureProblems.Problem in problems:
 		_problem_list.set_item_metadata(_problem_list.add_item(problem.text), problem)
-	var index: int = _tabs.get_tab_idx_from_control(_problem_list)
-	_tabs.set_tab_title(index, "Problems (%d)" % problems.size() if not problems.is_empty() else "Problems")
+	problems_listed.emit(problems.size())
+
+func get_problem_list() -> ItemList: return _problem_list
 
 ## Opens where the problem is: the event (or the map) with its page in the middle
 func _show_problem(index: int) -> void:
 	var problem: AdventureProblems.Problem = _problem_list.get_item_metadata(index)
+	EditorInterface.set_main_screen_editor("Adventure")
 	if problem.event == null:
 		_open_location(problem.page)
 		return

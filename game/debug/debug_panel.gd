@@ -179,8 +179,13 @@ static func format_entry(entry: Dictionary) -> String:
 			return "%s %s catches breath: %s, exhausted %s" % [_icon(CAMP_ICON), _actor(entry), recovered, exhausted]
 		"exchange": return _format_exchange(entry)
 		"rested": return "%s %s rests: no more exhaustion" % [_icon(CAMP_ICON), _actor(entry)]
+		"gained": return _format_carry(entry, true)
+		"lost": return _format_carry(entry, false)
 		"died": return "%s %s %s" % [_icon(DEATH_ICON, KIND_COLORS[LogBuffer.Kind.ERROR]), _actor(entry), _outcome("died", false)]
 	return _escaped(str(entry))
+
+static func _format_carry(entry: Dictionary, gained: bool) -> String:
+	return "%s %s %d × %s" % [_actor(entry), _outcome("gains" if gained else "loses", gained), _number(entry, "count"), _link(_text(entry, "item"))]
 
 static func _format_roll(entry: Dictionary) -> String:
 	var attribute: CharacterAttribute = ResourceId.find(_text(entry, "attribute")) as CharacterAttribute

@@ -2,32 +2,62 @@
 class_name AdventureActionMenu
 extends PopupMenu
 
-## A context menu at the mouse: item text -> what it does; each item gets an editor icon by the words in its text
+## A context menu at the mouse: item text -> what it does (an empty Callable: shown, but disabled); each item gets an editor icon by the words in
+## its text. "Gain › Sword" goes into a submenu "Gain".
 
 const ICON_SIZE: int = 16
+const SUBMENU: String = " › "
 ## [words, icon name]: the first entry with a word in an item's text gives its icon
 const ICONS: Array[Array] = [
-	[["starting page"], "Favorites"], [["texts"], "Edit"], [["play"], "Play"], [["unlink"], "Unlinked"], [["remove", "delete", "not nearby", "not here"], "Remove"], [["other file"], "Load"],
-	[["(scenario)"], "GraphEdit"], [["monster"], "Skeleton2D"], [["encounter", "place "], "CharacterBody2D"], [["new ", "add "], "Add"],
+	[["starting page"], "Favorites"], [["texts", "rename"], "Edit"], [["inspector"], "Object"], [["can't"], "NodeWarning"], [["play"], "Play"],
+	[["unlink"], "Unlinked"], [["remove", "delete", "not nearby", "not here"], "Remove"], [["other file"], "Load"], [["(scenario)"], "GraphEdit"],
+	[["monster"], "Skeleton2D"], [["encounter", "place "], "CharacterBody2D"], [["new ", "add "], "Add"],
 ]
 
 var _actions: Dictionary[String, Callable] = {}
 
 func _init() -> void:
-	index_pressed.connect(func(index: int) -> void: _actions[get_item_text(index)].call())
+	index_pressed.connect(_on_pressed.bind(self, ""))
 
-## [param pick_icon]: text -> icon, for menus with icons of their own
+## [param pick_icon]: text -> icon, for menus with icons of their own (a submenu's own entry gets its name's)
 func show_actions(actions: Dictionary[String, Callable], pick_icon: Callable = AdventureActionMenu.get_icon) -> void:
 	_actions = actions
 	clear()
+	for child: Node in get_children():
+		remove_child(child)
+		child.queue_free()
+	var submenus: Dictionary[String, PopupMenu] = {}
 	for text: String in actions:
-		var icon: Texture2D = pick_icon.call(text)
-		if icon != null: add_icon_item(icon, text)
-		else: add_item(text)
-		set_item_icon_max_width(item_count - 1, ICON_SIZE)
+		if not text.contains(SUBMENU):
+			_add_action(self, text, actions[text], pick_icon.call(text))
+			continue
+		var group: String = text.get_slice(SUBMENU, 0)
+		if not submenus.has(group):
+			var submenu: PopupMenu = PopupMenu.new()
+			submenu.index_pressed.connect(_on_pressed.bind(submenu, group + SUBMENU))
+			add_child(submenu)
+			add_submenu_node_item(group, submenu)
+			_set_icon(self, pick_icon.call(group))
+			submenus[group] = submenu
+		_add_action(submenus[group], text.substr(group.length() + SUBMENU.length()), actions[text], pick_icon.call(text))
 	position = DisplayServer.mouse_get_position()
 	reset_size()
 	popup()
+
+func _add_action(menu: PopupMenu, label: String, action: Callable, icon: Texture2D) -> void:
+	menu.add_item(label)
+	_set_icon(menu, icon)
+	menu.set_item_disabled(menu.item_count - 1, not action.is_valid())
+
+func _set_icon(menu: PopupMenu, icon: Texture2D) -> void:
+	if icon == null: return
+	menu.set_item_icon(menu.item_count - 1, icon)
+	menu.set_item_icon_max_width(menu.item_count - 1, ICON_SIZE)
+
+## [param prefix]: a submenu's "Gain › "
+func _on_pressed(index: int, menu: PopupMenu, prefix: String) -> void:
+	var text: String = prefix + menu.get_item_text(index)
+	if _actions.has(text) and _actions[text].is_valid(): _actions[text].call()
 
 ## The icon of a menu item, by the words in it
 static func get_icon(text: String) -> Texture2D:

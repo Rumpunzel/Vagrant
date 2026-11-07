@@ -55,7 +55,7 @@ func _clear() -> void:
 
 func _add_option(weapon: Weapon, button_group: ButtonGroup) -> void:
 	var text: String = "Unarmed" if not weapon else "%s (%s)" % [weapon.get_equipment_name(), weapon.get_die_type()]
-	var faces: String = _describe_faces(weapon) if weapon else ""
+	var faces: String = Inventory.describe_faces(weapon) if weapon else ""
 	var button: Button = _add_row(text, faces, weapon != null and not weapon.is_usable(), weapon == _fight_request.selected_weapon, button_group)
 	button.toggled.connect(_on_option_toggled.bind(weapon))
 
@@ -82,15 +82,6 @@ func _add_row(text: String, faces_text: String, disabled: bool, pressed: bool, b
 
 func _on_option_toggled(toggled_on: bool, weapon: Weapon) -> void:
 	if toggled_on: _fight_request.selected_weapon = weapon
-
-static func _describe_faces(weapon: Weapon) -> String:
-	var faces: Array[String] = []
-	for face: int in range(1, weapon.get_die_type().faces + 1):
-		if weapon.is_marked(face): faces.append("[color=#%s][s]%d[/s][/color]" % [Main.FAILURE.to_html(), face])
-		else: faces.append("%d" % face)
-	var description: String = " ".join(faces)
-	if not weapon.is_usable(): description = "[color=gray]%s — %s[/color]" % [description, "dropped" if weapon.dropped and not weapon.ruined else "ruined"]
-	return description
 
 ## With several weapon dice (Veteran), the player may ask to pick the die even when none needs forcing
 func _add_choose_die_option() -> void:

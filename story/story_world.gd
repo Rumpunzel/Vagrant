@@ -14,6 +14,8 @@ var _places: Dictionary[AdventureEncounter, Array] = {}
 var _encounter_of: Dictionary[AdventureEvent, AdventureEncounter] = {}
 ## Links from each location, found once ([method AdventureLocation.get_distances])
 var _distances: Dictionary[AdventureLocation, Dictionary] = {}
+## Of each looted encounter, what of its [member AdventureEncounter.loot] is left (its monster's gear is on the monster); until then all of it
+var _loot_left: Dictionary[AdventureEncounter, Dictionary] = {}
 
 func _init(encounters: Array[AdventureEncounter] = [ ]) -> void:
 	for encounter: AdventureEncounter in encounters:
@@ -65,12 +67,29 @@ func is_near(encounter: AdventureEncounter, location: AdventureLocation, reach: 
 	return false
 
 ## Stages and moved encounters, by [ResourceId]
+## What of [param encounter]'s loot (besides its monster's gear) is left: item -> how many
+func get_loot_left(encounter: AdventureEncounter) -> Dictionary[ItemProfile, int]:
+	var left: Dictionary[ItemProfile, int] = {}
+	var source: Dictionary = _loot_left.get(encounter, encounter.loot)
+	left.assign(source)
+	return left
+
+func take_loot(encounter: AdventureEncounter, item: ItemProfile) -> void:
+	var left: Dictionary[ItemProfile, int] = get_loot_left(encounter)
+	left.erase(item)
+	_loot_left[encounter] = left
+
 func get_save() -> Dictionary:
 	var stages: Dictionary[String, Dictionary] = {}
 	for subject: Resource in _stages: stages[ResourceId.of(subject)] = _stages[subject].duplicate()
 	var places: Dictionary[String, Array] = {}
 	for encounter: AdventureEncounter in _places: places[ResourceId.of(encounter)] = ResourceId.of_each(_places[encounter])
-	return {stages = stages, places = places}
+	var loot_left: Dictionary[String, Dictionary] = {}
+	for encounter: AdventureEncounter in _loot_left:
+		var left: Dictionary[String, int] = {}
+		for item: ItemProfile in _loot_left[encounter]: left[ResourceId.of(item)] = _loot_left[encounter][item]
+		loot_left[ResourceId.of(encounter)] = left
+	return {stages = stages, places = places, loot_left = loot_left}
 
 ## Into a new world (no signals: the journal holds what already happened)
 func restore(data: Dictionary) -> void:
@@ -83,3 +102,12 @@ func restore(data: Dictionary) -> void:
 		var locations: Array[AdventureLocation] = []
 		locations.assign(ResourceId.find_each_at(places, id))
 		_places[ResourceId.find(id) as AdventureEncounter] = locations
+	# Saves from before looting have none
+	var loot_left: Dictionary = data.get("loot_left", {})
+	for id: String in loot_left:
+		var saved_left: Dictionary = loot_left[id]
+		var left: Dictionary[ItemProfile, int] = {}
+		for item_id: String in saved_left:
+			var count: int = saved_left[item_id]
+			left[ResourceId.find(item_id) as ItemProfile] = count
+		_loot_left[ResourceId.find(id) as AdventureEncounter] = left

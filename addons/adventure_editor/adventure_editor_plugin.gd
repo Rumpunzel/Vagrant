@@ -5,11 +5,14 @@ const AdventureEditorScene: PackedScene = preload("uid://btrr51xe6kwox")  # adve
 
 var _editor: AdventureEditor
 var _uid_inspector: AdventureUidInspector
+var _problems_button: Button
 
 func _enter_tree() -> void:
 	_editor = AdventureEditorScene.instantiate()
 	EditorInterface.get_editor_main_screen().add_child(_editor)
 	_editor.setup(get_undo_redo())
+	_problems_button = add_control_to_bottom_panel(_editor.get_problem_list(), "Problems")
+	_editor.problems_listed.connect(func(count: int) -> void: _problems_button.text = "Problems (%d)" % count if count > 0 else "Problems")
 	_make_visible(false)
 	resource_saved.connect(_on_resource_saved)
 	_uid_inspector = AdventureUidInspector.new()
@@ -17,6 +20,8 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	remove_inspector_plugin(_uid_inspector)
+	remove_control_from_bottom_panel(_editor.get_problem_list())
+	_editor.get_problem_list().queue_free()
 	_editor.queue_free()
 
 func _has_main_screen() -> bool: return true

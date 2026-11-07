@@ -17,8 +17,9 @@ func setup(of: AdventureEditor) -> void:
 	_make_dialogs()
 
 ## Asks for a name, then calls [param then] with it
-func ask_name(title: String, label: String, then: Callable) -> void:
-	_texts_dialog.ask(title, [AdventureTextsDialog.Field.new(label, "")] as Array[AdventureTextsDialog.Field], _on_named.bind(then))
+## [param value]: the name it has now, to change
+func ask_name(title: String, label: String, then: Callable, value: String = "") -> void:
+	_texts_dialog.ask(title, [AdventureTextsDialog.Field.new(label, value)] as Array[AdventureTextsDialog.Field], _on_named.bind(then))
 
 ## A name left empty asks for nothing
 func _on_named(texts: Array[String], then: Callable) -> void:
@@ -104,6 +105,14 @@ func _offer(taken: Array, on_pick: Callable, show_actions: Callable) -> void:
 	show_actions.call(actions)
 
 ## Creates the event's file and lists it on [param host] (a location, or a scenario as its last option), as one undo step
+## The loot template as the last option of [param encounter], in its own file
+func add_loot_event(encounter: AdventureEncounter) -> void:
+	var event: AdventureEvent = AdventureMakers.make_loot_event(encounter)
+	var files: Dictionary[String, Resource] = {AdventureMakers.get_event_path(encounter, event.title): event}
+	var events: Array[AdventureEvent] = AdventureGraph.get_listed_on(encounter)
+	events.append(event)
+	editor.get_edits().create(files, AdventureEventEditing.get_changes_listing(encounter, events), "New %s" % event.title)
+
 func _create_event(title: String, host: AdventurePage, scenario: bool) -> void:
 	var event: AdventureEvent = AdventureMakers.make_event(title, scenario)
 	var files: Dictionary[String, Resource] = {AdventureMakers.get_event_path(host, title): event}

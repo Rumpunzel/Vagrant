@@ -139,7 +139,8 @@ func _on_finished(_result: Dictionary) -> void:
 func _load_result(status: String) -> void:
 	var result: Dictionary = FightLabProcess.read_result(RESULT_FILE)
 	if result.is_empty():
-		_status.text = "The simulation failed; run the runner scene by hand to see why." if status == "Done" else ""
+		_status.text = "The simulation failed (hover for why)." if status == "Done" else ""
+		_status.tooltip_text = _runner.get_errors() if status == "Done" else ""
 		return
 	_tooltips.scenario = _scenario_picker.edited_resource as FightLabScenario
 	var one_fight: bool = result.has("fight")

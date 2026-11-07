@@ -12,6 +12,8 @@ var choices: Array[StoryChoice]
 var events: Array[AdventureEvent]
 ## Set on fight exchange pages, which are not adventure pages of their own
 var fight: Fight
+## Made by the story between authored pages, like looting ([method is_in_between])
+var in_between: bool = false
 ## Taken right away instead of showing the page, e.g. a fight lost on arrival
 var forced_choice: StoryChoice
 ## The party can neither catch its breath nor make camp here ([method AdventurePage.forbids_rest])
@@ -37,6 +39,8 @@ func _init(
 	events = from_events
 
 func is_fight_exchange() -> bool: return fight != null
+## A page the story makes between authored ones (a fight's exchanges, looting): not kept in the page stack, not counted as entered, not saved on
+func is_in_between() -> bool: return is_fight_exchange() or in_between
 ## The first page of a fight offers it, every following exchange belongs to it
 func is_fighting() -> bool: return is_fight_exchange() or choices.any(func(choice: StoryChoice) -> bool: return choice is StoryFightDecision)
 

@@ -3,10 +3,12 @@
 [ext_resource type="Script" uid="uid://ctyfdlvouya4j" path="res://characters/weapons/weapon_profile.gd" id="1_weapon"]
 [ext_resource type="Resource" uid="uid://clrjpyohkfypv" path="res://dice/die_types/d6.tres" id="2_die"]
 [ext_resource type="Resource" uid="uid://b1c6aib060ja5" path="res://characters/attributes/strength.tres" id="3_guts"]
+[ext_resource type="Texture2D" uid="uid://bgchma2q3dk10" path="res://assets/game_icons/delapouite/wood-club.svg" id="icon_texture"]
 
 [resource]
 script = ExtResource("1_weapon")
 name = "Club"
+icon = ExtResource("icon_texture")
 die = ExtResource("2_die")
 wield_attribute = ExtResource("3_guts")
 metadata/_custom_type_script = "uid://ctyfdlvouya4j"

@@ -12,6 +12,8 @@ var dropped: bool = false
 ## Faces that can be marked: a weapon's die faces, the results a piece of armour blocks
 @abstract func get_markable_faces() -> Array[int]
 @abstract func get_equipment_name() -> String
+## What this piece is: its weapon, armour or shield profile
+@abstract func get_item_profile() -> ItemProfile
 
 ## Marks [param face], or the next higher unmarked face if it already is. Returns the face marked; 0 when none was left, which ruins the item.
 func mark(face: int) -> int:

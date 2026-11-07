@@ -16,6 +16,7 @@ func get_markable_faces() -> Array[int]:
 	return faces
 
 func get_equipment_name() -> String: return weapon_profile.name
+func get_item_profile() -> ItemProfile: return weapon_profile
 func get_die_type() -> DieType: return weapon_profile.die
 func get_wield_attribute() -> CharacterAttribute: return weapon_profile.wield_attribute
 

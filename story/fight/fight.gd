@@ -130,7 +130,9 @@ func end_exchange() -> String:
 	# A beaten monster stays down; whether it is spared is up to the story
 	if outcome == Outcome.WON and second is Monster: (second as Monster).incapacitated = true
 	if not is_ongoing():
-		for actor: Actor in [first, second]: actor.pick_up_dropped_gear()
+		# Gear the foe's Nerves made them drop is picked up again
+		for actor: Actor in [first, second]:
+			for piece: Equipment in actor.get_gear(): piece.dropped = false
 	var line: String = ""
 	# A loser who collapsed on the save was told so already
 	match outcome:

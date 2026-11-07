@@ -14,6 +14,7 @@ static func create(new_armor_profile: ArmorProfile, new_marked_faces: Array[int]
 
 func get_markable_faces() -> Array[int]: return armor_profile.blocked_results
 func get_equipment_name() -> String: return armor_profile.name
+func get_item_profile() -> ItemProfile: return armor_profile
 
 func blocks(result: int) -> bool: return is_usable() and armor_profile.blocked_results.has(result)
 func get_damage_reduction() -> int: return armor_profile.damage_reduction if is_usable() else 0

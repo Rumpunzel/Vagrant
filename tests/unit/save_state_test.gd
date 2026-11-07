@@ -53,6 +53,23 @@ func test_character_comes_back() -> void:
 	assert_dict(copy.items).is_equal({item: 3})
 	assert_object(copy.most_recently_chosen_attribute).is_same(Rules.INTELLIGENCE)
 
+func test_gear_gained_and_lost_on_the_way_comes_back() -> void:
+	var sword: WeaponProfile = _saved(WeaponProfile.create("Sword", Rules.d10), "sword")
+	var helmet: ArmorProfile = _saved(ArmorProfile.create("Helmet", [5, 10] as Array[int]), "helmet")
+	var profile: CharacterProfile = TestCharacters.adventurer()
+	profile.armor = [helmet] as Array[ArmorProfile]
+	var character: Character = _character(profile)
+	character.gain(sword)
+	character.weapons[0].marked_faces = [9] as Array[int]
+	character.lose(helmet)
+	var data: Dictionary = _through_json(character.get_save())
+	var copy: Character = _character(profile)
+	copy.restore(data)
+	assert_int(copy.weapons.size()).is_equal(1)
+	assert_object(copy.weapons[0].weapon_profile).is_same(sword)
+	assert_array(copy.weapons[0].marked_faces).contains_exactly([9])
+	assert_array(copy.armor).is_empty()
+
 func test_monsters_come_back() -> void:
 	var encounter: AdventureEncounter = _saved(AdventureEncounter.new(), "encounter")
 	var page: AdventurePage = _saved(AdventurePage.new(), "page")
@@ -89,6 +106,24 @@ func test_world_comes_back() -> void:
 	assert_str(copy.get_stage(encounter, "Mood")).is_equal("angry")
 	assert_str(copy.get_stage(location, "Door")).is_equal("open")
 	assert_array(copy.get_places(encounter)).contains_exactly([location])
+
+func test_loot_left_comes_back() -> void:
+	var rations: ItemProfile = _saved(ItemProfile.create_item("Rations"), "rations")
+	var rope: ItemProfile = _saved(ItemProfile.create_item("Rope"), "rope")
+	var source: AdventureEncounter = AdventureEncounter.new()
+	source.loot = {rations: 2, rope: 1} as Dictionary[ItemProfile, int]
+	var encounter: AdventureEncounter = _saved(source, "looted")
+	var world: StoryWorld = StoryWorld.new()
+	world.take_loot(encounter, rope)
+	var copy: StoryWorld = StoryWorld.new()
+	var saved_world: Dictionary = _through_json(world.get_save())
+	copy.restore(saved_world)
+	assert_dict(copy.get_loot_left(encounter)).is_equal({rations: 2})
+	# Saves from before looting have nothing about it
+	saved_world.erase("loot_left")
+	var older: StoryWorld = StoryWorld.new()
+	older.restore(saved_world)
+	assert_dict(older.get_loot_left(encounter)).is_equal({rations: 2, rope: 1})
 
 func test_journal_counts_come_back() -> void:
 	var page: AdventurePage = _saved(AdventurePage.new(), "page")

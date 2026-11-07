@@ -131,6 +131,46 @@ func get_changes_adding_stage(track: AdventureStageTrack, stage: String) -> Arra
 	stages.append(stage)
 	return [[track, &"stages", stages, encounter]]
 
+## Renaming [param track], and every stage condition and effect about it ([param stages] knows them)
+func get_changes_renaming_track(track: AdventureStageTrack, new_name: String, stages: AdventureStageIndex) -> Array[Array]:
+	var changes: Array[Array] = [[track, &"name", new_name, encounter]]
+	for mention: Resource in stages.get_mentions(encounter, track.name): changes.append([mention, &"track", new_name, stages.get_file_of(mention)])
+	return changes
+
+## Renaming [param stage] of [param track], and every stage condition and effect naming it
+func get_changes_renaming_stage(track: AdventureStageTrack, stage: String, new_name: String, stages: AdventureStageIndex) -> Array[Array]:
+	var names: Array[String] = track.stages.duplicate()
+	names[names.find(stage)] = new_name
+	var changes: Array[Array] = [[track, &"stages", names, encounter]]
+	for mention: Resource in stages.get_mentions(encounter, track.name):
+		var condition: AdventureStageCondition = mention as AdventureStageCondition
+		var effect: AdventureStageConsequence = mention as AdventureStageConsequence
+		if condition != null and condition.stages.has(stage):
+			var needed: Array[String] = condition.stages.duplicate()
+			needed[needed.find(stage)] = new_name
+			changes.append([condition, &"stages", needed, stages.get_file_of(condition)])
+		elif effect != null and effect.stage == stage: changes.append([effect, &"stage", new_name, stages.get_file_of(effect)])
+	return changes
+
+## How many stage conditions and effects use [param track] (or only [param stage] of it); only what nothing uses can be removed
+func count_uses(track: AdventureStageTrack, stages: AdventureStageIndex, stage: String = "") -> int:
+	var uses: int = 0
+	for mention: Resource in stages.get_mentions(encounter, track.name):
+		var condition: AdventureStageCondition = mention as AdventureStageCondition
+		var effect: AdventureStageConsequence = mention as AdventureStageConsequence
+		if stage.is_empty() or (condition != null and condition.stages.has(stage)) or (effect != null and effect.stage == stage): uses += 1
+	return uses
+
+func get_changes_removing_track(track: AdventureStageTrack) -> Array[Array]:
+	var tracks: Array[AdventureStageTrack] = encounter.tracks.duplicate()
+	tracks.erase(track)
+	return [[encounter, &"tracks", tracks, encounter]]
+
+func get_changes_removing_stage(track: AdventureStageTrack, stage: String) -> Array[Array]:
+	var names: Array[String] = track.stages.duplicate()
+	names.erase(stage)
+	return [[track, &"stages", names, encounter]]
+
 ## A track without stages yet
 func get_changes_adding_track(track_name: String) -> Array[Array]:
 	var tracks: Array[AdventureStageTrack] = encounter.tracks.duplicate()

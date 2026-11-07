@@ -8,6 +8,8 @@ extends AdventureEventScenario
 const ENCOUNTER_UNUSED: Array[StringName] = [&"where", &"only_at", &"nearby_reach", &"nearby_stays_in_area"]
 
 @export var profile: ActorProfile
+## What its monster has besides its gear, taken by looting it ([AdventureLootDecision]): item -> how many
+@export var loot: Dictionary[ItemProfile, int] = {}
 @export var tracks: Array[AdventureStageTrack]
 ## Where it could be (UIDs), until a move ([AdventureMoveConsequence]) puts it somewhere; first contact usually narrows it to one
 @export_file("*.tres") var places: Array[String]

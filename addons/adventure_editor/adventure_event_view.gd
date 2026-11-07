@@ -61,6 +61,7 @@ func show_event(event: AdventureEvent, host: AdventurePage = null) -> void:
 	_clear()
 	_host = host
 	_beaten_chips.clear()
+	_hover_adds.clear()
 	for nodes: Dictionary in [_node_pages, _node_ports, _node_targets, _card_styles, _tags, _tag_owners, _fight_cards, _fight_pages]: nodes.clear()
 	_unstacked.clear()
 	_event = event
@@ -141,11 +142,10 @@ func _make_rest_check(page: AdventurePage) -> CheckBox:
 		_request(page, &"no_rest", on, action, _file_for(null, page))
 	)
 
-## Its height and view on the event screen go too, so it fits its nodes again
+## Its height on the event screen goes too, so it fits its nodes again
 func _tidy() -> void:
 	if layout != null and get_event() != null:
 		layout.graph_heights.erase(AdventureLayout.get_key(get_event()))
-		layout.graph_views.erase(AdventureLayout.get_key(get_event()))
 	super()
 
 ## The effect chips (and a won fight's "→ beaten") leading into the picked stage, marked

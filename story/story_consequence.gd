@@ -11,3 +11,5 @@ static func from_adventure_consequence(adventure_consequence: AdventureConsequen
 
 func resolve(story: Story, margin: int) -> void:
 	_adventure_consequence.resolve(story, margin)
+
+func is_shown() -> bool: return _adventure_consequence.is_shown()

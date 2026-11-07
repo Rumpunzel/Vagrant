@@ -11,6 +11,9 @@ const SAVE_COLOR: Color = Color(0.45, 0.6, 0.9)
 const HOST_COLOR: Color = Color(0.35, 0.8, 0.7)
 const CARD_ALPHA: float = 0.18
 const FIGHT_ICON: Texture2D = preload("uid://co8bcva1h1plg")  # ancient-sword.svg
+const CARRY_ICON: Texture2D = preload("uid://b4a43twbi6cri")  # swap-bag.svg
+## Editor icons of the item submenus, by how they start
+const ITEM_MENU_ICONS: Dictionary[String, String] = {"gain": "Add", "lose": "Remove", "doesn't": "Remove"}
 const SAVE_ICON: Texture2D = preload("uid://dpmwlpo7a7q1r")  # rolling-dices.svg
 const HOST_ICON: Texture2D = preload("uid://bee2desykk34h")  # anticlockwise-rotation.svg
 ## Outcome ports and their links by outcome
@@ -34,16 +37,36 @@ var _fight_cards: Dictionary[AdventureDecision, Control] = {}
 var _fight_pages: Dictionary[AdventureDecision, AdventurePage] = {}
 ## The read-only "→ beaten" chips of won fights against the encounter's own monster
 var _beaten_chips: Array[Control] = [ ]
+## The "+ effect" buttons, shown while the mouse is over their page ([method _show_hovered_adds])
+var _hover_adds: Array[Button] = [ ]
 
 func setup() -> void:
 	super()
 	node_selected.connect(func(_node: Node) -> void: _select_card(null))
+	get_tree().process_frame.connect(_show_hovered_adds)
+	tree_exiting.connect(func() -> void: get_tree().process_frame.disconnect(_show_hovered_adds))
+
+## "+ effect" only on the page the mouse is over: elsewhere it's hidden but keeps its place, so nodes don't change size
+func _show_hovered_adds() -> void:
+	var mouse: Vector2 = get_global_mouse_position()
+	for add: Button in _hover_adds:
+		if not is_instance_valid(add): continue
+		var node: Control = add.get_parent()
+		while node != null and not node is GraphNode: node = node.get_parent() as Control
+		var shown: bool = node != null and node.get_global_rect().has_point(mouse)
+		add.modulate.a = 1.0 if shown else 0.0
+		add.mouse_filter = Control.MOUSE_FILTER_STOP if shown else Control.MOUSE_FILTER_IGNORE
 
 ## A choice: one card with its port. A fight or save: a card with its kind and text, then a row with a port per outcome.
 func _add_decision_cards(node: GraphNode, page: AdventurePage, index: int, outlet: AdventureEventGraph.Outlet) -> void:
 	var decision: AdventureDecision = outlet.decision
 	if not outlet.to_check:
-		var card: PanelContainer = _make_card(page, index, _describe_outlet(outlet), Color.TRANSPARENT, null, outlet.goes_back())
+		var text: String = _describe_outlet(outlet)
+		var icon: Texture2D = null
+		if decision is AdventureLootDecision:
+			text = "%s\n%s" % [describe_loot(decision as AdventureLootDecision, _get_encounter()), text]
+			icon = _get_editor_icon("Search")
+		var card: PanelContainer = _make_card(page, index, text, Color.TRANSPARENT, icon, outlet.goes_back())
 		card.get_child(0).add_child(_make_tags(decision, &"consequences", _file_for(decision, page), "effect", _get_effect_additions))
 		node.add_child(card)
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, Color.WHITE)
@@ -75,16 +98,16 @@ func _add_decision_cards(node: GraphNode, page: AdventurePage, index: int, outle
 		if is_fight and outcome.label == "Won": _add_beaten_chip(row, decision as AdventureFightDecision)
 		node.set_slot(node.get_child_count() - 1, false, 0, Color.WHITE, true, 0, OUTCOME_COLORS.get(outcome.label, color))
 
-## How often the Fight Lab's reference fighters win against the fight's monster ("Weak 12% · Average 48% · Strong 91%", faded and marked when
+## How often the Fight Lab's reference fighters win against the fight's monster, with their best approach ("Weak 12% · Average 48% · Strong 91%", faded and marked when
 ## out of date; the card's tooltip tells more), and a button running them in the lab
 func _add_odds(card: PanelContainer, fight: AdventureFightDecision) -> void:
 	var fight_odds: AdventureFightOdds = tooltips.fight_odds if tooltips != null else null
 	var monster: MonsterProfile = fight_odds.get_monster_of(fight) if fight_odds != null else null
 	if monster == null: return
 	var parts: Array[String] = []
-	for entry: Dictionary in fight_odds.get_odds(fight):
-		var won: float = entry["stats"]["outcomes"]["won"]
-		parts.append("%s %d%%" % [entry["name"], roundi(won * 100.0)])
+	# Each fighter with its best approach; the tooltip compares them
+	for best: Dictionary in AdventureFightOdds.get_best(fight_odds.get_odds(fight)):
+		parts.append("%s %d%%" % [best["name"], roundi(AdventureFightOdds.get_won(best) * 100.0)])
 	var row: HBoxContainer = HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var label: Label = _make_info(" · ".join(parts) if not parts.is_empty() else "Fight odds: not simulated")
@@ -95,6 +118,11 @@ func _add_odds(card: PanelContainer, fight: AdventureFightDecision) -> void:
 	if AdventureFightOdds.has_lab():
 		row.add_child(AdventureUi.icon_button("ExternalLink", "⚔", "Open in the Fight Lab: the reference fighters against %s" % monster.name, AdventureFightOdds.open_in_lab.bind(monster)))
 	card.get_child(0).add_child(row)
+
+## "Loot: Lurker" (the named encounter, else [param own], the one whose events are shown)
+static func describe_loot(loot: AdventureLootDecision, own: AdventureEncounter) -> String:
+	var looted: AdventureEncounter = loot.get_looted(own)
+	return "Loot: %s" % (looted.title if looted != null else AdventureStageCondition.name_subject(loot.encounter) if not loot.encounter.is_empty() else "its encounter")
 
 ## Winning a fight against the encounter's own monster beats it: no effect does that, the fight does, so the chip can't be removed
 func _add_beaten_chip(row: HBoxContainer, fight: AdventureFightDecision) -> void:
@@ -170,6 +198,8 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 		if item == null: continue
 		var tag: Button = Button.new()
 		tag.text = _describe(item)
+		tag.icon = _get_item_icon(item)
+		tag.add_theme_constant_override(&"icon_max_width", ICON_SIZE)
 		tag.tooltip_text = "Edit in the Inspector"
 		tag.pressed.connect(func() -> void: EditorInterface.edit_resource(item))
 		if tooltips != null and (item is AdventureStageCondition or item is AdventureStageConsequence): tooltips.attach(tag, item, "edit it in the Inspector")
@@ -186,16 +216,25 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 				var with: Array = items.duplicate()
 				with.append(additions[text])
 				_request(resource, property, with, "Add %s" % text, file)
-		_show_menu(actions)
+		_menu.show_actions(actions, func(text: String) -> Texture2D:
+			var icon: Texture2D = _get_item_icon(additions[text]) if additions.has(text) else null
+			return icon if icon != null else _get_menu_icon(text)
+		)
 	)
 	add.text = add_text
 	tags.add_child(add)
+	if add_text == "effect": _hover_adds.append(add)
 	return tags
 
 func _get_effect_additions() -> Dictionary[String, Resource]:
 	var additions: Dictionary[String, Resource] = {}
 	var types: Dictionary[String, Script] = AdventureMakers.get_consequence_types()
-	for type_name: String in types: additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_consequence(types[type_name])
+	for type_name: String in types:
+		if types[type_name] != AdventureGainConsequence and types[type_name] != AdventureLoseConsequence:
+			additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_consequence(types[type_name])
+	var items: Array[ItemProfile] = AdventureMakers.find_items()
+	for item: ItemProfile in items: additions["Gain%s%s" % [AdventureActionMenu.SUBMENU, item.name]] = AdventureMakers.make_gain(item)
+	for item: ItemProfile in items: additions["Lose%s%s" % [AdventureActionMenu.SUBMENU, item.name]] = AdventureMakers.make_lose(item)
 	return additions
 
 ## Every kind of condition, "It can fight / is beaten / is dead" for a monster encounter, and "is …" for each stage of the event's encounter
@@ -211,30 +250,36 @@ func _get_condition_additions(_holder: AdventureEvent) -> Dictionary[String, Res
 			if track == null: continue
 			for stage: String in track.stages: additions["%s is %s" % [track.name, stage]] = AdventureMakers.make_stage_condition(track.name, stage)
 	var types: Dictionary[String, Script] = AdventureMakers.get_condition_types()
-	for type_name: String in types: additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_condition(types[type_name])
+	for type_name: String in types:
+		if types[type_name] != AdventureCarriesCondition: additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_condition(types[type_name])
+	var items: Array[ItemProfile] = AdventureMakers.find_items()
+	for negated: bool in [false, true]:
+		for item: ItemProfile in items:
+			additions["%s%s%s" % ["Doesn't carry" if negated else "Carries", AdventureActionMenu.SUBMENU, item.name]] = AdventureMakers.make_carries(item, negated)
 	return additions
 
 ## The encounter whose events are shown, if any
 func _get_encounter() -> AdventureEncounter: return null
+
+## The icon of the item a gain, loss or "carries" is about
+static func _get_item_icon(resource: Resource) -> Texture2D:
+	var item: ItemProfile = null
+	if resource is AdventureGainConsequence: item = (resource as AdventureGainConsequence).item
+	elif resource is AdventureLoseConsequence: item = (resource as AdventureLoseConsequence).item
+	elif resource is AdventureCarriesCondition: item = (resource as AdventureCarriesCondition).item
+	return item.icon if item != null else null
 
 ## Its own text, or its kind's name when it has none to show
 static func _describe(item: Resource) -> String:
 	var text: String = item.call(&"describe")
 	return text if not text.is_empty() else AdventureMakers.get_type_name(item.get_script().get_global_name())
 
-## Buttons for new choices, fights and saves
+## One "Add" button for new choices, fights, saves and searches, from a menu with their icons
 func _make_add_bar(page: AdventurePage) -> HBoxContainer:
 	var bar: HBoxContainer = HBoxContainer.new()
-	var actions: Dictionary[String, Callable] = _get_add_actions(page)
-	var icons: Dictionary[String, Texture2D] = _get_add_icons()
-	for text: String in actions:
-		var button: Button = Button.new()
-		button.text = text.trim_prefix("Add ")
-		button.icon = icons[text]
-		button.add_theme_constant_override(&"icon_max_width", ICON_SIZE)
-		button.tooltip_text = text
-		button.pressed.connect(actions[text])
-		bar.add_child(button)
+	var add: Button = AdventureUi.text_button("Add", "Add", "A new choice, fight, save or search on this page", func() -> void: _show_menu(_get_add_actions(page)))
+	add.flat = true
+	bar.add_child(add)
 	return bar
 
 func _get_add_actions(page: AdventurePage) -> Dictionary[String, Callable]:
@@ -242,16 +287,17 @@ func _get_add_actions(page: AdventurePage) -> Dictionary[String, Callable]:
 		"Add choice": _add_decision.bind(page, AdventureMakers.make_choice),
 		"Add fight": _add_decision.bind(page, AdventureMakers.make_fight),
 		"Add save": _add_decision.bind(page, AdventureMakers.make_save),
+		"Add loot (search)": _add_decision.bind(page, AdventureMakers.make_loot),
 	}
-
-func _get_add_icons() -> Dictionary[String, Texture2D]:
-	return {"Add choice": _get_editor_icon("Add"), "Add fight": FIGHT_ICON, "Add save": SAVE_ICON}
 
 ## Fights and saves get the game's icons
 func _get_menu_icon(text: String) -> Texture2D:
 	var lower: String = text.to_lower()
 	if lower.contains("fight") or lower.contains("is beaten") or lower.contains("is dead") or lower.begins_with("kill"): return FIGHT_ICON
 	if lower.contains("save"): return SAVE_ICON
+	if lower.contains("loot"): return _get_editor_icon("Search")
+	for start: String in ITEM_MENU_ICONS: if lower.begins_with(start): return _get_editor_icon(ITEM_MENU_ICONS[start])
+	if lower.begins_with("carries"): return CARRY_ICON
 	return super(text)
 
 func _add_decision(page: AdventurePage, make: Callable) -> void:

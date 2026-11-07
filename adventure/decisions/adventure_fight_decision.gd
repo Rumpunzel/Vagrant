@@ -11,13 +11,25 @@ extends AdventureDiceDecision
 @export var flee_transition: AdventurePageReference
 @export var draw_transition: AdventurePageReference
 
-## Won, Lost, Fled, Draw; fleeing and a draw do nothing but lead on
+## The encounter whose monster fights: the named one, else [param own] (the encounter of the event it is in); none if that has no monster
+func get_monster_encounter(own: AdventureEncounter) -> AdventureEncounter:
+	var fought: AdventureEncounter = Files.load_existing(encounter) as AdventureEncounter if not encounter.is_empty() else own
+	return fought if fought != null and fought.profile is MonsterProfile else null
+
+## Who fights: the monster of [method get_monster_encounter], else the first of [member enemies] (a one-off fight); the story and the
+## adventure editor both go by this
+func get_monster_profile(own: AdventureEncounter) -> MonsterProfile:
+	var fought: AdventureEncounter = get_monster_encounter(own)
+	if fought != null: return fought.profile as MonsterProfile
+	return enemies[0] if not enemies.is_empty() else null
+
+## Won, Draw, Lost, Fled; fleeing and a draw do nothing but lead on
 func get_outcomes() -> Array[Outcome]:
 	return [
 		Outcome.new("Won", &"transition", &"consequences"),
+		Outcome.new("Draw", &"draw_transition", &""),
 		Outcome.new("Lost", &"failure_transition", &"failure_consequences"),
 		Outcome.new("Fled", &"flee_transition", &""),
-		Outcome.new("Draw", &"draw_transition", &""),
 	]
 
 ## The outcome a fight that ended so takes
@@ -26,9 +38,10 @@ func get_fight_outcome(fight_outcome: Fight.Outcome) -> Outcome:
 	var outcomes: Array[Outcome] = get_outcomes()
 	match fight_outcome:
 		Fight.Outcome.WON: return outcomes[0]
-		Fight.Outcome.LOST: return outcomes[1]
-		Fight.Outcome.FLED: return outcomes[2]
-	return outcomes[3]
+		Fight.Outcome.DRAW: return outcomes[1]
+		Fight.Outcome.LOST: return outcomes[2]
+		Fight.Outcome.FLED: return outcomes[3]
+	return outcomes[1]
 
 func to_dice_request(protagonist: Character) -> FightRequest:
 	return FightRequest.new(protagonist, self)

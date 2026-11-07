@@ -48,6 +48,11 @@ const CHART_EXPLANATIONS: Dictionary[String, String] = {
 var shown_sections: Array[String] = []
 ## What the tooltips say; the dock hands it the scenario
 var tooltips: FightLabTooltips = FightLabTooltips.new()
+## The colours of the compared fighters' names (by the attribute they fight with), for the charts' categories
+var _category_colors: Array[Color] = []
+## Their icons (of the attribute they fight with) and the short names beside them ([method FightLabTooltips.get_short_name])
+var _category_icons: Array[Texture2D] = []
+var _category_labels: Array[String] = []
 
 var _result: Dictionary = {}
 var _matrix: GridContainer
@@ -110,7 +115,7 @@ func _build_matrix() -> void:
 	_matrix.add_child(Label.new())
 	for monster: int in monsters.size(): _matrix.add_child(_header_button("b", monster, monsters[monster], "Click: all of side A against %s" % monsters[monster], _select_column.bind(monster)))
 	for character: int in characters.size():
-		_matrix.add_child(_header_button("a", character, characters[character], "Click: %s against all of side B" % characters[character], _select_row.bind(character)))
+		_matrix.add_child(_header_button("a", character, tooltips.get_short_name("a", character), "Click: %s against all of side B" % characters[character], _select_row.bind(character)))
 		for monster: int in monsters.size():
 			var button: Button = Button.new()
 			button.set_meta("cell", Vector2i(character, monster))
@@ -182,6 +187,9 @@ func _refresh() -> void:
 	var monsters: Array[String] = _get_monsters()
 	var categories: Array[String] = []
 	var stats: Array[Dictionary] = []
+	_category_colors.clear()
+	_category_icons.clear()
+	_category_labels.clear()
 	if detail and swept:
 		var cell: Vector2i = _selection[0]
 		_heading.text = "%s vs %s by %s" % [characters[cell.x], monsters[cell.y], _result["sweep"]]
@@ -205,6 +213,13 @@ func _refresh() -> void:
 				"row": categories.append(monsters[cell.y])
 				"column": categories.append(characters[cell.x])
 				_: categories.append("%s vs %s" % [characters[cell.x], monsters[cell.y]])
+			var attribute: CharacterAttribute = tooltips.get_attribute("b", cell.y) if _view == "row" else tooltips.get_attribute("a", cell.x)
+			_category_colors.append(attribute.color.lightened(0.25) if attribute != null else Color.TRANSPARENT)
+			_category_icons.append(attribute.icon if attribute != null else null)
+			match _view:
+				"row": _category_labels.append(tooltips.get_short_name("b", cell.y))
+				"column": _category_labels.append(tooltips.get_short_name("a", cell.x))
+				_: _category_labels.append("%s vs %s" % [tooltips.get_short_name("a", cell.x), monsters[cell.y]])
 			stats.append(entry["stats"])
 	_show_comparison(categories, stats)
 
@@ -312,6 +327,12 @@ func _box_chart(title: String, categories: Array[String], series: Array[Dictiona
 ## Hovering a category tells all its values, what the chart shows and [param notes] (one per category)
 func _explain(chart: Control, title: String, notes: Array[String]) -> Control:
 	chart.set(&"explanation", CHART_EXPLANATIONS.get(title, ""))
+	# Fighters' names in the colour of the attribute they fight with; values (distributions, sweeps) as they are
+	var categories: Array = chart.get(&"categories")
+	if categories.size() == _category_colors.size():
+		chart.set(&"category_colors", _category_colors.duplicate())
+		chart.set(&"category_icons", _category_icons.duplicate())
+		chart.set(&"category_labels", _category_labels.duplicate())
 	chart.set(&"notes", notes)
 	var trigger: RichTooltipTrigger = tooltips.attach(chart, Callable(chart, &"describe_hovered"))
 	chart.connect(&"hovered_changed", trigger.refresh)
@@ -396,5 +417,11 @@ func _header_button(side: String, index: int, text: String, click: String, on_pr
 	button.text = text
 	button.flat = true
 	button.pressed.connect(on_pressed)
+	# In the colour of the attribute it fights with, and with its icon
+	var attribute: CharacterAttribute = tooltips.get_attribute(side, index)
+	if attribute != null:
+		button.icon = attribute.icon
+		button.add_theme_constant_override(&"icon_max_width", 16)
+		for state: StringName in [&"font_color", &"font_hover_color", &"font_pressed_color", &"font_focus_color"]: button.add_theme_color_override(state, attribute.color.lightened(0.25))
 	tooltips.attach(button, func() -> String: return "%s\n[color=%s]%s[/color]" % [tooltips.describe_fighter(side, index), FightLabTooltips.DIM.to_html(), click])
 	return button

@@ -22,9 +22,12 @@ func _init() -> void:
 func start(settings: FightLabRunSettings, settings_file: String, out: String) -> bool:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(settings_file).get_base_dir())
 	ResourceSaver.save(settings, settings_file)
-	for path: String in [out, out + ".progress"]:
+	for path: String in [out, out + ".progress", out + ".log"]:
 		if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
-	var arguments: PackedStringArray = ["--headless", "--path", ProjectSettings.globalize_path("res://"), RUNNER_SCENE, "--", "--settings=" + settings_file, "--out=" + out]
+	var arguments: PackedStringArray = [
+		"--headless", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(out + ".log"), RUNNER_SCENE,
+		"--", "--settings=" + settings_file, "--out=" + out,
+	]
 	_pid = OS.create_process(OS.get_executable_path(), arguments)
 	if _pid < 0: return false
 	_out = out
@@ -32,6 +35,15 @@ func start(settings: FightLabRunSettings, settings_file: String, out: String) ->
 	return true
 
 func is_running() -> bool: return _pid >= 0
+
+## The errors the last run's process logged (its first few), to tell why it failed
+func get_errors() -> String:
+	var log_file: String = _out + ".log"
+	if not FileAccess.file_exists(log_file): return ""
+	var errors: Array[String] = []
+	for line: String in FileAccess.get_file_as_string(log_file).split("\n"):
+		if line.contains("ERROR") and not line.contains("still in use at exit") and not line.contains("leaked at exit"): errors.append(line.strip_edges())
+	return "\n".join(errors.slice(0, 5))
 
 ## A finished run's result in [param out]; empty if there is none
 static func read_result(out: String) -> Dictionary:

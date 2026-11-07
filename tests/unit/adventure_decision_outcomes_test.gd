@@ -31,11 +31,11 @@ func test_fight_outcomes_follow_how_the_fight_ended() -> void:
 	var fight: AdventureFightDecision = AdventureFightDecision.new()
 	var pages: Array[AdventurePage] = [AdventurePage.new(), AdventurePage.new(), AdventurePage.new(), AdventurePage.new()]
 	fight.transition = pages[0]
-	fight.failure_transition = pages[1]
-	fight.flee_transition = pages[2]
-	fight.draw_transition = pages[3]
-	assert_array(fight.get_outcomes().map(func(outcome: AdventureDecision.Outcome) -> String: return outcome.name)).contains_exactly(["Won", "Lost", "Fled", "Draw"])
-	var ended: Array[Fight.Outcome] = [Fight.Outcome.WON, Fight.Outcome.LOST, Fight.Outcome.FLED, Fight.Outcome.DRAW]
+	fight.draw_transition = pages[1]
+	fight.failure_transition = pages[2]
+	fight.flee_transition = pages[3]
+	assert_array(fight.get_outcomes().map(func(outcome: AdventureDecision.Outcome) -> String: return outcome.name)).contains_exactly(["Won", "Draw", "Lost", "Fled"])
+	var ended: Array[Fight.Outcome] = [Fight.Outcome.WON, Fight.Outcome.DRAW, Fight.Outcome.LOST, Fight.Outcome.FLED]
 	for index: int in ended.size(): assert_object(fight.get_reference(fight.get_fight_outcome(ended[index]))).is_same(pages[index])
 	# Fleeing and a draw do nothing but lead on
 	assert_str(fight.get_fight_outcome(Fight.Outcome.FLED).consequences_property).is_empty()
