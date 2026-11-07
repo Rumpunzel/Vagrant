@@ -41,6 +41,16 @@ func test_carrying_as_a_condition() -> void:
 	assert_bool(carries.is_true(_story, null)).is_true()
 	assert_str(carries.describe()).is_equal("Carries 2 or more Rations")
 
+func test_not_carrying_as_a_condition() -> void:
+	var lacks: AdventureCarriesCondition = AdventureMakers.make_carries(_rations, true)
+	assert_bool(lacks.is_true(_story, null)).is_true()
+	assert_str(lacks.describe()).is_equal("Doesn't carry Rations")
+	_story.give(_rations, 1)
+	assert_bool(lacks.is_true(_story, null)).is_false()
+	lacks.at_least = 2
+	assert_bool(lacks.is_true(_story, null)).is_true()
+	assert_str(lacks.describe()).is_equal("Carries fewer than 2 Rations")
+
 func test_the_editor_names_them() -> void:
 	assert_str(_consequence(AdventureGainConsequence.new(), _rations, 2).describe()).is_equal("Gain 2 Rations")
 	assert_str(_consequence(AdventureLoseConsequence.new(), _sword, 1).describe()).is_equal("Lose Sword")

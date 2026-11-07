@@ -1,6 +1,7 @@
 extends GdUnitTestSuite
 
-## Looting in the adventure editor: what its card and tooltip say, and the problem of a search that finds nothing.
+## Items and looting in the adventure editor: the items its menus offer, what a search's card and tooltip say, and the problem of a search that
+## finds nothing.
 
 var _shore: AdventureLocation
 var _bandit: AdventureEncounter
@@ -56,3 +57,15 @@ func _adventure() -> Adventure:
 
 func _problems() -> Array:
 	return AdventureProblems.new(AdventureGraph.new(_adventure()), [] as Array[AdventureEvent]).problems.map(func(problem: AdventureProblems.Problem) -> String: return problem.text)
+
+func test_menus_offer_the_items_found_weapons_first() -> void:
+	var directory: String = "user://test_find_items"
+	DirAccess.make_dir_recursive_absolute(directory.path_join("deeper"))
+	ResourceSaver.save(ItemProfile.create_item("Rope"), directory.path_join("rope.tres"))
+	ResourceSaver.save(WeaponProfile.create("Axe", Rules.d8), directory.path_join("deeper/axe.tres"))
+	ResourceSaver.save(AdventurePage.new(), directory.path_join("page.tres"))
+	var names: Array[String] = []
+	for item: ItemProfile in AdventureMakers.find_items(directory): names.append(item.name)
+	for path: String in ["rope.tres", "deeper/axe.tres", "page.tres", "deeper"]: DirAccess.remove_absolute(directory.path_join(path))
+	DirAccess.remove_absolute(directory)
+	assert_array(names).is_equal(["Axe", "Rope"])

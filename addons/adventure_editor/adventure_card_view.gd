@@ -11,6 +11,9 @@ const SAVE_COLOR: Color = Color(0.45, 0.6, 0.9)
 const HOST_COLOR: Color = Color(0.35, 0.8, 0.7)
 const CARD_ALPHA: float = 0.18
 const FIGHT_ICON: Texture2D = preload("uid://co8bcva1h1plg")  # ancient-sword.svg
+const CARRY_ICON: Texture2D = preload("uid://b4a43twbi6cri")  # swap-bag.svg
+## Editor icons of the item submenus, by how they start
+const ITEM_MENU_ICONS: Dictionary[String, String] = {"gain": "Add", "lose": "Remove", "doesn't": "Remove"}
 const SAVE_ICON: Texture2D = preload("uid://dpmwlpo7a7q1r")  # rolling-dices.svg
 const HOST_ICON: Texture2D = preload("uid://bee2desykk34h")  # anticlockwise-rotation.svg
 ## Outcome ports and their links by outcome
@@ -195,6 +198,8 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 		if item == null: continue
 		var tag: Button = Button.new()
 		tag.text = _describe(item)
+		tag.icon = _get_item_icon(item)
+		tag.add_theme_constant_override(&"icon_max_width", ICON_SIZE)
 		tag.tooltip_text = "Edit in the Inspector"
 		tag.pressed.connect(func() -> void: EditorInterface.edit_resource(item))
 		if tooltips != null and (item is AdventureStageCondition or item is AdventureStageConsequence): tooltips.attach(tag, item, "edit it in the Inspector")
@@ -211,7 +216,10 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 				var with: Array = items.duplicate()
 				with.append(additions[text])
 				_request(resource, property, with, "Add %s" % text, file)
-		_show_menu(actions)
+		_menu.show_actions(actions, func(text: String) -> Texture2D:
+			var icon: Texture2D = _get_item_icon(additions[text]) if additions.has(text) else null
+			return icon if icon != null else _get_menu_icon(text)
+		)
 	)
 	add.text = add_text
 	tags.add_child(add)
@@ -221,7 +229,12 @@ func _make_tags(resource: Resource, property: StringName, file: Resource, add_te
 func _get_effect_additions() -> Dictionary[String, Resource]:
 	var additions: Dictionary[String, Resource] = {}
 	var types: Dictionary[String, Script] = AdventureMakers.get_consequence_types()
-	for type_name: String in types: additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_consequence(types[type_name])
+	for type_name: String in types:
+		if types[type_name] != AdventureGainConsequence and types[type_name] != AdventureLoseConsequence:
+			additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_consequence(types[type_name])
+	var items: Array[ItemProfile] = AdventureMakers.find_items()
+	for item: ItemProfile in items: additions["Gain%s%s" % [AdventureActionMenu.SUBMENU, item.name]] = AdventureMakers.make_gain(item)
+	for item: ItemProfile in items: additions["Lose%s%s" % [AdventureActionMenu.SUBMENU, item.name]] = AdventureMakers.make_lose(item)
 	return additions
 
 ## Every kind of condition, "It can fight / is beaten / is dead" for a monster encounter, and "is …" for each stage of the event's encounter
@@ -237,11 +250,24 @@ func _get_condition_additions(_holder: AdventureEvent) -> Dictionary[String, Res
 			if track == null: continue
 			for stage: String in track.stages: additions["%s is %s" % [track.name, stage]] = AdventureMakers.make_stage_condition(track.name, stage)
 	var types: Dictionary[String, Script] = AdventureMakers.get_condition_types()
-	for type_name: String in types: additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_condition(types[type_name])
+	for type_name: String in types:
+		if types[type_name] != AdventureCarriesCondition: additions[AdventureMakers.get_type_name(type_name)] = AdventureMakers.make_condition(types[type_name])
+	var items: Array[ItemProfile] = AdventureMakers.find_items()
+	for negated: bool in [false, true]:
+		for item: ItemProfile in items:
+			additions["%s%s%s" % ["Doesn't carry" if negated else "Carries", AdventureActionMenu.SUBMENU, item.name]] = AdventureMakers.make_carries(item, negated)
 	return additions
 
 ## The encounter whose events are shown, if any
 func _get_encounter() -> AdventureEncounter: return null
+
+## The icon of the item a gain, loss or "carries" is about
+static func _get_item_icon(resource: Resource) -> Texture2D:
+	var item: ItemProfile = null
+	if resource is AdventureGainConsequence: item = (resource as AdventureGainConsequence).item
+	elif resource is AdventureLoseConsequence: item = (resource as AdventureLoseConsequence).item
+	elif resource is AdventureCarriesCondition: item = (resource as AdventureCarriesCondition).item
+	return item.icon if item != null else null
 
 ## Its own text, or its kind's name when it has none to show
 static func _describe(item: Resource) -> String:
@@ -270,6 +296,8 @@ func _get_menu_icon(text: String) -> Texture2D:
 	if lower.contains("fight") or lower.contains("is beaten") or lower.contains("is dead") or lower.begins_with("kill"): return FIGHT_ICON
 	if lower.contains("save"): return SAVE_ICON
 	if lower.contains("loot"): return _get_editor_icon("Search")
+	for start: String in ITEM_MENU_ICONS: if lower.begins_with(start): return _get_editor_icon(ITEM_MENU_ICONS[start])
+	if lower.begins_with("carries"): return CARRY_ICON
 	return super(text)
 
 func _add_decision(page: AdventurePage, make: Callable) -> void:
