@@ -1,8 +1,6 @@
 # Vagrant
 
-*Vagrant* (working title) is a pen & paper RPG. Its rules live in `obsidian_vault/Vagrant/WIP 5/`; `Rules Reference.md` there sums them up.
-
-This repository is also a personal playground: a digital prototype in Godot to try out the rules and some game architecture. Many of its assets are placeholders for personal use and belong to their respective owners (icons from [game-icons.net](https://game-icons.net), CC BY 3.0; font Grenze Gotisch, SIL OFL).
+This is a pen & paper RPG.
 
 ## Attributes
 
@@ -20,7 +18,7 @@ For each **double** rolled for attributes, choose a rare origin.
 
 ## Adventuring
 
-The digital version plays as a choose-your-own-adventure with dice checks and fights. Locations, the events that can happen there and the people and creatures met on the way make up an adventure; what the player did changes what comes next.
+The digital version plays as a choose-your-own-adventure.
 
 ![adventure](https://github.com/Rumpunzel/Vagrant/blob/main/screenshots/adventure.PNG?raw=true)
 
@@ -36,4 +34,4 @@ A fight is a series of exchanges: both sides roll their breath dice, weapons and
 
 ## The Prototype
 
-Made with Godot 4.6 (GDScript): open the project in the editor, or run it with `godot --path .`. `CLAUDE.md` describes the code's layout and conventions.
+Made with Godot.
