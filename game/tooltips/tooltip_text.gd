@@ -21,7 +21,7 @@ static func make_label(bbcode: String, host: Control) -> RichTextLabel:
 	# Godot keeps its tooltips on screen by the size they have as they open, before a wrapping label is laid out (it would count one
 	# line): laid out once at its width in the host, with the host's theme, it knows its real height
 	host.add_child(label, false, Node.INTERNAL_MODE_BACK)
-	label.size.x = label.custom_minimum_size.x if label.autowrap_mode != TextServer.AUTOWRAP_OFF else label.get_content_width()
+	label.size.x = label.custom_minimum_size.x if label.autowrap_mode != TextServer.AUTOWRAP_OFF else float(label.get_content_width())
 	label.custom_minimum_size.y = label.get_content_height()
 	host.remove_child(label)
 	return label
