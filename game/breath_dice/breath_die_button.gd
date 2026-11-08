@@ -20,7 +20,7 @@ func _get_tooltip(_at_position: Vector2) -> String:
 	if disabled: return TooltipText.compose("Lost %s" % die_type, RECOVERY)
 	return TooltipText.compose("%s breath die" % die_type, RULE)
 
-func _make_custom_tooltip(for_text: String) -> Object: return TooltipText.make_label(for_text)
+func _make_custom_tooltip(for_text: String) -> Object: return TooltipText.make_label(for_text, self)
 
 func _update() -> void: pass
 
