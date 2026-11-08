@@ -1,6 +1,6 @@
 # Vagrant
 
-This is a pen & paper RPG.
+This is a digital prototype for a Pen & Paper RPG with the current working title "Vagrant."
 
 ## Attributes
 
