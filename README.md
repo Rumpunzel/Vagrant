@@ -1,10 +1,10 @@
 # Vagrant
 
-This is a digital prototype for a physical Pen & Paper RPG with the current working title "Vagrant."
+This is a digital prototype for a Pen & Paper RPG with the current working title "Vagrant."
 
-## Rolling Attributes
+## Attributes
 
-Character attributes are a simple **[2d6]** roll.
+A character has three attributes, **Guts**, **Blood** and **Nerves**, each a simple **[2d6]** roll.
 
 ![attribute_rolling](https://github.com/Rumpunzel/Vagrant/blob/main/screenshots/attribute_rolling.PNG?raw=true)
 
@@ -18,12 +18,20 @@ For each **double** rolled for attributes, choose a rare origin.
 
 ## Adventuring
 
-The digital version is Choose-Your-Own-Adventure game with dice checks and combat.
+The digital version plays as a choose-your-own-adventure.
 
 ![adventure](https://github.com/Rumpunzel/Vagrant/blob/main/screenshots/adventure.PNG?raw=true)
 
-## Resting
+## Breath Dice and Resting
 
-The RPG uses a **breath dice** mechanic to represent a character's available effort and exhaustion.
+**Breath dice** (d4 to d12) are a character's effort and exhaustion. They are rolled for saves and fights; a die that comes up above the attribute it was rolled with is lost. Catching one's breath exhausts one die type to recover all the others.
 
 ![resting](https://github.com/Rumpunzel/Vagrant/blob/main/screenshots/resting.PNG?raw=true)
+
+## Fights
+
+A fight is a series of exchanges: both sides roll their breath dice, weapons and shields at once, and the higher threat gains the vantage, which their stance turns into more damage dealt (Guts), less damage taken (Blood) or an unnerved foe (Nerves). Forcing a weapon or shield beyond one's strength costs threat and wears the gear down; armour blocks certain results. What gets through becomes an injury, which lowers all attributes until a character can no longer resist.
+
+## The Prototype
+
+Made with Godot.
