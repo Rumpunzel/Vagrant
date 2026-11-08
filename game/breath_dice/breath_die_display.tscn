@@ -9,7 +9,6 @@
 [node name="BreathDieDisplay" type="Button" unique_id=1562868667 node_paths=PackedStringArray("_shadow")]
 offset_right = 63.0
 offset_bottom = 71.0
-tooltip_text = "d8 breath die"
 focus_mode = 0
 mouse_filter = 1
 button_mask = 0

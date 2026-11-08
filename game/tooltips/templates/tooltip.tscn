@@ -13,6 +13,7 @@ script = ExtResource("1_template")
 content_labels = [NodePath("Content")]
 lock_elements = [NodePath("LockBorder")]
 timer_lock_progress_bar = NodePath("LockProgress")
+max_width = 280.0
 use_tween_in = true
 pop_scale = Vector2(1.05, 1.05)
 use_tween_out = true

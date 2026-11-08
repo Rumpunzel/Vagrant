@@ -33,5 +33,12 @@ func _add(ability: String) -> void:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	label.text = ability
+	label.text = RulesGlossary.link(ability)
+	var tooltips: MetaTooltipTrigger = MetaTooltipTrigger.new()
+	tooltips.trigger_node = label
+	tooltips.origin = TooltipEnums.TooltipOrigin.MOUSE_POSITION_START
+	tooltips.offset = Vector2(16.0, 16.0)
+	tooltips.overflow_mode = TooltipEnums.OverflowMode.CLAMP
+	tooltips.tooltip_for = RulesGlossary.tooltip_for
+	label.add_child(tooltips)
 	_abilities.add_child(label)

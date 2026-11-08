@@ -20,6 +20,8 @@ extends Control
 ## Vagrant: any [Range] (e.g. a [ProgressBar]), filled by the normalized time until the tooltip locks
 ## ([code]timer_lock_delay[/code])
 @export var timer_lock_progress_bar: Range
+## Vagrant: the widest a content label grows; longer lines wrap at it (0: they never wrap)
+@export var max_width: float = 0.0
 
 @export_group("Tweening")
 ## Use a tween scale animation from [code]Vector2.ZERO[/code] to [code]Vector2.ONE[/code]
@@ -130,8 +132,22 @@ func set_content(tooltip_strings: Array[String]) -> void:
 	for i: int in tooltip_strings.size():
 		if content_labels.size() > i:
 			content_labels[i].text = tooltip_strings[i]
+			if max_width > 0.0: fit_width(content_labels[i], max_width)
 		else:
 			printerr(name, " has fewer RichTextLabels than there are content strings on trigger ", trigger.name)
+
+
+## Vagrant: [param label] as wide as its widest line, but wrapping at [param max_width]. Measured with its font from the plain text (its
+## tags taken out), as a label not yet laid out (or outside the tree) knows no width of its own
+static func fit_width(label: RichTextLabel, max_width: float) -> void:
+	var font: Font = label.get_theme_font("normal_font")
+	var font_size: int = label.get_theme_font_size("normal_font_size")
+	var plain: String = RegEx.create_from_string("\\[[^\\]]*\\]").sub(label.text, "", true)
+	var widest: float = 0.0
+	for line: String in plain.split("\n"): widest = maxf(widest, font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x)
+	var wraps: bool = widest > max_width
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if wraps else TextServer.AUTOWRAP_OFF
+	label.custom_minimum_size.x = max_width if wraps else 0.0
 
 
 func set_pivot(_alignment: TooltipEnums.TooltipAlignment) -> void:

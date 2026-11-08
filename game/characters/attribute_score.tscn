@@ -23,6 +23,7 @@ metadata/_custom_type_script = "uid://c071oa3mjavbs"
 script = ExtResource("3_ktfhn")
 trigger_node = NodePath("..")
 origin = 3
+overflow_mode = 1
 metadata/_custom_type_script = "uid://coqwnstoj346c"
 
 [node name="AttributeIcon" parent="." unique_id=254158419 instance=ExtResource("2_ktfhn")]

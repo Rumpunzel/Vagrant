@@ -22,4 +22,4 @@ var score: AttributeScore :
 		score = new_score
 		_score.text = "%d" % score.get_score()
 		_score.modulate = score.get_color()
-		_tooltip_trigger.tooltip_strings = [score.get_details()]
+		_tooltip_trigger.tooltip_strings = [TooltipText.compose("[b]%s[/b]  %s" % [attribute.descriptor, score.get_details()], attribute.details)]

@@ -20,7 +20,7 @@ signal breath_die_button_added(breath_die_button: BreathDieButton)
 			dummy_button.die_type = _die_type
 			dummy_button.disabled = true
 			dummy_button.flat = true
-			dummy_button.tooltip_text = "All %s are lost." % _die_type
+			dummy_button.tooltip_text = TooltipText.compose("All %s are lost." % _die_type, BreathDieButton.RECOVERY)
 			dummy_button.mouse_default_cursor_shape = Control.CURSOR_FORBIDDEN
 			add(dummy_button)
 		for _index: int in range(_breath_dice_count): add_breath_die()
